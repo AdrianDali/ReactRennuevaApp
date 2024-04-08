@@ -53,9 +53,9 @@ function MenuCollectionCenter() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg">
+          <Container maxWidth="xl">
             <Grid container spacing={3}>
-              <Grid item xs={12} md={12}>
+              <Grid item xs={12} >
                 <Paper
                   sx={{
                     p: 3,

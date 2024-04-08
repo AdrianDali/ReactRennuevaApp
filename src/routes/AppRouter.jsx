@@ -21,6 +21,13 @@ import { MenuCollectionCenter } from '../pages/MenuCollectionCenter';
 import { MenuReport } from '../pages/MenuReport';
 import { MenuTracking } from '../pages/MenuTracking.jsx';
 import { MenuDonorRecolection } from '../pages/MenuDonorRecolection.js';
+import { MenuCompany } from '../pages/Menus/MenuCompany.js';
+import { MenuReportHistory } from '../pages/Menus/MenuReportHistory.js';
+import { MenuMainGenerator } from '../pages/Menus/MenuMainGenerator.js';
+import ResponsiveAppBar from '../containers/LayoutAppBar.jsx';
+import LayoutGenerator from '../containers/LayoutGenerator.jsx';
+import { MenuMyResponsivasGenerator } from '../pages/Menus/MenuMyResponsivasGenerator.js';
+
 
 
 function App() {
@@ -30,9 +37,6 @@ function App() {
   return (
     <TodoProvider>
       <BrowserRouter>
-
-
-
           <Routes>
           <Route path="/login" element={<Login />} />
             <Route path="/" element={<Login />} />
@@ -49,9 +53,16 @@ function App() {
             <Route path="/carrier" element={<Layout><MenuCarrier /></Layout>} />
             <Route path="/collection-center" element={<Layout><MenuCollectionCenter /></Layout>} />
             <Route path="/report" element={<Layout><MenuReport /></Layout>} />
-            <Route path="/tracking" element={<Layout><MenuTracking /></Layout>} />
+            <Route path="/tracking" element={<Layout><MenuTracking mode = "tracking"/></Layout>} />
+            <Route path="/tracking-external/:trackingNumber" element={<MenuTracking mode = "tracking external"/>} />
             <Route path="/donor-recolection" element={<Layout><MenuDonorRecolection /></Layout>} />
-            
+            <Route path="/company" element={<Layout><MenuCompany /></Layout>} />
+            <Route path="/report-history" element={<Layout><MenuReportHistory/></Layout>} />
+            <Route path="/main-generator" element={<LayoutGenerator><MenuMainGenerator/></LayoutGenerator> } />
+            <Route path='/responsivas-generator' element ={<LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator>} />
+
+
+
             <Route path="*" element={<h1>Not Found 404</h1>} />
           </Routes>
 

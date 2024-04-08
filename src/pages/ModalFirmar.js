@@ -10,7 +10,7 @@ import SignatureComponent from "../components/FirmaDocument";
 
 function ModalFirmar({ children, mode,id , type}) {
     const { openModalCreateFirma, setOpenModalCreateFirma, openModalEditFirma, setOpenModalEditFirma, openModalDeleteFirma, setOpenModalDeleteFirma,
-        openModalCreateFirmaReceptor, setOpenModalCreateFirmaReceptor, openModalEditFirmaReceptor, setOpenModalEditFirmaReceptor, openModalDeleteFirmaReceptor, setOpenModalDeleteFirmaReceptor,
+        openModalCreateFirmaReceptor, setUpdateReportInfo,setOpenModalCreateFirmaReceptor, openModalEditFirmaReceptor, setOpenModalEditFirmaReceptor, openModalDeleteFirmaReceptor, setOpenModalDeleteFirmaReceptor,
      } = useContext(TodoContext);
     console.log("ID DE QUIERN SE FIRMA",id)
 
@@ -38,7 +38,9 @@ function ModalFirmar({ children, mode,id , type}) {
             setOpenModalDeleteFirmaReceptor(false);
         }
         }
+        setUpdateReportInfo(true);
 
+        
 
 
     };

@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TodoContext } from '../context/index.js';
-import { ModalUser } from './Users/ModalUser';
-import RecyclingCenterTable from "../components/RecyclingCenterTable";
-import BarsChartVehicle from "../components/BarsChartVehicle";
+import { TodoContext } from '../../context/index.js';
+import { ModalUser } from '../Users/ModalUser';
+import RecyclingCenterTable from "../../components/RecyclingCenterTable";
+import BarsChartVehicle from "../../components/BarsChartVehicle";
 import {
   ThemeProvider,
   createTheme,
@@ -13,24 +13,28 @@ import {
   Toolbar,
   CssBaseline,
 } from '@mui/material';
-import Title from '../components/Title';
-import CUDButtons from "../containers/CUDButtons";
-import { ModalRecyclingCenter } from "./ModalRecyclingCenter.js";
+import Title from '../../components/Title';
+import CUDButtons from "../../containers/CUDButtons";
+//import { ModalCompany } from "../ModalCompany.js";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import CompanyTable from "../../components/boards/CompanyTable.jsx";
 
-function MenuRecyclingCenter() {
+import {ModalCompany} from "../../components/modals/ModalCompany.js";
+
+
+
+function MenuCompany() {
   const { 
-    openModalCreateRecyclingCenter, 
-    setOpenModalCreateRecyclingCenter, 
-    setOpenModalEditRecyclingCenter,
-    openModalEditRecyclingCenter, 
-    setOpenModalDeleteRecyclingCenter, 
-    openModalDeleteRecyclingCenter ,openModalText, setOpenModalText ,textOpenModalText,setTextOpenModalText
+    openModalCreateCompany, setOpenModalCreateCompany,
+    openModalEditCompany, setOpenModalEditCompany, 
+    openModalDeleteCompany, setOpenModalDeleteCompany, 
+    openModalText, setOpenModalText,
+    textOpenModalText,setTextOpenModalText
   } = useContext(TodoContext);
 
   const [datos, setDatos] = useState([]);
@@ -65,30 +69,30 @@ function MenuRecyclingCenter() {
                     justifyContent: 'center'
                   }}
                 >
-                  <Title>Centros de Reciclaje</Title>
-                  <CUDButtons model="RecyclingCenter" />
-                  <Title>Centros Creados</Title>
-                  <RecyclingCenterTable />
+                  <Title>Compañias</Title>
+                  <CUDButtons model="Company" />
+                  <Title>Compañias Creadas</Title>
+                  <CompanyTable />
                 </Paper>
               </Grid>
               
             </Grid>
           </Container>
 
-          {openModalCreateRecyclingCenter && (
-            <ModalRecyclingCenter mode={"CREAR"}>
+          {openModalCreateCompany && (
+            <ModalCompany mode={"CREAR"}>
               La funcionalidad de agregar TODO
-            </ ModalRecyclingCenter >
+            </ ModalCompany >
           )}
-          {openModalEditRecyclingCenter && (
-            <ModalRecyclingCenter mode={"EDITAR"}>
+          {openModalEditCompany && (
+            <ModalCompany mode={"EDITAR"}>
               La funcionalidad de editar TODO
-            </ ModalRecyclingCenter >
+            </ ModalCompany >
           )}
-          {openModalDeleteRecyclingCenter && (
-            <ModalRecyclingCenter mode={"BORRAR"}>
+          {openModalDeleteCompany && (
+            <ModalCompany mode={"BORRAR"}>
               La funcionalidad de borrar TODO
-            </ ModalRecyclingCenter >
+            </ ModalCompany >
           )}
            {openModalText && (
             <Dialog
@@ -114,4 +118,4 @@ function MenuRecyclingCenter() {
   );
 }
 
-export { MenuRecyclingCenter };
+export { MenuCompany };

@@ -14,7 +14,7 @@ function ModalResidueReport({ onClose, userselect, report }) { // Asegúrate de 
     console.log("####################ReporteSeleccionado###############################SDFDFDSFDSFDSGHMN")
     console.log(userselect)
     console.log(report)
-    const { openModalCreateResidueReport, setOpenModalCreateResidueReport, openModalEditResidueReport, setOpenModalEditResidueReport, openModalDeleteResidueReport, setOpenModalDeleteReportResidue } = useContext(TodoContext);
+    const { openModalCreateResidueReport, setOpenModalCreateResidueReport, openModalEditResidueReport, setOpenModalEditResidueReport, openModalDeleteResidueReport, setOpenModalDeleteReportResidue, setUpdateReportInfo } = useContext(TodoContext);
 
 
 
@@ -32,6 +32,7 @@ function ModalResidueReport({ onClose, userselect, report }) { // Asegúrate de 
         if (openModalDeleteResidueReport) {
             setOpenModalDeleteReportResidue(false);
         }
+        setUpdateReportInfo(true);
     };
 
     useEffect(() => {

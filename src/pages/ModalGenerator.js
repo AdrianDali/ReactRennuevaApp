@@ -354,12 +354,12 @@ function ModalGenerator({ children, mode }) {
                             onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
                             margin="dense"
                             inputProps={{
-                                maxLength: 13 // Opcional: si quieres forzar la longitud máxima en el HTML
+                                maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
                             }}
-                            error={razonSocial.length > 0 && (razonSocial.length < 12 || razonSocial.length > 13)}
+                            error={razonSocial.length > 0 &&  razonSocial.length > 50}
                             helperText={
-                                razonSocial.length > 0 && (razonSocial.length < 12 || razonSocial.length > 13)
-                                    ? "La Razon Social debe tener entre 12 y 13 caracteres"
+                                razonSocial.length > 0 &&  razonSocial.length > 50
+                                    ? "La Razon Social debe tener entre 5 y 50 caracteres"
                                     : ""
                             }
 

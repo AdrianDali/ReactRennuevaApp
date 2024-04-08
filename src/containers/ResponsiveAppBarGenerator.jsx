@@ -5,7 +5,6 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -13,17 +12,12 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Rennueva from "../assets/Rennueva.jpg";
 import AdbIcon from '@mui/icons-material/Adb';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from 'react-router-dom';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBarGenerator() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
@@ -47,16 +41,16 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#ffffff' }}>
-      <Container maxWidth="xl">
+    <AppBar position="static" sx={{ backgroundColor: '#ffffff' , borderRadius : "25px", borderColor :'#ffffff', marginLeft: 2,width : "98%", marginTop: -10}}>
+      <Container maxWidth="xl" sx={{borderRadius : "25px"}}>
         <Toolbar disableGutters>
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 25 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 25 , borderRadius : "25px"}}>
           
             <img src={Rennueva} alt="Rennueva" className="logo-header" />
             
           
 
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 10 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 10 , borderRadius: "25px" }}>
 
           <Menu
             id="menu-appbar"
@@ -74,6 +68,7 @@ function ResponsiveAppBar() {
             onClose={handleCloseNavMenu}
             sx={{
               display: { xs: 'block', md: 'none' },
+              borderRadius: "25px"
             }}
           >
             {pages.map((page) => (
@@ -87,7 +82,7 @@ function ResponsiveAppBar() {
 
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' , borderRadius :"25px" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -142,4 +137,4 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
+export default ResponsiveAppBarGenerator;

@@ -21,7 +21,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-
+import BarsChartGenerator  from "../components/graph/BarsCharGenerator.js";
 
 function MenuGenerator() {
   const { 
@@ -65,9 +65,9 @@ function MenuGenerator() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg">
+          <Container maxWidth="xl">
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} >
                 <Paper
                   sx={{
                     p: 3,
@@ -83,7 +83,7 @@ function MenuGenerator() {
                   <GeneratorTable />
                 </Paper>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} >
                 <Paper
                   sx={{
                     p: 4,
@@ -92,7 +92,7 @@ function MenuGenerator() {
                     height: 580,
                   }}
                 >
-                  <BarsChartVehicle />
+                  <BarsChartGenerator />
                 </Paper>
               </Grid>
             </Grid>

@@ -23,6 +23,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import DriverTable from "../components/DriverTable.js";
+import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
 
 
 
@@ -59,9 +60,9 @@ function MenuDriver() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg">
+          <Container maxWidth="xl">
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} >
                 <Paper
                   sx={{
                     p: 3,
@@ -77,7 +78,7 @@ function MenuDriver() {
                   <DriverTable />
                 </Paper>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} >
                 <Paper
                   sx={{
                     p: 4,
@@ -86,7 +87,7 @@ function MenuDriver() {
                     height: 580,
                   }}
                 >
-                  <BarsChartVehicle />
+                  <BarsChartCarrier />
                 </Paper>
               </Grid>
             </Grid>

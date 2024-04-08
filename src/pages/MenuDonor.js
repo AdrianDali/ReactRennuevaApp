@@ -23,7 +23,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import DonorTable from "../components/DonorTable.jsx";
-
+import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollection';
 
 function MenuDonor() {
   const {
@@ -56,9 +56,9 @@ function MenuDonor() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg">
+          <Container maxWidth="xl">
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} >
                 <Paper
                   sx={{
                     p: 3,
@@ -74,7 +74,7 @@ function MenuDonor() {
                   <DonorTable />
                 </Paper>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} >
                 <Paper
                   sx={{
                     p: 4,
@@ -83,7 +83,7 @@ function MenuDonor() {
                     height: 580,
                   }}
                 >
-                  <BarsCharDonor />
+                  <BarsCharOrderRecollection />
                 </Paper>
               </Grid>
             </Grid>

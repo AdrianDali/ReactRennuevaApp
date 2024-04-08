@@ -1,86 +1,101 @@
-import * as React from 'react';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import React, { useState, useEffect , useContext} from 'react';
+import axios from 'axios';
+import { 
+  Paper, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  TablePagination 
+} from '@mui/material';
+import { TodoContext } from '../context';
 import Title from './Title';
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-const rows = [
-  createData(
-    0,
-    '16 Mar, 2019',
-    'Elvis Presley',
-    'Tupelo, MS',
-    'VISA ⠀•••• 3719',
-    312.44,
-  ),
-  createData(
-    1,
-    '16 Mar, 2019',
-    'Paul McCartney',
-    'London, UK',
-    'VISA ⠀•••• 2574',
-    866.99,
-  ),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(
-    3,
-    '16 Mar, 2019',
-    'Michael Jackson',
-    'Gary, IN',
-    'AMEX ⠀•••• 2000',
-    654.39,
-  ),
-  createData(
-    4,
-    '15 Mar, 2019',
-    'Bruce Springsteen',
-    'Long Branch, NJ',
-    'VISA ⠀•••• 5919',
-    212.79,
-  ),
-];
-
-function preventDefault(event) {
-  event.preventDefault();
-}
-
-export default function Orders() {
-  return (
-    <React.Fragment>
-      <Title>Recent Orders</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Responsivas</TableCell>
-            <TableCell>residuo</TableCell>
+const DonorTable = () => {
+    const [clientes, setClientes] = useState([]);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const { updateDonorInfo, setUpdateDonorInfo } = useContext(TodoContext);
+    useEffect(() => {
+        axios
+            .get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`)
+            .then(response => {
+                setClientes(response.data);
+                setUpdateDonorInfo(false);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, [updateDonorInfo]);
+  
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+    };
+  
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
+  
+    return (
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <Title>Historial de Usuarios</Title>
+        <TableContainer sx={{ maxHeight: 300 , minHeight : 300 }}>
           
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>sda</TableCell>
-   
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        Ver todos los usuarios
-      </Link>
-    </React.Fragment>
-  );
+          <Table size="small" stickyHeader>
+            
+            <TableHead>
+              
+              <TableRow>
+                {/* Añade aquí tus encabezados de tabla */}
+                <TableCell>Grupo</TableCell>
+                <TableCell>Nombre</TableCell>
+                <TableCell>Correo</TableCell>
+                <TableCell>Nombre Usuario</TableCell>
+                <TableCell>RFC</TableCell>
+                <TableCell>Compañia</TableCell>
+                <TableCell>Direccion Estado</TableCell>
+                <TableCell>Direccion Ciudad</TableCell>
+                <TableCell>Dirección Colonia</TableCell>
+                <TableCell>Dirección Calle</TableCell>
+                <TableCell>Dirección Codigo Postal</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {clientes
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((cliente, index) => (
+                  <TableRow key={index}>
+                    {/* Añade aquí tus celdas de datos */}
+                    <TableCell>{cliente.groups[0]}</TableCell>
+                    <TableCell>{`${cliente.first_name} ${cliente.last_name}`}</TableCell>
+                    <TableCell>{cliente.email}</TableCell>
+                    <TableCell>{cliente.user}</TableCell>
+                    <TableCell>{cliente.rfc}</TableCell>
+                    <TableCell>{cliente.company}</TableCell>
+                    <TableCell>{cliente.address_state}</TableCell>
+                    <TableCell>{cliente.address_city}</TableCell>
+                    <TableCell>{cliente.address_locality}</TableCell>
+                    <TableCell>{cliente.address_street}</TableCell>
+                    <TableCell>{cliente.address_postal_code}</TableCell>
+                  </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={clientes.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    );
 }
+
+export default DonorTable;

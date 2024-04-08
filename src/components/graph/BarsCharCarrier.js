@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
-import Title from './Title';
+import Title from '../Title';
 
 export default function Chart() {
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {
     axios   
-      .get(`${process.env.REACT_APP_API_URL}/get-all-users-groups/`)
+      .get(`${process.env.REACT_APP_API_URL}/get-num-report-carrier/`)
       .then(response => {
-        const data = response.data.group_data; // Asumiendo que los datos relevantes están en group_data
+        const data = response.data; // Asumiendo que los datos relevantes están en group_data
+        console.log(data);
 
-        let chartData = data.map(item => ({
-          group: item.group,  // Asegúrate de que 'group' y 'user_count' son las claves correctas
-          users: item.user_count
-        }));
+        let chartData = data.map(item => (
+            console.log(item),
+            {
+            
+
+            group: item.usuario,  // Asegúrate de que 'group' y 'user_count' son las claves correctas
+            users: item.reportes
+          }));
+
+        // let chartData = [{
+        //   group: data.usuario,  // Asegúrate de que 'group' y 'user_count' son las claves correctas
+        //   users: data.reportes
+        // }];
 
         setGroups(chartData);
         console.log(chartData);
@@ -27,7 +37,7 @@ export default function Chart() {
 
   return (
     <React.Fragment>
-      <Title>Usuarios por Grupo</Title>
+      <Title>Responsivas Por Generador</Title>
       <ResponsiveContainer width="100%" height="90%">
         <BarChart
           data={groups}
@@ -35,7 +45,7 @@ export default function Chart() {
             top: 16,
             right: 16,
             bottom: 0,
-            left: 24,
+            left: 0,
           }}
         >
           <XAxis dataKey="group" stroke="#000000" />

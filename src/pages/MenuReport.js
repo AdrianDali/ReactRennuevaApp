@@ -37,6 +37,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
 
 const QRCode = require("qrcode");
 
@@ -141,17 +144,24 @@ const generatePdf = (report, data) => {
   let direccion_centro = "";
   let centro = "";
   let titulo_centro = "";
+  let permiso_centro = [];
   if (data[0].key_centro_reciclaje != null) {
     key_centro = data[0].key_centro_reciclaje;
     direccion_centro = data[0].ubicacion_centro_reciclaje;
     centro = data[0].centro_reciclaje;
     titulo_centro = "Reciclaje";
+    console.log("###############permiso")
+    console.log(data[0].permiso_centro_reciclaje)
+    console.log(data[0].permiso_centro_reciclaje[0])
+    permiso_centro = data[0].permiso_centro_reciclaje;
   }
   if (data[0].key_centro_recoleccion != null) {
     key_centro = data[0].key_centro_recoleccion;
     direccion_centro = data[0].ubicacion_centro_recoleccion;
     centro = data[0].centro_recoleccion;
     titulo_centro = "Recoleccion";
+    console.log("###############permiso")
+    permiso_centro = data[0].permiso_centro_recoleccion;
   }
   console.log("KEY CENTRO");
   console.log(key_centro);
@@ -170,10 +180,22 @@ const generatePdf = (report, data) => {
 
   // Text on the top right side
   doc.setFontSize(8);
-  doc.text("Responsiva de Recepcion de Residuos", 150, 10, { align: "left" });
-  doc.text("RA-TRE-01-06-01/2020", 150, 15, { align: "left" });
-  doc.text("PM-TRE-01-06-01/2021", 150, 20, { align: "left" });
-  doc.text("NOM-161-SEMARNAT-2011", 150, 25, { align: "left" });
+  doc.text("Responsiva de Recepion de Residuos", 150, 10, { align: "left" });
+  for (let i = 0; i < permiso_centro.length; i++) {
+    console.log("###############permiso")
+    console.log(permiso_centro[i])
+    doc.text(
+      permiso_centro[i],
+      150,
+      15 + i * 5,
+      { align: "left" }
+    );  
+
+  
+  }
+  // doc.text("RA-TRE-01-06-01/2020", 150, 15, { align: "left" });
+  // doc.text("PM-TRE-01-06-01/2021", 150, 20, { align: "left" });
+  // doc.text("NOM-161-SEMARNAT-2011", 150, 25, { align: "left" });
 
   // Title before the table
   doc.setFontSize(16);
@@ -204,14 +226,7 @@ const generatePdf = (report, data) => {
   doc.autoTable({
     startY: 35,
     tableWidth: 190,
-    body: [
-      [
-        "RFC:",
-        report.rfc_usuario,
-        "Razón Social:",
-        "Asociación de Colonos de Residencial Chiluca A.C.",
-      ],
-    ],
+    body: [["RFC:", report.rfc_usuario, "Razón Social:", data[0].razon_social]],
     theme: "plain",
     styles: tableStyles,
   });
@@ -260,6 +275,14 @@ const generatePdf = (report, data) => {
     styles: tableStyles,
   });
   doc.text("Datos del Transportista ", 14, 115);
+  if(data[0].transportista_nombre == null){
+    doc.setFontSize(12);
+    doc.text("El generador trajo sus reciduos con vehiculo propio", 14, 125);
+    doc.setFontSize(16);
+
+
+  }
+  else {
   doc.autoTable({
     startY: 120,
     tableWidth: 190,
@@ -274,7 +297,7 @@ const generatePdf = (report, data) => {
     theme: "plain",
     styles: tableStyles,
   });
-
+  }
   doc.setFontSize(16);
   doc.text("Datos del Residuo", 14, 135);
 
@@ -315,10 +338,10 @@ const generatePdf = (report, data) => {
   doc.text("Solicite, con su numero de folio, el", 70, distancia + 35, {
     align: "left",
   });
-  doc.text("deslose de los materiales y", 70, distancia + 40, {
+  doc.text("desglose de los materiales y", 70, distancia + 40, {
     align: "left",
   });
-  doc.text("comprobante al siguiente correo", 70, distancia + 45, {
+  doc.text("comprobante al siguiente correo:", 70, distancia + 45, {
     align: "left",
   });
   doc.text("plasticos@rennueva.com", 70, distancia + 50, { align: "left" });
@@ -418,13 +441,14 @@ const generatePdf = (report, data) => {
   doc.save("Responsiva_folio_" + report.id_report + ".pdf");
 };
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.getContrastText(theme.palette.primary.main),
-  backgroundColor: theme.palette.primary.main,
-  "&:hover": {
-    backgroundColor: theme.palette.primary.dark,
-  },
-}));
+const StyledButton = styled(Button)`
+  background-color: ${(props) => (props.isGreen ? "green" : "red")};
+  color: white;
+
+  &:hover {
+    background-color: ${(props) => (props.isGreen ? "darkgreen" : "darkred")};
+  }
+`;
 
 function MenuReport() {
   const {
@@ -435,7 +459,12 @@ function MenuReport() {
     setOpenModalDelete,
     openModalDelete,
     openModalCreateReport,
+    openModalEditReport,
+    openModalDeleteReport,
+
     setOpenModalCreateReport,
+    setOpenModalEditReport,
+    setOpenModalDeleteReport,
 
     openModalCreateResidueReport,
     setOpenModalCreateResidueReport,
@@ -466,8 +495,6 @@ function MenuReport() {
 
   const [datos, setDatos] = useState([]);
 
-  // ... otros handlers y useEffect ...
-
   const defaultTheme = createTheme();
 
   //##############################################################################################################
@@ -479,6 +506,34 @@ function MenuReport() {
   const [userSelectModal, setUserSelectModal] = useState("");
   const [reportSelectModal, setReportSelectModal] = useState("");
   const [id_report, setIdReport] = useState("");
+  const [reportSelect, setReportSelect] = useState([]);
+  const [isButtonGreen, setIsButtonGreen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null); // Estado para almacenar el ID del reporte a borrar
+
+  const handleClickOpen = (id_report) => {
+    setDeleteId(id_report); // Guarda el ID del reporte en el estado
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleConfirmDelete = () => {
+    console.log("Borrado confirmado");
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/delete-report/`, {
+        reportId: deleteId, // Usa el ID almacenado en el estado
+      })
+      .then((response) => {
+        console.log(
+          "##############################################info delete report####"
+        );
+        console.log(response.data);
+        setUpdateReportInfo(true);
+      });
+    handleClose();
+  };
 
   useEffect(() => {
     axios
@@ -523,9 +578,9 @@ function MenuReport() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg">
+          <Container maxWidth="xl">
             <Grid container spacing={3}>
-              <Grid item xs={12} md={12}>
+              <Grid item xs={12}>
                 <Paper
                   sx={{
                     p: 3,
@@ -564,6 +619,8 @@ function MenuReport() {
                             <TableCell>Residuos</TableCell>
                             <TableCell>Firma Generador</TableCell>
                             <TableCell>Reporte</TableCell>
+                            <TableCell>Editar</TableCell>
+                            <TableCell>Borrar</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -603,35 +660,50 @@ function MenuReport() {
                                       {reporte.telefono_usuario}
                                     </TableCell>
                                     <TableCell>
-                                      {reporte.estado_usuario}
+                                      {reporte.estado_reporte}
                                     </TableCell>
                                     <TableCell>
-                                      {reporte.ciudad_usuario}
+                                      {reporte.ciudad_reporte}
                                     </TableCell>
                                     <TableCell>
-                                      {reporte.colonia_usuario}
+                                      {reporte.colonia_reporte}
                                     </TableCell>
                                     <TableCell>
-                                      {reporte.calle_usuario}
+                                      {reporte.calle_reporte}
                                     </TableCell>
-                                    <TableCell>{reporte.cp_usuario}</TableCell>
+                                    <TableCell>{reporte.cp_reporte}</TableCell>
                                     <TableCell>
                                       {reporte.fecha_inicio_reporte}
                                     </TableCell>
 
                                     <TableCell>
-                                      <StyledButton
+                                      {/* <StyledButton
                                         onClick={() => {
                                           setIdReport(reporte.id_report);
                                           setOpenModalCreateFirmaReceptor(true);
                                         }}
                                       >
                                         Firmar
-                                      </StyledButton>
+                                      </StyledButton> */}
+                                      <Button
+                                        variant="contained"
+                                        color={
+                                          reporte.firma_responsiva_receptor
+                                            ? "success"
+                                            : "error"
+                                        }
+                                        onClick={() => {
+                                          setIdReport(reporte.id_report);
+                                          setOpenModalCreateFirmaReceptor(true);
+                                          setUpdateReportInfo(true);
+                                        }}
+                                      >
+                                        Firma
+                                      </Button>
                                     </TableCell>
 
                                     <TableCell>
-                                      <StyledButton
+                                      {/* <StyledButton
                                         onClick={() => {
                                           setOpenModalCreateResidueReport(true);
                                           setUserSelectModal(
@@ -643,22 +715,60 @@ function MenuReport() {
                                         }}
                                       >
                                         Residuo
-                                      </StyledButton>
+                                      </StyledButton> */}
+                                      <Button
+                                        variant="contained"
+                                        color={
+                                          reporte.residuos_agregados
+                                            ? "success"
+                                            : "error"
+                                        }
+                                        onClick={() => {
+                                          setOpenModalCreateResidueReport(true);
+                                          setUserSelectModal(
+                                            reporte.nombre_usuario
+                                          );
+                                          setReportSelectModal(
+                                            reporte.id_report
+                                          );
+
+                                          setUpdateReportInfo(true);
+                                        }}
+                                      >
+                                        Residuo
+                                      </Button>
                                     </TableCell>
 
                                     <TableCell>
-                                      <StyledButton
+                                      {/* <StyledButton
+                                        onClick={() => {
+                                          setIdReport(reporte.id_report);
+                                          setOpenModalCreateFirma(true);
+                                        }}
+                                       
+                                        
+                                        
+                                      >
+                                        Firmar
+                                      </StyledButton> */}
+                                      <Button
+                                        variant="contained"
+                                        color={
+                                          reporte.firma_responsiva_generador
+                                            ? "success"
+                                            : "error"
+                                        }
                                         onClick={() => {
                                           setIdReport(reporte.id_report);
                                           setOpenModalCreateFirma(true);
                                         }}
                                       >
-                                        Firmar
-                                      </StyledButton>
+                                        Firma
+                                      </Button>
                                     </TableCell>
 
                                     <TableCell>
-                                      <StyledButton
+                                      {/* <StyledButton
                                         onClick={async () => {
                                           const validate = await ValidateReport(
                                             reporte.id_report
@@ -666,7 +776,6 @@ function MenuReport() {
                                           console.log("VALIDATE");
                                           console.log(validate);
                                           if (validate == true) {
-                                          
                                             await generateQR(
                                               "http://localhost:3000/report"
                                             );
@@ -681,15 +790,140 @@ function MenuReport() {
                                             console.log(data[0]);
 
                                             generatePdf(reporte, data);
-                                          }else {
+                                          } else {
                                             setOpenModalText(true);
-                                            setTextOpenModalText("No se puede generar el reporte, aun no se han firmado todos los campos"); 
+                                            setTextOpenModalText(
+                                              "No se puede generar el reporte, aun no se han firmado todos los campos"
+                                            );
                                           }
-
                                         }}
                                       >
                                         Reporte
-                                      </StyledButton>
+                                      </StyledButton> */}
+
+                                      <Button
+                                        variant="contained"
+                                        color={
+                                          reporte.firma_responsiva_generador &&
+                                          reporte.firma_responsiva_receptor &&
+                                          reporte.residuos_agregados
+                                            ? "success"
+                                            : "error"
+                                        }
+                                        onClick={async () => {
+                                          const validate = await ValidateReport(
+                                            reporte.id_report
+                                          );
+                                          console.log("VALIDATE");
+                                          console.log(validate);
+
+                                          if (validate == true) {
+                                            const data = await getAllInfoReport(
+                                              reporte.id_report
+                                            );
+
+                                            let key_centro = "";
+                                            if (
+                                              data[0].key_centro_reciclaje !=
+                                              null
+                                            ) {
+                                              key_centro =
+                                                data[0].key_centro_reciclaje;
+                                            }
+                                            if (
+                                              data[0].key_centro_recoleccion !=
+                                              null
+                                            ) {
+                                              key_centro =
+                                                data[0].key_centro_recoleccion;
+                                            }
+
+                                            const folio_busqueda =
+                                              data[0].key_grupo_usuario +
+                                              "-" +
+                                              key_centro +
+                                              "-" +
+                                              reporte.id_report;
+
+                                            await generateQR(
+                                              "https://rewards.rennueva.com/tracking-external/" +
+                                                folio_busqueda // Aquí deberías poner la URL correcta para el reporte
+                                            );
+
+                                            console.log("DATA de la funcion1");
+                                            console.log(reporte);
+                                            console.log(
+                                              "######SDASDASD el reporte firmado"
+                                            );
+                                            console.log(data[0]);
+
+                                            generatePdf(reporte, data);
+                                          } else {
+                                            setOpenModalText(true);
+                                            setTextOpenModalText(
+                                              "No se puede generar el reporte, aun no se han firmado todos los campos"
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        Reporte
+                                      </Button>
+                                    </TableCell>
+                                    <TableCell>
+                                      <IconButton
+                                        aria-label="editar"
+                                        onClick={() => {
+                                          console.log("Editar");
+                                          console.log(reporte.id_report);
+                                          setIdReport(reporte.id_report);
+                                          console.log(reporte);
+                                          console.log(report);
+                                          setReportSelect(reporte);
+                                          setOpenModalEditReport(true);
+                                        }}
+                                      >
+                                        <EditIcon />
+                                      </IconButton>
+                                    </TableCell>
+                                    <TableCell>
+                                      <IconButton
+                                        aria-label="borrar"
+                                        onClick={() =>
+                                          handleClickOpen(reporte.id_report)
+                                        }
+                                      >
+                                        {" "}
+                                        {/* Suponiendo que el ID del reporte es "1", aquí deberías pasar el ID real según tu lógica */}
+                                        <DeleteIcon />
+                                      </IconButton>
+                                      <Dialog
+                                        open={open}
+                                        onClose={handleClose}
+                                        aria-labelledby="alert-dialog-title"
+                                        aria-describedby="alert-dialog-description"
+                                      >
+                                        <DialogTitle id="alert-dialog-title">
+                                          {"¿Estás seguro de querer borrar?"}
+                                        </DialogTitle>
+                                        <DialogContent>
+                                          <DialogContentText id="alert-dialog-description">
+                                            Esta acción no se puede deshacer.
+                                          </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                          <Button onClick={handleClose}>
+                                            Cancelar
+                                          </Button>
+                                          <Button
+                                            onClick={handleConfirmDelete}
+                                            autoFocus
+                                          >
+                                            {" "}
+                                            {/* Aquí no necesitas pasar el ID ya que se maneja a través del estado */}
+                                            Confirmar
+                                          </Button>
+                                        </DialogActions>
+                                      </Dialog>
                                     </TableCell>
                                   </TableRow>
                                 )
@@ -701,12 +935,13 @@ function MenuReport() {
                     <TablePagination
                       rowsPerPageOptions={[5, 10, 25]}
                       component="div"
-                      count={clientes.length}
+                      count={report.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}
                       onRowsPerPageChange={handleChangeRowsPerPage}
                     />
+                    
 
                     {openModalCreateFirma && (
                       <ModalFirmar
@@ -758,12 +993,12 @@ function MenuReport() {
               La funcionalidad de agregar TODO
             </ModalReport>
           )}
-          {openModalEdit && (
-            <ModalReport mode={"EDITAR"}>
+          {openModalEditReport && (
+            <ModalReport mode={"EDITAR"} report={reportSelect}>
               La funcionalidad de editar TODO
             </ModalReport>
           )}
-          {openModalDelete && (
+          {openModalDeleteReport && (
             <ModalReport mode={"BORRAR"}>
               La funcionalidad de borrar TODO
             </ModalReport>

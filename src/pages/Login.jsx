@@ -62,7 +62,21 @@ export default function SignInSide() {
       setToken(response.data.token);
       console.log(response.data.token);
       setError(null);
-      navigate('/dash');
+
+      // obtner la informacion del usuario
+      const responseUser = await axios.post(`${process.env.REACT_APP_SERVER_URL}/Rennueva/read-django-user/`, {
+        user : username,
+      });
+      console.log("####################DSDS");
+      console.log(responseUser.data);
+      if (responseUser.data.groups[0] === "Administrador") {
+        navigate('/dash');
+      }
+      else if (responseUser.data.groups[0] === "Generador") {
+        navigate('/main-generator');
+      }
+
+      
     } catch (error) {
       // Manejar y mostrar error
       setError('Login Failed');

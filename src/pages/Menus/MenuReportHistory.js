@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TodoContext } from '../context/index.js';
-import { ModalUser } from './Users/ModalUser';
-import RecyclingCenterTable from "../components/RecyclingCenterTable";
-import BarsChartVehicle from "../components/BarsChartVehicle";
+import { TodoContext } from '../../context/index.js';
+import { ModalUser } from '../Users/ModalUser';
+import RecyclingCenterTable from "../../components/RecyclingCenterTable";
+import BarsChartVehicle from "../../components/BarsChartVehicle";
 import {
   ThemeProvider,
   createTheme,
@@ -13,21 +13,21 @@ import {
   Toolbar,
   CssBaseline,
 } from '@mui/material';
-import Title from '../components/Title';
-import CUDButtons from "../containers/CUDButtons";
-import { ModalRecyclingCenter } from "./ModalRecyclingCenter.js";
+import Title from '../../components/Title';
+import CUDButtons from "../../containers/CUDButtons";
+import { ModalRecyclingCenter } from "../ModalRecyclingCenter.js";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import CompanyTable from "../../components/boards/CompanyTable.jsx";
+import ReportTable from "../../components/ReportTable.jsx";
 
-function MenuRecyclingCenter() {
+function MenuReportHistory() {
   const { 
     openModalCreateRecyclingCenter, 
-    setOpenModalCreateRecyclingCenter, 
-    setOpenModalEditRecyclingCenter,
     openModalEditRecyclingCenter, 
     setOpenModalDeleteRecyclingCenter, 
     openModalDeleteRecyclingCenter ,openModalText, setOpenModalText ,textOpenModalText,setTextOpenModalText
@@ -65,10 +65,10 @@ function MenuRecyclingCenter() {
                     justifyContent: 'center'
                   }}
                 >
-                  <Title>Centros de Reciclaje</Title>
-                  <CUDButtons model="RecyclingCenter" />
-                  <Title>Centros Creados</Title>
-                  <RecyclingCenterTable />
+                  <Title>Responsivas</Title>
+                  <CUDButtons model="ReportHistory" />
+                  <Title>Historial de Responsivas</Title>
+                  <ReportTable />
                 </Paper>
               </Grid>
               
@@ -114,4 +114,4 @@ function MenuRecyclingCenter() {
   );
 }
 
-export { MenuRecyclingCenter };
+export { MenuReportHistory };

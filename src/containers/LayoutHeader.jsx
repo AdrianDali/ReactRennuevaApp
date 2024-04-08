@@ -1,23 +1,22 @@
 import React from 'react';
 import Header from '../components/Header';
 import styled from "styled-components";
-import Sidebar from './LayoutSideBar';
+//import Sidebar from './LayoutSideBar';
 import ResponsiveAppBar from './LayoutAppBar';
 import MiniDrawer from './LayoutSideBar';
-
+import Sidebar from './SideBar';
 
 const Layout = ({ children }) => {
 	  	return (
 		<div style={{width: '100%'}}>
 			
 			
-			<MiniDrawer />     
+			<Sidebar children={children} />
     
 
 
 			
 			
-			{children}
 		</div>
 	);
 }

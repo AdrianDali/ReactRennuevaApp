@@ -22,6 +22,7 @@ import Chart from '../components/Chart';
 import Deposits from '../components/Deposits';
 import Orders from '../components/Orders';
 import ResponsiveAppBar from '../containers/LayoutAppBar';
+import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollection';
 
 function Copyright(props) {
   return (
@@ -107,7 +108,7 @@ export default function Dashboard() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 0, mb: 0 }}>
+          <Container maxWidth="xl" sx={{ mt: 0, mb: 0 }}>
             <Grid container spacing={2}>
               {/* Chart */}
               <Grid item xs={12} md={8} lg={8}>
@@ -144,16 +145,16 @@ export default function Dashboard() {
                 </Paper>
               </Grid>
               {/* Chart */}
-              <Grid item xs={4} md={4} lg={4}>
+              <Grid item xs={8} md={4} lg={4}>
                 <Paper
                   sx={{
                     p: 4,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 338,
+                    height: 440,
                   }}
                 >
-                  <Chart />
+                  <BarsCharOrderRecollection />
                   
                 </Paper>
                 

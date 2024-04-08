@@ -8,14 +8,23 @@ function preventDefault(event) {
 }
 
 export default function Deposits() {
+  // Genera la fecha actual
+  const today = new Date();
+  
+  // Formatea la fecha como "DD MMMM, YYYY". Puedes ajustar el formato según tus necesidades.
+  const formattedDate = today.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
   return (
     <React.Fragment>
-      <Title>Plastico Reciclado</Title>
+      <Title>Total Plastico Reciclado</Title>
       <Typography component="p" variant="h4">
-        3,000 Kg
+        000 Kg
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
-        on 15 Marzo, 2023
+        {formattedDate}
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>
