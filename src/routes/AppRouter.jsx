@@ -43,7 +43,7 @@ function App() {
           <Route path="/login" element={<Login />} />
             <Route path="/" element={<Login />} />
             <Route path="/users" element={<CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout>} />
-            <Route path="/groups" element={<Layout><MenuGroups/></Layout>} />
+            <Route path="/groups" element={<CentroLayout List={<AdminList/>}><MenuGroups /></CentroLayout>} />
             <Route path="/vehicle" element={<Layout><MenuVehicle /></Layout>} />
             <Route path="/residue" element={<Layout><MenuResidue /></Layout>} />
             <Route path="/recycling-center" element={<Layout><MenuRecyclingCenter /></Layout>} />
@@ -62,7 +62,7 @@ function App() {
             <Route path="/report-history" element={<Layout><MenuReportHistory/></Layout>} />
             <Route path="/main-generator" element={<LayoutGenerator><MenuMainGenerator/></LayoutGenerator> } />
             <Route path='/responsivas-generator' element ={<LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator>} />
-            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuCarrier /></CentroLayout>} />
+            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuGroups /></CentroLayout>} />
            
             
             

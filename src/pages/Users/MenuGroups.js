@@ -44,7 +44,6 @@ function MenuGroups() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: "flex" }}>
         <CssBaseline />
 
         <Box
@@ -52,8 +51,6 @@ function MenuGroups() {
           sx={{
             backgroundColor: (theme) => theme.palette.grey[100],
             flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
           }}
         >
           <Toolbar />
@@ -133,7 +130,6 @@ function MenuGroups() {
             </Dialog>
           )}
         </Box>
-      </Box>
     </ThemeProvider>
   );
 }
