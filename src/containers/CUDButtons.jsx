@@ -3,13 +3,16 @@ import React, { useState, useEffect, useContext } from "react";
 import { TodoContext } from '../context/index.js';
 import { OptionButton, ActionButtonOrdersExcel, ImportExcelButton , ActionButtonResponsivaExcel} from '../components/OptionButton';
 import axios from 'axios';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+
 
 const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
     const {
       totalListlUsers,
       openModalCreate, setOpenModalCreate,
       openModalEdit, setOpenModalEdit,
-      openModalDelete, setOpenModalDelete, theme, setTheme, themeStyle,
+      openModalDelete, setOpenModalDelete,
       openModalCreateGroup, setOpenModalCreateGroup,
       openModalEditGroup, setOpenModalEditGroup,
       openModalDeleteGroup, setOpenModalDeleteGroup,
@@ -38,9 +41,6 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
       openModalEditVehicle, setOpenModalEditVehicle,
       openModalDeleteVehicle, setOpenModalDeleteVehicle,
       openModalCreateReport, setOpenModalCreateReport,
-      openModalEditReport, setOpenModalEditReport,
-      openModalDeleteReport, setOpenModalDeleteReport,
-
       openModalCreateCompany, setOpenModalCreateCompany,
       openModalEditCompany, setOpenModalEditCompany,
       openModalDeleteCompany, setOpenModalDeleteCompany,
@@ -121,9 +121,18 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
       }
     };
     
+    const datoss = [
+      { title: 'Solicitado' },
+      { title: 'Pendiente Recoleccion' },
+      { title: 'Cancelada' },
+
+    ];
+
     
     return (
         <div style={{display :"flex"}}>
+
+
         <div className="create-button">
         {model === 'User' ? (
         <OptionButton setOpenModal={setOpenModalCreate} text="Crear Usuario" color="#28a745"  />
@@ -161,13 +170,6 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
       ) : null}
       {model === 'Company' ? (
         <OptionButton setOpenModal={setOpenModalCreateCompany} text="Crear Compañia" color="#28a745" />
-      ) : null}
-      {model === 'DonorRecolection' ? (
-        <ActionButtonOrdersExcel 
-        text="Exportar a Excel"
-        color="#28a745"
-        
-      />
       ) : null}
       {model === 'ReportHistory' ? (
         <ImportExcelButton text="Importar Generadores Excel" color="blue" onImported={handleDataImported} />
@@ -253,9 +255,7 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
         {model === "Company" ? (
           <OptionButton setOpenModal={setOpenModalDeleteCompany} text="Borrar Compañia" color="#dc3545" />
         ): null}
-        {model === "DonorRecolection" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteVehicle} text="Borrar Orden Recoleccioni" color="#dc3545" />
-        ): null}
+      
         {model === "ReportHistory" ? (
           <OptionButton setOpenModal={setOpenModalDeleteVehicle} text="Borrar Historial de Reportes" color="#dc3545" />
         ): null}
@@ -272,6 +272,10 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
         
       ) : null}
       </div>
+
+      
+
+
         </div>
     );
     }
