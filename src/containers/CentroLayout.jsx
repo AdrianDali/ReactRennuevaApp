@@ -8,25 +8,14 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import RennuevaLogo from '../assets/Rennueva.jpg';
 import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import HomeIcon from '@mui/icons-material/Home';
-import DocIcon from '@mui/icons-material/Description';
 import MuiDrawer from '@mui/material/Drawer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
@@ -36,7 +25,8 @@ import {
 import { styled, useTheme } from '@mui/material/styles';
 
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+const settings = ['Profile', 'Account', 'Logout'];
 const user = {
     name: "Usuario Ejemplo",
     email: "usuario@example.com",
@@ -44,7 +34,7 @@ const user = {
 };
 
 const defaultTheme = createTheme();
-const drawerWidth = 250;
+const drawerWidth = 300;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -55,7 +45,7 @@ const openedMixin = (theme) => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowX: 'hidden',
+    overflowX: 'scroll',
 });
 
 const closedMixin = (theme) => ({
@@ -101,7 +91,7 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 
 
 
-const DrawerList = ({ open, setOpen, desktop }) => (
+const ProfileSection = ({ open, setOpen, desktop }) => (
     <Box sx={{ width: '100%', py: 2 }} role="presentation" onClick={() => setOpen(false)} >
         <Box
             sx={{
@@ -114,13 +104,13 @@ const DrawerList = ({ open, setOpen, desktop }) => (
             <Avatar
 
                 src={user.avatar}
-                sx={{ width: '64px', mb: 1, height: '64px', transform: !open && 'scale(0.5)', transition: 'transform 0.25s'}}
+                sx={{ width: '64px', mb: 1, height: '64px', transform: !open && 'scale(0.5)', transition: 'transform 0.25s' }}
             />
 
-            <Typography variant="h6" sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.25s' }}>
+            <Typography variant="h6" sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }}>
                 {user.name}
             </Typography>
-            <Typography variant="body2" sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.25s' }}>
+            <Typography variant="body2" sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }}>
                 {user.email}
             </Typography>
         </Box>
@@ -129,18 +119,28 @@ const DrawerList = ({ open, setOpen, desktop }) => (
 );
 
 
-const MobileMenu = ({ open, setOpen }) => {
+const MobileMenu = ({ children, open, setOpen }) => {
 
     return (
-        <Drawer open={open} onClose={() => setOpen(false)} sx={{ '& .MuiPaper-root': { top: '85px', borderRadius: '25px' } }}>
-            <DrawerList open={open} setOpen={setOpen} desktop={false} />
+        <Drawer open={open}
+            onClose={() => setOpen(false)}
+            sx={{
+                '& .MuiPaper-root': {
+                    height: 'calc(100% - 90px)',
+                    top: '85px',
+                    width: drawerWidth,
+                    borderRadius: '25px'
+                }
+            }}>
+            <ProfileSection open={open} setOpen={setOpen} desktop={false} />
+            {children}
         </Drawer>
     )
 
 }
 
 
-const DesktopMenu = ({ open, setOpen }) => {
+const DesktopMenu = ({ open, setOpen, children }) => {
     const theme = useTheme();
 
     return (
@@ -151,31 +151,8 @@ const DesktopMenu = ({ open, setOpen }) => {
                 </IconButton>
             </DrawerHeader>
             <Divider />
-            <DrawerList open={open} setOpen={setOpen} desktop={true} />
-            <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: open ? 3 : 'auto',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
+            <ProfileSection open={open} setOpen={setOpen} desktop={true} />
+            {children}
         </StyledDrawer>)
 }
 
@@ -183,21 +160,14 @@ const DesktopMenu = ({ open, setOpen }) => {
 
 
 
-export default function CentroLayout({ children }) {
-    const [anchorElNav, setAnchorElNav] = useState(null);
+export default function CentroLayout({ children, List }) {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [open, setOpen] = useState(false);
     const [desktop, setDesktop] = useState(window.innerWidth > 899);
 
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
+
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
     };
 
     const handleCloseUserMenu = () => {
@@ -235,7 +205,7 @@ export default function CentroLayout({ children }) {
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ bgcolor: (theme) => theme.palette.grey[100] }}>
-                <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 0 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '8px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 0 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '1px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Container maxWidth="xl" >
                         <Toolbar disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
                             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -287,13 +257,18 @@ export default function CentroLayout({ children }) {
                         </Toolbar>
                     </Container>
                 </AppBar>
-                <Box sx={{ display: 'flex', maxWidth: '100vw', overflow: 'hidden' }}>
+                <Box sx={{ display: 'flex', width: '100vw' }}>
                     {desktop
-                        ? <DesktopMenu open={open} setOpen={setOpen} />
-                        : <MobileMenu open={open} setOpen={setOpen} />}
-                    <Box sx={{ flexGrow: { xs: 0, md: 1 } }}>
-                        {children}
-                    </Box>
+                        ? <DesktopMenu open={open} setOpen={setOpen}>
+                            {List}
+                        </DesktopMenu>
+                        : <MobileMenu open={open} setOpen={setOpen} >
+                            {List}
+                        </MobileMenu>
+                    }
+
+                    {children}
+
 
                 </Box>
             </Box>
