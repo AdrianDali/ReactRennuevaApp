@@ -48,15 +48,12 @@ function MenuDriver() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
           component="main"
           sx={{
             backgroundColor: (theme) => theme.palette.grey[100],
             flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
           }}
         >
           <Toolbar />
@@ -127,7 +124,6 @@ function MenuDriver() {
             </Dialog>
           )}
         </Box>
-      </Box>
     </ThemeProvider>
   );
 }

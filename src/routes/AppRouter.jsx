@@ -48,11 +48,11 @@ function App() {
             <Route path="/residue" element={<Layout><MenuResidue /></Layout>} />
             <Route path="/recycling-center" element={<Layout><MenuRecyclingCenter /></Layout>} />
             <Route path="/generator" element={<CentroLayout List={<AdminList/>}><MenuGenerator/></CentroLayout>} />
-            <Route path="/driver" element={<Layout><MenuDriver /></Layout>} />
+            <Route path="/driver" element={<CentroLayout List={<AdminList/>}><MenuDriver /></CentroLayout>} />
             <Route path="/register" element={<SignUp />} />
             <Route path="/dash" element={<CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout>} />
             <Route path="/donor" element={<CentroLayout List={<AdminList/>}><MenuDonor /></CentroLayout>} />
-            <Route path="/carrier" element={<Layout><MenuCarrier /></Layout>} />
+            <Route path="/carrier" element={<Layout><MenuCarrier /></Layout>}/>
             <Route path="/collection-center" element={<Layout><MenuCollectionCenter /></Layout>} />
             <Route path="/report" element={<Layout><MenuReport /></Layout>} />
             <Route path="/tracking" element={<Layout><MenuTracking mode = "tracking"/></Layout>} />
@@ -62,7 +62,7 @@ function App() {
             <Route path="/report-history" element={<Layout><MenuReportHistory/></Layout>} />
             <Route path="/main-generator" element={<LayoutGenerator><MenuMainGenerator/></LayoutGenerator> } />
             <Route path='/responsivas-generator' element ={<LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator>} />
-            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuDonor /></CentroLayout>} />
+            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuDriver /></CentroLayout>} />
            
             
             
