@@ -47,18 +47,16 @@ function MenuCarrier() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
           component="main"
           sx={{
             backgroundColor: (theme) => theme.palette.grey[100],
             flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
+            pt: 8,
           }}
         >
-          <Toolbar />
+
           <Container maxWidth="xl">
             <Grid container spacing={3}>
               <Grid item xs={12} >
@@ -126,7 +124,6 @@ function MenuCarrier() {
             </Dialog>
           )}
         </Box>
-      </Box>
     </ThemeProvider>
   );
 }
