@@ -95,31 +95,22 @@ export default function EditRecolectionModal({
     }
   };
 
-  const [state, setState] = useState({
-    noDisponible: false,
-    bajaBateria: false,
-    faltaEspacio: false,
-    activoEspontaneo: false,
-    noInteresado: false,
-    otro: false,
-    otroTexto: "",
-  });
-
   const [value, setValue] = useState("");
   const [otroTexto, setOtroTexto] = useState("");
 
   const handleChange = (event) => {
     setValue(event.target.value);
+    console.log(event.target.value);
     if (event.target.value !== "otro") {
       setOtroTexto(""); // Limpiar el texto si "Otro" no está seleccionado
     }
-    setState({ ...state, [event.target.value]: event.target.checked });
-
+    
   };
 
   const handleTextChange = (event) => {
+    console.log(event.target.value);
     setOtroTexto(event.target.value);
-    setState({ ...state, otroTexto: event.target.value });
+    
   };
   return createPortal(
     <Modal open={open} onClose={() => setOpen(false)}>
@@ -188,13 +179,13 @@ export default function EditRecolectionModal({
                     />
 
                 </RadioGroup>
-                {state.otro && (
+                {value === "otro" && (
                   <TextField
                     fullWidth
                     margin="dense"
                     label="Especifique otro motivo"
                     variant="outlined"
-                    value={state.otroTexto}
+                    value={otroTexto}
                     onChange={handleTextChange}
                   />
                 )}
@@ -243,17 +234,61 @@ export default function EditRecolectionModal({
             >
               Guardar cambios
             </Button>
+          ) : status === "cancelado"  ? (
+            <Button
+              fullWidth
+              color="success"
+              variant="contained"
+              type="submit"
+              onClick={() => {
+                const data = {
+                  user: recolection.donador,
+                  id_order: recolection.id,
+                  comment_cancelation: value === "otro" ? otroTexto : value,
+                };
+                console.log(data);
+                axios
+                  .post(
+                    `${process.env.REACT_APP_API_URL}/cancel-donor-recollection/`,
+                    data
+                  )
+                  .then((response) => {
+                    console.log(response);
+                    setMessage("Se ha cancelado la recolección");
+                    setOpenMessageModal(true);
+                    setUpdate(!update);
+                    setOpen(false);
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    setMessage("Ha ocurrido un error al cancelar la recolección");
+                    setOpenMessageModal(true);
+                  });
+              }
+                }
+
+            >
+              Cancelar recolección
+            </Button>
           ) : (
             <Button
               fullWidth
               color="success"
               variant="contained"
               type="submit"
-              disabled={status == ""}
+              disabled={status === ""}
             >
               Guardar cambios
             </Button>
-          )}
+          )
+            }
+           
+
+          {status === "cancelado" && value === "otro" && otroTexto === "" && (
+            <p style={{ color: "red" }}>Especifique el motivo de cancelación</p>
+          )
+            }
+
         </form>
       </Box>
     </Modal>,
