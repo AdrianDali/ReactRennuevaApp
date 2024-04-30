@@ -50,7 +50,7 @@ function App() {
             <Route path="/generator" element={<Layout><MenuGenerator /></Layout>} />
             <Route path="/driver" element={<Layout><MenuDriver /></Layout>} />
             <Route path="/register" element={<SignUp />} />
-            <Route path="/dash" element={<Layout><Dashboard /></Layout>} />
+            <Route path="/dash" element={<CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout>} />
             <Route path="/donor" element={<Layout><MenuDonor /></Layout>} />
             <Route path="/carrier" element={<Layout><MenuCarrier /></Layout>} />
             <Route path="/collection-center" element={<Layout><MenuCollectionCenter /></Layout>} />
