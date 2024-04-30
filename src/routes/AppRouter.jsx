@@ -47,7 +47,7 @@ function App() {
             <Route path="/vehicle" element={<Layout><MenuVehicle /></Layout>} />
             <Route path="/residue" element={<Layout><MenuResidue /></Layout>} />
             <Route path="/recycling-center" element={<Layout><MenuRecyclingCenter /></Layout>} />
-            <Route path="/generator" element={<Layout><MenuGenerator /></Layout>} />
+            <Route path="/generator" element={<CentroLayout List={<AdminList/>}><MenuGenerator/></CentroLayout>} />
             <Route path="/driver" element={<Layout><MenuDriver /></Layout>} />
             <Route path="/register" element={<SignUp />} />
             <Route path="/dash" element={<CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout>} />
@@ -62,7 +62,7 @@ function App() {
             <Route path="/report-history" element={<Layout><MenuReportHistory/></Layout>} />
             <Route path="/main-generator" element={<LayoutGenerator><MenuMainGenerator/></LayoutGenerator> } />
             <Route path='/responsivas-generator' element ={<LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator>} />
-            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout>} />
+            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuGenerator/></CentroLayout>} />
            
             
             
