@@ -51,7 +51,7 @@ function App() {
             <Route path="/driver" element={<Layout><MenuDriver /></Layout>} />
             <Route path="/register" element={<SignUp />} />
             <Route path="/dash" element={<CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout>} />
-            <Route path="/donor" element={<Layout><MenuDonor /></Layout>} />
+            <Route path="/donor" element={<CentroLayout List={<AdminList/>}><MenuDonor /></CentroLayout>} />
             <Route path="/carrier" element={<Layout><MenuCarrier /></Layout>} />
             <Route path="/collection-center" element={<Layout><MenuCollectionCenter /></Layout>} />
             <Route path="/report" element={<Layout><MenuReport /></Layout>} />
