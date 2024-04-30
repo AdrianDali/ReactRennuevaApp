@@ -33,7 +33,7 @@ function MenuDonor() {
     openModalEditDonor,
     setOpenModalDelete,
     openModalDeleteDonor,
-    openModalText, setOpenModalText , textOpenModalText
+    openModalText, setOpenModalText, textOpenModalText
   } = useContext(TodoContext);
 
   const [datos, setDatos] = useState([]);
@@ -44,84 +44,83 @@ function MenuDonor() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl">
-            <Grid container spacing={3}>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Title>Donadores</Title>
-                  <CUDButtons model="Donor" />
-                  <Title>Donadores Creados</Title>
-                  <DonorTable />
-                </Paper>
-              </Grid>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 580,
-                  }}
-                >
-                  <BarsCharOrderRecollection />
-                </Paper>
-              </Grid>
+      <CssBaseline />
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) => theme.palette.grey[100],
+          flexGrow: 1,
+        }}
+      >
+        <Toolbar />
+        <Container maxWidth="xl">
+          <Grid container spacing={3}>
+            <Grid item xs={12} >
+              <Paper
+                sx={{
+                  p: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Title>Donadores</Title>
+                <CUDButtons model="Donor" />
+                <Title>Donadores Creados</Title>
+                <DonorTable />
+              </Paper>
             </Grid>
-          </Container>
+            <Grid item xs={12} >
+              <Paper
+                sx={{
+                  p: 4,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 580,
+                }}
+              >
+                <BarsCharOrderRecollection />
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
 
-          {openModalCreateDonor && (
-            <ModalDonor mode={"CREAR"}>
-              La funcionalidad de agregar TODO
-            </ ModalDonor >
-          )}
-          {openModalEditDonor && (
-            <ModalDonor mode={"EDITAR"}>
-              La funcionalidad de editar TODO
-            </ ModalDonor >
-          )}
-          {openModalDeleteDonor && (
-            <ModalDonor mode={"BORRAR"}>
-              La funcionalidad de borrar TODO
-            </ ModalDonor >
-          )}
-          {openModalText && (
-            <Dialog
-              open={openModalText}
-              onClose={() => setOpenModalText(false)}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  {textOpenModalText}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
-              </DialogActions>
-            </Dialog>
-          )}
-        </Box>
+        {openModalCreateDonor && (
+          <ModalDonor mode={"CREAR"}>
+            La funcionalidad de agregar TODO
+          </ ModalDonor >
+        )}
+        {openModalEditDonor && (
+          <ModalDonor mode={"EDITAR"}>
+            La funcionalidad de editar TODO
+          </ ModalDonor >
+        )}
+        {openModalDeleteDonor && (
+          <ModalDonor mode={"BORRAR"}>
+            La funcionalidad de borrar TODO
+          </ ModalDonor >
+        )}
+        {openModalText && (
+          <Dialog
+            open={openModalText}
+            onClose={() => setOpenModalText(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {textOpenModalText}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
+            </DialogActions>
+          </Dialog>
+        )}
       </Box>
+
     </ThemeProvider>
   );
 }

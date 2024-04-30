@@ -62,7 +62,7 @@ function App() {
             <Route path="/report-history" element={<Layout><MenuReportHistory/></Layout>} />
             <Route path="/main-generator" element={<LayoutGenerator><MenuMainGenerator/></LayoutGenerator> } />
             <Route path='/responsivas-generator' element ={<LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator>} />
-            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuGenerator/></CentroLayout>} />
+            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuDonor /></CentroLayout>} />
            
             
             
