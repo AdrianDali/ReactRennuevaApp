@@ -145,7 +145,7 @@ const DesktopMenu = ({ open, setOpen, children }) => {
 
     return (
         <StyledDrawer variant="permanent" open={open}>
-            <DrawerHeader>
+            <DrawerHeader alignItems="center">
                 <IconButton onClick={() => setOpen(!open)}>
                     {!open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                 </IconButton>
