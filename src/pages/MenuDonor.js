@@ -51,8 +51,6 @@ function MenuDonor() {
           sx={{
             backgroundColor: (theme) => theme.palette.grey[100],
             flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
           }}
         >
           <Toolbar />

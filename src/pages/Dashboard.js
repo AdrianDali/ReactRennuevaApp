@@ -37,133 +37,79 @@ function Copyright(props) {
   );
 }
 
-const drawerWidth = 250;
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    '& .MuiDrawer-paper': {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      boxSizing: 'border-box',
-      ...(!open && {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up('sm')]: {
-          width: theme.spacing(9),
-        },
-      }),
-    },
-  }),
-);
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
+      <CssBaseline />
 
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.grey[100],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl" sx={{ mt: 0, mb: 0 }}>
-            <Grid container spacing={2}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={8}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 260,
-                  }}
-                >
-                  <Chart />
-                </Paper>
-              </Grid>
-              
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={4}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 260,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              
-              {/* Recent Orders */}
-              <Grid item xs={8}>
-                <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column'}}>
-                  <Orders />
-                </Paper>
-              </Grid>
-              {/* Chart */}
-              <Grid item xs={8} md={4} lg={4}>
-                <Paper
-                  sx={{
-                    p: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 440,
-                  }}
-                >
-                  <BarsCharOrderRecollection />
-                  
-                </Paper>
-                
-              </Grid>
-              
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.grey[100],
+          flexGrow: 1,
+          overflow: 'auto',
+        }}
+      >
+        <Toolbar />
+        <Container maxWidth="xl" sx={{ mt: 0, mb: 0 }}>
+          <Grid container spacing={2}>
+            {/* Chart */}
+            <Grid item xs={12} md={8} lg={8}>
+              <Paper
+                sx={{
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 260,
+                }}
+              >
+                <Chart />
+              </Paper>
             </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
-        </Box>
+
+            {/* Recent Deposits */}
+            <Grid item xs={12} md={4} lg={4}>
+              <Paper
+                sx={{
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 260,
+                }}
+              >
+                <Deposits />
+              </Paper>
+            </Grid>
+
+            {/* Recent Orders */}
+            <Grid item xs={8}>
+              <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
+                <Orders />
+              </Paper>
+            </Grid>
+            {/* Chart */}
+            <Grid item xs={8} md={4} lg={4}>
+              <Paper
+                sx={{
+                  p: 4,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 440,
+                }}
+              >
+                <BarsCharOrderRecollection />
+              </Paper>
+            </Grid>
+          </Grid>
+          <Copyright sx={{ pt: 4 }} />
+        </Container>
       </Box>
     </ThemeProvider>
   );

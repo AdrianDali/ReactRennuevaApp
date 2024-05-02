@@ -39,6 +39,9 @@ function ModalUser({ children, mode }) {
   const [center, setCenter] = useState("")
   const [centers, setCenters] = useState([])
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [address_num_ext, setAddressNumExt] = useState("");
+  const [address_reference, setAddressReference] = useState("");
+
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -102,6 +105,8 @@ function ModalUser({ children, mode }) {
         address_street: e.target.street.value,
         address_postal_code: e.target.postal_code.value,
         address_num_int: e.target.address_num_int.value,
+        address_num_ext: e.target.address_num_ext.value,
+        address_reference: e.target.address_reference.value,
         address_lat: 0,
         address_lng: 0,
         razon_social: e.target.razon_social.value,
@@ -150,10 +155,11 @@ function ModalUser({ children, mode }) {
         address_street: e.target.street.value,
         address_postal_code: e.target.postal_code.value,
         address_num_int: e.target.address_num_int.value,
+        address_num_ext: e.target.address_num_ext.value,
+        address_reference: e.target.address_reference.value,
         address_lat: 0,
         address_lng: 0,
         razon_social: e.target.razon_social.value,
-
         antiguoUser: old_user,
       };
 
@@ -255,12 +261,16 @@ function ModalUser({ children, mode }) {
       setStreet("")
       setAddressNumInt("")
       setPostalCode("")
+      setAddressNumExt("")
+      setAddressReference("")
     } else {
       setState(center.AddressState)
       setCity(center.AddressCity)
       setLocality(center.AddressLocality)
       setStreet(center.AddressStreet)
       setAddressNumInt(center.AddressNumInt)
+      setAddressNumExt(center.AddressNumExt)
+      setAddressReference(center.AddressReference)
       setPostalCode(center.AddressPostalCode)
     }
     //console.log("###################### CENTER FETCHED ##################################")
@@ -291,6 +301,8 @@ function ModalUser({ children, mode }) {
     setStreet(datoEncontrado.address_street);
     setPostalCode(datoEncontrado.address_postal_code);
     setAddressNumInt(datoEncontrado.address_num_int);
+    setAddressNumExt(datoEncontrado.address_num_ext);
+    setAddressReference(datoEncontrado.address_reference);
     setOldUser(selectedOption);
     setRazonSocial(datoEncontrado.razon_social)
 
@@ -600,9 +612,32 @@ function ModalUser({ children, mode }) {
               }
             />
             <TextField
+              label="Numero exterior"
+              name="address_num_ext"
+              required
+              fullWidth
+              value={address_num_ext}
+              onChange={(e) => {
+                // Solo permite números
+                if (e.target.value === '' || /^[0-9\b]+$/.test(e.target.value)) {
+                  handleInputChange(e, setAddressNumExt, mode);
+                }
+              }}
+              inputProps={{
+                readOnly: group === "Centro",
+                maxLength: 5
+              }}
+              margin="dense"
+              error={address_num_ext?.length > 0 && address_num_ext?.length > 5}
+              helperText={
+                address_num_ext?.length > 0 && address_num_ext?.length > 5
+                  ? "El numero exterior debe tener entre 1 y 5 caracteres"
+                  : ""
+              }
+            />
+            <TextField
               label="Numero interior"
               name="address_num_int"
-              required
               fullWidth
               value={address_num_int}
               onChange={(e) => {
@@ -646,6 +681,30 @@ function ModalUser({ children, mode }) {
               helperText={
                 postal_code.length > 0 && postal_code.length > 5
                   ? "El numero interior debe tener entre 1 y 5 caracteres"
+                  : ""
+              }
+            />
+
+            <TextField
+              label="Referencias"
+              name="address_reference"
+              multiline
+              fullWidth
+              value={address_reference}
+              onChange={(e) => {
+                if (e.target.value.length <= 100) {
+                  handleInputChange(e, setAddressReference, mode);
+                }
+              }}
+              inputProps={{
+                readOnly: group === "Centro",
+                maxLength: 100
+              }}
+              margin="dense"
+              error={address_reference?.length > 100}
+              helperText={
+                address_reference?.length > 100
+                  ? "Máximo 100 carcateres"
                   : ""
               }
             />

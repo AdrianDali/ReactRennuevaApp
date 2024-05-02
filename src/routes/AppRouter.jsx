@@ -28,6 +28,7 @@ import ResponsiveAppBar from '../containers/LayoutAppBar.jsx';
 import LayoutGenerator from '../containers/LayoutGenerator.jsx';
 import { MenuMyResponsivasGenerator } from '../pages/Menus/MenuMyResponsivasGenerator.js';
 import CentroLayout from '../containers/CentroLayout.jsx';
+import AdminList from '../containers/ListSideBar/AdminList2.jsx';
 
 
 
@@ -41,7 +42,7 @@ function App() {
           <Routes>
           <Route path="/login" element={<Login />} />
             <Route path="/" element={<Login />} />
-            <Route path="/users" element={<Layout><MenuUser /></Layout>} />
+            <Route path="/users" element={<CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout>} />
             <Route path="/groups" element={<Layout><MenuGroups/></Layout>} />
             <Route path="/vehicle" element={<Layout><MenuVehicle /></Layout>} />
             <Route path="/residue" element={<Layout><MenuResidue /></Layout>} />
@@ -49,7 +50,7 @@ function App() {
             <Route path="/generator" element={<Layout><MenuGenerator /></Layout>} />
             <Route path="/driver" element={<Layout><MenuDriver /></Layout>} />
             <Route path="/register" element={<SignUp />} />
-            <Route path="/dash" element={<Layout><Dashboard /></Layout>} />
+            <Route path="/dash" element={<CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout>} />
             <Route path="/donor" element={<Layout><MenuDonor /></Layout>} />
             <Route path="/carrier" element={<Layout><MenuCarrier /></Layout>} />
             <Route path="/collection-center" element={<Layout><MenuCollectionCenter /></Layout>} />
@@ -61,7 +62,7 @@ function App() {
             <Route path="/report-history" element={<Layout><MenuReportHistory/></Layout>} />
             <Route path="/main-generator" element={<LayoutGenerator><MenuMainGenerator/></LayoutGenerator> } />
             <Route path='/responsivas-generator' element ={<LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator>} />
-            <Route path='/centro' element ={<CentroLayout><MenuDonor/></CentroLayout>} />
+            <Route path='/centro' element ={<CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout>} />
            
             
             

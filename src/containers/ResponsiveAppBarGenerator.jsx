@@ -23,7 +23,7 @@ function ResponsiveAppBarGenerator() {
   const navigate = useNavigate();
   const handleLogout = () => {
     navigate('/login');
-};
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -41,48 +41,48 @@ function ResponsiveAppBarGenerator() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#ffffff' , borderRadius : "25px", borderColor :'#ffffff', marginLeft: 2,width : "98%", marginTop: -10}}>
-      <Container maxWidth="xl" sx={{borderRadius : "25px"}}>
+    <AppBar position="static" sx={{ backgroundColor: '#ffffff', borderRadius: "25px", borderColor: '#ffffff', marginLeft: 2, width: "98%", marginTop: -10 }}>
+      <Container maxWidth="xl" sx={{ borderRadius: "25px" }}>
         <Toolbar disableGutters>
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 25 , borderRadius : "25px"}}>
-          
+          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 25, borderRadius: "25px" }}>
+
             <img src={Rennueva} alt="Rennueva" className="logo-header" />
-            
-          
 
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 10 , borderRadius: "25px" }}>
 
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorElNav}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            open={Boolean(anchorElNav)}
-            onClose={handleCloseNavMenu}
-            sx={{
-              display: { xs: 'block', md: 'none' },
-              borderRadius: "25px"
-            }}
-          >
-            {pages.map((page) => (
-              <MenuItem key={page} onClick={handleCloseNavMenu}>
-                <Typography textAlign="center">{page}</Typography>
-              </MenuItem>
-            ))}
-          </Menu>
-          </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 10, borderRadius: "25px" }}>
+
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: { xs: 'block', md: 'none' },
+                  borderRadius: "25px"
+                }}
+              >
+                {pages.map((page) => (
+                  <MenuItem key={page} onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">{page}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
           </Box>
 
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' , borderRadius :"25px" } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', borderRadius: "25px" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -117,19 +117,19 @@ function ResponsiveAppBarGenerator() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-    <MenuItem 
-        key={setting} 
-        onClick={() => {
-            if (setting === 'Logout') {
-                handleLogout();
-            } else {
-                handleCloseUserMenu();
-            }
-        }}
-    >
-        <Typography textAlign="center">{setting}</Typography>
-    </MenuItem>
-))}
+                <MenuItem
+                  key={setting}
+                  onClick={() => {
+                    if (setting === 'Logout') {
+                      handleLogout();
+                    } else {
+                      handleCloseUserMenu();
+                    }
+                  }}
+                >
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
             </Menu>
           </Box>
         </Toolbar>
