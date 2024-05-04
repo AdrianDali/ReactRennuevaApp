@@ -1,32 +1,44 @@
-import React, { useState } from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
+import React, { useState } from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+import loginDonor from "../services/ApiLoginAWT";
+import GetUser from "../services/ApiGetUser";
 
 function Copyright(props) {
-
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'© '}
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"© "}
       <Link color="inherit" href="https://mui.com/">
         Rennueva
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
@@ -34,62 +46,77 @@ function Copyright(props) {
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
-
-
-
-
-
-
 export default function SignInSide() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('username', username);
+    console.log("username", username);
+    const req = {
+      username: username,
+      password: password,
+    };
+
     try {
-      // Realizando la petición POST a la API
-      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api-token-auth/`, {
-        username,
-        password,
-      });
+      const { data, success, message } = await loginDonor(req);
+
+      if (success) {
+        console.log("Login successful:", data);
+      } else {
+        console.log("Login failed:", message);
+      }
+
       // Almacenar el token en el estado (y posiblemente en un almacenamiento persistente como localStorage)
-      setToken(response.data.token);
-      console.log(response.data.token);
+      document.cookie = `refresh=${data.refresh}`;
+      document.cookie = `user=${username}`;
+      document.cookie = `access=${data.access}`;
       setError(null);
 
       // obtner la informacion del usuario
-      const responseUser = await axios.post(`${process.env.REACT_APP_SERVER_URL}/Rennueva/read-django-user/`, {
-        user : username,
-      });
-      console.log("####################DSDS");
-      console.log(responseUser.data);
-      if (responseUser.data.groups[0] === "Administrador") {
-        navigate('/dash');
-      }
-      else if (responseUser.data.groups[0] === "Generador") {
-        navigate('/main-generator');
+      const {dataUser , successUser, messageUser} = await GetUser(req);
+
+      if (!successUser) {
+        console.log("Error al obtener los datos del usuario:", messageUser);
+        setError("Login Failed");
+        setShowModal(true); // Mostrar el modal de error
+        setUsername(""); // Limpiar campo de usuario
+        setPassword(""); // Limpiar campo de contraseña
+        
       }
 
-      
+      if (dataUser.groups[0] === "Administrador") {
+        navigate("/dash");
+      } else if (responseUser.data.groups[0] === "Generador") {
+        navigate("/main-generator");
+      }
     } catch (error) {
       // Manejar y mostrar error
-      setError('Login Failed');
+      setError("Login Failed");
       setShowModal(true); // Mostrar el modal de error
-      setUsername(''); // Limpiar campo de usuario
-      setPassword(''); // Limpiar campo de contraseña
+      setUsername(""); // Limpiar campo de usuario
+      setPassword(""); // Limpiar campo de contraseña
     }
   };
 
-
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
           item
@@ -97,12 +124,15 @@ export default function SignInSide() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-            backgroundRepeat: 'no-repeat',
+            backgroundImage:
+              "url(https://source.unsplash.com/random?wallpapers)",
+            backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -110,25 +140,29 @@ export default function SignInSide() {
             sx={{
               my: 8,
               mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
               Iniciar Sesion
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-
+            <Box
+              component="form"
+              noValidate
+              onSubmit={handleSubmit}
+              sx={{ mt: 1 }}
+            >
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 id="email"
-                label="Correo Electronico"
+                label="Correo Electdfgfdronico"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -141,11 +175,24 @@ export default function SignInSide() {
                 fullWidth
                 name="password"
                 label="Contraseña"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <FormControlLabel
                 control={
@@ -166,14 +213,16 @@ export default function SignInSide() {
               >
                 Ingresar
               </Button>
-              {showModal &&
+              {showModal && (
                 <div>
-                  <Stack sx={{ width: '100%' }} spacing={2}>
-                    <Alert severity="error"> — Usuario o Contraseña Incorrecta — </Alert>
+                  <Stack sx={{ width: "100%" }} spacing={2}>
+                    <Alert severity="error">
+                      {" "}
+                      — Usuario o Contraseña Incorrecta —{" "}
+                    </Alert>
                   </Stack>
                 </div>
-              }
-
+              )}
 
               <Grid container>
                 <Grid item xs>
@@ -192,7 +241,6 @@ export default function SignInSide() {
           </Box>
         </Grid>
       </Grid>
-
     </ThemeProvider>
   );
 }

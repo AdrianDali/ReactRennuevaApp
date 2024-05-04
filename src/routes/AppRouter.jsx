@@ -23,8 +23,13 @@ import { MenuMainGenerator } from '../pages/Menus/MenuMainGenerator.js';
 import LayoutGenerator from '../containers/LayoutGenerator.jsx';
 import { MenuMyResponsivasGenerator } from '../pages/Menus/MenuMyResponsivasGenerator.js';
 import CentroLayout from '../containers/CentroLayout.jsx';
+
+import Login from '../pages/Login';
+
 import AdminList from '../containers/ListSideBar/AdminList2.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+
 
 
 function App() {
@@ -51,6 +56,8 @@ function App() {
     { path: '/responsivas-generator', element: <LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator> },
     { path: '/centro', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
     { path: '*', element: <h1>Not Found 404</h1> },
+    { path: '/', element: <Login/> },
+    { path: '/login', element: <Login/> },
   ]);
 
   return (
