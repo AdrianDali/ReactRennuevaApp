@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
@@ -51,7 +51,6 @@ export default function SignInSide() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState(null);
-  const [token, setToken] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
@@ -83,13 +82,15 @@ export default function SignInSide() {
       }
 
       // Almacenar el token en el estado (y posiblemente en un almacenamiento persistente como localStorage)
-      document.cookie = `refresh=${data.refresh}`;
-      document.cookie = `user=${username}`;
-      document.cookie = `access=${data.access}`;
+      document.cookie = `refresh=${data.refresh}; SameSite=Lax; Secure`;
+      document.cookie = `user=${username}; SameSite=Lax; Secure`;
+      document.cookie = `access=${data.access}; SameSite=Lax; Secure`;
+
       setError(null);
 
+      console.log("data", data);
       // obtner la informacion del usuario
-      const {dataUser , successUser, messageUser} = await GetUser(req);
+      const { dataUser, successUser, messageUser } = await GetUser(username, data.access, data.refresh);
 
       if (!successUser) {
         console.log("Error al obtener los datos del usuario:", messageUser);
@@ -97,7 +98,6 @@ export default function SignInSide() {
         setShowModal(true); // Mostrar el modal de error
         setUsername(""); // Limpiar campo de usuario
         setPassword(""); // Limpiar campo de contraseña
-        
       }
 
       if (dataUser.groups[0] === "Administrador") {

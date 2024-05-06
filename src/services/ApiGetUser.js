@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export default async function GetUser(credentials) {
+export default async function GetUser(username, accessToken,refreshToken) {
 
     const request = {
-        user: credentials.username,
+        user: username,
     };
 
     const config = {

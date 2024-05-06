@@ -5,9 +5,7 @@ import { ModalUser } from "./ModalUser.js";
 import UserTable from "../../components/Table";
 import CUDButtons from "../../containers/CUDButtons";
 import BarsChart from "../../components/BarsChart";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableRow from "@mui/material/TableRow";
+import {createTheme, ThemeProvider } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -21,37 +19,56 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import getCookieValue from "../../services/GetCookie.js";
+import GetUser from "../../services/ApiGetUser.js"
+import { Typography } from "@mui/material";
+
 
 function MenuUser() {
 
-
   const defaultTheme = createTheme();
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
 
-  const [datos, setDatos] = useState([]);
   const {
     textOpenModalText,
-    totalListlUsers,
     openModalCreate,
-    setOpenModalCreate,
-    setOpenModalEdit,
     openModalEdit,
-    setOpenModalDelete,
     openModalDelete,
     openModalText,
     setOpenModalText,
   } = useContext(TodoContext);
+  const [dataUser, setDataUser] = useState(null);
 
+  
   useEffect(() => {
-    setDatos(totalListlUsers);
-  }, []);
+    async function fetchData(user,access, refresh) {
+      const { dataUser, successUser, messageUser } = await GetUser(user, access, refresh);
+      setDataUser(dataUser);
+      console.log("data", dataUser);
+      console.log("success", successUser);  
+      console.log("message", messageUser);  
+      if (successUser) {
+        setDataUser(dataUser);
+      }
+
+    }
+
+    const user = getCookieValue("user");
+    console.log("user", user);
+    const refreshToken = getCookieValue("refresh");
+    console.log("refresh", refreshToken);
+    const accessToken = getCookieValue("access");
+    console.log("access", accessToken);
+    fetchData(user, accessToken, refreshToken);
+    
+
+  } 
+  , []);
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box
         component="main"
         sx={{
@@ -131,6 +148,20 @@ function MenuUser() {
           </Dialog>
         )}
       </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            margin: "auto",
+            
+          }}
+        >
+          <Typography variant="h5">No Access</Typography>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }
