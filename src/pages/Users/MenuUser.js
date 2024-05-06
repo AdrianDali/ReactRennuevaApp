@@ -22,12 +22,12 @@ import Button from "@mui/material/Button";
 import getCookieValue from "../../services/GetCookie.js";
 import GetUser from "../../services/ApiGetUser.js"
 import { Typography } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 
 function MenuUser() {
 
   const defaultTheme = createTheme();
-
+  const navigate = useNavigate();
   const {
     textOpenModalText,
     openModalCreate,
@@ -58,6 +58,10 @@ function MenuUser() {
     console.log("refresh", refreshToken);
     const accessToken = getCookieValue("access");
     console.log("access", accessToken);
+    if (!refreshToken || !accessToken) {
+      console.error("No token found");
+      navigate("/login");
+    }
     fetchData(user, accessToken, refreshToken);
     
 
