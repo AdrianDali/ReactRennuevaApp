@@ -23,6 +23,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import getCookieValue from "../services/GetCookie.js";
+import GetUser from "../services/ApiGetUser.js";
+import { useNavigate } from "react-router-dom";
+
+import useAuth from "../hooks/useAuth.js";
+
 
 function MenuVehicle() {
   const { 
@@ -39,14 +45,15 @@ function MenuVehicle() {
 
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
+  const dataUser = useAuth();
 
-  // ... otros handlers y useEffect ...
 
   const defaultTheme = createTheme();
 
+
   return (
     <ThemeProvider theme={defaultTheme}>
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
@@ -116,6 +123,18 @@ function MenuVehicle() {
           )}
         </Box>
       </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

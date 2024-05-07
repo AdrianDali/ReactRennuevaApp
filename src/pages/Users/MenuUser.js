@@ -23,6 +23,7 @@ import getCookieValue from "../../services/GetCookie.js";
 import GetUser from "../../services/ApiGetUser.js"
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth.js";
 
 function MenuUser() {
 
@@ -36,37 +37,8 @@ function MenuUser() {
     openModalText,
     setOpenModalText,
   } = useContext(TodoContext);
-  const [dataUser, setDataUser] = useState(null);
-
   
-  useEffect(() => {
-    async function fetchData(user,access, refresh) {
-      const { dataUser, successUser, messageUser } = await GetUser(user, access, refresh);
-      setDataUser(dataUser);
-      console.log("data", dataUser);
-      console.log("success", successUser);  
-      console.log("message", messageUser);  
-      if (successUser) {
-        setDataUser(dataUser);
-      }
-
-    }
-
-    const user = getCookieValue("user");
-    console.log("user", user);
-    const refreshToken = getCookieValue("refresh");
-    console.log("refresh", refreshToken);
-    const accessToken = getCookieValue("access");
-    console.log("access", accessToken);
-    if (!refreshToken || !accessToken) {
-      console.error("No token found");
-      navigate("/login");
-    }
-    fetchData(user, accessToken, refreshToken);
-    
-
-  } 
-  , []);
+  const dataUser = useAuth();
 
 
   return (

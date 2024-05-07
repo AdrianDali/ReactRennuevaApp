@@ -40,6 +40,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import useAuth from "../hooks/useAuth.js";
 
 const QRCode = require("qrcode");
 
@@ -510,6 +511,8 @@ function MenuReport() {
   const [isButtonGreen, setIsButtonGreen] = useState(true);
   const [open, setOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null); // Estado para almacenar el ID del reporte a borrar
+
+  const dataUser = useAuth();
 
   const handleClickOpen = (id_report) => {
     setDeleteId(id_report); // Guarda el ID del reporte en el estado

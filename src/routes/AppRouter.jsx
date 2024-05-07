@@ -34,7 +34,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 function App() {
   const router = createBrowserRouter([ 
-    { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
+    { path: '/users', element: <Layout List={<AdminList/>}><MenuUser/></Layout> },
     { path: '/groups', element: <Layout><MenuGroups/></Layout> },
     { path: '/vehicle', element: <Layout><MenuVehicle /></Layout> },
     { path: '/residue', element: <Layout><MenuResidue /></Layout> },
@@ -42,7 +42,7 @@ function App() {
     { path: '/generator', element: <Layout><MenuGenerator /></Layout> },
     { path: '/driver', element: <Layout><MenuDriver /></Layout> },
     { path: '/register', element: <SignUp /> },
-    { path: '/dash', element: <CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout> },
+    { path: '/dash', element: <Layout List={<AdminList/>}><Dashboard/></Layout> },
     { path: '/donor', element: <Layout><MenuDonor /></Layout> },
     { path: '/carrier', element: <Layout><MenuCarrier /></Layout> },
     { path: '/collection-center', element: <Layout><MenuCollectionCenter /></Layout> },
@@ -54,7 +54,7 @@ function App() {
     { path: '/report-history', element: <Layout><MenuReportHistory/></Layout> },
     { path: '/main-generator', element: <LayoutGenerator><MenuMainGenerator/></LayoutGenerator> },
     { path: '/responsivas-generator', element: <LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator> },
-    { path: '/centro', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
+    { path: '/centro', element: <Layout List={<AdminList/>}><MenuUser/></Layout> },
     { path: '*', element: <h1>Not Found 404</h1> },
     { path: '/', element: <Login/> },
     { path: '/login', element: <Login/> },

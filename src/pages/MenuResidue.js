@@ -25,6 +25,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import BarsCharResidue from "../components/graph/BarsCharResidue";
+import useAuth from "../hooks/useAuth.js";
+
 
 function MenuResidue() {
   const {
@@ -39,10 +41,16 @@ function MenuResidue() {
     openModalText,
   } = useContext(TodoContext);
 
+  const dataUser = useAuth();
+
+
   const defaultTheme = createTheme();
+
+  
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <Box
@@ -134,6 +142,18 @@ function MenuResidue() {
           )}
         </Box>
       </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

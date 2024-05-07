@@ -22,6 +22,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import BarsChartGenerator  from "../components/graph/BarsCharGenerator.js";
+import useAuth from "../hooks/useAuth.js";
 
 function MenuGenerator() {
   const { 
@@ -45,7 +46,8 @@ function MenuGenerator() {
     
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
+  const dataUser = useAuth();
+
 
   // ... otros handlers y useEffect ...
 
@@ -53,6 +55,7 @@ function MenuGenerator() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
@@ -133,6 +136,18 @@ function MenuGenerator() {
           )}
         </Box>
       </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

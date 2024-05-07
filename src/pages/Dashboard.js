@@ -1,28 +1,22 @@
 import * as React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from '../components/listItems';
 import Chart from '../components/Chart';
 import Deposits from '../components/Deposits';
 import Orders from '../components/Orders';
-import ResponsiveAppBar from '../containers/LayoutAppBar';
 import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollection';
+import { useNavigate } from 'react-router-dom';
+import Title from '../components/Title';
+import useAuth from "../hooks/useAuth.js";
+
+
 
 function Copyright(props) {
   return (
@@ -42,12 +36,13 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
-  
+  const dataUser = useAuth();
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box
         component="main"
         sx={{
@@ -111,6 +106,18 @@ export default function Dashboard() {
           <Copyright sx={{ pt: 4 }} />
         </Container>
       </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }
