@@ -102,7 +102,7 @@ export default function SignInSide() {
 
       if (dataUser.groups[0] === "Administrador") {
         navigate("/dash");
-      } else if (responseUser.data.groups[0] === "Generador") {
+      } else if (dataUser.groups[0] === "Generador") {
         navigate("/main-generator");
       }
     } catch (error) {
