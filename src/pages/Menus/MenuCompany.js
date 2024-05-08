@@ -37,30 +37,19 @@ function MenuCompany() {
     textOpenModalText,setTextOpenModalText
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
-
   const dataUser = useAuth();
-
-  // ... otros handlers y useEffect ...
 
   const defaultTheme = createTheme();
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
+      <Box sx={{ display: "flex", height: "90vh", width : '95vw'}}>
+        
       {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl">
+     
+        
+     <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} >
                 <Paper
@@ -80,7 +69,7 @@ function MenuCompany() {
               </Grid>
               
             </Grid>
-          </Container>
+          
 
           {openModalCreateCompany && (
             <ModalCompany mode={"CREAR"}>
@@ -115,8 +104,8 @@ function MenuCompany() {
               </DialogActions>
             </Dialog>
           )}
-        </Box>
-      </Box>
+        </Container>
+      
        ) : (
         <Box
           sx={{
@@ -129,6 +118,7 @@ function MenuCompany() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
+      </Box>
     </ThemeProvider>
   );
 }

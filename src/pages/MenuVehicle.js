@@ -23,10 +23,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import getCookieValue from "../services/GetCookie.js";
-import GetUser from "../services/ApiGetUser.js";
-import { useNavigate } from "react-router-dom";
-
 import useAuth from "../hooks/useAuth.js";
 
 function MenuVehicle() {

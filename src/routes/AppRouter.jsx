@@ -46,7 +46,7 @@ function App() {
     { path: '/report', element: <Layout><MenuReport /></Layout> },
     { path: '/tracking', element: <Layout><MenuTracking mode = "tracking"/></Layout> },
     { path: '/tracking-external/:trackingNumber', element: <MenuTracking mode = "tracking external"/> },
-    { path: '/donor-recolection', element: <Layout><MenuDonorRecolection /></Layout> },
+    { path: '/donor-recolection', element: <CentroLayout List={<AdminList/>}><MenuDonorRecolection/></CentroLayout> },
     { path: '/company', element: <Layout><MenuCompany /></Layout> },
     { path: '/report-history', element: <Layout><MenuReportHistory/></Layout> },
     { path: '/main-generator', element: <LayoutGenerator><MenuMainGenerator/></LayoutGenerator> },
