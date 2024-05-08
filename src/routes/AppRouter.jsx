@@ -23,20 +23,17 @@ import { MenuMainGenerator } from '../pages/Menus/MenuMainGenerator.js';
 import LayoutGenerator from '../containers/LayoutGenerator.jsx';
 import { MenuMyResponsivasGenerator } from '../pages/Menus/MenuMyResponsivasGenerator.js';
 import CentroLayout from '../containers/CentroLayout.jsx';
-
 import Login from '../pages/Login';
-
 import AdminList from '../containers/ListSideBar/AdminList2.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 
-
-
 function App() {
+
   const router = createBrowserRouter([ 
     { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
-    { path: '/groups', element: <Layout><MenuGroups/></Layout> },
-    { path: '/vehicle', element: <Layout><MenuVehicle /></Layout> },
+    { path: '/groups', element: <CentroLayout List={<AdminList/>}><MenuGroups/></CentroLayout> },
+    { path: '/vehicle', element: <CentroLayout List={<AdminList/>}><MenuVehicle/></CentroLayout> },
     { path: '/residue', element: <Layout><MenuResidue /></Layout> },
     { path: '/recycling-center', element: <Layout><MenuRecyclingCenter /></Layout> },
     { path: '/generator', element: <Layout><MenuGenerator /></Layout> },

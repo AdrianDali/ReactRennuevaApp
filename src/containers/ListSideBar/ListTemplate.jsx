@@ -17,7 +17,7 @@ export class ListTemplateItem {
         this.tag = tag;
         this.icon = icon;
         if (redirection) this.redirection = redirection;
-        this.subElements = subElemnets;
+        if (subElemnets) this.subElements = subElemnets;
     }
 
     /**

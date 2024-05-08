@@ -39,6 +39,7 @@ function MenuUser() {
   } = useContext(TodoContext);
   
   const dataUser = useAuth();
+  console.log("dataUser", dataUser);
 
 
   return (
