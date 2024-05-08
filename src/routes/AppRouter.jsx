@@ -34,7 +34,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 function App() {
   const router = createBrowserRouter([ 
-    { path: '/users', element: <Layout List={<AdminList/>}><MenuUser/></Layout> },
+    { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
     { path: '/groups', element: <Layout><MenuGroups/></Layout> },
     { path: '/vehicle', element: <Layout><MenuVehicle /></Layout> },
     { path: '/residue', element: <Layout><MenuResidue /></Layout> },
