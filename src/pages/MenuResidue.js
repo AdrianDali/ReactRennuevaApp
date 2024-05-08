@@ -27,7 +27,6 @@ import Button from "@mui/material/Button";
 import BarsCharResidue from "../components/graph/BarsCharResidue";
 import useAuth from "../hooks/useAuth.js";
 
-
 function MenuResidue() {
   const {
     openModalCreateResidue,
@@ -43,30 +42,17 @@ function MenuResidue() {
 
   const dataUser = useAuth();
 
-
   const defaultTheme = createTheme();
-
-  
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl" sx={{ mb: 5 }}>
+      <CssBaseline />
+      <Box sx={{ display: "flex", height: "90vh", width: "100vw" }}>
+        {dataUser && dataUser.groups[0] === "Administrador" ? (
+          <Container
+            maxWidth={false}
+            sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
+          >
             {" "}
             {/* Margen en la parte inferior ajustado */}
             <Grid container spacing={3}>
@@ -103,57 +89,57 @@ function MenuResidue() {
                 </Paper>
               </Grid>
             </Grid>
-          </Container>
-
-          {openModalCreateResidue && (
-            <ModalResidue mode={"CREAR"}>
-              La funcionalidad de agregar TODO
-            </ModalResidue>
-          )}
-          {openModalEditResidue && (
-            <ModalResidue mode={"EDITAR"}>
-              La funcionalidad de editar TODO
-            </ModalResidue>
-          )}
-          {openModalDeleteResidue && (
-            <ModalResidue mode={"BORRAR"}>
-              La funcionalidad de borrar TODO
-            </ModalResidue>
-          )}
-          {openModalText && (
-            <Dialog
-              open={openModalText}
-              onClose={() => setOpenModalText(false)}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                {textOpenModalText}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
+            {openModalCreateResidue && (
+              <ModalResidue mode={"CREAR"}>
+                La funcionalidad de agregar TODO
+              </ModalResidue>
+            )}
+            {openModalEditResidue && (
+              <ModalResidue mode={"EDITAR"}>
+                La funcionalidad de editar TODO
+              </ModalResidue>
+            )}
+            {openModalDeleteResidue && (
+              <ModalResidue mode={"BORRAR"}>
+                La funcionalidad de borrar TODO
+              </ModalResidue>
+            )}
+            {openModalText && (
+              <Dialog
+                open={openModalText}
+                onClose={() => setOpenModalText(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
                   {textOpenModalText}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
-              </DialogActions>
-            </Dialog>
-          )}
-        </Box>
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    {textOpenModalText}
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenModalText(false)}>
+                    Aceptar
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
+          </Container>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+            }}
+          >
+            <Title>No tienes permisos para ver esta página</Title>
+          </Box>
+        )}
       </Box>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
-          <Title>No tienes permisos para ver esta página</Title>
-        </Box>
-      )}
     </ThemeProvider>
   );
 }
