@@ -25,6 +25,8 @@ import Button from '@mui/material/Button';
 import DriverTable from "../components/DriverTable.js";
 import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
 
+import useAuth from "../hooks/useAuth.js";
+
 
 
 function MenuDriver() {
@@ -40,7 +42,7 @@ function MenuDriver() {
     openModalDeleteDriver 
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
+  const dataUser = useAuth();
 
   //... otros handlers y useEffect ...
 
@@ -48,6 +50,7 @@ function MenuDriver() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+       {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
@@ -128,6 +131,18 @@ function MenuDriver() {
           )}
         </Box>
       </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "../styles/user/CreateUser.css";
 import { TodoContext } from "../context/index.js";
 import axios from "axios";
+import PhoneExtensionSelect from '../components/PhoneExtensionSelect.jsx';
 import {
   Modal,
   TextField,
@@ -50,6 +51,7 @@ function ModalDonor({ children, mode }) {
     { "gender": "Otro",}
         ]);
   const [address_reference, setReference] = useState("");
+  const [phoneExtension, setPhoneExtension] = useState("");
   
 
 
@@ -109,6 +111,7 @@ function ModalDonor({ children, mode }) {
         razon_social: e.target.razon_social.value,
         gender:  gender ,
         birthdate: birthday,
+        phone_extention: phoneExtension
         
       };
 
@@ -156,6 +159,7 @@ function ModalDonor({ children, mode }) {
         razon_social: e.target.razon_social.value,
         gender: gender,
         birthdate: birthday,
+        phone_extention: phoneExtension,
         id: id,
         
       };
@@ -265,6 +269,7 @@ function ModalDonor({ children, mode }) {
     setRfc(datoEncontrado.rfc);
     setCompany(datoEncontrado.company);
     setPhone(datoEncontrado.phone);
+    setPhoneExtension(datoEncontrado.phone_extention);
     setState(datoEncontrado.address_state);
     setCity(datoEncontrado.address_city);
     setLocality(datoEncontrado.address_locality);
@@ -452,6 +457,7 @@ function ModalDonor({ children, mode }) {
             )}
 
             <FormControl fullWidth mt={2} mb={2}>
+              <PhoneExtensionSelect value={phoneExtension} setValue={setPhoneExtension} />
               <TextField
                 label="Celular"
                 name="phone"

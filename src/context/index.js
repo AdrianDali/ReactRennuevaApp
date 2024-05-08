@@ -5,6 +5,7 @@ const TodoContext = React.createContext();
 
 
 function TodoProvider({ children }) {
+
   const [theme, setTheme] = React.useState("light");
   const themeStyle = theme === "light" ? Light : Dark;
   const [openModalCreate, setOpenModalCreate] = React.useState(false);
@@ -58,44 +59,22 @@ function TodoProvider({ children }) {
   const [updateReportInfo, setUpdateReportInfo] = React.useState(false);
   const [updateResidueReportInfo, setUpdateResidueReportInfo] = React.useState(false);
   const [updateUserInfo, setUpdateUserInfo] = React.useState(false);
-
   const [openModalCreateFirma, setOpenModalCreateFirma] = React.useState(false);
   const [openModalEditFirma, setOpenModalEditFirma] = React.useState(false);
   const [openModalDeleteFirma, setOpenModalDeleteFirma] = React.useState(false);
-
   const [openModalCreateFirmaReceptor, setOpenModalCreateFirmaReceptor] = React.useState(false);
   const [openModalEditFirmaReceptor, setOpenModalEditFirmaReceptor] = React.useState(false);
   const [openModalDeleteFirmaReceptor, setOpenModalDeleteFirmaReceptor] = React.useState(false);
-
   const [openModalCreateCompany, setOpenModalCreateCompany] = React.useState(false);
   const [openModalEditCompany, setOpenModalEditCompany] = React.useState(false);
   const [openModalDeleteCompany, setOpenModalDeleteCompany] = React.useState(false);
   const [updateCompanyInfo, setUpdateCompanyInfo] = React.useState(false);
-
   const [openModalDeleteOrderRecollection , setOpenModalDeleteOrderRecollection] = React.useState(false);
-   
-
-
-
-  const users = [
-    { id: 1, name: 'Adrian Alejandro', apellido: "Hernandez Rueda", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 2, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 3, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 4, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 5, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 6, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 7, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 8, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 9, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' },
-    { id: 10, name: 'Juan', apellido: "Hernandez", email: 'adrian@gmail.com', registered: "13-12-2000", rol: 'admin' }]
-
-
-  const totalListlUsers = users
 
 
   return (
     <TodoContext.Provider value={{
-      totalListlUsers,
+      
       openModalCreate, setOpenModalCreate, openModalEdit,
       setOpenModalEdit, openModalDelete,
       setOpenModalDelete, theme, setTheme, themeStyle,

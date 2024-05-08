@@ -24,6 +24,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import DonorTable from "../components/DonorTable.jsx";
 import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollection';
+import useAuth from "../hooks/useAuth.js";
 
 function MenuDonor() {
   const {
@@ -36,7 +37,7 @@ function MenuDonor() {
     openModalText, setOpenModalText , textOpenModalText
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
+  const dataUser = useAuth();
 
   // ... otros handlers y useEffect ...
 
@@ -44,6 +45,7 @@ function MenuDonor() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
@@ -51,8 +53,6 @@ function MenuDonor() {
           sx={{
             backgroundColor: (theme) => theme.palette.grey[100],
             flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
           }}
         >
           <Toolbar />
@@ -124,6 +124,18 @@ function MenuDonor() {
           )}
         </Box>
       </Box>
+       ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

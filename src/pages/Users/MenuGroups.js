@@ -25,10 +25,12 @@ import {
   Toolbar,
   CssBaseline,
 } from "@mui/material";
-
 import Title from "../../components/Title";
+import useAuth from "../../hooks/useAuth.js";
+
 
 function MenuGroups() {
+  
   const {
     openModalCreateGroup,
     openModalText,
@@ -40,10 +42,14 @@ function MenuGroups() {
     setOpenModalDeleteGroup,
   } = useContext(TodoContext);
 
+  const dataUser = useAuth();
+
   const defaultTheme = createTheme();
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
 
@@ -136,6 +142,18 @@ function MenuGroups() {
           )}
         </Box>
       </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

@@ -22,6 +22,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import useAuth from "../hooks/useAuth.js";
+
 
 function MenuRecyclingCenter() {
   const { 
@@ -33,7 +35,7 @@ function MenuRecyclingCenter() {
     openModalDeleteRecyclingCenter ,openModalText, setOpenModalText ,textOpenModalText,setTextOpenModalText
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
+  const dataUser = useAuth();
 
   // ... otros handlers y useEffect ...
 
@@ -41,6 +43,7 @@ function MenuRecyclingCenter() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
@@ -110,6 +113,18 @@ function MenuRecyclingCenter() {
           )}
         </Box>
       </Box>
+       ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

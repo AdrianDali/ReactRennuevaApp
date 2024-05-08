@@ -24,6 +24,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CarrierTable from "../components/CarrierTable.jsx";
 import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
+import getCookieValue from "../services/GetCookie.js";
+import GetUser from "../services/ApiGetUser.js";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth.js";
+
+
 
 function MenuCarrier() {
   const { 
@@ -39,14 +45,16 @@ function MenuCarrier() {
 
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
+  const dataUsers = useAuth();
 
   // ... otros handlers y useEffect ...
 
   const defaultTheme = createTheme();
 
+ 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {dataUsers && dataUsers.groups[0] === "Administrador" ? (
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Box
@@ -127,6 +135,18 @@ function MenuCarrier() {
           )}
         </Box>
       </Box>
+       ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Title>No tienes permisos para ver esta página</Title>
+        </Box>
+      )}
     </ThemeProvider>
   );
 }

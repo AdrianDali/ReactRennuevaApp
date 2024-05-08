@@ -22,6 +22,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CollectionCenterTable from "../components/CollectionCenterTable.jsx";
+import useAuth from "../hooks/useAuth.js";
+
+
 
 function MenuCollectionCenter() {
   const { 
@@ -33,7 +36,7 @@ function MenuCollectionCenter() {
     openModalDeleteCollectionCenter , openModalText, setOpenModalText ,textOpenModalText,setTextOpenModalText
   } = useContext(TodoContext);
 
-  const [datos, setDatos] = useState([]);
+  const dataUser = useAuth();
 
   // ... otros handlers y useEffect ...
 

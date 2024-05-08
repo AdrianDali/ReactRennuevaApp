@@ -2,6 +2,9 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import { generateExcel, generateExcelResponsiva} from '../services/Excel.js';
 import * as XLSX from 'xlsx';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import DownloadIcon from '@mui/icons-material/Download';
 
 
 function OptionButton({ setOpenModal, text, color }) {
@@ -20,15 +23,16 @@ function OptionButton({ setOpenModal, text, color }) {
 
 function ActionButtonOrdersExcel({text, color }) {
   return (
-    <Button
-      variant="contained"
-      onClick={() => {
-        generateExcel(); // Llamar a la función para generar Excel
-      }}
-      style={{ backgroundColor: color , color: 'black'}}
-    >
-      {text}
-    </Button>
+    <Tooltip title="Descargar Excel">
+      <IconButton
+        onClick={() => {
+          generateExcel(); // Llamar a la función para generar Excel
+        }}
+        style={{ backgroundColor: color , color: 'black'}}
+      >
+        <DownloadIcon />
+      </IconButton>
+    </Tooltip>
   );
 }
 
