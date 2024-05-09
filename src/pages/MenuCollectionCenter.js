@@ -23,6 +23,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CollectionCenterTable from "../components/CollectionCenterTable.jsx";
 import useAuth from "../hooks/useAuth.js";
+import { Typography } from "@mui/material";
 
 
 
@@ -44,19 +45,10 @@ function MenuCollectionCenter() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl">
+      <CssBaseline />
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
+      
+      <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} >
                 <Paper
@@ -76,8 +68,7 @@ function MenuCollectionCenter() {
               </Grid>
               
             </Grid>
-          </Container>
-
+          
           {openModalCreateCollectionCenter && (
             < ModalCollectionCenter mode={"CREAR"}>
               La funcionalidad de agregar TODO
@@ -111,8 +102,22 @@ function MenuCollectionCenter() {
               </DialogActions>
             </Dialog>
           )}
-        </Box>
-      </Box>
+        </Container>
+         ) : (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+              margin: "auto",
+              
+            }}
+          >
+            <Typography variant="h5">No Access</Typography>
+          </Box>
+        )}
+
     </ThemeProvider>
   );
 }

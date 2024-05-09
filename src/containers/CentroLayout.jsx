@@ -23,6 +23,7 @@ import {
     createTheme,
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
+import useAuth from '../hooks/useAuth';
 
 
 
@@ -91,7 +92,8 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 
 
 
-const ProfileSection = ({ open, setOpen, desktop }) => (
+const ProfileSection = ({ open, setOpen, desktop ,dataUser}) => (
+
     <Box sx={{ width: '100%', py: 2 }} role="presentation" onClick={() => setOpen(false)} >
         <Box
             sx={{
@@ -108,10 +110,13 @@ const ProfileSection = ({ open, setOpen, desktop }) => (
             />
 
             <Typography variant="h6" sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }}>
-                {user.name}
+                {dataUser ? dataUser.first_name : 'Usuario'}
             </Typography>
             <Typography variant="body2" sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }}>
-                {user.email}
+                {dataUser ? dataUser.email : ''}
+            </Typography>
+            <Typography variant="body2" sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.2s' }}>
+                {dataUser ? dataUser.groups[0] : ''}
             </Typography>
         </Box>
         <Divider />
@@ -140,18 +145,20 @@ const MobileMenu = ({ children, open, setOpen }) => {
 }
 
 
-const DesktopMenu = ({ open, setOpen, children }) => {
+const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
     const theme = useTheme();
+    console.log(dataUser);
+    
 
     return (
         <StyledDrawer variant="permanent" open={open}>
-            <DrawerHeader alignItems="center">
+            <DrawerHeader>
                 <IconButton onClick={() => setOpen(!open)}>
                     {!open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                 </IconButton>
             </DrawerHeader>
             <Divider />
-            <ProfileSection open={open} setOpen={setOpen} desktop={true} />
+            <ProfileSection open={open} setOpen={setOpen} desktop={true} dataUser = {dataUser}/>
             {children}
         </StyledDrawer>)
 }
@@ -164,6 +171,9 @@ export default function CentroLayout({ children, List }) {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [open, setOpen] = useState(false);
     const [desktop, setDesktop] = useState(window.innerWidth > 899);
+    
+    const dataUser = useAuth();
+    console.log(dataUser);
 
 
     const handleOpenUserMenu = (event) => {
@@ -175,39 +185,50 @@ export default function CentroLayout({ children, List }) {
     };
 
 
+    // useEffect(() => {
+    //     window.addEventListener('resize', () => {
+    //         if (window.innerWidth > 899) {
+    //             setDesktop(true);
+    //         } else {
+    //             setDesktop(false);
+    //         }
+    //     });
 
+    //     return () => {
+    //         window.removeEventListener('resize', () => {
+    //             if (window.innerWidth > 899) {
+    //                 setDesktop(true);
+    //             } else {
+    //                 setDesktop(false);
+    //             }
+    //         });
+    //     }
 
-
+    // }, []);
     useEffect(() => {
-        window.addEventListener('resize', () => {
+        const handleResize = () => {
             if (window.innerWidth > 899) {
                 setDesktop(true);
             } else {
                 setDesktop(false);
             }
-        });
-
+        };
+    
+        window.addEventListener('resize', handleResize);
+    
         return () => {
-            window.removeEventListener('resize', () => {
-                if (window.innerWidth > 899) {
-                    setDesktop(true);
-                } else {
-                    setDesktop(false);
-                }
-            });
+            window.removeEventListener('resize', handleResize);
         }
-
     }, []);
-
-
-
+    
 
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ bgcolor: (theme) => theme.palette.grey[100] }}>
-                <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 25px 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '1px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 25px 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '5px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Container maxWidth="xl" >
                         <Toolbar disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
+                            
                             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                                 <IconButton
                                     size="large"
@@ -259,7 +280,7 @@ export default function CentroLayout({ children, List }) {
                 </AppBar>
                 <Box sx={{ display: 'flex', width: '100vw' }}>
                     {desktop
-                        ? <DesktopMenu open={open} setOpen={setOpen}>
+                        ? <DesktopMenu open={open} setOpen={setOpen} dataUser={dataUser}>
                             {List}
                         </DesktopMenu>
                         : <MobileMenu open={open} setOpen={setOpen} >

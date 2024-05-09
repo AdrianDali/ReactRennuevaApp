@@ -45,19 +45,12 @@ function MenuDonor() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
+      
       {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl">
-            <Grid container spacing={3}>
+      
+      <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
+      <Grid container spacing={3}>
               <Grid item xs={12} >
                 <Paper
                   sx={{
@@ -87,8 +80,7 @@ function MenuDonor() {
                 </Paper>
               </Grid>
             </Grid>
-          </Container>
-
+         
           {openModalCreateDonor && (
             <ModalDonor mode={"CREAR"}>
               La funcionalidad de agregar TODO
@@ -122,8 +114,9 @@ function MenuDonor() {
               </DialogActions>
             </Dialog>
           )}
-        </Box>
-      </Box>
+           </Container>
+
+      
        ) : (
         <Box
           sx={{
@@ -136,6 +129,7 @@ function MenuDonor() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
+      
     </ThemeProvider>
   );
 }

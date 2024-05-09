@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TodoContext } from '../context/index.js';
-import { ModalUser } from './Users/ModalUser';
+import { TodoContext } from "../context/index.js";
+import { ModalUser } from "./Users/ModalUser";
 import RecyclingCenterTable from "../components/RecyclingCenterTable";
 import BarsChartVehicle from "../components/BarsChartVehicle";
 import {
@@ -12,27 +12,30 @@ import {
   Container,
   Toolbar,
   CssBaseline,
-} from '@mui/material';
-import Title from '../components/Title';
+} from "@mui/material";
+import Title from "../components/Title";
 import CUDButtons from "../containers/CUDButtons";
 import { ModalRecyclingCenter } from "./ModalRecyclingCenter.js";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
 import useAuth from "../hooks/useAuth.js";
 
-
 function MenuRecyclingCenter() {
-  const { 
-    openModalCreateRecyclingCenter, 
-    setOpenModalCreateRecyclingCenter, 
+  const {
+    openModalCreateRecyclingCenter,
+    setOpenModalCreateRecyclingCenter,
     setOpenModalEditRecyclingCenter,
-    openModalEditRecyclingCenter, 
-    setOpenModalDeleteRecyclingCenter, 
-    openModalDeleteRecyclingCenter ,openModalText, setOpenModalText ,textOpenModalText,setTextOpenModalText
+    openModalEditRecyclingCenter,
+    setOpenModalDeleteRecyclingCenter,
+    openModalDeleteRecyclingCenter,
+    openModalText,
+    setOpenModalText,
+    textOpenModalText,
+    setTextOpenModalText,
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
@@ -43,64 +46,57 @@ function MenuRecyclingCenter() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
+
       {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
+        <Container
+          maxWidth={false}
+          sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
         >
-          <Toolbar />
-          <Container maxWidth="xl">
-            <Grid container spacing={3}>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Title>Centros de Reciclaje</Title>
-                  <CUDButtons model="RecyclingCenter" />
-                  <Title>Centros Creados</Title>
-                  <RecyclingCenterTable />
-                </Paper>
-              </Grid>
-              
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Title>Centros de Reciclaje</Title>
+                <CUDButtons model="RecyclingCenter" />
+                <Title>Centros Creados</Title>
+                <RecyclingCenterTable />
+              </Paper>
             </Grid>
-          </Container>
+          </Grid>
 
           {openModalCreateRecyclingCenter && (
             <ModalRecyclingCenter mode={"CREAR"}>
               La funcionalidad de agregar TODO
-            </ ModalRecyclingCenter >
+            </ModalRecyclingCenter>
           )}
           {openModalEditRecyclingCenter && (
             <ModalRecyclingCenter mode={"EDITAR"}>
               La funcionalidad de editar TODO
-            </ ModalRecyclingCenter >
+            </ModalRecyclingCenter>
           )}
           {openModalDeleteRecyclingCenter && (
             <ModalRecyclingCenter mode={"BORRAR"}>
               La funcionalidad de borrar TODO
-            </ ModalRecyclingCenter >
+            </ModalRecyclingCenter>
           )}
-           {openModalText && (
+          {openModalText && (
             <Dialog
               open={openModalText}
               onClose={() => setOpenModalText(false)}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
-              <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
+              <DialogTitle id="alert-dialog-title">
+                {textOpenModalText}
+              </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                   {textOpenModalText}
@@ -111,9 +107,8 @@ function MenuRecyclingCenter() {
               </DialogActions>
             </Dialog>
           )}
-        </Box>
-      </Box>
-       ) : (
+        </Container>
+      ) : (
         <Box
           sx={{
             display: "flex",

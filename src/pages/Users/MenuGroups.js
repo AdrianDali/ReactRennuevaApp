@@ -28,9 +28,7 @@ import {
 import Title from "../../components/Title";
 import useAuth from "../../hooks/useAuth.js";
 
-
 function MenuGroups() {
-  
   const {
     openModalCreateGroup,
     openModalText,
@@ -46,70 +44,55 @@ function MenuGroups() {
 
   const defaultTheme = createTheme();
 
-
   return (
     <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
       {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
+        <Container
+          maxWidth={false}
+          sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
         >
-          <Toolbar />
-          <Container maxWidth="xl" sx={{ mb: 2.5 }}>
-            {" "}
-            {/* Agregado margen inferior */}
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                {" "}
-                {/* Cambiado a xs={12} para ocupar todo el ancho */}
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Title>Grupos</Title>
-                  <CUDButtons model="Group" />
-
-                  <Title>Grupos Creados</Title>
-                  <GroupTable />
-                  
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                {" "}
-                {/* Asegurado que ocupe todo el ancho */}
-                <Paper
-                  sx={{
-                    p: 4,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 580,
-                  }}
-                >
-                  <BarsChartGroup />
-                </Paper>
-              </Grid>
+          {" "}
+          {/* Agregado margen inferior */}
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              {" "}
+              {/* Cambiado a xs={12} para ocupar todo el ancho */}
+              <Paper
+                sx={{
+                  p: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Title>Grupos</Title>
+                <CUDButtons model="Group" />
+                <Title>Grupos Creados</Title>
+                <GroupTable />
+              </Paper>
             </Grid>
-          </Container>
-
+            <Grid item xs={12}>
+              {" "}
+              {/* Asegurado que ocupe todo el ancho */}
+              <Paper
+                sx={{
+                  p: 4,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 580,
+                }}
+              >
+                <BarsChartGroup />
+              </Paper>
+            </Grid>
+          </Grid>
           {openModalCreateGroup && (
             <ModalGroup mode={"CREAR"}>
               La funcionalidad de agregar TODO
             </ModalGroup>
           )}
-
           {openModalEditGroup && (
             <ModalGroup mode={"EDITAR"}>
               La funcionalidad de editar TODO
@@ -140,8 +123,7 @@ function MenuGroups() {
               </DialogActions>
             </Dialog>
           )}
-        </Box>
-      </Box>
+        </Container>
       ) : (
         <Box
           sx={{

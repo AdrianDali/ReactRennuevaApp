@@ -23,38 +23,35 @@ import { MenuMainGenerator } from '../pages/Menus/MenuMainGenerator.js';
 import LayoutGenerator from '../containers/LayoutGenerator.jsx';
 import { MenuMyResponsivasGenerator } from '../pages/Menus/MenuMyResponsivasGenerator.js';
 import CentroLayout from '../containers/CentroLayout.jsx';
-
 import Login from '../pages/Login';
-
 import AdminList from '../containers/ListSideBar/AdminList2.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 
-
-
 function App() {
+
   const router = createBrowserRouter([ 
     { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
-    { path: '/groups', element: <Layout><MenuGroups/></Layout> },
-    { path: '/vehicle', element: <Layout><MenuVehicle /></Layout> },
-    { path: '/residue', element: <Layout><MenuResidue /></Layout> },
-    { path: '/recycling-center', element: <Layout><MenuRecyclingCenter /></Layout> },
-    { path: '/generator', element: <Layout><MenuGenerator /></Layout> },
-    { path: '/driver', element: <Layout><MenuDriver /></Layout> },
+    { path: '/groups', element: <CentroLayout List={<AdminList/>}><MenuGroups/></CentroLayout> },
+    { path: '/vehicle', element: <CentroLayout List={<AdminList/>}><MenuVehicle/></CentroLayout> },
+    { path: '/residue', element: <CentroLayout List={<AdminList/>}><MenuResidue/></CentroLayout> },
+    { path: '/recycling-center', element: <CentroLayout List={<AdminList/>}><MenuRecyclingCenter/></CentroLayout> },
+    { path: '/generator', element: <CentroLayout List={<AdminList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/driver', element: <CentroLayout List={<AdminList/>}><MenuDriver/></CentroLayout> },
     { path: '/register', element: <SignUp /> },
-    { path: '/dash', element: <Layout List={<AdminList/>}><Dashboard/></Layout> },
-    { path: '/donor', element: <Layout><MenuDonor /></Layout> },
-    { path: '/carrier', element: <Layout><MenuCarrier /></Layout> },
-    { path: '/collection-center', element: <Layout><MenuCollectionCenter /></Layout> },
-    { path: '/report', element: <Layout><MenuReport /></Layout> },
+    { path: '/dash', element: <CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout> },
+    { path: '/donor', element: <CentroLayout List={<AdminList/>}><MenuDonor/></CentroLayout> },
+    { path: '/carrier', element: <CentroLayout List={<AdminList/>}><MenuCarrier/></CentroLayout> },
+    { path: '/collection-center', element: <CentroLayout List={<AdminList/>}><MenuCollectionCenter/></CentroLayout> },
+    { path: '/report', element: <CentroLayout List={<AdminList/>}><MenuReport/></CentroLayout> },
     { path: '/tracking', element: <Layout><MenuTracking mode = "tracking"/></Layout> },
     { path: '/tracking-external/:trackingNumber', element: <MenuTracking mode = "tracking external"/> },
-    { path: '/donor-recolection', element: <Layout><MenuDonorRecolection /></Layout> },
-    { path: '/company', element: <Layout><MenuCompany /></Layout> },
-    { path: '/report-history', element: <Layout><MenuReportHistory/></Layout> },
+    { path: '/donor-recolection', element: <CentroLayout List={<AdminList/>}><MenuDonorRecolection/></CentroLayout> },
+    { path: '/company', element: <CentroLayout List={<AdminList/>}><MenuCompany/></CentroLayout> },
+    { path: '/report-history', element: <CentroLayout List={<AdminList/>}><MenuReportHistory/></CentroLayout> },
+    
     { path: '/main-generator', element: <LayoutGenerator><MenuMainGenerator/></LayoutGenerator> },
     { path: '/responsivas-generator', element: <LayoutGenerator><MenuMyResponsivasGenerator/></LayoutGenerator> },
-    { path: '/centro', element: <Layout List={<AdminList/>}><MenuUser/></Layout> },
     { path: '*', element: <h1>Not Found 404</h1> },
     { path: '/', element: <Login/> },
     { path: '/login', element: <Login/> },

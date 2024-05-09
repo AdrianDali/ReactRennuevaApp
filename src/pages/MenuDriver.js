@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { TodoContext } from '../context/index.js';
-import { ModalUser } from './Users/ModalUser';
+import { TodoContext } from "../context/index.js";
+import { ModalUser } from "./Users/ModalUser";
 import ResidueTable from "../components/ResidueTable";
 import BarsChartVehicle from "../components/BarsChartVehicle";
 import {
@@ -12,34 +12,32 @@ import {
   Container,
   Toolbar,
   CssBaseline,
-} from '@mui/material';
-import Title from '../components/Title';
+} from "@mui/material";
+import Title from "../components/Title";
 import CUDButtons from "../containers/CUDButtons";
 import { ModalDriver } from "./ModalDriver.js";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
 import DriverTable from "../components/DriverTable.js";
 import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
 
 import useAuth from "../hooks/useAuth.js";
 
-
-
 function MenuDriver() {
-  const { 
+  const {
     openModalText,
     setOpenModalText,
     textOpenModalText,
-    openModalCreateDriver, 
-    setOpenModalCreateDriver, 
+    openModalCreateDriver,
+    setOpenModalCreateDriver,
     setOpenModalEditDriver,
-    openModalEditDriver, 
-    setOpenModalDeleteDriver, 
-    openModalDeleteDriver 
+    openModalEditDriver,
+    setOpenModalDeleteDriver,
+    openModalDeleteDriver,
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
@@ -50,66 +48,57 @@ function MenuDriver() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-       {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
+      <CssBaseline />
+      {dataUser && dataUser.groups[0] === "Administrador" ? (
+        <Container
+          maxWidth={false}
+          sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
         >
-          <Toolbar />
-          <Container maxWidth="xl">
-            <Grid container spacing={3}>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Title>Conductores</Title>
-                  <CUDButtons model="Driver" />
-                  <Title>Lista de Conductores</Title>
-                  <DriverTable />
-                </Paper>
-              </Grid>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 580,
-                  }}
-                >
-                  <BarsChartCarrier />
-                </Paper>
-              </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Title>Conductores</Title>
+                <CUDButtons model="Driver" />
+                <Title>Lista de Conductores</Title>
+                <DriverTable />
+              </Paper>
             </Grid>
-          </Container>
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: 4,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 580,
+                }}
+              >
+                <BarsChartCarrier />
+              </Paper>
+            </Grid>
+          </Grid>
 
           {openModalCreateDriver && (
             <ModalDriver mode={"CREAR"}>
               La funcionalidad de agregar TODO
-            </ ModalDriver >
+            </ModalDriver>
           )}
           {openModalEditDriver && (
             <ModalDriver mode={"EDITAR"}>
               La funcionalidad de editar TODO
-            </ ModalDriver >
+            </ModalDriver>
           )}
           {openModalDeleteDriver && (
             <ModalDriver mode={"BORRAR"}>
               La funcionalidad de borrar TODO
-            </ ModalDriver >
+            </ModalDriver>
           )}
           {openModalText && (
             <Dialog
@@ -118,7 +107,9 @@ function MenuDriver() {
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
-              <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
+              <DialogTitle id="alert-dialog-title">
+                {textOpenModalText}
+              </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                   {textOpenModalText}
@@ -129,8 +120,7 @@ function MenuDriver() {
               </DialogActions>
             </Dialog>
           )}
-        </Box>
-      </Box>
+        </Container>
       ) : (
         <Box
           sx={{

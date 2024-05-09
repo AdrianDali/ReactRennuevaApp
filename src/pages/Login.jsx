@@ -162,7 +162,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 id="email"
-                label="Correo Electdfgfdronico"
+                label="Correo Electronico"
                 name="email"
                 autoComplete="email"
                 autoFocus
