@@ -46,17 +46,9 @@ function MenuUser() {
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box
-        component="main"
-        sx={{
-          backgroundColor: (theme) => theme.palette.grey[100],
-          flexGrow: 1,
-          overflow: "auto",
-        }}
-      >
-        <Toolbar />
-        <Container maxWidth="xl" >
-          <Grid container spacing={3}>
+      
+      <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
+      <Grid container spacing={3}>
             <Grid item xs={12}>
               <Paper
                 sx={{
@@ -86,7 +78,7 @@ function MenuUser() {
               </Paper>
             </Grid>
           </Grid>
-        </Container>
+        
 
         {openModalCreate && (
           <ModalUser mode={"CREAR"}>
@@ -124,7 +116,7 @@ function MenuUser() {
             </DialogActions>
           </Dialog>
         )}
-      </Box>
+      </Container>
       ) : (
         <Box
           sx={{

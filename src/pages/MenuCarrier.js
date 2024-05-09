@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TodoContext } from '../context/index.js';
-import { ModalUser } from './Users/ModalUser';
+import { TodoContext } from "../context/index.js";
+import { ModalUser } from "./Users/ModalUser";
 import GeneratorTable from "../components/GeneratorTable";
 import BarsChartVehicle from "../components/BarsChartVehicle";
 import {
@@ -12,16 +12,16 @@ import {
   Container,
   Toolbar,
   CssBaseline,
-} from '@mui/material';
-import Title from '../components/Title';
+} from "@mui/material";
+import Title from "../components/Title";
 import CUDButtons from "../containers/CUDButtons";
 import { ModalCarrier } from "./ModalCarrier.js";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
 import CarrierTable from "../components/CarrierTable.jsx";
 import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
 import getCookieValue from "../services/GetCookie.js";
@@ -29,20 +29,17 @@ import GetUser from "../services/ApiGetUser.js";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth.js";
 
-
-
 function MenuCarrier() {
-  const { 
-    openModalCreateCarrier, 
-    setOpenModalCreateCarrier, 
+  const {
+    openModalCreateCarrier,
+    setOpenModalCreateCarrier,
     setOpenModalEditCarrier,
-    openModalEditCarrier, 
-    setOpenModalDeleteCarrier, 
-    openModalDeleteCarrier ,
+    openModalEditCarrier,
+    setOpenModalDeleteCarrier,
+    openModalDeleteCarrier,
     openModalText,
     setOpenModalText,
-    textOpenModalText
-
+    textOpenModalText,
   } = useContext(TodoContext);
 
   const dataUsers = useAuth();
@@ -51,69 +48,56 @@ function MenuCarrier() {
 
   const defaultTheme = createTheme();
 
- 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
       {dataUsers && dataUsers.groups[0] === "Administrador" ? (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl">
-            <Grid container spacing={3}>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Title>Transportista</Title>
-                  <CUDButtons model="Carrier" />
-                  <Title>Transportistas Creados</Title>
-                  <CarrierTable />
-                </Paper>
-              </Grid>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 580,
-                  }}
-                >
-                  <BarsChartCarrier />
-                </Paper>
-              </Grid>
+        <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Title>Transportista</Title>
+                <CUDButtons model="Carrier" />
+                <Title>Transportistas Creados</Title>
+                <CarrierTable />
+              </Paper>
             </Grid>
-          </Container>
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: 4,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 580,
+                }}
+              >
+                <BarsChartCarrier />
+              </Paper>
+            </Grid>
+          </Grid>
 
           {openModalCreateCarrier && (
             <ModalCarrier mode={"CREAR"}>
               La funcionalidad de agregar TODO
-            </ ModalCarrier >
+            </ModalCarrier>
           )}
           {openModalEditCarrier && (
             <ModalCarrier mode={"EDITAR"}>
               La funcionalidad de editar TODO
-            </ ModalCarrier >
+            </ModalCarrier>
           )}
           {openModalDeleteCarrier && (
             <ModalCarrier mode={"BORRAR"}>
               La funcionalidad de borrar TODO
-            </ ModalCarrier >
+            </ModalCarrier>
           )}
           {openModalText && (
             <Dialog
@@ -122,7 +106,9 @@ function MenuCarrier() {
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
-              <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
+              <DialogTitle id="alert-dialog-title">
+                {textOpenModalText}
+              </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                   {textOpenModalText}
@@ -133,9 +119,8 @@ function MenuCarrier() {
               </DialogActions>
             </Dialog>
           )}
-        </Box>
-      </Box>
-       ) : (
+        </Container>
+      ) : (
         <Box
           sx={{
             display: "flex",

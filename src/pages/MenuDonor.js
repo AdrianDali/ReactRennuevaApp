@@ -46,8 +46,7 @@ function MenuDonor() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", height: "90vh", width : '100vw'}}>
-        
+      
       {dataUser && dataUser.groups[0] === "Administrador" ? (
       
       <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
@@ -130,7 +129,7 @@ function MenuDonor() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-      </Box>
+      
     </ThemeProvider>
   );
 }

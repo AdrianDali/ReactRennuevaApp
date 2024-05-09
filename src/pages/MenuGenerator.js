@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TodoContext } from '../context/index.js';
-import { ModalGenerator } from './ModalGenerator';
+import { TodoContext } from "../context/index.js";
+import { ModalGenerator } from "./ModalGenerator";
 import GeneratorTable from "../components/GeneratorTable";
 import BarsChartVehicle from "../components/BarsChartVehicle";
 import {
@@ -12,26 +12,26 @@ import {
   Container,
   Toolbar,
   CssBaseline,
-} from '@mui/material';
-import Title from '../components/Title';
+} from "@mui/material";
+import Title from "../components/Title";
 import CUDButtons from "../containers/CUDButtons";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
-import BarsChartGenerator  from "../components/graph/BarsCharGenerator.js";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
+import BarsChartGenerator from "../components/graph/BarsCharGenerator.js";
 import useAuth from "../hooks/useAuth.js";
 
 function MenuGenerator() {
-  const { 
-    openModalCreate, 
-    setOpenModalCreate, 
+  const {
+    openModalCreate,
+    setOpenModalCreate,
     setOpenModalEdit,
-    openModalEdit, 
-    setOpenModalDelete, 
-    openModalDelete ,
+    openModalEdit,
+    setOpenModalDelete,
+    openModalDelete,
 
     openModalCreateGenerator,
     setOpenModalCreateGenerator,
@@ -41,13 +41,10 @@ function MenuGenerator() {
     setOpenModalDeleteGenerator,
     openModalText,
     setOpenModalText,
-    textOpenModalText
-
-    
+    textOpenModalText,
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
-
 
   // ... otros handlers y useEffect ...
 
@@ -55,29 +52,22 @@ function MenuGenerator() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      {dataUser && dataUser.groups[0] === "Administrador" ? (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) => theme.palette.grey[100],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="xl">
+      <CssBaseline />
+     
+        {dataUser && dataUser.groups[0] === "Administrador" ? (
+          <Container
+            maxWidth={false}
+            sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
+          >
             <Grid container spacing={3}>
-              <Grid item xs={12} >
+              <Grid item xs={12}>
                 <Paper
                   sx={{
                     p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   <Title>Generadores</Title>
@@ -86,12 +76,12 @@ function MenuGenerator() {
                   <GeneratorTable />
                 </Paper>
               </Grid>
-              <Grid item xs={12} >
+              <Grid item xs={12}>
                 <Paper
                   sx={{
                     p: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
+                    display: "flex",
+                    flexDirection: "column",
                     height: 580,
                   }}
                 >
@@ -99,55 +89,58 @@ function MenuGenerator() {
                 </Paper>
               </Grid>
             </Grid>
-          </Container>
 
-          {openModalCreateGenerator && (
-            <ModalGenerator mode={"CREAR"}>
-              La funcionalidad de agregar TODO
-            </ ModalGenerator >
-          )}
-          {openModalEditGenerator && (
-            <ModalGenerator mode={"EDITAR"}>
-              La funcionalidad de editar TODO
-            </ ModalGenerator >
-          )}
-          {openModalDeleteGenerator && (
-            <ModalGenerator mode={"BORRAR"}>
-              La funcionalidad de borrar TODO
-            </ ModalGenerator >
-          )}
-           {openModalText && (
-            <Dialog
-              open={openModalText}
-              onClose={() => setOpenModalText(false)}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
+            {openModalCreateGenerator && (
+              <ModalGenerator mode={"CREAR"}>
+                La funcionalidad de agregar TODO
+              </ModalGenerator>
+            )}
+            {openModalEditGenerator && (
+              <ModalGenerator mode={"EDITAR"}>
+                La funcionalidad de editar TODO
+              </ModalGenerator>
+            )}
+            {openModalDeleteGenerator && (
+              <ModalGenerator mode={"BORRAR"}>
+                La funcionalidad de borrar TODO
+              </ModalGenerator>
+            )}
+            {openModalText && (
+              <Dialog
+                open={openModalText}
+                onClose={() => setOpenModalText(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
                   {textOpenModalText}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
-              </DialogActions>
-            </Dialog>
-          )}
-        </Box>
-      </Box>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
-          <Title>No tienes permisos para ver esta página</Title>
-        </Box>
-      )}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    {textOpenModalText}
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenModalText(false)}>
+                    Aceptar
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
+          </Container>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+            }}
+          >
+            <Title>No tienes permisos para ver esta página</Title>
+          </Box>
+        )}
+      
     </ThemeProvider>
   );
 }

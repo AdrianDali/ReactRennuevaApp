@@ -53,12 +53,8 @@ function MenuResidue() {
             maxWidth={false}
             sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
           >
-            {" "}
-            {/* Margen en la parte inferior ajustado */}
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                {" "}
-                {/* Ocupa todo el ancho en pantallas pequeñas */}
                 <Paper
                   sx={{
                     p: 3,
@@ -75,8 +71,6 @@ function MenuResidue() {
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-                {" "}
-                {/* Ocupa todo el ancho en pantallas pequeñas */}
                 <Paper
                   sx={{
                     p: 4,

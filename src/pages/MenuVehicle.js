@@ -46,29 +46,30 @@ function MenuVehicle() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", height: "90vh", width : '100vw'}}>
+      <Box sx={{ display: "flex", height: "90vh", width: "100vw" }}>
         {dataUser && dataUser.groups[0] === "Administrador" ? (
-            <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Paper
-                    sx={{
-                      p: 3,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                   
-                    }}
-                  >
-                    <Title>Vehículos</Title>
-                    <CUDButtons model="Vehicle" />
-                    <Title>Vehículos Creados</Title>
-                    <VehicleTable />
-                  </Paper>
-                </Grid>
+          <Container
+            maxWidth={false}
+            sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
+          >
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Paper
+                  sx={{
+                    p: 3,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Title>Vehículos</Title>
+                  <CUDButtons model="Vehicle" />
+                  <Title>Vehículos Creados</Title>
+                  <VehicleTable />
+                </Paper>
               </Grid>
-           
+            </Grid>
 
             {openModalCreateVehicle && (
               <ModalVehicle mode={"CREAR"}>
@@ -107,8 +108,7 @@ function MenuVehicle() {
                 </DialogActions>
               </Dialog>
             )}
-          </Container> 
-       
+          </Container>
         ) : (
           <Box
             sx={{

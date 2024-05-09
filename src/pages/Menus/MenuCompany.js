@@ -44,8 +44,6 @@ function MenuCompany() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", height: "90vh", width : '95vw'}}>
-        
       {dataUser && dataUser.groups[0] === "Administrador" ? (
      
         
@@ -118,7 +116,7 @@ function MenuCompany() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-      </Box>
+     
     </ThemeProvider>
   );
 }
