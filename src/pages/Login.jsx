@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -24,6 +24,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import loginDonor from "../services/ApiLoginAWT";
 import GetUser from "../services/ApiGetUser";
+import { TodoContext } from "../context";
 
 function Copyright(props) {
   return (
@@ -55,6 +56,8 @@ export default function SignInSide() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const { userGroups, setUserGroups } = useContext(TodoContext);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -100,11 +103,26 @@ export default function SignInSide() {
         setPassword(""); // Limpiar campo de contraseña
       }
 
+      setUserGroups(dataUser.groups[0]);
+
       if (dataUser.groups[0] === "Administrador") {
+        console.log("Administrador");
         navigate("/dash");
       } else if (dataUser.groups[0] === "Generador") {
+        console.log("Generador");
         navigate("/main-generator");
+
+      } else if (dataUser.groups[0] === "Comunicacion") {
+        console.log("Comunicacion");
+        navigate("/donor-recollection");
+      }else if (dataUser.groups[0] === "Logistica") {
+        console.log("Logistica");
+        navigate("/donor-recollection-logistic");
+      } else if (dataUser.groups[0] === "Calidad") {
+        console.log("Calidad");
+        navigate("/donor-recollection-quality");
       }
+
     } catch (error) {
       // Manejar y mostrar error
       setError("Login Failed");
