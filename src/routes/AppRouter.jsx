@@ -1,10 +1,9 @@
-
+import React, { useState, useContext } from 'react';
 import { TodoProvider } from '../context/index';
-import { MenuUser } from '../pages/Users/MenuUser';
-import Layout from '../containers/LayoutHeader';
-import React from 'react';
 import { MenuGroups } from '../pages/Users/MenuGroups';
 import { MenuVehicle } from '../pages/MenuVehicle';
+import { MenuUser } from '../pages/Users/MenuUser';
+import Layout from '../containers/LayoutHeader';
 import { MenuResidue } from '../pages/MenuResidue';
 import { MenuRecyclingCenter } from '../pages/MenuRecyclingCenter.js';
 import { MenuGenerator } from '../pages/MenuGenerator';
@@ -26,10 +25,15 @@ import CentroLayout from '../containers/CentroLayout.jsx';
 import Login from '../pages/Login';
 import AdminList from '../containers/ListSideBar/AdminList2.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { TodoContext } from '../context/index';
+import ComunicacionList from '../containers/ListSideBarComunicacion/ComunicacionList.jsx';
+import LogisticList from '../containers/ListSideBarLogistica/LogisticaList.jsx';
+import QualityList from '../containers/ListSideBarCalidad/CalidadList.jsx';
 
 
 function App() {
 
+  
   const router = createBrowserRouter([ 
     { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
     { path: '/groups', element: <CentroLayout List={<AdminList/>}><MenuGroups/></CentroLayout> },
@@ -55,6 +59,16 @@ function App() {
     { path: '*', element: <h1>Not Found 404</h1> },
     { path: '/', element: <Login/> },
     { path: '/login', element: <Login/> },
+
+    // menus para grupo comunicacion
+    { path: '/donor-comunication', element: <CentroLayout List={<ComunicacionList/>}><MenuDonor/></CentroLayout> },
+    { path: '/donor-recollection-comunication', element: <CentroLayout List={<ComunicacionList/>}><MenuDonorRecolection/></CentroLayout> },
+
+    // menus para grupo logistica y transporte
+    { path: '/donor-recollection-logistic', element: <CentroLayout List={<LogisticList/>}><MenuDonorRecolection/></CentroLayout> },
+
+    // menu para grupo de calidad 
+    { path: '/donor-recollection-quality', element: <CentroLayout List={<QualityList/>}><MenuDonorRecolection/></CentroLayout> },
   ]);
 
   return (

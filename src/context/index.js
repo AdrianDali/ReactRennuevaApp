@@ -71,6 +71,9 @@ function TodoProvider({ children }) {
   const [updateCompanyInfo, setUpdateCompanyInfo] = React.useState(false);
   const [openModalDeleteOrderRecollection , setOpenModalDeleteOrderRecollection] = React.useState(false);
 
+  const [userGroups, setUserGroups] = React.useState(null);
+
+
 
   return (
     <TodoContext.Provider value={{
@@ -136,7 +139,8 @@ function TodoProvider({ children }) {
       openModalEditCompany, setOpenModalEditCompany,
       openModalDeleteCompany, setOpenModalDeleteCompany,
       openModalDeleteOrderRecollection , setOpenModalDeleteOrderRecollection,
-      updateCompanyInfo, setUpdateCompanyInfo
+      updateCompanyInfo, setUpdateCompanyInfo,
+      userGroups, setUserGroups
     }} >
       {children}
     </TodoContext.Provider>
