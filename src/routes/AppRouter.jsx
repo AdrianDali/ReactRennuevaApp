@@ -28,7 +28,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { TodoContext } from '../context/index';
 import ComunicacionList from '../containers/ListSideBarComunicacion/ComunicacionList.jsx';
 import LogisticList from '../containers/ListSideBarLogistica/LogisticaList.jsx';
-
+import QualityList from '../containers/ListSideBarCalidad/CalidadList.jsx';
 
 
 function App() {
@@ -67,7 +67,8 @@ function App() {
     // menus para grupo logistica y transporte
     { path: '/donor-recollection-logistic', element: <CentroLayout List={<LogisticList/>}><MenuDonorRecolection/></CentroLayout> },
 
-
+    // menu para grupo de calidad 
+    { path: '/donor-recollection-quality', element: <CentroLayout List={<QualityList/>}><MenuDonorRecolection/></CentroLayout> },
   ]);
 
   return (
