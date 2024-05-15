@@ -30,7 +30,7 @@ const UserTable = ({ datos }) => {
     useEffect(() => {
         // Realiza una petición GET a una URL específica
         axios
-            .post(`${process.env.REACT_APP_API_URL}/get-all-users/`, {"group" : "Administrador"})
+            .get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`)
             .then(response => {
                 const data = response.data;
                 setClientes(data);
