@@ -114,7 +114,7 @@ export default function SignInSide() {
 
       } else if (dataUser.groups[0] === "Comunicacion") {
         console.log("Comunicacion");
-        navigate("/donor-recollection");
+        navigate("/donor-recollection-comunication");
       }else if (dataUser.groups[0] === "Logistica") {
         console.log("Logistica");
         navigate("/donor-recollection-logistic");
