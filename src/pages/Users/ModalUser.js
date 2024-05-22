@@ -224,7 +224,7 @@ function ModalUser({ children, mode }) {
 
     // Definir las peticiones pero no ejecutarlas todavía
     const fetchGroups = axios.get(`${process.env.REACT_APP_API_URL}/get-all-groups/`);
-    const fetchUsers = axios.post(`${process.env.REACT_APP_API_URL}/get-all-users/`, { group: "Administrador" });
+    const fetchUsers = axios.get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`);
     const fetchCompanies = axios.get(`${process.env.REACT_APP_API_URL}/get-all-companies/`);
     // Ejecutar todas las peticiones en paralelo y establecer los estados una vez que todas hayan terminado
     Promise.all([fetchGroups, fetchUsers, fetchCompanies])

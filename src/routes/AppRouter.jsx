@@ -29,7 +29,8 @@ import { TodoContext } from '../context/index';
 import ComunicacionList from '../containers/ListSideBarComunicacion/ComunicacionList.jsx';
 import LogisticList from '../containers/ListSideBarLogistica/LogisticaList.jsx';
 import QualityList from '../containers/ListSideBarCalidad/CalidadList.jsx';
-
+import MenuRequestRestorePass from '../pages/Menus/MenuRequestRestorePass.js';
+import MenuResetPass from '../pages/Menus/MenuResetPass.js';
 
 function App() {
 
@@ -69,6 +70,10 @@ function App() {
 
     // menu para grupo de calidad 
     { path: '/donor-recollection-quality', element: <CentroLayout List={<QualityList/>}><MenuDonorRecolection/></CentroLayout> },
+
+    // menus para resetear contraseña
+    { path: '/reset-password-request/', element: <MenuRequestRestorePass/>},
+    {path : '/reset-password/:uidb64/:token/', element: <MenuResetPass/>}
   ]);
 
   return (
