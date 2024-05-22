@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Box, Paper, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Container, Typography, Box, Paper, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const MenuRequestRestorePass = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalSeverity, setModalSeverity] = useState('success');
 
+  const navigate = useNavigate();
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
@@ -20,24 +22,26 @@ const MenuRequestRestorePass = () => {
       const response = await axios.post('http://127.0.0.1:8000/Rennueva/password-reset-request/', { email });
       setLoading(false);
       if (response.status === 200) {
-        setSnackbarSeverity('success');
-        setSnackbarMessage('Se ha enviado un correo para restablecer la contraseña');
+        setModalSeverity('success');
+        setModalMessage('Se ha enviado un correo para restablecer la contraseña');
+        //navigate('/login');
       } else {
-        setSnackbarSeverity('error');
-        setSnackbarMessage('No se pudo enviar el correo. Inténtelo de nuevo más tarde.');
+        setModalSeverity('error');
+        setModalMessage('No se pudo enviar el correo. Inténtelo de nuevo más tarde.');
       }
-      setSnackbarOpen(true);
+      setModalOpen(true);
     } catch (error) {
       setLoading(false);
-      setSnackbarSeverity('error');
-      setSnackbarMessage('Error enviando el correo');
-      setSnackbarOpen(true);
+      setModalSeverity('error');
+      setModalMessage('Error enviando el correo');
+      setModalOpen(true);
       console.error('Error enviando el correo', error);
     }
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+  const handleModalClose = () => {
+    setModalOpen(false);
+    navigate('/login');
   };
 
   return (
@@ -83,15 +87,22 @@ const MenuRequestRestorePass = () => {
           </form>
         </Paper>
       </Box>
-      <Snackbar 
-        open={snackbarOpen} 
-        autoHideDuration={6000} 
-        onClose={handleSnackbarClose}
+      <Dialog
+        open={modalOpen}
+        onClose={handleModalClose}
       >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+        <DialogTitle>{modalSeverity === 'success' ? 'Éxito' : 'Error'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {modalMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleModalClose} color="primary">
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

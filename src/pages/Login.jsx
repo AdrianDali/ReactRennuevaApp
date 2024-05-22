@@ -244,7 +244,7 @@ export default function SignInSide() {
 
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="#" variant="body2" onClick={() => navigate("/reset-password-request/")}>
                     Olvidaste tu Contrasena?
                   </Link>
                 </Grid>
