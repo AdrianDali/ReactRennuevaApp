@@ -22,7 +22,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import DonorTable from "../components/DonorTable.jsx";
+import DonorTable from "../components/boards/DonorTable.jsx";
 import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollection';
 import useAuth from "../hooks/useAuth.js";
 
