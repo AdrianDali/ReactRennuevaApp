@@ -125,7 +125,7 @@ function Row(props) {
         <TableCell>{row.email}</TableCell>
         <TableCell>{row.phone}</TableCell>
         <TableCell>{row.direccion_completa}</TableCell>
-        <TableCell>
+        {/* <TableCell>
           <Button
             color={row.status === "solicitado" ? "primary" : "error"}
             onClick={() => {
@@ -135,7 +135,7 @@ function Row(props) {
           >
             <Edit />
           </Button>
-        </TableCell>
+        </TableCell> */}
 
         <TableCell>
           <IconButton aria-label="borrar" onClick={() => handleClickOpen(11)}>
@@ -347,7 +347,7 @@ const DonorRecolectionTable = () => {
                 <TableCell>Correo</TableCell>
                 <TableCell>Telefono</TableCell>
                 <TableCell>Direccion</TableCell>
-                <TableCell>Editar</TableCell>
+                {/* <TableCell>Editar</TableCell> */}
                 <TableCell>Eliminar</TableCell>
               </TableRow>
             </TableHead>
