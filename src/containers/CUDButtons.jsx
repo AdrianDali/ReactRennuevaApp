@@ -234,9 +234,6 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
         {model === "CollectionCenter" ? (
           <OptionButton setOpenModal={setOpenModalDeleteCollectionCenter} text="Borrar Centro de Acopio" color="#dc3545" />
         ): null}
-        {model === "Donor" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteDonor} text="Borrar Donador" color="#dc3545" />
-        ): null}
         {model === "Driver" ? (
           <OptionButton setOpenModal={setOpenModalDeleteDriver} text="Borrar Conductor" color="#dc3545" />
         ): null}

@@ -122,7 +122,7 @@ const handlePermisoChange = (index, event) => {
       }
       console.log("####dawd##################CREAR##################################");
       console.log(permisos);
-      const nuevoDato = [{
+      const nuevoDato = {
         collection_center_name: e.target.nombre.value,
         collection_center_razon_social: e.target.razon_social.value,
         collection_center_rfc: rfcValue,
@@ -147,11 +147,11 @@ const handlePermisoChange = (index, event) => {
 
             })
 
-      }];
+      };
 
       axios
         .post(
-          `${process.env.REACT_APP_API_URL}/creat-collection-center/`,
+          `${process.env.REACT_APP_API_URL}/create-collection-center/`,
           nuevoDato
         )
         .then((response) => {

@@ -98,7 +98,7 @@ function ModalRecyclingCenter({ children, mode }) {
         rfcValue = "XAXX010101000"; // Aquí puedes poner el RFC por defecto que desees
       }
       console.log(permisos)
-      const nuevoDato = [{
+      const nuevoDato = {
         recycling_center_name: e.target.nombre.value,
         recycling_center_razon_social: e.target.razon_social.value,
         recycling_center_rfc: rfcValue,
@@ -122,13 +122,13 @@ function ModalRecyclingCenter({ children, mode }) {
             })
         
 
-      }];
+      };
       console.log("#############################")
       console.log(nuevoDato)
 
       axios
         .post(
-          `${process.env.REACT_APP_API_URL}/creat-recycling-center/`,
+          `${process.env.REACT_APP_API_URL}/create-recycling-center/`,
           nuevoDato
         )
         .then((response) => {
