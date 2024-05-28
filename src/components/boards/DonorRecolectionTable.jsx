@@ -134,9 +134,6 @@ const rows = [
                     <TableCell>{row.fecha}</TableCell>
                     <TableCell>{row.direccion_completa}</TableCell>
                     <TableCell>{row.peso_estimado}</TableCell>
-
-                    
-
                     <TableCell>
                       <Button
                         color={
@@ -315,6 +312,7 @@ const DonorRecolectionTable = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [recolectionToEdit, setRecolectionToEdit] = useState(null);
   const [filterClient, setFilterClient] = useState(null);
+  const [auxClientes, setAuxClientes] = useState(null);
 
 
   useEffect(() => {
@@ -324,7 +322,7 @@ const DonorRecolectionTable = () => {
         console.log("Donor recolection data");
         console.log(response.data.ordenes);
         setClientes(response.data.ordenes);
-
+        setAuxClientes(response.data.ordenes);
         setUpdateDonorInfo(false);
       })
       .catch((error) => {
@@ -385,7 +383,7 @@ const DonorRecolectionTable = () => {
                 console.log(value);
                 console.log (value.email);
                 setFilterClient(value.email);
-                setClientes(clientes.filter((cliente) => cliente.donador === value.email) );
+                setClientes(auxClientes.filter((cliente) => cliente.donador === value.email) );
                 
                   
               } else {
@@ -395,6 +393,7 @@ const DonorRecolectionTable = () => {
                     console.log("Donor recolection data");
                     console.log(response.data.ordenes);
                     setClientes(response.data.ordenes);
+                    setAuxClientes(response.data.ordenes);
                     setFilterClient(null);
                   })
                   .catch((error) => {
