@@ -49,28 +49,6 @@ function Row(props) {
     setTextOpenModalText,
   } = useContext(TodoContext);
 
-  function createData(name, calories, fat, carbs, protein, price) {
-    return {
-      name,
-      calories,
-      fat,
-      carbs,
-      protein,
-      price,
-      history: [
-        {
-          date: "2020-01-05",
-          customerId: "11091700",
-          amount: 3,
-        },
-        {
-          date: "2020-01-02",
-          customerId: "Anonymous",
-          amount: 1,
-        },
-      ],
-    };
-  }
 
   const handleClickOpen = (id) => {
     setOpenCancelModal(true);
@@ -106,7 +84,7 @@ function Row(props) {
     setOpenCancelModal(false);
   };
 
-  const rows = [createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99)];
+
 
   return (
     <React.Fragment>
@@ -239,6 +217,7 @@ function Row(props) {
 
 const DonorRecolectionTable = () => {
   const [clientes, setClientes] = useState([]);
+  const [auxClientes, setAuxClientes] = useState([]);
   const [correoCliente, setCorreoCliente] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -260,6 +239,7 @@ const DonorRecolectionTable = () => {
         console.log("Donor recolection data");
         console.log(response.data);
         setClientes(response.data);
+        setAuxClientes(response.data);
 
         setUpdateDonorInfo(false);
       })
@@ -308,12 +288,14 @@ const DonorRecolectionTable = () => {
               )}
               onChange={(event, value) => {
                 if (value) {
+                  
                   console.log(value);
                   console.log(value.email);
                   setFilterClient(value.email);
+                  
                   setClientes(
-                    clientes.filter(
-                      (cliente) => cliente.user === value.email
+                    auxClientes.filter(
+                      (cliente) => cliente.user == value.email
                     )
                   );
                 } else {
@@ -325,6 +307,8 @@ const DonorRecolectionTable = () => {
                       console.log("Donor recolection data");
                       console.log(response.data);
                       setClientes(response.data);
+                      setAuxClientes(response.data);
+                      
                       setFilterClient(null);
                     })
                     .catch((error) => {
