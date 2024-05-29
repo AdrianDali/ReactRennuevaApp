@@ -24,6 +24,7 @@ import GetUser from "../../services/ApiGetUser.js"
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
+import { CommentsDisabledOutlined } from "@mui/icons-material";
 
 function MenuUser() {
 
@@ -39,7 +40,8 @@ function MenuUser() {
   } = useContext(TodoContext);
   
   const dataUser = useAuth();
-  console.log("dataUser", dataUser);
+  console.log("dataUser", dataUser)
+  
 
 
   return (
@@ -81,17 +83,17 @@ function MenuUser() {
         
 
         {openModalCreate && (
-          <ModalUser mode={"CREAR"}>
+          <ModalUser mode={"CREAR"} creatorUser={dataUser.user}>
             La funcionalidad de agregar TODO
           </ModalUser>
         )}
         {openModalEdit && (
-          <ModalUser mode={"EDITAR"}>
+          <ModalUser mode={"EDITAR"}  creatorUser={dataUser.user} >
             La funcionalidad de editar TODO
           </ModalUser>
         )}
         {openModalDelete && (
-          <ModalUser mode={"BORRAR"}>
+          <ModalUser mode={"BORRAR"}  creatorUser={dataUser.user} >
             La funcionalidad de borrar TODO
           </ModalUser>
         )}

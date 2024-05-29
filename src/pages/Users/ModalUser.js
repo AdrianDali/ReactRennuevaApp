@@ -14,7 +14,7 @@ import { Group } from '@mui/icons-material';
 
 
 
-function ModalUser({ children, mode }) {
+function ModalUser({ children, mode , creatorUser}) {
   const [datos, setDatos] = useState([""]);
   const [groups, setGroups] = useState([""])
   const [users, setUsers] = useState([""])
@@ -43,6 +43,7 @@ function ModalUser({ children, mode }) {
   const [address_reference, setAddressReference] = useState("");
   const [permisos , setPermisos] = useState([{"name": "Lectura"}, {"name" : "Escritura"}])
   const [permiso, setPermiso] = useState("Lectura")
+  const [creator , setCreator] = useState(creatorUser)
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -85,6 +86,12 @@ function ModalUser({ children, mode }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    console.log("###################### SUBMIT ##################################")
+    console.log(creatorUser)
+    
+
+
     if (mode === "CREAR") {
       var rfcValue = e.target.rfc.value
       if (!rfcValue) {
@@ -112,6 +119,7 @@ function ModalUser({ children, mode }) {
         address_lng: 0,
         razon_social: e.target.razon_social.value,
         user_permissions: permiso,
+        creator_user: creator
       };
 
 
@@ -164,6 +172,7 @@ function ModalUser({ children, mode }) {
         razon_social: e.target.razon_social.value,
         antiguoUser: old_user,
         user_permissions: permiso,
+        creator_user: creatorUser
 
       };
 
@@ -192,7 +201,8 @@ function ModalUser({ children, mode }) {
       var user_ant = antiguo_user ? antiguo_user.value : null;
 
       const deleteDato = {
-        user: user
+        email: user,
+        creator_user: creatorUser
       }
 
       axios
