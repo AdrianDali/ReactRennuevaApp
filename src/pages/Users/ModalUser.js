@@ -136,9 +136,18 @@ function ModalUser({ children, mode , creatorUser}) {
 
         })
         .catch(error => {
+          console.error("############################");
           setOpenModalText(true);
-          setTextOpenModalText("Algo salio mal. Intenta de nuevo \n  " + error + " ")
-          console.error(error);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
 
     }
@@ -192,7 +201,18 @@ function ModalUser({ children, mode , creatorUser}) {
           // Limpiar los campos del formulario
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
 
     }
@@ -209,6 +229,7 @@ function ModalUser({ children, mode , creatorUser}) {
         .put(`${process.env.REACT_APP_API_URL}/delete-django-user/`, deleteDato)
         .then(response => {
           const data = response.data;
+          console.log("###################### DELETE ##################################")
           console.log(data)
           setOpenModalText(true);
           setTextOpenModalText("Usuario borrado correctamente")
@@ -218,7 +239,18 @@ function ModalUser({ children, mode , creatorUser}) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
 
