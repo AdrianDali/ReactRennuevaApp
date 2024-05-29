@@ -41,7 +41,8 @@ function ModalUser({ children, mode }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [address_num_ext, setAddressNumExt] = useState("");
   const [address_reference, setAddressReference] = useState("");
-
+  const [permisos , setPermisos] = useState([{"name": "Lectura"}, {"name" : "Escritura"}])
+  const [permiso, setPermiso] = useState("Lectura")
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -110,6 +111,7 @@ function ModalUser({ children, mode }) {
         address_lat: 0,
         address_lng: 0,
         razon_social: e.target.razon_social.value,
+        user_permissions: permiso,
       };
 
 
@@ -161,6 +163,8 @@ function ModalUser({ children, mode }) {
         address_lng: 0,
         razon_social: e.target.razon_social.value,
         antiguoUser: old_user,
+        user_permissions: permiso,
+
       };
 
       console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF")
@@ -233,6 +237,7 @@ function ModalUser({ children, mode }) {
         // en el mismo orden en que fueron añadidas en Promise.all
 
         const groupsData = responses[0].data;
+        console.log(responses[0].data)
         const usersData = responses[1].data;
         const companiesData = responses[2].data;
 
@@ -305,6 +310,9 @@ function ModalUser({ children, mode }) {
     setAddressReference(datoEncontrado.address_reference);
     setOldUser(selectedOption);
     setRazonSocial(datoEncontrado.razon_social)
+    console.log("PERMISOS")
+    console.log(datoEncontrado.user_permissions)
+    setPermiso(datoEncontrado.user_permissions)
 
 
 
@@ -443,6 +451,25 @@ function ModalUser({ children, mode }) {
               onChange={(e) => handleInputChange(e, setEmail, mode)}
               margin="dense"
             />
+
+            <FormControl fullWidth mt={2} mb={2}>
+              <InputLabel id="rol-select-label">Permisos</InputLabel>
+              <Select
+                labelId="rol-select-label"
+                id="rol-select"
+                required
+                value={permiso}
+                onChange={(e) => {
+                  handleInputChange(e, setPermiso, mode)
+                  // handleGroupChange(e)
+                }}
+              >
+                {permisos.map((name, index) => (
+                  <MenuItem key={index} value={name.name}>{name.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
 
             {mode === "CREAR" ? (
               <TextField
