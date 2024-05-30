@@ -77,7 +77,7 @@ const reportItem = new ListTemplateItem({
         new ListTemplateItem({
             tag: "Seguiemiento",
             icon: <TrackChangesIcon />,
-            redirection: "/report",
+            redirection: "/tracking",
         }),
         new ListTemplateItem({
             tag: "Historial de reportes",
