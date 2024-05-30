@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import Title from "../components/Title";
 
-function ModalDonor({ children, mode }) {
+function ModalDonor({ children, mode, creatorUser }) {
   const [datos, setDatos] = useState([]);
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -52,6 +52,7 @@ function ModalDonor({ children, mode }) {
         ]);
   const [address_reference, setReference] = useState("");
   const [phoneExtension, setPhoneExtension] = useState("");
+  const [creator, setCreator] = useState(creatorUser);
   
 
 
@@ -111,7 +112,11 @@ function ModalDonor({ children, mode }) {
         razon_social: e.target.razon_social.value,
         gender:  gender ,
         birthdate: birthday,
-        phone_extention: phoneExtension
+        phone_extention: phoneExtension,
+        user_permission: "Escritura",
+        creator_user: creator,
+
+
         
       };
 
@@ -127,9 +132,20 @@ function ModalDonor({ children, mode }) {
 
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "EDITAR") {
       var rfcValue = e.target.rfc.value;
@@ -161,6 +177,8 @@ function ModalDonor({ children, mode }) {
         birthdate: birthday,
         phone_extention: phoneExtension,
         id: id,
+        creator_user: creator,
+        user_permission: "Escritura",
         
       };
       console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
@@ -178,16 +196,28 @@ function ModalDonor({ children, mode }) {
           closeModal();
           // Limpiar los campos del formulario
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "BORRAR") {
       const antiguo_user = document.getElementById("user-select");
       var user_ant = antiguo_user ? antiguo_user.value : null;
 
       const deleteDato = {
-        user: user,
+        email: user,
+        creator_user: creator,
       };
 
       axios
@@ -201,9 +231,20 @@ function ModalDonor({ children, mode }) {
           e.target.reset();
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
 
     // Limpiar los campos del formulario

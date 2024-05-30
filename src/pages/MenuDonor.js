@@ -64,7 +64,7 @@ function MenuDonor() {
                   <Title>Donadores</Title>
                   <CUDButtons model="Donor" />
                   <Title>Donadores Creados</Title>
-                  <DonorTable />
+                  <DonorTable creatorUser={dataUser.user} />
                 </Paper>
               </Grid>
               <Grid item xs={12} >
@@ -82,17 +82,17 @@ function MenuDonor() {
             </Grid>
          
           {openModalCreateDonor && (
-            <ModalDonor mode={"CREAR"}>
+            <ModalDonor mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
             </ ModalDonor >
           )}
           {openModalEditDonor && (
-            <ModalDonor mode={"EDITAR"}>
+            <ModalDonor mode={"EDITAR"} creatorUser={dataUser.user}>
               La funcionalidad de editar TODO
             </ ModalDonor >
           )}
           {openModalDeleteDonor && (
-            <ModalDonor mode={"BORRAR"}>
+            <ModalDonor mode={"BORRAR"} creatorUser={dataUser.user}>
               La funcionalidad de borrar TODO
             </ ModalDonor >
           )}

@@ -36,8 +36,10 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 
+
 function Row(props) {
   const { row } = props;
+  const { dataUser } = props;
   const [open, setOpen] = React.useState(false);
   const [openCancelModal, setOpenCancelModal] = React.useState(false);
   const [openEditModal, setOpenEditModal] = React.useState(false);
@@ -50,6 +52,8 @@ function Row(props) {
   } = useContext(TodoContext);
 
 
+  const [creator , setCreator] = useState(dataUser);
+
   const handleClickOpen = (id) => {
     setOpenCancelModal(true);
   };
@@ -58,11 +62,14 @@ function Row(props) {
     console.log("Borrado confirmado");
     console.log(user);
     console.log(id);
+    const deleteDato = {
+      email: user,
+      creator_user: dataUser,
+    };
+    console.log(deleteDato);
 
     axios
-      .put(`${process.env.REACT_APP_API_URL}/delete-django-user/`, {
-        user: user,
-      })
+      .put(`${process.env.REACT_APP_API_URL}/delete-django-user/`, deleteDato)
       .then((response) => {
         console.log(response);
         setOpen(false);
@@ -70,12 +77,20 @@ function Row(props) {
         setTextOpenModalText("Donador eliminado correctamente");
         setUpdateDonorInfo(true);
       })
-      .catch((error) => {
-        console.error(error);
-        setOpen(false);
+      .catch(error => {
+        console.error("############################");
         setOpenModalText(true);
-        setTextOpenModalText("Error al eliminar el donador");
-      });
+  
+        // Check if error response and data exist
+        if (error.response && error.response.data) {
+          const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+          setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+        } else {
+          setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+        }
+  
+        console.error(error.response);
+      })
 
     handleClose();
   };
@@ -215,13 +230,15 @@ function Row(props) {
   );
 }
 
-const DonorRecolectionTable = () => {
+const DonorRecolectionTable = (creatorUser) => {
+  console.log(creatorUser);
   const [clientes, setClientes] = useState([]);
   const [auxClientes, setAuxClientes] = useState([]);
   const [correoCliente, setCorreoCliente] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [open, setOpen] = useState(false);
+  const [creator, setCreator] = useState(creatorUser);
   const {
     updateDonorInfo,
     setUpdateDonorInfo,
@@ -339,7 +356,7 @@ const DonorRecolectionTable = () => {
               {clientes
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((orden, index) => (
-                  <Row key={index} row={orden} />
+                  <Row key={index} row={orden} creatorUser={creator} />
                 ))}
             </TableBody>
           </Table>
