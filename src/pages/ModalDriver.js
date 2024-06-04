@@ -10,7 +10,10 @@ import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function ModalDriver({ children, mode }) {
+function ModalDriver({ children, mode , creatorUser}) {
+
+    const [creator, setCreator] = useState(creatorUser);
+
     const [datos, setDatos] = useState([]);
     const [groups, setGroups] = useState([])
     const [users, setUsers] = useState([])
@@ -63,6 +66,8 @@ function ModalDriver({ children, mode }) {
                 last_name: e.target.apellido.value,
                 phone: e.target.phone.value,
                 license: e.target.license.value,
+                user_permissions: "Escritura",
+                creator_user: creator
               
             };
 
@@ -79,8 +84,19 @@ function ModalDriver({ children, mode }) {
 
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "EDITAR") {
@@ -93,6 +109,8 @@ function ModalDriver({ children, mode }) {
                 last_name: e.target.apellido.value,
                 phone: e.target.phone.value,
                 license: e.target.license.value,
+                user_permissions: "Escritura",
+                creator_user: creator,
                 
 
                 old_license: old_user,
@@ -113,8 +131,19 @@ function ModalDriver({ children, mode }) {
                     // Limpiar los campos del formulario
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "BORRAR") {
@@ -122,7 +151,9 @@ function ModalDriver({ children, mode }) {
             var user_ant = antiguo_user ? antiguo_user.value : null;
 
             const deleteDato = {
-                license: old_user
+                user: e.target.email.value,
+                user_permissions: "Escritura",
+                creator_user: creator,
             }
 
             axios
