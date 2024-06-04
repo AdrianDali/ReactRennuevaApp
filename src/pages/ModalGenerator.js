@@ -10,7 +10,7 @@ import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function ModalGenerator({ children, mode }) {
+function ModalGenerator({ children, mode,creatorUser }) {
     const [datos, setDatos] = useState([]);
     const [groups, setGroups] = useState([])
     const [users, setUsers] = useState([])
@@ -34,6 +34,8 @@ function ModalGenerator({ children, mode }) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const [old_user, setOldUser] = useState("");
     const [razonSocial, setRazonSocial] = useState("");
+    const [creator, setCreator] = useState(creatorUser);
+  
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
@@ -82,6 +84,8 @@ function ModalGenerator({ children, mode }) {
                 address_lng: 0,
 
                 razon_social: e.target.razon_social.value,
+                user_permission: "Escritura",
+                creator_user: creator
             };
 
             axios
@@ -97,8 +101,19 @@ function ModalGenerator({ children, mode }) {
 
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "EDITAR") {
@@ -125,6 +140,9 @@ function ModalGenerator({ children, mode }) {
                 antiguoUser: old_user,
 
                 razon_social: e.target.razon_social.value,
+                creator_user: creator,
+                user_permission: "Escritura"
+
             };
             console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF")
             console.log(editarDato)
@@ -142,8 +160,19 @@ function ModalGenerator({ children, mode }) {
                     // Limpiar los campos del formulario
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "BORRAR") {
@@ -151,7 +180,8 @@ function ModalGenerator({ children, mode }) {
             var user_ant = antiguo_user ? antiguo_user.value : null;
 
             const deleteDato = {
-                user: user
+                email: user,
+                creator_user: creator
             }
 
             axios
@@ -167,8 +197,19 @@ function ModalGenerator({ children, mode }) {
 
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
         }
 
         // Limpiar los campos del formulario
