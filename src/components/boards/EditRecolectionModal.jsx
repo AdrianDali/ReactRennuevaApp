@@ -50,7 +50,13 @@ export default function EditRecolectionModal({
 
   useEffect(() => {
     if (recolection != null) {
-      setStatus(recolection.status);
+      if(recolection.status === 'recolectada'){
+      setStatus('recolectado');
+      }else if(recolection.status ==='entregadaCentro'){
+        setStatus('entregado');
+      }else{
+        setStatus(recolection.status);
+      }
     } else {
       setStatus("");
     }
@@ -89,6 +95,60 @@ export default function EditRecolectionModal({
           console.error(error);
           setMessage(
             "Ha ocurrido un error al actualizar la fecha de recolección"
+          );
+          setOpenMessageModal(true);
+        });
+    }else if(status === "recolectado"){
+      const data = {
+        user: recolection.donador,
+        id_order: recolection.id,
+      };
+      console.log(data);
+      axios
+        .post(
+          `${process.env.REACT_APP_API_URL}/change-recollection-recolectada/`,
+          data
+        )
+        .then((response) => {
+          console.log(response);
+          setMessage(
+            "Se ha actualizado el estado de la recolección"
+          );
+          setOpenMessageModal(true);
+          setUpdate(!update);
+          setOpen(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setMessage(
+            "Ha ocurrido un error al actualizar la recolección"
+          );
+          setOpenMessageModal(true);
+        });
+    }else if(status === 'entregado'){
+      const data = {
+        user: recolection.donador,
+        id_order: recolection.id,
+      };
+      console.log(data);
+      axios
+        .post(
+          `${process.env.REACT_APP_API_URL}/change-recollection-entregada-centro/`,
+          data
+        )
+        .then((response) => {
+          console.log(response);
+          setMessage(
+            "Se ha actualizado el estado de la recolección"
+          );
+          setOpenMessageModal(true);
+          setUpdate(!update);
+          setOpen(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setMessage(
+            "Ha ocurrido un error al actualizar la recolección"
           );
           setOpenMessageModal(true);
         });
