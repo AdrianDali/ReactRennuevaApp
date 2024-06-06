@@ -10,7 +10,7 @@ import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function ModalCarrier({ children, mode }) {
+function ModalCarrier({ children, mode, creatorUser }) {
     const [datos, setDatos] = useState([]);
     const [groups, setGroups] = useState([])
     const [users, setUsers] = useState([])
@@ -38,6 +38,7 @@ function ModalCarrier({ children, mode }) {
     const [comments, setComments] = useState("");
     const [razon_social, setRazonSocial] = useState("");
     const [permiso, setPermiso] = useState("");
+    const [creator, setCreator] = useState(creatorUser);
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
@@ -86,6 +87,7 @@ function ModalCarrier({ children, mode }) {
                 comments: e.target.comments.value,
                 razon_social: e.target.razon_social.value,
                 permiso: e.target.permiso.value,
+                creator_user: creator
             };
             console.log("##SDAFS")
             console.log(nuevoDato)
@@ -102,8 +104,19 @@ function ModalCarrier({ children, mode }) {
 
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "EDITAR") {
@@ -144,8 +157,19 @@ function ModalCarrier({ children, mode }) {
                     // Limpiar los campos del formulario
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "BORRAR") {
@@ -169,8 +193,19 @@ function ModalCarrier({ children, mode }) {
 
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
         }
 
         // Limpiar los campos del formulario
