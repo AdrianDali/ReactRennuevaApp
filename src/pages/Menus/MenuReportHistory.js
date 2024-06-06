@@ -45,7 +45,7 @@ function MenuReportHistory() {
   const defaultTheme = createTheme();
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
 
       {dataUser && dataUser.groups[0] === "Administrador" ? (
@@ -121,7 +121,7 @@ function MenuReportHistory() {
           <Typography variant="h5">No Access</Typography>
         </Box>
       )}
-    </ThemeProvider>
+    </>
   );
 }
 

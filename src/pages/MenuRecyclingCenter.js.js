@@ -42,10 +42,9 @@ function MenuRecyclingCenter() {
 
   // ... otros handlers y useEffect ...
 
-  const defaultTheme = createTheme();
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
 
       {dataUser && dataUser.groups[0] === "Administrador" ? (
@@ -120,7 +119,7 @@ function MenuRecyclingCenter() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-    </ThemeProvider>
+    </>
   );
 }
 

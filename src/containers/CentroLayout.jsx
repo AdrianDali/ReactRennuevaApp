@@ -24,6 +24,16 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useAuth from '../hooks/useAuth';
+import theme from '../context/theme';
+import '@fontsource/poppins/100.css';
+import '@fontsource/poppins/200.css';
+import '@fontsource/poppins/300.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+import '@fontsource/poppins/800.css';
+import '@fontsource/poppins/900.css';
 
 
 
@@ -34,7 +44,7 @@ const user = {
     avatar: "/avatar.jpg",
 };
 
-const defaultTheme = createTheme();
+
 const drawerWidth = 300;
 
 const openedMixin = (theme) => ({
@@ -112,7 +122,6 @@ const ProfileSection = ({ open, setOpen, desktop, dataUser }) => (
             }}
         >
             <Avatar
-
                 src={user.avatar}
                 sx={{ width: '64px', mb: 1, height: '64px', transform: !open && 'scale(0.5)', transition: 'transform 0.25s' }}
             />
@@ -238,7 +247,7 @@ export default function CentroLayout({ children, List }) {
 
 
     return (
-        <ThemeProvider theme={defaultTheme}>
+        <ThemeProvider theme={theme}>
             <Box sx={{ bgcolor: (theme) => theme.palette.grey[100] }}>
                 <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 25px 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '5px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Container maxWidth="xl" >

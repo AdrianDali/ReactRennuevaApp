@@ -14,7 +14,7 @@ function OptionButton({ setOpenModal, text, color }) {
       onClick={() => {
         setOpenModal(state => !state);
       }}
-      style={{ backgroundColor: color , color: 'black'}}
+      color={color}
     >
       {text}
     </Button>
@@ -44,7 +44,7 @@ function ActionButtonResponsivaExcel({text, color }) {
         generateExcelResponsiva(); // Llamar a la función para generar Excel
       }
       }
-      style={{ backgroundColor: color , color: 'black'}}
+      color={color}
     >
       {text}
     </Button>
@@ -85,7 +85,7 @@ function ImportExcelButton({ text, color, onImported }) {
       <Button
         variant="contained"
         component="label"
-        style={{ backgroundColor: color, color: 'black' }}
+        color={color}
       >
         {text}
         <input

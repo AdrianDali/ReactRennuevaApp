@@ -46,12 +46,8 @@ function MenuGenerator() {
 
   const dataUser = useAuth();
 
-  // ... otros handlers y useEffect ...
-
-  const defaultTheme = createTheme();
-
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
      
         {dataUser && dataUser.groups[0] === "Administrador" ? (
@@ -141,7 +137,7 @@ function MenuGenerator() {
           </Box>
         )}
       
-    </ThemeProvider>
+    </>
   );
 }
 

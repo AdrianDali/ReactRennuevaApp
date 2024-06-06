@@ -39,10 +39,10 @@ function MenuCompany() {
 
   const dataUser = useAuth();
 
-  const defaultTheme = createTheme();
+
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       {dataUser && dataUser.groups[0] === "Administrador" ? (
      
@@ -117,7 +117,7 @@ function MenuCompany() {
         </Box>
       )}
      
-    </ThemeProvider>
+    </>
   );
 }
 

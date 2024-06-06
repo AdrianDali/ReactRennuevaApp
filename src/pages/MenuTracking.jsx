@@ -55,7 +55,7 @@ function MenuTracking() {
       
 
     return (
-        <ThemeProvider theme={defaultTheme}>
+        <>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
                 <Box
@@ -117,7 +117,7 @@ function MenuTracking() {
                     </Container>
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     );
 }
 

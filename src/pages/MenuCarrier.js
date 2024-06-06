@@ -46,10 +46,10 @@ function MenuCarrier() {
 
   // ... otros handlers y useEffect ...
 
-  const defaultTheme = createTheme();
+ 
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       {dataUsers && dataUsers.groups[0] === "Administrador" ? (
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
@@ -132,7 +132,7 @@ function MenuCarrier() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-    </ThemeProvider>
+    </>
   );
 }
 
