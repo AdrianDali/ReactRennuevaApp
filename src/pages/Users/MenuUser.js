@@ -25,6 +25,7 @@ import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
 import { CommentsDisabledOutlined } from "@mui/icons-material";
+import theme from '../../context/theme';
 
 function MenuUser() {
 
@@ -45,7 +46,7 @@ function MenuUser() {
 
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       {dataUser && dataUser.groups[0] === "Administrador" ? (
       
@@ -133,7 +134,7 @@ function MenuUser() {
           <Typography variant="h5">No Access</Typography>
         </Box>
       )}
-    </ThemeProvider>
+    </>
   );
 }
 

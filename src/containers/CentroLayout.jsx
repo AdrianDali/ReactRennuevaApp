@@ -24,6 +24,16 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import useAuth from '../hooks/useAuth';
+import theme from '../context/theme';
+import '@fontsource/poppins/100.css';
+import '@fontsource/poppins/200.css';
+import '@fontsource/poppins/300.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+import '@fontsource/poppins/800.css';
+import '@fontsource/poppins/900.css';
 
 
 
@@ -34,13 +44,14 @@ const user = {
     avatar: "/avatar.jpg",
 };
 
-const defaultTheme = createTheme();
+
 const drawerWidth = 300;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
     top: '100px',
     left: '10px',
+    bottom: '0',
     borderRadius: '25px',
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
@@ -78,7 +89,14 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
         width: drawerWidth,
         flexShrink: 0,
         whiteSpace: 'nowrap',
+
         boxSizing: 'border-box',
+        '& .MuiPaper-root': {
+            height: 'calc(100% - 100px)',
+            width: drawerWidth,
+            borderRadius: '25px'
+        },
+
         ...(open && {
             ...openedMixin(theme),
             '& .MuiDrawer-paper': openedMixin(theme),
@@ -92,9 +110,9 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 
 
 
-const ProfileSection = ({ open, setOpen, desktop ,dataUser}) => (
+const ProfileSection = ({ open, setOpen, desktop, dataUser }) => (
 
-    <Box sx={{ width: '100%', py: 2 }} role="presentation" onClick={() => setOpen(false)} >
+    <Box sx={{ width: '100%', py: 2, pb: 0 }} role="presentation" onClick={() => setOpen(false)} >
         <Box
             sx={{
                 p: 2,
@@ -104,7 +122,6 @@ const ProfileSection = ({ open, setOpen, desktop ,dataUser}) => (
             }}
         >
             <Avatar
-
                 src={user.avatar}
                 sx={{ width: '64px', mb: 1, height: '64px', transform: !open && 'scale(0.5)', transition: 'transform 0.25s' }}
             />
@@ -148,7 +165,7 @@ const MobileMenu = ({ children, open, setOpen }) => {
 const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
     const theme = useTheme();
     console.log(dataUser);
-    
+
 
     return (
         <StyledDrawer variant="permanent" open={open}>
@@ -158,8 +175,15 @@ const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
                 </IconButton>
             </DrawerHeader>
             <Divider />
-            <ProfileSection open={open} setOpen={setOpen} desktop={true} dataUser = {dataUser}/>
-            {children}
+            <ProfileSection open={open} setOpen={setOpen} desktop={true} dataUser={dataUser} />
+            <Box sx={{
+                height: '100%',
+                overflowY: 'scroll',
+                pb: '1rem',
+            }}>
+                {children}
+            </Box>
+            
         </StyledDrawer>)
 }
 
@@ -171,7 +195,7 @@ export default function CentroLayout({ children, List }) {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [open, setOpen] = useState(false);
     const [desktop, setDesktop] = useState(window.innerWidth > 899);
-    
+
     const dataUser = useAuth();
     console.log(dataUser);
 
@@ -213,22 +237,22 @@ export default function CentroLayout({ children, List }) {
                 setDesktop(false);
             }
         };
-    
+
         window.addEventListener('resize', handleResize);
-    
+
         return () => {
             window.removeEventListener('resize', handleResize);
         }
     }, []);
-    
+
 
     return (
-        <ThemeProvider theme={defaultTheme}>
+        <ThemeProvider theme={theme}>
             <Box sx={{ bgcolor: (theme) => theme.palette.grey[100] }}>
                 <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 25px 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '5px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Container maxWidth="xl" >
                         <Toolbar disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
-                            
+
                             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                                 <IconButton
                                     size="large"

@@ -3,9 +3,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { TodoContext } from '../context/index.js';
 import { OptionButton, ActionButtonOrdersExcel, ImportExcelButton , ActionButtonResponsivaExcel} from '../components/OptionButton';
 import axios from 'axios';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
 
+;
 
 const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
     const {
@@ -135,44 +134,44 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
 
         <div className="create-button">
         {model === 'User' ? (
-        <OptionButton setOpenModal={setOpenModalCreate} text="Crear Usuario" color="#28a745"  />
+        <OptionButton setOpenModal={setOpenModalCreate} text="Crear Usuario" color='success' />
       ): null } 
       {model === 'Group' ? (
-        <OptionButton setOpenModal={setOpenModalCreateGroup} text="Crear Grupo" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateGroup} text="Crear Grupo" color="success" />
       ): null }
       {model === 'Carrier' ? (
-        <OptionButton setOpenModal={setOpenModalCreateCarrier} text="Crear Transportista" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateCarrier} text="Crear Transportista" color="success" />
       ):null}
       {model === 'CollectionCenter' ? (
-        <OptionButton setOpenModal={setOpenModalCreateCollectionCenter} text="Crear Centro de Acopio" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateCollectionCenter} text="Crear Centro de Acopio" color="success" />
       ) : null}
       {model === 'Donor' ? (
-        <OptionButton setOpenModal={setOpenModalCreateDonor} text="Crear Donador" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateDonor} text="Crear Donador" color="success" />
       ): null}
       {model === 'Driver' ? (
-        <OptionButton setOpenModal={setOpenModalCreateDriver} text="Crear Conductor" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateDriver} text="Crear Conductor" color="success" />
       ) : null}
       {model === 'Generator' ? (
         console.log("MODELS"),
-        <OptionButton setOpenModal={setOpenModalCreateGenerator} text="Crear Generador" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateGenerator} text="Crear Generador" color="success" />
       ): null}
       {model === 'RecyclingCenter' ? (
-        <OptionButton setOpenModal={setOpenModalCreateRecyclingCenter} text="Crear Centro de Reciclaje" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateRecyclingCenter} text="Crear Centro de Reciclaje" color="success" />
       ) :null}
       {model === 'Residue' ? (
-        <OptionButton setOpenModal={setOpenModalCreateResidue} text="Crear Residuo" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateResidue} text="Crear Residuo" color="success" />
       ) : null}
       {model === 'Vehicle' ? (
-        <OptionButton setOpenModal={setOpenModalCreateVehicle} text="Crear Vehicle" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateVehicle} text="Crear Vehicle" color="success" />
       ) : null}
       {model === 'Responsiva' ? (
-        <OptionButton setOpenModal={setOpenModalCreateReport} text="Crear responsiva" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateReport} text="Crear responsiva" color="success" />
       ) : null}
       {model === 'Company' ? (
-        <OptionButton setOpenModal={setOpenModalCreateCompany} text="Crear Compañia" color="#28a745" />
+        <OptionButton setOpenModal={setOpenModalCreateCompany} text="Crear Compañia" color="success" />
       ) : null}
       {model === 'ReportHistory' ? (
-        <ImportExcelButton text="Importar Generadores Excel" color="blue" onImported={handleDataImported} />
+        <ImportExcelButton text="Importar Generadores Excel" color="success" onImported={handleDataImported} />
       ) : null}
 
 
@@ -180,81 +179,81 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
       </div>
         <div className="create-button">
         {model === "User"  ? (
-          <OptionButton setOpenModal={setOpenModalEdit} text="Editar Usuario" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEdit} text="Editar Usuario" color="info" />
         ) : null}
         {model === "Group"  ? (
-          <OptionButton setOpenModal={setOpenModalEditGroup} text="Editar Grupo" color="##007bff" />
+          <OptionButton setOpenModal={setOpenModalEditGroup} text="Editar Grupo" color="info" />
         ) : null}
         {model === "Carrier"  ? (
-          <OptionButton setOpenModal={setOpenModalEditCarrier} text="Editar Transportista" color="##007bff" />
+          <OptionButton setOpenModal={setOpenModalEditCarrier} text="Editar Transportista" color="info" />
         ) : null }
         {model === "CollectionCenter"  ? (
-          <OptionButton setOpenModal={setOpenModalEditCollectionCenter} text="Editar Centro de Acopio" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditCollectionCenter} text="Editar Centro de Acopio" color="info" />
         ) : null}
         {model === "Donor"  ? (
-          <OptionButton setOpenModal={setOpenModalEditDonor} text="Editar Donador" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditDonor} text="Editar Donador" color="info" />
         ) : null}
         {model === "Driver"  ? (
-          <OptionButton setOpenModal={setOpenModalEditDriver} text="Editar Conductor" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditDriver} text="Editar Conductor" color="info" />
         ) : null}
         {model === "Generator"  ? (
-          <OptionButton setOpenModal={setOpenModalEditGenerator} text="Editar Generador" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditGenerator} text="Editar Generador" color="info" />
         ): null }
         {model === "RecyclingCenter"  ? (
-          <OptionButton setOpenModal={setOpenModalEditRecyclingCenter} text="Editar Centro de Reciclaje" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditRecyclingCenter} text="Editar Centro de Reciclaje" color="info" />
         ) : null}
         {model === "Residue"  ? (
-          <OptionButton setOpenModal={setOpenModalEditResidue} text="Editar Residuo" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditResidue} text="Editar Residuo" color="info" />
         ) : null}
         {model === "Vehicle"  ? (
-          <OptionButton setOpenModal={setOpenModalEditVehicle} text="Editar Vehicle" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditVehicle} text="Editar Vehicle" color="info" />
         ) : null}
         {model === "Company"  ? (
-          <OptionButton setOpenModal={setOpenModalEditCompany} text="Editar Compañia" color="#007bff" />
+          <OptionButton setOpenModal={setOpenModalEditCompany} text="Editar Compañia" color="info" />
         ) : null}
         {/* {model === 'ReportHistory' ? (
         <ImportExcelButton text="Importar Centros de Recoleccion Excel" color="blue" onImported={handleDataImported} />
       ) : null} */}
       {model === 'ReportHistory' ? (
-        <div className="create-button">  <ImportExcelButton text="Importar Responsivas Excel" color="blue" onImported={handleDataImported} /> </div>
+        <div className="create-button">  <ImportExcelButton text="Importar Responsivas Excel" color="success" onImported={handleDataImported} /> </div>
       ) : null}
       
 
       </div>
         <div className="create-button">
         {model === "User" ? (
-          <OptionButton setOpenModal={setOpenModalDelete} text="Borrar Usuario" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDelete} text="Borrar Usuario" color="error" />
         ): null}
         {model === "Group" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteGroup} text="Borrar Grupo" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteGroup} text="Borrar Grupo" color="error" />
         ): null}
         {model === "Carrier" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteCarrier} text="Borrar Transportista" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteCarrier} text="Borrar Transportista" color="error" />
         ): null}
         {model === "CollectionCenter" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteCollectionCenter} text="Borrar Centro de Acopio" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteCollectionCenter} text="Borrar Centro de Acopio" color="error" />
         ): null}
         {model === "Driver" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteDriver} text="Borrar Conductor" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteDriver} text="Borrar Conductor" color="error" />
         ): null}
         {model === "Generator" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteGenerator} text="Borrar Generador" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteGenerator} text="Borrar Generador" color="error" />
         ): null}
         {model === "RecyclingCenter" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteRecyclingCenter} text="Borrar Centro de Reciclaje" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteRecyclingCenter} text="Borrar Centro de Reciclaje" color="error" />
         ): null}
         {model === "Residue" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteResidue} text="Borrar Residuo" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteResidue} text="Borrar Residuo" color="error" />
         ): null}
         {model === "Vehicle" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteVehicle} text="Borrar Vehicle" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteVehicle} text="Borrar Vehicle" color="error" />
         ): null}
         {model === "Company" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteCompany} text="Borrar Compañia" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteCompany} text="Borrar Compañia" color="error" />
         ): null}
       
         {model === "ReportHistory" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteVehicle} text="Borrar Historial de Reportes" color="#dc3545" />
+          <OptionButton setOpenModal={setOpenModalDeleteVehicle} text="Borrar Historial de Reportes" color="error" />
         ): null}
 
       </div>
@@ -263,7 +262,7 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
         
         <ActionButtonResponsivaExcel 
         text="Exportar a Excel"
-        color="#28a745"
+        color="primary"
         
       />
         

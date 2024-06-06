@@ -568,7 +568,7 @@ function MenuReport() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
      
         <CssBaseline />
       
@@ -1047,8 +1047,7 @@ function MenuReport() {
             </Dialog>
           )}
         </Container>
-      
-    </ThemeProvider>
+    </>
   );
 }
 
