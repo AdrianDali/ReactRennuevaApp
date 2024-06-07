@@ -59,9 +59,9 @@ function MenuCollectionCenter() {
                     justifyContent: 'center'
                   }}
                 >
-                  <Title>Centros de Recoleccion</Title>
+                  <Title>Centros de Acopio</Title>
                   <CUDButtons model="CollectionCenter" />
-                  <Title>Centros Creados</Title>
+                  <Title>Centros de acopio creados</Title>
                   <CollectionCenterTable />
                 </Paper>
               </Grid>
