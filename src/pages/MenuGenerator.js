@@ -46,12 +46,8 @@ function MenuGenerator() {
 
   const dataUser = useAuth();
 
-  // ... otros handlers y useEffect ...
-
-  const defaultTheme = createTheme();
-
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
      
         {dataUser && dataUser.groups[0] === "Administrador" ? (
@@ -91,17 +87,17 @@ function MenuGenerator() {
             </Grid>
 
             {openModalCreateGenerator && (
-              <ModalGenerator mode={"CREAR"}>
+              <ModalGenerator mode={"CREAR"} creatorUser={dataUser.user}>
                 La funcionalidad de agregar TODO
               </ModalGenerator>
             )}
             {openModalEditGenerator && (
-              <ModalGenerator mode={"EDITAR"}>
+              <ModalGenerator mode={"EDITAR"} creatorUser={dataUser.user}>
                 La funcionalidad de editar TODO
               </ModalGenerator>
             )}
             {openModalDeleteGenerator && (
-              <ModalGenerator mode={"BORRAR"}>
+              <ModalGenerator mode={"BORRAR"} creatorUser={dataUser.user}>
                 La funcionalidad de borrar TODO
               </ModalGenerator>
             )}
@@ -141,7 +137,7 @@ function MenuGenerator() {
           </Box>
         )}
       
-    </ThemeProvider>
+    </>
   );
 }
 

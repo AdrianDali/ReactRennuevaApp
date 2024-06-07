@@ -42,10 +42,9 @@ function MenuGroups() {
 
   const dataUser = useAuth();
 
-  const defaultTheme = createTheme();
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       {dataUser && dataUser.groups[0] === "Administrador" ? (
         <Container
@@ -89,17 +88,17 @@ function MenuGroups() {
             </Grid>
           </Grid>
           {openModalCreateGroup && (
-            <ModalGroup mode={"CREAR"}>
+            <ModalGroup mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
             </ModalGroup>
           )}
           {openModalEditGroup && (
-            <ModalGroup mode={"EDITAR"}>
+            <ModalGroup mode={"EDITAR"} creatorUser={dataUser.user}>
               La funcionalidad de editar TODO
             </ModalGroup>
           )}
           {openModalDeleteGroup && (
-            <ModalGroup mode={"BORRAR"}>
+            <ModalGroup mode={"BORRAR"} creatorUser={dataUser.user}>
               La funcionalidad de borrar TODO
             </ModalGroup>
           )}
@@ -136,7 +135,7 @@ function MenuGroups() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-    </ThemeProvider>
+    </>
   );
 }
 

@@ -46,10 +46,10 @@ function MenuCarrier() {
 
   // ... otros handlers y useEffect ...
 
-  const defaultTheme = createTheme();
+ 
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       {dataUsers && dataUsers.groups[0] === "Administrador" ? (
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
@@ -85,17 +85,17 @@ function MenuCarrier() {
           </Grid>
 
           {openModalCreateCarrier && (
-            <ModalCarrier mode={"CREAR"}>
+            <ModalCarrier mode={"CREAR"} creatorUser={dataUsers.user}> 
               La funcionalidad de agregar TODO
             </ModalCarrier>
           )}
           {openModalEditCarrier && (
-            <ModalCarrier mode={"EDITAR"}>
+            <ModalCarrier mode={"EDITAR"} creatorUser={dataUsers.user}>
               La funcionalidad de editar TODO
             </ModalCarrier>
           )}
           {openModalDeleteCarrier && (
-            <ModalCarrier mode={"BORRAR"}>
+            <ModalCarrier mode={"BORRAR"} creatorUser={dataUsers.user}>
               La funcionalidad de borrar TODO
             </ModalCarrier>
           )}
@@ -132,7 +132,7 @@ function MenuCarrier() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-    </ThemeProvider>
+    </>
   );
 }
 

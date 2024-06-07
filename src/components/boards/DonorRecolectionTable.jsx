@@ -48,7 +48,39 @@ function Row(props) {
     setTextOpenModalText,
   } = useContext(TodoContext);
 
+  const statusText = (status) => {
+    switch (status) {
+        case 'solicitado':
+            return 'Solicitada'
+        case 'pendienteRecoleccion':
+            return 'Pendiente de recolección'
+        case 'recolectada':
+            return 'Recolectada'
+        case 'cancelado':
+            return 'Cancelada'
+        case 'entregadaCentro':
+            return 'Entregada al centro'
+        default:
+            return 'indefinido'
+    }
+}
 
+const statusColor = (status) => {
+    switch (status) {
+        case 'solicitada':
+            return '#0588d1'
+        case 'pendienteRecoleccion':
+            return '#ed6c03'
+        case 'recolectada':
+            return '#2e7d32'
+        case 'cancelado':
+            return 'error'
+        case 'entregadaCentro':
+            return '#2e7d32'
+        default:
+            return '#0588d1'
+    }
+}
 
   function createData(name, calories, fat, carbs, protein, price) {
     return {
@@ -134,9 +166,6 @@ const rows = [
                     <TableCell>{row.fecha}</TableCell>
                     <TableCell>{row.direccion_completa}</TableCell>
                     <TableCell>{row.peso_estimado}</TableCell>
-
-                    
-
                     <TableCell>
                       <Button
                         color={
@@ -186,11 +215,7 @@ const rows = [
                     </TableCell>
                     <TableCell
                       bgcolor={
-                        row.status === "solicitado"
-                          ? "#008000"
-                          : row.status === "pendienteRecoleccion"
-                          ? "#FFA500"
-                          : "#FF0000"
+                        statusColor(row.status)
                       }
                       sx={{
                         borderRadius: "10px", // Adjust the radius to your preference
@@ -206,9 +231,7 @@ const rows = [
                         // Add more styles here
                       }}
                     >
-                      {row.status === "pendienteRecoleccion"
-                        ? "pendiente"
-                        : row.status}
+                      {statusText(row.status)}
                     </TableCell>
       </TableRow>
       <TableRow>
@@ -315,6 +338,7 @@ const DonorRecolectionTable = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [recolectionToEdit, setRecolectionToEdit] = useState(null);
   const [filterClient, setFilterClient] = useState(null);
+  const [auxClientes, setAuxClientes] = useState(null);
 
 
   useEffect(() => {
@@ -324,7 +348,7 @@ const DonorRecolectionTable = () => {
         console.log("Donor recolection data");
         console.log(response.data.ordenes);
         setClientes(response.data.ordenes);
-
+        setAuxClientes(response.data.ordenes);
         setUpdateDonorInfo(false);
       })
       .catch((error) => {
@@ -385,7 +409,7 @@ const DonorRecolectionTable = () => {
                 console.log(value);
                 console.log (value.email);
                 setFilterClient(value.email);
-                setClientes(clientes.filter((cliente) => cliente.donador === value.email) );
+                setClientes(auxClientes.filter((cliente) => cliente.donador === value.email) );
                 
                   
               } else {
@@ -395,6 +419,7 @@ const DonorRecolectionTable = () => {
                     console.log("Donor recolection data");
                     console.log(response.data.ordenes);
                     setClientes(response.data.ordenes);
+                    setAuxClientes(response.data.ordenes);
                     setFilterClient(null);
                   })
                   .catch((error) => {

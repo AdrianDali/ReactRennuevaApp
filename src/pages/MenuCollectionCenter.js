@@ -41,10 +41,9 @@ function MenuCollectionCenter() {
 
   // ... otros handlers y useEffect ...
 
-  const defaultTheme = createTheme();
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       {dataUser && dataUser.groups[0] === "Administrador" ? (
       
@@ -118,7 +117,7 @@ function MenuCollectionCenter() {
           </Box>
         )}
 
-    </ThemeProvider>
+    </>
   );
 }
 

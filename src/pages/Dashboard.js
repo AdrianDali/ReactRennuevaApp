@@ -15,6 +15,7 @@ import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollec
 import { useNavigate } from 'react-router-dom';
 import Title from '../components/Title';
 import useAuth from "../hooks/useAuth.js";
+import theme from '../context/theme';
 
 
 
@@ -32,20 +33,17 @@ function Copyright(props) {
 }
 
 
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
-
 export default function Dashboard() {
   const dataUser = useAuth();
 
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       
       {dataUser && dataUser.groups[0] === "Administrador" ? (
      
-     <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
+     <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3, bgcolor: 'background.default', minHeight: '100%'}}>
      <Grid container spacing={2}>
             {/* Chart */}
             <Grid item xs={12} md={8} lg={8}>

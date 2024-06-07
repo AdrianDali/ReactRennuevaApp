@@ -42,12 +42,10 @@ function MenuDriver() {
 
   const dataUser = useAuth();
 
-  //... otros handlers y useEffect ...
 
-  const defaultTheme = createTheme();
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       {dataUser && dataUser.groups[0] === "Administrador" ? (
         <Container
@@ -78,7 +76,7 @@ function MenuDriver() {
                   display: "flex",
                   flexDirection: "column",
                   height: 580,
-                }}
+                }}l
               >
                 <BarsChartCarrier />
               </Paper>
@@ -86,17 +84,17 @@ function MenuDriver() {
           </Grid>
 
           {openModalCreateDriver && (
-            <ModalDriver mode={"CREAR"}>
+            <ModalDriver mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
             </ModalDriver>
           )}
           {openModalEditDriver && (
-            <ModalDriver mode={"EDITAR"}>
+            <ModalDriver mode={"EDITAR"} creatorUser={dataUser.user}>
               La funcionalidad de editar TODO
             </ModalDriver>
           )}
           {openModalDeleteDriver && (
-            <ModalDriver mode={"BORRAR"}>
+            <ModalDriver mode={"BORRAR"} creatorUser={dataUser.user}>
               La funcionalidad de borrar TODO
             </ModalDriver>
           )}
@@ -133,7 +131,7 @@ function MenuDriver() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-    </ThemeProvider>
+    </>
   );
 }
 

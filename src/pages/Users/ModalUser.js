@@ -14,7 +14,7 @@ import { Group } from '@mui/icons-material';
 
 
 
-function ModalUser({ children, mode }) {
+function ModalUser({ children, mode , creatorUser}) {
   const [datos, setDatos] = useState([""]);
   const [groups, setGroups] = useState([""])
   const [users, setUsers] = useState([""])
@@ -41,7 +41,9 @@ function ModalUser({ children, mode }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [address_num_ext, setAddressNumExt] = useState("");
   const [address_reference, setAddressReference] = useState("");
-
+  const [permisos , setPermisos] = useState([{"name": "Lectura"}, {"name" : "Escritura"}])
+  const [permiso, setPermiso] = useState("Lectura")
+  const [creator , setCreator] = useState(creatorUser)
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -84,6 +86,12 @@ function ModalUser({ children, mode }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    console.log("###################### SUBMIT ##################################")
+    console.log(creatorUser)
+    
+
+
     if (mode === "CREAR") {
       var rfcValue = e.target.rfc.value
       if (!rfcValue) {
@@ -110,6 +118,8 @@ function ModalUser({ children, mode }) {
         address_lat: 0,
         address_lng: 0,
         razon_social: e.target.razon_social.value,
+        user_permissions: permiso,
+        creator_user: creator
       };
 
 
@@ -126,9 +136,18 @@ function ModalUser({ children, mode }) {
 
         })
         .catch(error => {
+          console.error("############################");
           setOpenModalText(true);
-          setTextOpenModalText("Algo salio mal. Intenta de nuevo \n  " + error + " ")
-          console.error(error);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
 
     }
@@ -161,6 +180,9 @@ function ModalUser({ children, mode }) {
         address_lng: 0,
         razon_social: e.target.razon_social.value,
         antiguoUser: old_user,
+        user_permissions: permiso,
+        creator_user: creatorUser
+
       };
 
       console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF")
@@ -179,7 +201,18 @@ function ModalUser({ children, mode }) {
           // Limpiar los campos del formulario
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
 
     }
@@ -188,13 +221,15 @@ function ModalUser({ children, mode }) {
       var user_ant = antiguo_user ? antiguo_user.value : null;
 
       const deleteDato = {
-        user: user
+        email: user,
+        creator_user: creatorUser
       }
 
       axios
         .put(`${process.env.REACT_APP_API_URL}/delete-django-user/`, deleteDato)
         .then(response => {
           const data = response.data;
+          console.log("###################### DELETE ##################################")
           console.log(data)
           setOpenModalText(true);
           setTextOpenModalText("Usuario borrado correctamente")
@@ -204,7 +239,18 @@ function ModalUser({ children, mode }) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
 
@@ -233,6 +279,7 @@ function ModalUser({ children, mode }) {
         // en el mismo orden en que fueron añadidas en Promise.all
 
         const groupsData = responses[0].data;
+        console.log(responses[0].data)
         const usersData = responses[1].data;
         const companiesData = responses[2].data;
 
@@ -305,6 +352,9 @@ function ModalUser({ children, mode }) {
     setAddressReference(datoEncontrado.address_reference);
     setOldUser(selectedOption);
     setRazonSocial(datoEncontrado.razon_social)
+    console.log("PERMISOS")
+    console.log(datoEncontrado.user_permissions)
+    setPermiso(datoEncontrado.user_permissions)
 
 
 
@@ -443,6 +493,25 @@ function ModalUser({ children, mode }) {
               onChange={(e) => handleInputChange(e, setEmail, mode)}
               margin="dense"
             />
+
+            <FormControl fullWidth mt={2} mb={2}>
+              <InputLabel id="rol-select-label">Permisos</InputLabel>
+              <Select
+                labelId="rol-select-label"
+                id="rol-select"
+                required
+                value={permiso}
+                onChange={(e) => {
+                  handleInputChange(e, setPermiso, mode)
+                  // handleGroupChange(e)
+                }}
+              >
+                {permisos.map((name, index) => (
+                  <MenuItem key={index} value={name.name}>{name.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
 
             {mode === "CREAR" ? (
               <TextField

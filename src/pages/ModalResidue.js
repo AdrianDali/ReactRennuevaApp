@@ -6,12 +6,12 @@ import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabe
 import Title from '../components/Title';
 import { TodoContext } from '../context/index.js';
 
-function ModalResidue({ children, mode }) {
+function ModalResidue({ children, mode, creatorUser }) {
   const [residues, setResidues] = useState([]);
   const [residue, setResidue] = useState("");
   const [oldResidue, setOldResidue] = useState("");
   const [descripcion, setDescripcion] = useState("");
-
+  const [creator, setCreator] = useState(creatorUser);
   const { setUpdateResidueInfo,openModalCreateResidue, setOpenModalText, setTextOpenModalText, setOpenModalCreateResidue, openModalEditResidue, setOpenModalEditResidue, openModalDeleteResidue, setOpenModalDeleteResidue } = useContext(TodoContext);
 
   const closeModal = () => {
@@ -53,6 +53,7 @@ function ModalResidue({ children, mode }) {
         .post(`${process.env.REACT_APP_API_URL}/create-residue/`, {
           nombre: e.target.nombre.value,
           descripcion: e.target.descripcion.value,
+          creator_user: creator
         })
         .then(response => {
           const data = response.data;
@@ -68,12 +69,23 @@ function ModalResidue({ children, mode }) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     if (mode === "EDITAR") {
       axios
-        .put(`${process.env.REACT_APP_API_URL}/update-residue/`, { antiguoNombre : oldResidue, nombre: e.target.nombre.value, descripcion: e.target.descripcion.value})
+        .put(`${process.env.REACT_APP_API_URL}/update-residue/`, { antiguoNombre : oldResidue, nombre: e.target.nombre.value, descripcion: e.target.descripcion.value, creator_user: creator})
         .then(response => {
           const data = response.data;
           console.log(data)
@@ -84,12 +96,23 @@ function ModalResidue({ children, mode }) {
           // Limpiar los campos del formulario
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     if (mode === "BORRAR") {
       axios
-        .put(`${process.env.REACT_APP_API_URL}/delete-residue/`, { nombre: e.target.nombre.value})
+        .put(`${process.env.REACT_APP_API_URL}/delete-residue/`, { nombre: e.target.nombre.value, creator_user: creator})
         .then(response => {
           const data = response.data;
           console.log(data)
@@ -101,7 +124,18 @@ function ModalResidue({ children, mode }) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     e.target.reset();
