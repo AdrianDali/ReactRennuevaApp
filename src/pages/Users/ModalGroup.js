@@ -6,12 +6,13 @@ import axios from 'axios';
 import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
 import Title from '../../components/Title';
 
-function ModalGroup({ children, mode }) {
+function ModalGroup({ children, mode, creatorUser }) {
   const [groups, setGroups] = useState([]);
   const [group, setGroup] = useState("");
   const [old_group, setOldGroup] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const [groupKey, setGroupKey] = useState("")
+  const [creator, setCreator] = useState(creatorUser);
 
   const { setUpdateGroupInfo,openModalCreateGroup, setOpenModalText, setTextOpenModalText, setOpenModalCreateGroup, openModalEditGroup, setOpenModalEditGroup, openModalDeleteGroup, setOpenModalDeleteGroup } = useContext(TodoContext);
 
@@ -33,7 +34,8 @@ function ModalGroup({ children, mode }) {
 
     const nuevoDato = {
       name: group,
-      group_key: groupKey
+      group_key: groupKey,
+      creator_user: creator
     };
 
     const antiguo_user = document.getElementById("mySelect")
@@ -42,10 +44,12 @@ function ModalGroup({ children, mode }) {
     const editarDato = {
       name: group,
       antiguoName: old_group,
-      group_key: groupKey
+      group_key: groupKey, 
+      creator_user: creator
     };
     const borrarDato = {
       name: old_group ? old_group : user_ant,
+      creator_user: creator
     };
 
     if (mode === "CREAR") {
@@ -64,7 +68,18 @@ function ModalGroup({ children, mode }) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     if (mode === "EDITAR") {
@@ -81,7 +96,18 @@ function ModalGroup({ children, mode }) {
           // Limpiar los campos del formulario
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     if (mode === "BORRAR") {
@@ -98,7 +124,18 @@ function ModalGroup({ children, mode }) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
 

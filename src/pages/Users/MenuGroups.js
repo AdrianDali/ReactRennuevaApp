@@ -88,17 +88,17 @@ function MenuGroups() {
             </Grid>
           </Grid>
           {openModalCreateGroup && (
-            <ModalGroup mode={"CREAR"}>
+            <ModalGroup mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
             </ModalGroup>
           )}
           {openModalEditGroup && (
-            <ModalGroup mode={"EDITAR"}>
+            <ModalGroup mode={"EDITAR"} creatorUser={dataUser.user}>
               La funcionalidad de editar TODO
             </ModalGroup>
           )}
           {openModalDeleteGroup && (
-            <ModalGroup mode={"BORRAR"}>
+            <ModalGroup mode={"BORRAR"} creatorUser={dataUser.user}>
               La funcionalidad de borrar TODO
             </ModalGroup>
           )}
