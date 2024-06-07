@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import Title from "../components/Title";
 
-function ModalRecyclingCenter({ children, mode }) {
+function ModalRecyclingCenter({ children, mode , creatorUser}) {
   const [datos, setDatos] = useState([]);
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -43,7 +43,7 @@ function ModalRecyclingCenter({ children, mode }) {
   const [idCenter, setIdCenter] = useState("");
   const [key, setKey] = useState("");
   const [permisos, setPermisos] = useState([]);
-
+  const [creator , setCreator] = useState(creatorUser)
 
   const {
     setUpdateRecyclingCenterInfo,
@@ -113,6 +113,7 @@ function ModalRecyclingCenter({ children, mode }) {
         address_lat: 0,
         address_lng: 0,
         recycling_center_key: key,
+        creator_user: creator,
         recycling_center_permiso: 
           permisos.map((permiso) => {
             return {
@@ -140,9 +141,20 @@ function ModalRecyclingCenter({ children, mode }) {
           e.target.reset();
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "EDITAR") {
       var rfcValue = e.target.rfc.value;
@@ -170,6 +182,7 @@ function ModalRecyclingCenter({ children, mode }) {
         address_lng: 0,
         recycling_center_id: idCenter,
         recycling_center_key: key,
+        creator_user: creator,
         recycling_center_permiso: 
           permisos.map((permiso) => {
             return {
@@ -196,9 +209,20 @@ function ModalRecyclingCenter({ children, mode }) {
           closeModal();
           // Limpiar los campos del formulario
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "BORRAR") {
       const antiguo_user = document.getElementById("user-select");
@@ -206,6 +230,7 @@ function ModalRecyclingCenter({ children, mode }) {
 
       const deleteDato = {
         recycling_center_id: idCenter,
+        creator_user: creator
       };
 
       axios
@@ -222,9 +247,20 @@ function ModalRecyclingCenter({ children, mode }) {
           e.target.reset();
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
 
     // Limpiar los campos del formulario

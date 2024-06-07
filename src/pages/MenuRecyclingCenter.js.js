@@ -72,17 +72,17 @@ function MenuRecyclingCenter() {
           </Grid>
 
           {openModalCreateRecyclingCenter && (
-            <ModalRecyclingCenter mode={"CREAR"}>
+            <ModalRecyclingCenter mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
             </ModalRecyclingCenter>
           )}
           {openModalEditRecyclingCenter && (
-            <ModalRecyclingCenter mode={"EDITAR"}>
+            <ModalRecyclingCenter mode={"EDITAR"} creatorUser={dataUser.user}>
               La funcionalidad de editar TODO
             </ModalRecyclingCenter>
           )}
           {openModalDeleteRecyclingCenter && (
-            <ModalRecyclingCenter mode={"BORRAR"}>
+            <ModalRecyclingCenter mode={"BORRAR"} creatorUser={dataUser.user}>
               La funcionalidad de borrar TODO
             </ModalRecyclingCenter>
           )}
