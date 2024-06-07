@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
 import Title from '../components/Title';
 
-function ModalVehicle({ children, mode }) {
+function ModalVehicle({ children, mode, creatorUser }) {
   const [vehicles, setVehicles] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [driver, setDriver] = useState("");
@@ -19,6 +19,7 @@ function ModalVehicle({ children, mode }) {
     const [placas, setPlacas] = useState("");
     const [capacidad, setCapacidad] = useState("");
     const [permiso, setPermiso] = useState("");
+    const [creator, setCreator] = useState(creatorUser);
 
 
 
@@ -47,7 +48,8 @@ function ModalVehicle({ children, mode }) {
       placas: e.target.placas.value,
       capacidad: e.target.capacidad.value,
       idConductor: id,
-      permiso: e.target.permiso.value
+      permiso: e.target.permiso.value,
+      creator_user: creator
     };
     const editarDato = {
         modelo: e.target.nombre.value,
@@ -55,7 +57,8 @@ function ModalVehicle({ children, mode }) {
         capacidad: e.target.capacidad.value,
         idConductor: id,
         antiguasPlacas: oldVehicle,
-        permiso: e.target.permiso.value
+        permiso: e.target.permiso.value,
+        creator_user: creator
         };
         
 
@@ -86,7 +89,18 @@ function ModalVehicle({ children, mode }) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     if (mode === "EDITAR") {
@@ -103,12 +117,23 @@ function ModalVehicle({ children, mode }) {
           // Limpiar los campos del formulario
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     if (mode === "BORRAR") {
       axios
-        .post(`${process.env.REACT_APP_API_URL}/delete-vehicle/`, { placas: oldVehicle})
+        .post(`${process.env.REACT_APP_API_URL}/delete-vehicle/`, { placas: oldVehicle, creator_user: creator })
         .then(response => {
           const data = response.data;
           console.log(data)
@@ -121,7 +146,18 @@ function ModalVehicle({ children, mode }) {
 
         })
         .catch(error => {
-          console.error(error);
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
         })
     }
     e.target.reset();

@@ -72,17 +72,17 @@ function MenuVehicle() {
             </Grid>
 
             {openModalCreateVehicle && (
-              <ModalVehicle mode={"CREAR"}>
+              <ModalVehicle mode={"CREAR"} creatorUser={dataUser.user}>
                 La funcionalidad de agregar TODO
               </ModalVehicle>
             )}
             {openModalEditVehicle && (
-              <ModalVehicle mode={"EDITAR"}>
+              <ModalVehicle mode={"EDITAR"} creatorUser={dataUser.user}>
                 La funcionalidad de editar TODO
               </ModalVehicle>
             )}
             {openModalDeleteVehicle && (
-              <ModalVehicle mode={"BORRAR"}>
+              <ModalVehicle mode={"BORRAR"} creatorUser={dataUser.user}>
                 La funcionalidad de borrar TODO
               </ModalVehicle>
             )}
