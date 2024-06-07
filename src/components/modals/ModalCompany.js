@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import Title from "../../components/Title.js";
 
-function ModalCompany({ children, mode }) {
+function ModalCompany({ children, mode, creatorUser }) {
   const [datos, setDatos] = useState([]);
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -26,6 +26,7 @@ function ModalCompany({ children, mode }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [companyOldName, setCompanyOldName] = useState("");
 
+  const [creator , setCreator] = useState(creatorUser)
 
 
     const [companyName, setCompanyName] = useState("");
@@ -75,6 +76,7 @@ function ModalCompany({ children, mode }) {
             CompanyMainWeb: companyMainWeb,
             CompanySecondWeb: companySecondWeb,
             CompanyFontName: companyFontName,
+            creator_user: creator
         };
 
       axios
@@ -89,9 +91,20 @@ function ModalCompany({ children, mode }) {
 
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "EDITAR") {
       const editarDato = {
@@ -102,7 +115,8 @@ function ModalCompany({ children, mode }) {
             CompanyMainWeb: companyMainWeb,
             CompanySecondWeb: companySecondWeb,
             CompanyFontName: companyFontName,
-            CompanyNewName: companyName
+            CompanyNewName: companyName,
+            creator_user: creator
       };
       console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
       console.log(editarDato);
@@ -119,14 +133,26 @@ function ModalCompany({ children, mode }) {
           closeModal();
           // Limpiar los campos del formulario
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "BORRAR") {
 
       const deleteDato = {
         CompanyName: companyOldName,
+        creator_user: creator
       };
 
       axios
@@ -141,9 +167,20 @@ function ModalCompany({ children, mode }) {
           e.target.reset();
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
 
     // Limpiar los campos del formulario
