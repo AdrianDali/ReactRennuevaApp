@@ -10,7 +10,7 @@ import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function ModalCarrier({ children, mode }) {
+function ModalCarrier({ children, mode, creatorUser }) {
     const [datos, setDatos] = useState([]);
     const [groups, setGroups] = useState([])
     const [users, setUsers] = useState([])
@@ -37,7 +37,9 @@ function ModalCarrier({ children, mode }) {
     const [old_user, setOldUser] = useState("");
     const [comments, setComments] = useState("");
     const [razon_social, setRazonSocial] = useState("");
-    const [permiso, setPermiso] = useState("");
+    const [permisos , setPermisos] = useState([{"name": "Lectura"}, {"name" : "Escritura"}])
+  const [permiso, setPermiso] = useState("Lectura")
+    const [creator, setCreator] = useState(creatorUser);
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
@@ -85,7 +87,10 @@ function ModalCarrier({ children, mode }) {
                 rfc: rfcValue,
                 comments: e.target.comments.value,
                 razon_social: e.target.razon_social.value,
-                permiso: e.target.permiso.value,
+                //permiso: e.target.permiso.value,
+                
+                user_permission: permiso,
+                creator_user: creator
             };
             console.log("##SDAFS")
             console.log(nuevoDato)
@@ -102,8 +107,19 @@ function ModalCarrier({ children, mode }) {
 
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "EDITAR") {
@@ -123,7 +139,11 @@ function ModalCarrier({ children, mode }) {
                 rfc: rfcValue,
                 comments: e.target.comments.value,
                 razon_social: e.target.razon_social.value,
-                permiso: e.target.permiso.value,
+
+                //permiso: e.target.permiso.value,
+
+                user_permission: permiso,
+                creator_user: creator,
 
 
                 old_user: old_user,
@@ -144,8 +164,19 @@ function ModalCarrier({ children, mode }) {
                     // Limpiar los campos del formulario
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
 
         }
         if (mode === "BORRAR") {
@@ -153,7 +184,8 @@ function ModalCarrier({ children, mode }) {
             var user_ant = antiguo_user ? antiguo_user.value : null;
 
             const deleteDato = {
-                user: old_user
+                email: old_user,
+                creator_user: creator
             }
 
             axios
@@ -169,8 +201,19 @@ function ModalCarrier({ children, mode }) {
 
                 })
                 .catch(error => {
-                    console.error(error);
-                })
+                    console.error("############################");
+                    setOpenModalText(true);
+              
+                    // Check if error response and data exist
+                    if (error.response && error.response.data) {
+                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                    } else {
+                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                    }
+              
+                    console.error(error.response);
+                  })
         }
 
         // Limpiar los campos del formulario
@@ -418,15 +461,24 @@ function ModalCarrier({ children, mode }) {
                                 onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
                                 margin="dense"
                             />
-                            <TextField
-                                label="Permiso"
-                                name="permiso"
-                                required
-                                fullWidth
-                                value={permiso}
-                                onChange={(e) => handleInputChange(e, setPermiso, mode)}
-                                margin="dense"
-                            />
+                            
+                            <FormControl fullWidth mt={2} mb={2}>
+              <InputLabel id="rol-select-label">Permisos</InputLabel>
+              <Select
+                labelId="rol-select-label"
+                id="rol-select"
+                required
+                value={permiso}
+                onChange={(e) => {
+                  handleInputChange(e, setPermiso, mode)
+                  // handleGroupChange(e)
+                }}
+              >
+                {permisos.map((name, index) => (
+                  <MenuItem key={index} value={name.name}>{name.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
                         </FormControl>
 
                     </Box>

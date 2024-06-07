@@ -84,17 +84,17 @@ function MenuResidue() {
               </Grid>
             </Grid>
             {openModalCreateResidue && (
-              <ModalResidue mode={"CREAR"}>
+              <ModalResidue mode={"CREAR"} creatorUser={dataUser.user}>
                 La funcionalidad de agregar TODO
               </ModalResidue>
             )}
             {openModalEditResidue && (
-              <ModalResidue mode={"EDITAR"}>
+              <ModalResidue mode={"EDITAR"}creatorUser={dataUser.user}>
                 La funcionalidad de editar TODO
               </ModalResidue>
             )}
             {openModalDeleteResidue && (
-              <ModalResidue mode={"BORRAR"}>
+              <ModalResidue mode={"BORRAR"} creatorUser={dataUser.user}>
                 La funcionalidad de borrar TODO
               </ModalResidue>
             )}
