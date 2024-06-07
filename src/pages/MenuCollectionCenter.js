@@ -69,17 +69,17 @@ function MenuCollectionCenter() {
             </Grid>
           
           {openModalCreateCollectionCenter && (
-            < ModalCollectionCenter mode={"CREAR"}>
+            < ModalCollectionCenter mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
             </ ModalCollectionCenter >
           )}
           {openModalEditCollectionCenter && (
-            < ModalCollectionCenter mode={"EDITAR"}>
+            < ModalCollectionCenter mode={"EDITAR"} creatorUser={dataUser.user}>
               La funcionalidad de editar TODO
             </ ModalCollectionCenter >
           )}
           {openModalDeleteCollectionCenter && (
-            <ModalCollectionCenter mode={"BORRAR"}>
+            <ModalCollectionCenter mode={"BORRAR"} creatorUser={dataUser.user}>
               La funcionalidad de borrar TODO
             </ ModalCollectionCenter >
           )}
