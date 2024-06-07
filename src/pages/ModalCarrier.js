@@ -37,7 +37,8 @@ function ModalCarrier({ children, mode, creatorUser }) {
     const [old_user, setOldUser] = useState("");
     const [comments, setComments] = useState("");
     const [razon_social, setRazonSocial] = useState("");
-    const [permiso, setPermiso] = useState("");
+    const [permisos , setPermisos] = useState([{"name": "Lectura"}, {"name" : "Escritura"}])
+  const [permiso, setPermiso] = useState("Lectura")
     const [creator, setCreator] = useState(creatorUser);
 
     const togglePasswordVisibility = () => {
@@ -86,7 +87,9 @@ function ModalCarrier({ children, mode, creatorUser }) {
                 rfc: rfcValue,
                 comments: e.target.comments.value,
                 razon_social: e.target.razon_social.value,
-                permiso: e.target.permiso.value,
+                //permiso: e.target.permiso.value,
+                
+                user_permission: permiso,
                 creator_user: creator
             };
             console.log("##SDAFS")
@@ -136,7 +139,11 @@ function ModalCarrier({ children, mode, creatorUser }) {
                 rfc: rfcValue,
                 comments: e.target.comments.value,
                 razon_social: e.target.razon_social.value,
-                permiso: e.target.permiso.value,
+
+                //permiso: e.target.permiso.value,
+
+                user_permission: permiso,
+                creator_user: creator,
 
 
                 old_user: old_user,
@@ -177,7 +184,8 @@ function ModalCarrier({ children, mode, creatorUser }) {
             var user_ant = antiguo_user ? antiguo_user.value : null;
 
             const deleteDato = {
-                user: old_user
+                email: old_user,
+                creator_user: creator
             }
 
             axios
@@ -453,15 +461,24 @@ function ModalCarrier({ children, mode, creatorUser }) {
                                 onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
                                 margin="dense"
                             />
-                            <TextField
-                                label="Permiso"
-                                name="permiso"
-                                required
-                                fullWidth
-                                value={permiso}
-                                onChange={(e) => handleInputChange(e, setPermiso, mode)}
-                                margin="dense"
-                            />
+                            
+                            <FormControl fullWidth mt={2} mb={2}>
+              <InputLabel id="rol-select-label">Permisos</InputLabel>
+              <Select
+                labelId="rol-select-label"
+                id="rol-select"
+                required
+                value={permiso}
+                onChange={(e) => {
+                  handleInputChange(e, setPermiso, mode)
+                  // handleGroupChange(e)
+                }}
+              >
+                {permisos.map((name, index) => (
+                  <MenuItem key={index} value={name.name}>{name.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
                         </FormControl>
 
                     </Box>
