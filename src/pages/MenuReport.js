@@ -360,7 +360,7 @@ const generatePdf = (report, data) => {
       "-" +
       report.id_report,
     150,
-    distancia + 30,
+    distancia + 32,
     { align: "right" }
   );
 
@@ -407,13 +407,27 @@ const generatePdf = (report, data) => {
     10 + signatureWidth + spaceBetweenSignatures,
     startY
   );
+
   doc.line(
     10 + signatureWidth + spaceBetweenSignatures,
     startY + 5,
     10 + 2 * signatureWidth + spaceBetweenSignatures,
     startY + 5
   ); // Línea de firma para el Generador
-  doc.line(1, startY + 13, 400, startY + 13); // Línea de nombre para el Generador
+  doc.line(1, startY + 17, 400, startY + 20); // Línea de nombre para el Generador
+
+  // Agrega la leyenda del generador y/o donador con la legislación aplicable en la materia.
+  doc.setFontSize(8);
+  doc.text(
+    "El generador y/o donador declara bajo protesta de decir verdad que cumple con todas las obligaciones legales inherentes, de conformidad ",
+    15,
+    startY + 10
+  );
+  doc.text(
+    "con la legislación aplicable en la materia.",
+    15,
+    startY + 15
+  );
   doc.setFontSize(6);
   doc.text(
     "Tecnologias Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtemoc, Ciudad de Mexico, Mexico ",
@@ -421,7 +435,7 @@ const generatePdf = (report, data) => {
     distancia + 75
   );
   doc.text(
-    "Tel. (55)8437 7300 y (55)8437 7272, info@rennueva.com",
+    "Tel. (55)8437 7300 , info@rennueva.com",
     14,
     distancia + 80
   );
@@ -432,7 +446,7 @@ const generatePdf = (report, data) => {
   );
 
   if (qrImage) {
-    doc.addImage(qrImage, "PNG", 12, distancia + 25, 45, 45);
+    doc.addImage(qrImage, "PNG", 12, distancia + 30, 35, 35);
     // Modifica 'x', 'y', 'width' y 'height' para ubicar y dimensionar el QR como desees.
   }
 
