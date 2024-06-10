@@ -17,6 +17,11 @@ const recoleccionItem = new ListTemplateItem({
             icon: <AssignmentReturnedIcon />,
             redirection: "/donor-recollection-logistic",
         }),
+        new ListTemplateItem({
+            tag: "Donador",
+            icon: <FavoriteIcon />,
+            redirection: "/logistic/donor",
+        }),
     ]
 })
 
