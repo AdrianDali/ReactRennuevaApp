@@ -124,7 +124,10 @@ export default function SignInSide() {
       } else if (dataUser.groups[0] === "Produccion") {
         console.log("Produccion");
         navigate("/production/donor-recollection");
-      }
+      } else if (dataUser.groups[0] === "Registro") {
+        console.log("Register");
+        navigate("/register/donor-recollection");
+      } 
 
     } catch (error) {
       // Manejar y mostrar error

@@ -47,7 +47,7 @@ function MenuDriver() {
   return (
     <>
       <CssBaseline />
-      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" ) ? (
+      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
         <Container
           maxWidth={false}
           sx={{ flexGrow: 1, overflow: "auto", py: 3 }}

@@ -50,7 +50,7 @@ function MenuGenerator() {
     <>
       <CssBaseline />
      
-      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" ) ? (
+      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
         
           <Container
             maxWidth={false}
