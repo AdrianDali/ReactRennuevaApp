@@ -47,7 +47,7 @@ function MenuRecyclingCenter() {
     <>
       <CssBaseline />
 
-      {dataUser && dataUser.groups[0] === "Administrador" ? (
+      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" ) ? (
         <Container
           maxWidth={false}
           sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
