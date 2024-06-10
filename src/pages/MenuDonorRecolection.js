@@ -43,7 +43,7 @@ function MenuDonorRecolection() {
     <>
       <CssBaseline />
       <Box sx={{ display: "flex", height: "90vh", width: "100vw" }}>
-      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" ) ? (
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" ) ? (
         
           <Container
             maxWidth={false}

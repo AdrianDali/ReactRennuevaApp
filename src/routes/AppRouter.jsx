@@ -31,6 +31,7 @@ import LogisticList from '../containers/ListSideBarLogistica/LogisticaList.jsx';
 import QualityList from '../containers/ListSideBarCalidad/CalidadList.jsx';
 import MenuRequestRestorePass from '../pages/Menus/MenuRequestRestorePass.js';
 import MenuResetPass from '../pages/Menus/MenuResetPass.js';
+import ProduccionList from '../containers/ListSideBarProduccion/ProduccionList.jsx';
 
 function App() {
 
@@ -80,7 +81,13 @@ function App() {
     { path: '/quality/recycling-center', element: <CentroLayout List={<QualityList/>}><MenuRecyclingCenter/></CentroLayout> },
     { path: '/quality/collection-center', element: <CentroLayout List={<QualityList/>}><MenuCollectionCenter/></CentroLayout> },
     { path: '/quality/vehicle', element: <CentroLayout List={<QualityList/>}><MenuVehicle/> </CentroLayout> },
-    
+  
+    //menus para grupo produccion
+    { path: '/production/donor-recollection', element: <CentroLayout List={<ProduccionList/>}><MenuDonorRecolection/></CentroLayout> },
+    { path: '/production/donor', element: <CentroLayout List={<ProduccionList/>}><MenuDonor/></CentroLayout> },
+    { path: '/production/report', element: <CentroLayout List={<ProduccionList/>}><MenuReport/></CentroLayout> },
+    { path: '/production/tracking', element: <CentroLayout List={<ProduccionList/>} ><MenuTracking mode = "tracking"/></CentroLayout> },
+    { path: '/production/report-history', element: <CentroLayout List={<ProduccionList/>}><MenuReportHistory/></CentroLayout> },
 
 
     // menus para resetear contraseña

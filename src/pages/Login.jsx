@@ -121,6 +121,9 @@ export default function SignInSide() {
       } else if (dataUser.groups[0] === "Calidad") {
         console.log("Calidad");
         navigate("/quality/donor-recollection");
+      } else if (dataUser.groups[0] === "Produccion") {
+        console.log("Produccion");
+        navigate("/production/donor-recollection");
       }
 
     } catch (error) {
