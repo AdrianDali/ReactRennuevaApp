@@ -70,17 +70,17 @@ function MenuCompany() {
           
 
           {openModalCreateCompany && (
-            <ModalCompany mode={"CREAR"}>
+            <ModalCompany mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
             </ ModalCompany >
           )}
           {openModalEditCompany && (
-            <ModalCompany mode={"EDITAR"}>
+            <ModalCompany mode={"EDITAR"} creatorUser={dataUser.user}>
               La funcionalidad de editar TODO
             </ ModalCompany >
           )}
           {openModalDeleteCompany && (
-            <ModalCompany mode={"BORRAR"}>
+            <ModalCompany mode={"BORRAR"} creatorUser={dataUser.user}>
               La funcionalidad de borrar TODO
             </ ModalCompany >
           )}

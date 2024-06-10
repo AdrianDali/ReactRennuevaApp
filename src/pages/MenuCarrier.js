@@ -51,7 +51,7 @@ function MenuCarrier() {
   return (
     <>
       <CssBaseline />
-      {dataUsers && dataUsers.groups[0] === "Administrador" ? (
+      {dataUsers && (dataUsers.groups[0] === "Administrador"  || dataUsers.groups[0] === "Calidad" ) ? (
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
           <Grid container spacing={3}>
             <Grid item xs={12}>

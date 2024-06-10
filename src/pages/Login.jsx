@@ -120,7 +120,7 @@ export default function SignInSide() {
         navigate("/donor-recollection-logistic");
       } else if (dataUser.groups[0] === "Calidad") {
         console.log("Calidad");
-        navigate("/donor-recollection-quality");
+        navigate("/quality/donor-recollection");
       }
 
     } catch (error) {
