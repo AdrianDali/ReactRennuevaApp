@@ -47,13 +47,13 @@ const CompanyTable = () => {
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
-                <TableCell>Nombre compañia</TableCell>
-                <TableCell>logo</TableCell>
-                <TableCell>Main Color</TableCell>
-                <TableCell>Secondary Color</TableCell>
-                <TableCell>Main Web</TableCell>
-                <TableCell>Secondary Web</TableCell>
-                <TableCell>Font Name </TableCell>
+                <TableCell>Nombre</TableCell>
+                <TableCell>Logo</TableCell>
+                <TableCell>Color principal</TableCell>
+                <TableCell>Color secundario</TableCell>
+                <TableCell>Sitio principal</TableCell>
+                <TableCell>Sitio secundario</TableCell>
+                <TableCell>Fuente</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -73,6 +73,7 @@ const CompanyTable = () => {
           </Table>
         </TableContainer>
         <TablePagination
+          lang='es'
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={clientes.length}
