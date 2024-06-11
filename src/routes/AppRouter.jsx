@@ -31,6 +31,8 @@ import LogisticList from '../containers/ListSideBarLogistica/LogisticaList.jsx';
 import QualityList from '../containers/ListSideBarCalidad/CalidadList.jsx';
 import MenuRequestRestorePass from '../pages/Menus/MenuRequestRestorePass.js';
 import MenuResetPass from '../pages/Menus/MenuResetPass.js';
+import ProduccionList from '../containers/ListSideBarProduccion/ProduccionList.jsx';
+import RegisterList from '../containers/ListSideBarRegister/RegisterList.jsx';
 
 function App() {
 
@@ -67,9 +69,41 @@ function App() {
 
     // menus para grupo logistica y transporte
     { path: '/donor-recollection-logistic', element: <CentroLayout List={<LogisticList/>}><MenuDonorRecolection/></CentroLayout> },
-
+    { path: '/logistic/donor', element: <CentroLayout List={<LogisticList/>}><MenuDonor/></CentroLayout> },
     // menu para grupo de calidad 
-    { path: '/donor-recollection-quality', element: <CentroLayout List={<QualityList/>}><MenuDonorRecolection/></CentroLayout> },
+    { path: '/quality/donor-recollection', element: <CentroLayout List={<QualityList/>}><MenuDonorRecolection/></CentroLayout> },
+    { path: '/quality/generator', element: <CentroLayout List={<QualityList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/quality/donor', element: <CentroLayout List={<QualityList/>}><MenuDonor/></CentroLayout> },
+    { path: '/quality/carrier', element: <CentroLayout List={<QualityList/>}><MenuCarrier/></CentroLayout> },
+    { path: '/quality/driver', element: <CentroLayout List={<QualityList/>}><MenuDriver/></CentroLayout> },
+    { path: '/quality/report', element: <CentroLayout List={<QualityList/>}><MenuReport/></CentroLayout> },
+    { path: '/quality/tracking', element: <CentroLayout List={<QualityList/>} ><MenuTracking mode = "tracking"/></CentroLayout> },
+    { path: '/quality/report-history', element: <CentroLayout List={<QualityList/>}><MenuReportHistory/></CentroLayout> },
+    { path: '/quality/recycling-center', element: <CentroLayout List={<QualityList/>}><MenuRecyclingCenter/></CentroLayout> },
+    { path: '/quality/collection-center', element: <CentroLayout List={<QualityList/>}><MenuCollectionCenter/></CentroLayout> },
+    { path: '/quality/vehicle', element: <CentroLayout List={<QualityList/>}><MenuVehicle/> </CentroLayout> },
+  
+    //menus para grupo produccion
+    { path: '/production/donor-recollection', element: <CentroLayout List={<ProduccionList/>}><MenuDonorRecolection/></CentroLayout> },
+    { path: '/production/donor', element: <CentroLayout List={<ProduccionList/>}><MenuDonor/></CentroLayout> },
+    { path: '/production/report', element: <CentroLayout List={<ProduccionList/>}><MenuReport/></CentroLayout> },
+    { path: '/production/tracking', element: <CentroLayout List={<ProduccionList/>} ><MenuTracking mode = "tracking"/></CentroLayout> },
+    { path: '/production/report-history', element: <CentroLayout List={<ProduccionList/>}><MenuReportHistory/></CentroLayout> },
+
+    //menus para grupo registros 
+    { path: '/register/donor-recollection', element: <CentroLayout List={<RegisterList/>}><MenuDonorRecolection/></CentroLayout> },
+    { path: '/register/generator', element: <CentroLayout List={<RegisterList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/register/donor', element: <CentroLayout List={<RegisterList/>}><MenuDonor/></CentroLayout> },
+    { path: '/register/carrier', element: <CentroLayout List={<RegisterList/>}><MenuCarrier/></CentroLayout> },
+    { path: '/register/driver', element: <CentroLayout List={<RegisterList/>}><MenuDriver/></CentroLayout> },
+    { path: '/register/report', element: <CentroLayout List={<RegisterList/>}><MenuReport/></CentroLayout> },
+    { path: '/register/tracking', element: <CentroLayout List={<RegisterList/>} ><MenuTracking mode = "tracking"/></CentroLayout> },
+    { path: '/register/report-history', element: <CentroLayout List={<RegisterList/>}><MenuReportHistory/></CentroLayout> },
+    { path: '/register/recycling-center', element: <CentroLayout List={<RegisterList/>}><MenuRecyclingCenter/></CentroLayout> },
+    { path: '/register/collection-center', element: <CentroLayout List={<RegisterList/>}><MenuCollectionCenter/></CentroLayout> },
+    { path: '/register/vehicle', element: <CentroLayout List={<RegisterList/>}><MenuVehicle/> </CentroLayout> },
+  
+
 
     // menus para resetear contraseña
     { path: '/reset-password-request/', element: <MenuRequestRestorePass/>},

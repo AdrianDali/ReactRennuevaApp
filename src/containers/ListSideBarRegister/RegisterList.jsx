@@ -26,22 +26,22 @@ const usersItem = new ListTemplateItem({
         new ListTemplateItem({
             tag: "Generador",
             icon: <SettingsInputComponentIcon />,
-            redirection: "/quality/generator",
+            redirection: "/register/generator",
         }),
         new ListTemplateItem({
             tag: "Donador",
             icon: <FavoriteIcon/>,
-            redirection: "/quality/donor",
+            redirection: "/register/donor",
         }),
         new ListTemplateItem({
             tag: "Conductor",
             icon: <LocalTaxiIcon />,
-            redirection: "/quality/driver",
+            redirection: "/register/driver",
         }),
         new ListTemplateItem({
             tag: "Transpotista",
             icon: <LocalShippingIcon />,
-            redirection: "/quality/carrier",
+            redirection: "/register/carrier",
         }),
     ]
 })
@@ -54,17 +54,17 @@ const reportItem = new ListTemplateItem({
         new ListTemplateItem({
             tag: "Reporte",
             icon: <BarChartIcon />,
-            redirection: "/quality/report",
+            redirection: "/register/report",
         }),
         new ListTemplateItem({
             tag: "Seguiemiento",
             icon: <TrackChangesIcon />,
-            redirection: "/quality/tracking",
+            redirection: "/register/tracking",
         }),
         new ListTemplateItem({
             tag: "Historial de reportes",
             icon: <HistoryIcon />,
-            redirection: "/quality/report-history",
+            redirection: "/register/report-history",
         }),
     ]
 })
@@ -77,17 +77,17 @@ const entitiesItem = new ListTemplateItem({
         new ListTemplateItem({
             tag: "Centro de Reciclaje",
             icon: <DeleteIcon />,
-            redirection: "/quality/recycling-center",
+            redirection: "/register/recycling-center",
         }),
         new ListTemplateItem({
             tag: "Centro de Recolección",
             icon: <AssignmentReturnedIcon />,
-            redirection: "/quality/collection-center",
+            redirection: "/register/collection-center",
         }),
         new ListTemplateItem({
             tag: "Vehiculo",
             icon: <DirectionsCarIcon />,
-            redirection: "/quality/vehicle",
+            redirection: "/register/vehicle",
         }),
     ]
 })
@@ -101,13 +101,13 @@ const collectRequestItem = new ListTemplateItem({
         new ListTemplateItem({
             tag: "Orden recolección",
             icon: <AssignmentReturnedIcon />,
-            redirection: "/quality/donor-recollection",
+            redirection: "/register/donor-recollection",
         }),
     
     ]
 })
 
-export default function AdminList() {
+export default function RegisterList() {
     return (
         <ListTemplate items={[ usersItem, reportItem, entitiesItem, collectRequestItem]} />
     )

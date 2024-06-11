@@ -47,7 +47,7 @@ function MenuVehicle() {
     <>
       <CssBaseline />
       <Box sx={{ display: "flex", height: "90vh", width: "100vw" }}>
-        {dataUser && dataUser.groups[0] === "Administrador" ? (
+      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
           <Container
             maxWidth={false}
             sx={{ flexGrow: 1, overflow: "auto", py: 3 }}

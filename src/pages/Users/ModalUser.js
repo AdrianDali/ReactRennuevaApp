@@ -473,7 +473,7 @@ function ModalUser({ children, mode , creatorUser}) {
               onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
               margin="dense"
               inputProps={{
-                maxLength: 13 // Opcional: si quieres forzar la longitud máxima en el HTML
+                maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={razon_social.length > 0 && (razon_social.length < 0 || razon_social.length > 50)}
               helperText={

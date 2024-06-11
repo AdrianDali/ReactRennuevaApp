@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import Title from "../components/Title";
 
-function ModalCollectionCenter({ children, mode }) {
+function ModalCollectionCenter({ children, mode, creatorUser }) {
   const [users, setUsers] = useState([]);
   const [companies, setCompanies] = useState([""]);
   const [user, setUser] = useState("");
@@ -38,6 +38,7 @@ function ModalCollectionCenter({ children, mode }) {
   const [idCenter, setIdCenter] = useState("");
   const [key, setKey] = useState("");
     const [permisos, setPermisos] = useState([]);  
+    const [creator , setCreator] = useState(creatorUser)
 
 
   const {
@@ -136,6 +137,7 @@ const handlePermisoChange = (index, event) => {
         address_postal_code: e.target.postal_code.value,
         address_lat: 0,
         address_lng: 0,
+        creator_user: creator,
         collection_center_key: key,
         collection_center_permiso: 
           permisos.map((permiso) => {
@@ -163,9 +165,20 @@ const handlePermisoChange = (index, event) => {
           e.target.reset();
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "EDITAR") {
       var rfcValue = e.target.rfc.value;
@@ -194,7 +207,8 @@ const handlePermisoChange = (index, event) => {
               nombre: permiso
             }
 
-            })
+            }) ,
+            creator_user: creator
       };
       console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
       console.log(editarDato);
@@ -214,9 +228,20 @@ const handlePermisoChange = (index, event) => {
           closeModal();
           // Limpiar los campos del formulario
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
     if (mode === "BORRAR") {
       const antiguo_user = document.getElementById("user-select");
@@ -224,6 +249,7 @@ const handlePermisoChange = (index, event) => {
 
       const deleteDato = {
         collection_center_id: idCenter,
+        creator_user: creator
       };
 
       axios
@@ -240,9 +266,20 @@ const handlePermisoChange = (index, event) => {
           e.target.reset();
           closeModal();
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error("############################");
+          setOpenModalText(true);
+    
+          // Check if error response and data exist
+          if (error.response && error.response.data) {
+            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+          } else {
+            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+          }
+    
+          console.error(error.response);
+        })
     }
 
     // Limpiar los campos del formulario
