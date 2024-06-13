@@ -138,6 +138,120 @@ const savePdf = async (pdfBase64, id_report) => {
   }
 };
 
+const generatePdfTalon = (report, data) => {
+  console.log("DATA de la funcion");
+  console.log(data);
+  let key_centro = "";
+  let direccion_centro = "";
+  let centro = "";
+  let titulo_centro = "";
+  let permiso_centro = [];
+  if (data[0].key_centro_reciclaje != null) {
+    key_centro = data[0].key_centro_reciclaje;
+    direccion_centro = data[0].ubicacion_centro_reciclaje;
+    centro = data[0].centro_reciclaje;
+    titulo_centro = "Reciclaje";
+    console.log("###############permiso");
+    console.log(data[0].permiso_centro_reciclaje);
+    console.log(data[0].permiso_centro_reciclaje[0]);
+    permiso_centro = data[0].permiso_centro_reciclaje;
+  }
+  if (data[0].key_centro_recoleccion != null) {
+    key_centro = data[0].key_centro_recoleccion;
+    direccion_centro = data[0].ubicacion_centro_recoleccion;
+    centro = data[0].centro_recoleccion;
+    titulo_centro = "Recoleccion";
+    console.log("###############permiso");
+    permiso_centro = data[0].permiso_centro_recoleccion;
+  }
+  console.log("KEY CENTRO");
+  console.log(key_centro);
+  // doc.setFontSize(10);
+  // doc.text("Certificacion del generador:", 90, distancia, { align: 'left' });
+
+  const doc = new jsPDF({
+    orientation: "landscape",
+    unit: "mm",
+    format: [210, 70] // Ancho y alto del talón en milímetros
+  });
+
+  var distancia = 0;
+  doc.setFontSize(8);
+  doc.text("Solicite, con su numero de folio, el", 70, distancia + 15, {
+    align: "left",
+  });
+  doc.text("desglose de los materiales y", 70, distancia + 20, {
+    align: "left",
+  });
+  doc.text("comprobante al siguiente correo:", 70, distancia + 25, {
+    align: "left",
+  });
+  doc.text("plasticos@rennueva.com", 70, distancia + 30, { align: "left" });
+
+  // Antes de añadir el texto para el "FOLIO", cambia el color del texto a rojo.
+  doc.setTextColor(255, 0, 0); // Esto representa el color rojo en valores RGB
+
+  // Luego, agrega el texto para el "FOLIO".
+  // El color rojo que estableciste anteriormente se aplicará aquí.
+  doc.text(
+    "FOLIO: " +
+      data[0].key_grupo_usuario +
+      "-" +
+      key_centro +
+      "-" +
+      report.id_report,
+    150,
+    distancia + 5,
+    { align: "right" }
+  );
+
+  // ... (resto de tu código para generar el PDF)
+
+  // Si vas a seguir añadiendo más texto de diferentes colores, recuerda volver a establecer el color del texto.
+  // Por ejemplo, para volver al negro usarías:
+  doc.setTextColor(0, 0, 0);
+  doc.text(
+    "Fecha Recepcion: " + report.fecha_inicio_reporte,
+    200,
+    distancia + 15,
+    { align: "right" }
+  );
+  const startY = distancia + 10;
+  const signatureWidth = 80;
+  const spaceBetweenSignatures = 20;
+
+// Línea de firma para el Generador
+  //doc.line(1, startY + 17, 400, startY ); // Línea de nombre para el Generador
+  doc.setFontSize(6);
+  doc.text(
+    "Tecnologias Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtemoc, Ciudad de Mexico, Mexico ",
+    14,
+    distancia + 45
+  );
+  doc.text(
+    "Tel. (55)8437 7300 , info@rennueva.com",
+    14,
+    distancia + 50
+  );
+  doc.text(
+    "Todos los datos recabados en este documento seran tratados conforme a la Ley General de Proteccion de Datos Personales",
+    14,
+    distancia + 55
+  );
+
+  if (qrImage) {
+    doc.addImage(qrImage, "PNG", 12, distancia + 5, 35, 35);
+    // Modifica 'x', 'y', 'width' y 'height' para ubicar y dimensionar el QR como desees.
+  }
+
+  const pdfBase64 = doc.output("datauristring");
+  savePdf(pdfBase64, report.id_report);
+
+  doc.save("Responsiva_folio_" + report.id_report + ".pdf");
+};
+
+
+
 const generatePdf = (report, data) => {
   console.log("DATA de la funcion2");
   console.log(data);
@@ -876,6 +990,108 @@ function MenuReport() {
                                         }}
                                       >
                                         Reporte
+                                      </Button>
+                                    </TableCell>
+                                    <TableCell>
+                                      {/* <StyledButton
+                                        onClick={async () => {
+                                          const validate = await ValidateReport(
+                                            reporte.id_report
+                                          );
+                                          console.log("VALIDATE");
+                                          console.log(validate);
+                                          if (validate == true) {
+                                            await generateQR(
+                                              "http://localhost:3000/report"
+                                            );
+                                            const data = await getAllInfoReport(
+                                              reporte.id_report
+                                            );
+                                            console.log("DATA de la funcion1");
+                                            console.log(reporte);
+                                            console.log(
+                                              "######SDASDASD el reporte firmado"
+                                            );
+                                            console.log(data[0]);
+
+                                            generatePdf(reporte, data);
+                                          } else {
+                                            setOpenModalText(true);
+                                            setTextOpenModalText(
+                                              "No se puede generar el reporte, aun no se han firmado todos los campos"
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        Reporte
+                                      </StyledButton> */}
+
+                                      <Button
+                                        variant="contained"
+                                        color={
+                                          reporte.firma_responsiva_generador &&
+                                          reporte.firma_responsiva_receptor &&
+                                          reporte.residuos_agregados
+                                            ? "success"
+                                            : "error"
+                                        }
+                                        onClick={async () => {
+                                          const validate = await ValidateReport(
+                                            reporte.id_report
+                                          );
+                                          console.log("VALIDATE");
+                                          console.log(validate);
+
+                                          if (validate == true) {
+                                            const data = await getAllInfoReport(
+                                              reporte.id_report
+                                            );
+
+                                            let key_centro = "";
+                                            if (
+                                              data[0].key_centro_reciclaje !=
+                                              null
+                                            ) {
+                                              key_centro =
+                                                data[0].key_centro_reciclaje;
+                                            }
+                                            if (
+                                              data[0].key_centro_recoleccion !=
+                                              null
+                                            ) {
+                                              key_centro =
+                                                data[0].key_centro_recoleccion;
+                                            }
+
+                                            const folio_busqueda =
+                                              data[0].key_grupo_usuario +
+                                              "-" +
+                                              key_centro +
+                                              "-" +
+                                              reporte.id_report;
+
+                                            await generateQR(
+                                              "https://rewards.rennueva.com/tracking-external/" +
+                                                folio_busqueda // Aquí deberías poner la URL correcta para el reporte
+                                            );
+
+                                            console.log("DATA de la funcion1");
+                                            console.log(reporte);
+                                            console.log(
+                                              "######SDASDASD el reporte firmado"
+                                            );
+                                            console.log(data[0]);
+
+                                            generatePdfTalon(reporte, data);
+                                          } else {
+                                            setOpenModalText(true);
+                                            setTextOpenModalText(
+                                              "No se puede generar el reporte, aun no se han firmado todos los campos"
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        Talon
                                       </Button>
                                     </TableCell>
                                     <TableCell>
