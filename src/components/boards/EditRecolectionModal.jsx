@@ -47,14 +47,30 @@ export default function EditRecolectionModal({
 }) {
   const [isDateCorrect, setIsDateCorrect] = useState(false);
   const [status, setStatus] = useState("");
+  const [conductores, setConductores] = useState([]);
+  const [conductorAsignado, setConductorAsignado] = useState();
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
+      .then((response) => {
+        console.log(response.data);
+        setConductores(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+
 
   useEffect(() => {
     if (recolection != null) {
-      if(recolection.status === 'recolectada'){
-      setStatus('recolectado');
-      }else if(recolection.status ==='entregadaCentro'){
-        setStatus('entregado');
-      }else{
+      if (recolection.status === "recolectada") {
+        setStatus("recolectado");
+      } else if (recolection.status === "entregadaCentro") {
+        setStatus("entregado");
+      } else {
         setStatus(recolection.status);
       }
     } else {
@@ -75,6 +91,7 @@ export default function EditRecolectionModal({
         user: recolection.donador,
         id_order: recolection.id,
         fecha_estimada_recoleccion: reformattedDate,
+        conductor : conductorAsignado
       };
       console.log(data);
       axios
@@ -98,7 +115,7 @@ export default function EditRecolectionModal({
           );
           setOpenMessageModal(true);
         });
-    }else if(status === "recolectado"){
+    } else if (status === "recolectado") {
       const data = {
         user: recolection.donador,
         id_order: recolection.id,
@@ -111,21 +128,17 @@ export default function EditRecolectionModal({
         )
         .then((response) => {
           console.log(response);
-          setMessage(
-            "Se ha actualizado el estado de la recolección"
-          );
+          setMessage("Se ha actualizado el estado de la recolección");
           setOpenMessageModal(true);
           setUpdate(!update);
           setOpen(false);
         })
         .catch((error) => {
           console.error(error);
-          setMessage(
-            "Ha ocurrido un error al actualizar la recolección"
-          );
+          setMessage("Ha ocurrido un error al actualizar la recolección");
           setOpenMessageModal(true);
         });
-    }else if(status === 'entregado'){
+    } else if (status === "entregado") {
       const data = {
         user: recolection.donador,
         id_order: recolection.id,
@@ -138,18 +151,14 @@ export default function EditRecolectionModal({
         )
         .then((response) => {
           console.log(response);
-          setMessage(
-            "Se ha actualizado el estado de la recolección"
-          );
+          setMessage("Se ha actualizado el estado de la recolección");
           setOpenMessageModal(true);
           setUpdate(!update);
           setOpen(false);
         })
         .catch((error) => {
           console.error(error);
-          setMessage(
-            "Ha ocurrido un error al actualizar la recolección"
-          );
+          setMessage("Ha ocurrido un error al actualizar la recolección");
           setOpenMessageModal(true);
         });
     }
@@ -164,13 +173,11 @@ export default function EditRecolectionModal({
     if (event.target.value !== "otro") {
       setOtroTexto(""); // Limpiar el texto si "Otro" no está seleccionado
     }
-    
   };
 
   const handleTextChange = (event) => {
     console.log(event.target.value);
     setOtroTexto(event.target.value);
-    
   };
   return createPortal(
     <Modal open={open} onClose={() => setOpen(false)}>
@@ -236,8 +243,7 @@ export default function EditRecolectionModal({
                     value="otro"
                     control={<Radio />}
                     label="Otro"
-                    />
-
+                  />
                 </RadioGroup>
                 {value === "otro" && (
                   <TextField
@@ -249,40 +255,67 @@ export default function EditRecolectionModal({
                     onChange={handleTextChange}
                   />
                 )}
+                
               </FormGroup>
             </FormControl>
           )}
 
-          {status === "pendienteRecoleccion" && (
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                disablePast
-                format="DD/MM/YYYY"
-                onAccept={(date) => {
-                  setIsDateCorrect(true);
-                }}
-                onError={(reason, value) => {
-                  if (reason === null) {
-                    setIsDateCorrect(true);
-                  } else {
-                    setIsDateCorrect(false);
-                  }
-                }}
-                slotProps={{
-                  field: {
-                    margin: "dense",
-                    fullWidth: "true",
-                    required: "true",
-                    name: "date",
-                  },
-                  textField: {
-                    label: "Fecha de recolección",
-                    name: "date",
-                  },
-                }}
-              />
-            </LocalizationProvider>
-          )}
+{status === "pendienteRecoleccion" && (
+  <>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker
+        disablePast
+        format="DD/MM/YYYY"
+        onAccept={(date) => {
+          setIsDateCorrect(true);
+        }}
+        onError={(reason, value) => {
+          if (reason === null) {
+            setIsDateCorrect(true);
+          } else {
+            setIsDateCorrect(false);
+          }
+        }}
+        slotProps={{
+          field: {
+            margin: "normal",
+            fullWidth: true,
+            required: true,
+            name: "date",
+          },
+          textField: {
+            label: "Fecha de recolección",
+            name: "date",
+          },
+        }}
+      />
+    </LocalizationProvider>
+    
+    <FormControl fullWidth margin="normal">
+      <InputLabel id="select-status-label">Conductor Asignado</InputLabel>
+      <Select
+        labelId="select-status-label"
+        id="select-status"
+        value={conductorAsignado}
+        label="Conductor Asignado"
+        onChange={(e) => {
+          console.log(e.target.value);
+          setConductorAsignado(e.target.value);
+        }}
+        fullWidth
+        required
+      >
+        {conductores.map((conductor) => (
+          <MenuItem key={conductor.id} value={conductor.user}>
+            {conductor.first_name} {conductor.last_name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </>
+)}
+
+
 
           {status === "pendienteRecoleccion" ? (
             <Button
@@ -294,7 +327,7 @@ export default function EditRecolectionModal({
             >
               Guardar cambios
             </Button>
-          ) : status === "cancelado"  ? (
+          ) : status === "cancelado" ? (
             <Button
               fullWidth
               color="success"
@@ -321,12 +354,14 @@ export default function EditRecolectionModal({
                   })
                   .catch((error) => {
                     console.error(error);
-                    setMessage("Ha ocurrido un error al cancelar la recolección");
+                    setMessage(
+                      "Ha ocurrido un error al cancelar la recolección"
+                    );
                     setOpenMessageModal(true);
                   });
-              }
-                }
+              }}
 
+              
             >
               Cancelar recolección
             </Button>
@@ -340,15 +375,11 @@ export default function EditRecolectionModal({
             >
               Guardar cambios
             </Button>
-          )
-            }
-           
+          )}
 
           {status === "cancelado" && value === "otro" && otroTexto === "" && (
             <p style={{ color: "red" }}>Especifique el motivo de cancelación</p>
-          )
-            }
-
+          )}
         </form>
       </Box>
     </Modal>,
