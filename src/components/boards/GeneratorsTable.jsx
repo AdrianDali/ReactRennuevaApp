@@ -16,9 +16,13 @@ import {
     MenuItem,
     MenuList,
     ListItemIcon,
-    ListItem,
     ListItemText,
-    Divider
+    Badge,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    DialogContentText
 } from "@mui/material";
 import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit } from "@mui/icons-material";
 import theme from "../../context/theme";
@@ -29,29 +33,44 @@ import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
+import { generateExcelFromJson } from "../../services/Excel";
 
 
 
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
+    const {
+        setOpenModalEditGenerator,
+        setOpenModalDeleteGenerator,
+    } = useContext(TodoContext);
     const open = Boolean(anchorEl);
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
+    const handleEdit = () => {
+        setOpenModalEditGenerator(true);
+        handleClose();
+    }
+
+    const handleDelete = () => {
+        setOpenModalDeleteGenerator(true);
+        handleClose();
+    }
+
 
     return (
         <Menu anchorEl={anchorEl} open={open}>
             <ClickAwayListener onClickAway={handleClose}>
                 <MenuList>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleEdit}>
                         <ListItemIcon>
                             <Edit />
                         </ListItemIcon>
                         <ListItemText primary="Editar" />
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleDelete}>
                         <ListItemIcon>
                             <Delete color="error" />
                         </ListItemIcon>
@@ -64,30 +83,50 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
 }
 
 
-function ExportOptionsMenu({ anchorEl, setAnchorEl }) {
+function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, visibleData, selectedData}) {
     const open = Boolean(anchorEl);
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
+    const handleExportAll = () => {
+        //console.log(allData)
+        generateExcelFromJson(allData, "Generadores");
+        handleClose();
+    }
+
+    const handleExportVisible = () => {
+        //console.log(visibleData)
+        generateExcelFromJson(visibleData, "Generadores");
+        handleClose();
+    }
+
+    const handleExportSelected = () => {
+        //console.log(selectedData)
+        const dataToExport = allData.filter((generador) => selectedData.includes(generador.user));
+        //console.log(dataToExport)
+        generateExcelFromJson(dataToExport, "Generadores");
+        handleClose();
+    }
+
     return (
         <Menu anchorEl={anchorEl} open={open}>
             <ClickAwayListener onClickAway={handleClose}>
                 <MenuList>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleExportAll}>
                         <ListItemIcon>
                             <Download />
                         </ListItemIcon>
                         <ListItemText primary="Exportar todos" />
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleExportVisible}>
                         <ListItemIcon>
                             <Visibility />
                         </ListItemIcon>
                         <ListItemText primary="Exportar visibles" />
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleExportSelected}>
                         <ListItemIcon>
                             <Check />
                         </ListItemIcon>
@@ -100,18 +139,11 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl }) {
 
 }
 
-function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete }) {
+function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersApplied, visibleData, allData}) {
     
     const {
-        setUpdateGeneratorInfo,
-        openModalCreateGenerator,
         setOpenModalCreateGenerator,
-        openModalEditGenerator,
-        setOpenModalEditGenerator,
-        openModalDeleteGenerator,
         setOpenModalDeleteGenerator,
-        openModalText, 
-        setOpenModalText
     } = useContext(TodoContext);
     const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
     if (selected.length > 0) return (
@@ -127,7 +159,7 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete }) {
                     setUsersToDelete(selected)
                 }}>Borrar</Button>
             </Box>
-            <ExportOptionsMenu anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
+            <ExportOptionsMenu selectedData={selected} visibleData={visibleData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
         </Box>
     )
 
@@ -138,10 +170,12 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete }) {
             </Typography>
             <Box>
                 <IconButton color="info" ><Search /></IconButton>
-                <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
+                <Badge color="error"  overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
+                    <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={   { m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
+                </Badge>
                 <Button variant="outlined" size="large" color="success" startIcon={<Download />} sx={{ m: 2 }} onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}>Exportar</Button>
                 <Button variant="contained" size="large" color="primary" startIcon={<Add />} sx={{ m: 2 }} onClick={() => { setOpenModalCreateGenerator(true) }}>Nuevo</Button>
-                <ExportOptionsMenu anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl}/>
+                <ExportOptionsMenu selectedData={selected} visibleData={visibleData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl}/>
             </Box>
         </Box>
     )
@@ -150,34 +184,31 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete }) {
 
 
 export default function GeneratorsTable({ data }) {
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [visibleData, setVisibleData] = useState(data);
     const [generatorsToDelete, setGeneratorsToDelete] = useState([]);
     const [userToEdit, setUserToEdit] = useState(null);
+    const [filtersApplied, setFiltersApplied] = useState(false);
     const dataUser = useAuth();
     const {
-        setUpdateGeneratorInfo,
         openModalCreateGenerator,
-        setOpenModalCreateGenerator,
         openModalEditGenerator,
         setOpenModalEditGenerator,
         openModalDeleteGenerator,
         setOpenModalDeleteGenerator,
-        openModalText, 
+        openModalText,
+        textOpenModalText,
         setOpenModalText
     } = useContext(TodoContext);
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
-    const [rowContextMenuSelected, setRowContextMenuSelected] = useState(null);
     const [selected, setSelected] = useState([]);
     const [generalCheckboxStatus, setGeneralCheckboxStatus] = useState("unchecked");
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
     const [dataForFilters, setDataForFilters] = useState({
-        email: [],
-        rfc: [],
         company: [],
-        postalCode: [],
-        state: [],
-        city: [],
-        locality: [],
+        address_postal_code: [],
+        address_state: [],
+        address_city: [],
+        address_locality: [],
     });
 
 
@@ -226,31 +257,29 @@ export default function GeneratorsTable({ data }) {
 
     useEffect(() => {
         setSelected([]);
+        setVisibleData(data);
         if (data.length > 0) {
-            const email = [...new Set(data.map((cliente) => cliente.user))];
-            const rfc = [...new Set(data.map((cliente) => cliente.rfc))];
             const company = [...new Set(data.map((cliente) => cliente.company))];
-            const postalCode = [...new Set(data.map((cliente) => cliente.address_postal_code))];
-            const state = [...new Set(data.map((cliente) => cliente.address_state))];
-            const city = [...new Set(data.map((cliente) => cliente.address_city))];
-            const locality = [...new Set(data.map((cliente) => cliente.address_locality))];
+            const address_postal_code = [...new Set(data.map((cliente) => cliente.address_postal_code))];
+            const address_state = [...new Set(data.map((cliente) => cliente.address_state))];
+            const address_city = [...new Set(data.map((cliente) => cliente.address_city))];
+            const address_locality = [...new Set(data.map((cliente) => cliente.address_locality))];
 
             setDataForFilters({
-                email,
-                rfc,
                 company,
-                postalCode,
-                state,
-                city,
-                locality
+                address_postal_code,
+                address_state,
+                address_city,
+                address_locality
             })
         }
     }, [data])
 
+
     return (
         <Box sx={{ width: '100%' }}>
             <Paper>
-                <Toolbar selected={selected} setOpenFiltersModal={setOpenFiltersModal} setUsersToDelete={setGeneratorsToDelete}/>
+                <Toolbar selected={selected} allData={data} visibleData={visibleData} setOpenFiltersModal={setOpenFiltersModal} setUsersToDelete={setGeneratorsToDelete} filtersApplied={filtersApplied}/>
                 <TableContainer>
                     <Table>
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
@@ -295,7 +324,7 @@ export default function GeneratorsTable({ data }) {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        <Typography variant="subtitle2">Campaña</Typography>
+                                        <Typography variant="subtitle2">Compañía</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -349,20 +378,22 @@ export default function GeneratorsTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data.map((cliente, index) => (
+                            {visibleData.map((cliente, index) => (
                                 <TableRow
                                     hover
                                     role="checkbox"
                                     key={cliente.user}
                                     selected={isRowSelected(cliente.user)}
                                     sx={{ cursor: 'pointer' }}
-                                    aria-checked={false}
+                                    aria-checked={isRowSelected(cliente.user) ? true : false}
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         toggleSelected(cliente.user)
                                     }}
                                     onContextMenu={(e) => {
                                         e.preventDefault();
+                                        setUserToEdit(cliente)
+                                        setGeneratorsToDelete([cliente.email])
                                         setRowContextMenuAnchorEl(e.target);
                                     }}
 
@@ -414,11 +445,33 @@ export default function GeneratorsTable({ data }) {
                     </Table>
                 </TableContainer>
             </Paper>
-            <GeneratorsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} />
+            <GeneratorsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setVisibleData={setVisibleData} users={data} setFiltersApplied={setFiltersApplied}/>
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalCreateGenerator && <ModalGenerator mode={"CREAR"} creatorUser={dataUser.user} />}
             {openModalEditGenerator && <ModalGenerator mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user}/>}
             <DeleteGeneratorModal generators={generatorsToDelete} open={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator}/>
+            {openModalText && (
+              <Dialog
+                open={openModalText}
+                onClose={() => setOpenModalText(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {textOpenModalText}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    {textOpenModalText}
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenModalText(false)}>
+                    Aceptar
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
         </Box>
     );
 }

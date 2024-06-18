@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom';
 import '../styles/user/CreateUser.css';
 import { TodoContext } from '../context/index.js';
 import axios from 'axios';
-import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
+import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel, IconButton, InputAdornment } from '@mui/material';
 import Title from '../components/Title';
-
-import { IconButton, InputAdornment } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
@@ -316,7 +315,9 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                 borderRadius: 2,
 
             }}>
-                <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
+                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>
+                    <Close />
+                </IconButton>
                 <form onSubmit={handleSubmit} >
                     <Box mb={2}>
                         <Title> Generador </Title>
