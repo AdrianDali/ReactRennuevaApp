@@ -127,7 +127,10 @@ export default function SignInSide() {
       } else if (dataUser.groups[0] === "Registro") {
         console.log("Register");
         navigate("/register/donor-recollection");
-      } 
+      } else if (dataUser.groups[0] === "Conductor") {
+        console.log("Conductor");
+        navigate("/driver/assigned-orders");
+      }
 
     } catch (error) {
       // Manejar y mostrar error

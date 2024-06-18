@@ -98,7 +98,7 @@ const entitiesItem = new ListTemplateItem({
             redirection: "/recycling-center",
         }),
         new ListTemplateItem({
-            tag: "Centro de Recolección",
+            tag: "Centro de acopio",
             icon: <AssignmentReturnedIcon />,
             redirection: "/collection-center",
         }),

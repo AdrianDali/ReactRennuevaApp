@@ -248,7 +248,7 @@ export default function CentroLayout({ children, List }) {
 
     return (
         <ThemeProvider theme={theme}>
-            <Box sx={{ bgcolor: (theme) => theme.palette.grey[100] }}>
+            <Box sx={{ bgcolor: (theme) => theme.palette.grey[100], minHeight: '100vh' }}>
                 <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 25px 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '5px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Container maxWidth="xl" >
                         <Toolbar disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
