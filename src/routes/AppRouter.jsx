@@ -44,7 +44,7 @@ function App() {
     { path: '/vehicle', element: <CentroLayout List={<AdminList/>}><MenuVehicle/></CentroLayout> },
     { path: '/residue', element: <CentroLayout List={<AdminList/>}><MenuResidue/></CentroLayout> },
     { path: '/recycling-center', element: <CentroLayout List={<AdminList/>}><MenuRecyclingCenter/></CentroLayout> },
-    { path: '/generator', element: <CentroLayout List={<AdminList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/generator', element: <CentroLayout List={<AdminList/>}><ExportsMenu/> </CentroLayout> },
     { path: '/driver', element: <CentroLayout List={<AdminList/>}><MenuDriver/></CentroLayout> },
     { path: '/register', element: <SignUp /> },
     { path: '/dash', element: <CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout> },

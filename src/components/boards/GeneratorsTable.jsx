@@ -277,7 +277,7 @@ export default function GeneratorsTable({ data }) {
 
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', mb: '3rem' }}>
             <Paper>
                 <Toolbar selected={selected} allData={data} visibleData={visibleData} setOpenFiltersModal={setOpenFiltersModal} setUsersToDelete={setGeneratorsToDelete} filtersApplied={filtersApplied}/>
                 <TableContainer>
