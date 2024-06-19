@@ -33,6 +33,7 @@ import MenuRequestRestorePass from '../pages/Menus/MenuRequestRestorePass.js';
 import MenuResetPass from '../pages/Menus/MenuResetPass.js';
 import ProduccionList from '../containers/ListSideBarProduccion/ProduccionList.jsx';
 import RegisterList from '../containers/ListSideBarRegister/RegisterList.jsx';
+import ExportsMenu from '../pages/Menus/ExportsMenu.jsx';
 
 function App() {
 
@@ -43,7 +44,7 @@ function App() {
     { path: '/vehicle', element: <CentroLayout List={<AdminList/>}><MenuVehicle/></CentroLayout> },
     { path: '/residue', element: <CentroLayout List={<AdminList/>}><MenuResidue/></CentroLayout> },
     { path: '/recycling-center', element: <CentroLayout List={<AdminList/>}><MenuRecyclingCenter/></CentroLayout> },
-    { path: '/generator', element: <CentroLayout List={<AdminList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/generator', element: <CentroLayout List={<AdminList/>}><ExportsMenu/> </CentroLayout> },
     { path: '/driver', element: <CentroLayout List={<AdminList/>}><MenuDriver/></CentroLayout> },
     { path: '/register', element: <SignUp /> },
     { path: '/dash', element: <CentroLayout List={<AdminList/>}><Dashboard/></CentroLayout> },
@@ -107,7 +108,9 @@ function App() {
 
     // menus para resetear contraseña
     { path: '/reset-password-request/', element: <MenuRequestRestorePass/>},
-    {path : '/reset-password/:uidb64/:token/', element: <MenuResetPass/>}
+    {path : '/reset-password/:uidb64/:token/', element: <MenuResetPass/>},
+
+    {path : '/exports', element: <CentroLayout List={<RegisterList/>}><ExportsMenu/> </CentroLayout>}
   ]);
 
   return (

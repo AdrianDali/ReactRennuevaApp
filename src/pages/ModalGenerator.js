@@ -3,19 +3,17 @@ import ReactDOM from 'react-dom';
 import '../styles/user/CreateUser.css';
 import { TodoContext } from '../context/index.js';
 import axios from 'axios';
-import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
+import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel, IconButton, InputAdornment } from '@mui/material';
 import Title from '../components/Title';
-
-import { IconButton, InputAdornment } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function ModalGenerator({ children, mode,creatorUser }) {
-    const [datos, setDatos] = useState([]);
+function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
     const [groups, setGroups] = useState([])
     const [users, setUsers] = useState([])
     const [companies, setCompanies] = useState([""])
-    const [user, setUser] = useState("");
+    const [user, setUser] = useState(userToEdit);
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [first_name, setFirstName] = useState("");
@@ -30,7 +28,6 @@ function ModalGenerator({ children, mode,creatorUser }) {
     const [rfc, setRfc] = useState("");
     const [phone, setPhone] = useState("");
     const [address_num_int, setAddressNumInt] = useState("");
-    const [address_num_ext, setAddressNumExt] = useState("");
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const [old_user, setOldUser] = useState("");
     const [razonSocial, setRazonSocial] = useState("");
@@ -57,12 +54,12 @@ function ModalGenerator({ children, mode,creatorUser }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         var rfcValue = e.target.rfc.value
         if (!rfcValue) {
             rfcValue = 'XAXX010101000'; // Aquí puedes poner el RFC por defecto que desees
         }
         if (mode === "CREAR") {
+            console.log("######################")
             const nuevoDato = {
                 user: e.target.email.value,
                 password: e.target.password.value,
@@ -257,11 +254,10 @@ function ModalGenerator({ children, mode,creatorUser }) {
 
     }, []);
 
-    const handleSelectChange = (event) => {
-        const selectedOption = event.target.value; // Obtener la opción seleccionada
-        console.log(selectedOption)
-        // Buscar el dato seleccionado en el arreglo de datos
-        const datoEncontrado = users.find((users) => users.user === selectedOption);
+    useEffect(() => {
+        if (userToEdit === null) return 
+        if (users.length === 0) return
+        const datoEncontrado = users.find((users) => users.user === userToEdit.user);
         console.log(datoEncontrado)
         setUser(datoEncontrado.user);
         setPassword(datoEncontrado.password);
@@ -278,12 +274,9 @@ function ModalGenerator({ children, mode,creatorUser }) {
         setStreet(datoEncontrado.address_street);
         setPostalCode(datoEncontrado.address_postal_code);
         setAddressNumInt(datoEncontrado.address_num_int);
-        setOldUser(selectedOption);
+        setOldUser(datoEncontrado.user);
         setRazonSocial(datoEncontrado.razon_social);
-
-
-
-    }
+    }, [userToEdit, users]);
 
     const handleInputChange = (e, setState, mode) => {
         const currentInputValue = e.target.value;
@@ -322,32 +315,12 @@ function ModalGenerator({ children, mode,creatorUser }) {
                 borderRadius: 2,
 
             }}>
-                <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
+                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>
+                    <Close />
+                </IconButton>
                 <form onSubmit={handleSubmit} >
                     <Box mb={2}>
-                        <Title> Usuario</Title>
-                        {mode === "EDITAR" || mode === "BORRAR" ? (
-                            <FormControl fullWidth>
-                                <InputLabel id="user-select-label">Usuario</InputLabel>
-                                <Select
-                                    labelId="user-select-label"
-                                    id="user-select"
-                                    onChange={(e) => {
-
-                                        handleSelectChange(e, setUser)
-
-
-                                    }}
-                                    required
-                                    //value={user}
-                                    w
-                                >
-                                    {users.map((name, index) => (
-                                        <MenuItem key={index} value={name.user}>{name.user}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        ) : null}
+                        <Title> Generador </Title>
                     </Box>
                     <Box mt={2} mb={2} sx={{ overflowY: 'auto', maxHeight: 500 }}>
                         <TextField
