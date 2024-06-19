@@ -34,6 +34,9 @@ import MenuResetPass from '../pages/Menus/MenuResetPass.js';
 import ProduccionList from '../containers/ListSideBarProduccion/ProduccionList.jsx';
 import RegisterList from '../containers/ListSideBarRegister/RegisterList.jsx';
 import ExportsMenu from '../pages/Menus/ExportsMenu.jsx';
+import DriverList from '../containers/ListSideBarDriver/DriverList.jsx';
+import { MenuAssignedOrders } from '../pages/Menus/MenuAssignedOrders.js';
+import { MenuOrderAssignment } from '../pages/Menus/MenuOrderAssignmentMenu.js';
 
 function App() {
 
@@ -52,7 +55,7 @@ function App() {
     { path: '/carrier', element: <CentroLayout List={<AdminList/>}><MenuCarrier/></CentroLayout> },
     { path: '/collection-center', element: <CentroLayout List={<AdminList/>}><MenuCollectionCenter/></CentroLayout> },
     { path: '/report', element: <CentroLayout List={<AdminList/>}><MenuReport/></CentroLayout> },
-    { path: '/tracking', element: <Layout><MenuTracking mode = "tracking"/></Layout> },
+    { path: '/tracking', element: <CentroLayout><MenuTracking mode = "tracking"/></CentroLayout> },
     { path: '/tracking-external/:trackingNumber', element: <MenuTracking mode = "tracking external"/> },
     { path: '/donor-recolection', element: <CentroLayout List={<AdminList/>}><MenuDonorRecolection/></CentroLayout> },
     { path: '/company', element: <CentroLayout List={<AdminList/>}><MenuCompany/></CentroLayout> },
@@ -71,9 +74,12 @@ function App() {
     // menus para grupo logistica y transporte
     { path: '/donor-recollection-logistic', element: <CentroLayout List={<LogisticList/>}><MenuDonorRecolection/></CentroLayout> },
     { path: '/logistic/donor', element: <CentroLayout List={<LogisticList/>}><MenuDonor/></CentroLayout> },
+    { path: '/logistic/order-recollection-assignment', element: <CentroLayout List={<LogisticList/>}><MenuOrderAssignment/></CentroLayout> },
+    
+    
     // menu para grupo de calidad 
     { path: '/quality/donor-recollection', element: <CentroLayout List={<QualityList/>}><MenuDonorRecolection/></CentroLayout> },
-    { path: '/quality/generator', element: <CentroLayout List={<QualityList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/quality/generator', element: <CentroLayout List={<QualityList/>}><ExportsMenu/></CentroLayout> },
     { path: '/quality/donor', element: <CentroLayout List={<QualityList/>}><MenuDonor/></CentroLayout> },
     { path: '/quality/carrier', element: <CentroLayout List={<QualityList/>}><MenuCarrier/></CentroLayout> },
     { path: '/quality/driver', element: <CentroLayout List={<QualityList/>}><MenuDriver/></CentroLayout> },
@@ -93,7 +99,7 @@ function App() {
 
     //menus para grupo registros 
     { path: '/register/donor-recollection', element: <CentroLayout List={<RegisterList/>}><MenuDonorRecolection/></CentroLayout> },
-    { path: '/register/generator', element: <CentroLayout List={<RegisterList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/register/generator', element: <CentroLayout List={<RegisterList/>}><ExportsMenu/></CentroLayout> },
     { path: '/register/donor', element: <CentroLayout List={<RegisterList/>}><MenuDonor/></CentroLayout> },
     { path: '/register/carrier', element: <CentroLayout List={<RegisterList/>}><MenuCarrier/></CentroLayout> },
     { path: '/register/driver', element: <CentroLayout List={<RegisterList/>}><MenuDriver/></CentroLayout> },
@@ -104,7 +110,9 @@ function App() {
     { path: '/register/collection-center', element: <CentroLayout List={<RegisterList/>}><MenuCollectionCenter/></CentroLayout> },
     { path: '/register/vehicle', element: <CentroLayout List={<RegisterList/>}><MenuVehicle/> </CentroLayout> },
   
-
+    //menus para grupo de conductores 
+    { path: '/driver/assigned-orders', element: <CentroLayout List={<DriverList/>}><MenuAssignedOrders/></CentroLayout> },
+    
 
     // menus para resetear contraseña
     { path: '/reset-password-request/', element: <MenuRequestRestorePass/>},
