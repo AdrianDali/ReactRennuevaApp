@@ -2,52 +2,45 @@ import React, { useContext, useState, useEffect } from 'react';
 import ConfirmationModal from './ConfirmationModal';
 import { Box, Typography, List, ListItem } from '@mui/material';
 import useAuth from '../../hooks/useAuth';
-import deleteUsers from '../../services/deleteUsers';
 import { TodoContext } from '../../context';
 import axios from 'axios';
 import NotificationModal from './NotificationModal';
+import deleteReports from '../../services/deleteReports';
 
-export default function DeleteGeneratorModal({ generators }) {
+export default function DeleteReportsModal({ reports}) {
     const [opneNotification, setOpenNotification] = useState(false);
     const {
-        setUpdateGeneratorInfo,
-        openModalCreateGenerator,
-        setOpenModalCreateGenerator,
-        openModalEditGenerator,
-        setOpenModalEditGenerator,
-        openModalDeleteGenerator,
-        setOpenModalDeleteGenerator,
-        openModalText,
-        setOpenModalText
+        setOpenModalDeleteReport,
+        openModalDeleteReport,
+        setUpdateReportInfo,
     } = useContext(TodoContext);
-    const userData = useAuth();
     const title = `¿Está seguro de realizar esta operación?`;
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState([]);
-
-    const handleDeleteGenerators = async () => {
+    const userData = useAuth();
+    console.log("reports to delete: ", reports)
+    const handleDeleteReports = async () => {
         setLoading(true);
-        if (userData === null) return;
-        const creator = userData.user;
-        const usersToDelete = generators.map(generator => ({ email: generator, 'creator_user': creator }));
-        const promises = deleteUsers(usersToDelete);
+        const reportsToDelete = reports.map(report => {
+            return { reportId: report, creator_user: userData.user}});
+        const promises = deleteReports(reportsToDelete);
         await promises.then(async (response) => {
             setResult(response);
             setLoading(false);
             setSuccess(response.every(res => res.status === 'fulfilled'));
             setOpenNotification(true);
-            setOpenModalDeleteGenerator(false);
+            setOpenModalDeleteReport(false);
         })
 
     }
 
     const body = (
         <Box px={1} pt={1}>
-            <Typography variant='body1'>Se eliminarán los siguientes generadores:</Typography>
+            <Typography variant='body1'>Se eliminarán los siguientes reportes:</Typography>
             <List sx={{ p: 0, pt: 1, pl: 1 }} >
-                {generators.map(generator => <ListItem sx={{ p: 0 }} key={generator}>
-                    <Typography variant='body1'>{generator}</Typography>
+                {reports.map(report => <ListItem sx={{ p: 0 }} key={report}>
+                    <Typography variant='body1'>{`Reporte con ID ${report}`}</Typography>
                 </ListItem>)}
             </List>
         </Box>
@@ -57,16 +50,19 @@ export default function DeleteGeneratorModal({ generators }) {
     const notificationBody = (
         <Box px={1} pt={1}>
             <Typography variant='body1'>
-                {success ? "Los generadores se eliminaron correctamente." : "Ocurrió un error al intentar eliminar los generadores. No se pudo eliminar a los siguientes generadores:"}
+                {success ? "Los reportes se eliminaron correctamente." : "Ocurrió un error al realizar la operación. No se pudo eliminar los siguinetes reportes:"}
             </Typography>
             <List sx={{ p: 0, pt: 1, pl: 1 }} >
                 {result.map(res => {
                     if (res.status === 'fulfilled') return null;
-                    const user = JSON.parse(res.reason.config.data);
+                    //TODO: Change this to the correct key
+                    //const user = JSON.parse(res.reason.config.data);
+                    const request = JSON.parse(res.reason.config.data);
+                    const requestId = request.reportId;
                     const errorMessage = res.reason.response.data.errorMessage? res.reason.response.data.errorMessage : res.reason.response.statusText;
                     return (
-                        <ListItem sx={{ p: 0 }} key={user.email}>
-                            <Typography variant='body1'>{`${user.email} - ${errorMessage}`}</Typography>
+                        <ListItem sx={{ p: 0 }} key={requestId}>
+                            <Typography variant='body1'>{`no se puedo eliminar el reporte con el ID ${requestId} - ${errorMessage}`}</Typography>
                         </ListItem>
                     )
                 })}
@@ -76,8 +72,8 @@ export default function DeleteGeneratorModal({ generators }) {
 
     return (
         <>
-            <ConfirmationModal isOpen={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator} title={title} severity='error' loading={loading} onConfirm={async () => {
-                await handleDeleteGenerators();
+            <ConfirmationModal isOpen={openModalDeleteReport} setOpen={setOpenModalDeleteReport} title={title} severity='error' loading={loading} onConfirm={async () => {
+                await handleDeleteReports();
             }}>
                 {body}
             </ConfirmationModal>
@@ -85,12 +81,12 @@ export default function DeleteGeneratorModal({ generators }) {
             <NotificationModal 
                 isOpen={opneNotification} 
                 setOpen={setOpenNotification}
-                title={success ? "Generadores eliminados con éxito" : "Ocurrió un error"} 
+                title={success ? "Reportes eliminados con éxito" : "Ocurrió un error"} 
                 severity={success ? "success" : "error"} 
                 onAccept={()=>{
-                    setUpdateGeneratorInfo(prev => !prev)
+                    setUpdateReportInfo(prev=>!prev)
                     }}>
-                {success ? "Los generadores se eliminaron correctamente" : notificationBody}
+                {success ? "Los reportes se eliminaron correctamente" : notificationBody}
             </NotificationModal>
         </>
     )

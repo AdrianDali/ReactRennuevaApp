@@ -8,45 +8,30 @@ import Title from '../components/Title';
 import Grid from '@mui/material/Grid';
 import SignatureComponent from "../components/FirmaDocument";
 
-function ModalFirmar({ children, mode,id , type}) {
-    const { openModalCreateFirma, setOpenModalCreateFirma, openModalEditFirma, setOpenModalEditFirma, openModalDeleteFirma, setOpenModalDeleteFirma,
-        openModalCreateFirmaReceptor, setUpdateReportInfo,setOpenModalCreateFirmaReceptor, openModalEditFirmaReceptor, setOpenModalEditFirmaReceptor, openModalDeleteFirmaReceptor, setOpenModalDeleteFirmaReceptor,
-     } = useContext(TodoContext);
-    console.log("ID DE QUIERN SE FIRMA",id)
+function ModalFirmar({ id, type }) {
+    const { openModalCreateFirma,
+        setOpenModalCreateFirma,
+        openModalEditFirma, 
+        setOpenModalEditFirma, 
+        openModalDeleteFirma, 
+        setOpenModalDeleteFirma,
+        openModalCreateFirmaReceptor,
+        setUpdateReportInfo,
+        setOpenModalCreateFirmaReceptor,
+        openModalEditFirmaReceptor,
+        setOpenModalEditFirmaReceptor,
+        openModalDeleteFirmaReceptor, 
+        setOpenModalDeleteFirmaReceptor,
+    } = useContext(TodoContext);
+    console.log("ID DE QUIERN SE FIRMA", id)
 
     const closeModal = () => {
-        if (type == "Generador"){
-        if (openModalCreateFirma) {
-            setOpenModalCreateFirma(false);
-        }
-        if (openModalEditFirma) {
-            setOpenModalEditFirma(false);
-        }
-        if (openModalDeleteFirma) {
-            setOpenModalDeleteFirma(false);
-        }
-    }
-        
-        if (type == "Receptor"){
-        if (openModalCreateFirmaReceptor) {
-            setOpenModalCreateFirmaReceptor(false);
-        }
-        if (openModalEditFirmaReceptor) {
-            setOpenModalEditFirmaReceptor(false);
-        }
-        if (openModalDeleteFirmaReceptor) {
-            setOpenModalDeleteFirmaReceptor(false);
-        }
-        }
-        setUpdateReportInfo(true);
-
-        
-
-
+        setUpdateReportInfo(prev => !prev);
+        setOpenModalEditFirma(false)
     };
 
     return ReactDOM.createPortal(
-        <Modal open={true} onClose={closeModal}>
+        <Modal open={openModalEditFirma} onClose={closeModal}>
 
             <Box className="ModalContent" sx={{
                 position: 'absolute',
@@ -62,7 +47,7 @@ function ModalFirmar({ children, mode,id , type}) {
             }}>
                 <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
                 <Box>
-                    <SignatureComponent id= {id} type= {type}/>
+                    <SignatureComponent id={id} type={type} />
                 </Box>
             </Box>
 

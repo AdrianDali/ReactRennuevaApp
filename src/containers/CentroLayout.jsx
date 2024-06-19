@@ -34,6 +34,7 @@ import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import '@fontsource/poppins/800.css';
 import '@fontsource/poppins/900.css';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -183,7 +184,7 @@ const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
             }}>
                 {children}
             </Box>
-            
+
         </StyledDrawer>)
 }
 
@@ -195,6 +196,7 @@ export default function CentroLayout({ children, List }) {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [open, setOpen] = useState(false);
     const [desktop, setDesktop] = useState(window.innerWidth > 899);
+    const navigate = useNavigate();
 
     const dataUser = useAuth();
     console.log(dataUser);
@@ -205,6 +207,7 @@ export default function CentroLayout({ children, List }) {
     };
 
     const handleCloseUserMenu = () => {
+        navigate('/');
         setAnchorElUser(null);
     };
 
@@ -292,11 +295,10 @@ export default function CentroLayout({ children, List }) {
                                     open={Boolean(anchorElUser)}
                                     onClose={handleCloseUserMenu}
                                 >
-                                    {settings.map((setting) => (
-                                        <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                            <Typography textAlign="center">{setting}</Typography>
-                                        </MenuItem>
-                                    ))}
+                                    <MenuItem onClick={handleCloseUserMenu}>
+                                        <Typography textAlign="center">Cerrar sesión</Typography>
+                                    </MenuItem>
+
                                 </Menu>
                             </Box>
                         </Toolbar>

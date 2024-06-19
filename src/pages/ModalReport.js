@@ -13,7 +13,9 @@ import {
   FormControl,
   InputLabel,
   Grid,
+  IconButton
 } from "@mui/material";
+import { Close } from "@mui/icons-material";
 import Title from "../components/Title";
 import Switch from "@mui/material/Switch";
 import Stack from "@mui/material/Stack";
@@ -343,7 +345,7 @@ function ModalReport({ children, mode, report }) {
         })
         .then((response) => {
           console.log(response);
-          setUpdateReportInfo(true);
+          setUpdateReportInfo(prev => !prev);
           setOpenModalText(true);
           setTextOpenModalText("Reporte actualizado correctamente");
           closeModal();
@@ -380,7 +382,7 @@ function ModalReport({ children, mode, report }) {
         })
         .then((response) => {
           console.log(response);
-          setUpdateReportInfo(true);
+          setUpdateReportInfo(prev => !prev);
           setOpenModalText(true);
           setTextOpenModalText("Reporte creado correctamente");
           closeModal();
@@ -482,12 +484,12 @@ function ModalReport({ children, mode, report }) {
           borderRadius: 2,
         }}
       >
-        <Button
+        <IconButton
           onClick={closeModal}
           sx={{ position: "absolute", right: 2, top: 2 }}
         >
-          &times;
-        </Button>
+          <Close />
+        </IconButton>
         <form onSubmit={handleSubmit}>
           <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 600 }}>
             <Box mb={2}>

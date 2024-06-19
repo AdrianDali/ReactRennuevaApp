@@ -5,7 +5,7 @@ import { TodoContext } from "../../context";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
-//import ReportsTable from "../../components/boards/ReportsTable";
+import ReportsTable from "../../components/boards/ReportsTable";
 
 export default function ExportsMenu() {
   const [clientes, setClientes] = useState([]);
@@ -50,7 +50,6 @@ export default function ExportsMenu() {
       }}
     >
       <GeneratorsTable data={clientes}/>
-      {/*<ReportsTable data={reports}/>*/}
     </Container>
   );
 }

@@ -92,7 +92,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Generador creado correctamente")
-                    setUpdateGeneratorInfo(true)
+                    setUpdateGeneratorInfo(prev => !prev)
                     e.target.reset();
                     closeModal()
 
@@ -151,7 +151,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Generador editado correctamente")
-                    setUpdateGeneratorInfo(true)
+                    setUpdateGeneratorInfo(prev => !prev)
                     e.target.reset();
                     closeModal()
                     // Limpiar los campos del formulario
@@ -188,7 +188,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Generador borrado correctamente")
-                    setUpdateGeneratorInfo(true)
+                    setUpdateGeneratorInfo(prev=>!prev)
                     e.target.reset();
                     closeModal()
 

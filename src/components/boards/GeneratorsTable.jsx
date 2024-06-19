@@ -435,7 +435,7 @@ export default function GeneratorsTable({ data }) {
                                             e.stopPropagation()
                                             setGeneratorsToDelete([cliente.email])
                                             setOpenModalDeleteGenerator(true)
-                                        }} >
+                                        }}>
                                             <Delete />
                                         </IconButton>
                                     </TableCell>
@@ -449,7 +449,7 @@ export default function GeneratorsTable({ data }) {
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalCreateGenerator && <ModalGenerator mode={"CREAR"} creatorUser={dataUser.user} />}
             {openModalEditGenerator && <ModalGenerator mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user}/>}
-            <DeleteGeneratorModal generators={generatorsToDelete} open={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator}/>
+            <DeleteGeneratorModal generators={generatorsToDelete} />
             {openModalText && (
               <Dialog
                 open={openModalText}
