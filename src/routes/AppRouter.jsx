@@ -79,7 +79,7 @@ function App() {
     
     // menu para grupo de calidad 
     { path: '/quality/donor-recollection', element: <CentroLayout List={<QualityList/>}><MenuDonorRecolection/></CentroLayout> },
-    { path: '/quality/generator', element: <CentroLayout List={<QualityList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/quality/generator', element: <CentroLayout List={<QualityList/>}><ExportsMenu/></CentroLayout> },
     { path: '/quality/donor', element: <CentroLayout List={<QualityList/>}><MenuDonor/></CentroLayout> },
     { path: '/quality/carrier', element: <CentroLayout List={<QualityList/>}><MenuCarrier/></CentroLayout> },
     { path: '/quality/driver', element: <CentroLayout List={<QualityList/>}><MenuDriver/></CentroLayout> },
@@ -99,7 +99,7 @@ function App() {
 
     //menus para grupo registros 
     { path: '/register/donor-recollection', element: <CentroLayout List={<RegisterList/>}><MenuDonorRecolection/></CentroLayout> },
-    { path: '/register/generator', element: <CentroLayout List={<RegisterList/>}><MenuGenerator/></CentroLayout> },
+    { path: '/register/generator', element: <CentroLayout List={<RegisterList/>}><ExportsMenu/></CentroLayout> },
     { path: '/register/donor', element: <CentroLayout List={<RegisterList/>}><MenuDonor/></CentroLayout> },
     { path: '/register/carrier', element: <CentroLayout List={<RegisterList/>}><MenuCarrier/></CentroLayout> },
     { path: '/register/driver', element: <CentroLayout List={<RegisterList/>}><MenuDriver/></CentroLayout> },

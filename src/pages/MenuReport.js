@@ -742,6 +742,7 @@ function MenuReport() {
                             <TableCell>Residuos</TableCell>
                             <TableCell>Firma Generador</TableCell>
                             <TableCell>Reporte</TableCell>
+                            <TableCell>Talon</TableCell>
                             <TableCell>Editar</TableCell>
                             <TableCell>Borrar</TableCell>
                           </TableRow>
