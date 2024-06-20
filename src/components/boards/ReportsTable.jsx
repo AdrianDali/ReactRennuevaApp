@@ -42,6 +42,7 @@ import getReportInfo from "../../services/getReportInfo";
 import generateReportPDF from "../../services/generateReportPDF";
 import generateQR from "../../services/generateQR";
 import DeleteReportsModal from "../modals/DeleteReportsModal";
+import ReportsFiltersModal from "../modals/ReportsFiltersModal";
 
 
 
@@ -371,7 +372,7 @@ export default function ReportsTable({ data }) {
             const ciudad_usuario = [...new Set(data.map((report) => report.ciudad_usuario))];
             const estado_usuario = [...new Set(data.map((report) => report.estado_usuario))];
             const cp_usuario = [...new Set(data.map((report) => report.cp_usuario))];
-            const fecha_inicio_reporte = [...new Set(data.map((report) => report.fecha_inicio_reporte))];
+            const fecha_inicio_reporte = [...new Set(data.map((report) => new Date(report.fecha_inicio_reporte)))];
             const centro_recoleccion = [...new Set(data.map((report) => report.centro_recoleccion))];
             const centro_reciclaje = [...new Set(data.map((report) => report.centro_reciclaje))];
             const compania_usuario = [...new Set(data.map((report) => report.compania_usuario))];
@@ -580,10 +581,10 @@ export default function ReportsTable({ data }) {
                                             startIcon={<Draw/>} 
                                             variant="contained" 
                                             size="small" 
-                                            color={report.firma_responsiva_receptor ? "success" : "warning"}
+                                            color={report.firma_responsiva_generador ? "success" : "warning"}
                                             onClick={(e) => {
                                                 e.stopPropagation()
-                                                onEditReceiverSign(report.id_report)
+                                                onEditGeneratorSign(report.id_report)
                                             }}
                                             >
                                             Firmar
@@ -609,10 +610,10 @@ export default function ReportsTable({ data }) {
                                             startIcon={<Draw />} 
                                             variant="contained" 
                                             size="small" 
-                                            color={report.firma_responsiva_generador ? "success" : "warning"}
+                                            color={report.firma_responsiva_receptor ? "success" : "warning"}
                                             onClick={(e) => {
                                                 e.stopPropagation()
-                                                onEditGeneratorSign(report.id_report)
+                                                onEditReceiverSign(report.id_report)
                                             }}
                                             >
                                             Firmar
@@ -659,7 +660,7 @@ export default function ReportsTable({ data }) {
             <ModalFirmar type={signType} id={reportToEdit}/>
             <ModalResidueReport report={reportToEdit}/>
             <DeleteReportsModal reports={reportsToDelete}/>
-            {/*<GeneratorsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setVisibleData={setVisibleData} users={data} setFiltersApplied={setFiltersApplied} />*/}
+            <ReportsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setVisibleData={setVisibleData} objects={data} setFiltersApplied={setFiltersApplied} />
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalCreateReport && <ModalReport mode={"CREAR"} />}
             {openModalEditReport && <ModalReport mode={"EDITAR"} report={reportToEdit} />}
