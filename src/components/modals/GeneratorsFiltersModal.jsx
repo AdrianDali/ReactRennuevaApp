@@ -67,7 +67,7 @@ function MultipleSelect({ data, label, name, setFilters, filters }) {
 
 
 
-export default function GeneratorsFiltersModal({ isOpen, setOpen, data, setVisibleData, users, setFiltersApplied }) {
+export default function GeneratorsFiltersModal({ isOpen, setOpen, data, setFilteredData, users, setFiltersApplied }) {
     const [filters, setFilters] = useState({
             company: [],
             address_locality: [],
@@ -85,7 +85,7 @@ export default function GeneratorsFiltersModal({ isOpen, setOpen, data, setVisib
         console.log('data antes del filtro', newData)
         const keys = Object.keys(filters);
         console.log('claves de filtros', keys)
-        if(keys.every(key => filters[key].length === 0)) return (setFiltersApplied(false), setVisibleData(users));
+        if(keys.every(key => filters[key].length === 0)) return (setFiltersApplied(false), setFilteredData(users));
         keys.forEach(key => {
             if (filters[key].length > 0) {
                 console.log('Filtrando por', key)
@@ -96,7 +96,7 @@ export default function GeneratorsFiltersModal({ isOpen, setOpen, data, setVisib
                 console.log('No hay filtros para', key)
             }
         });
-        setVisibleData(newData);
+        setFilteredData(newData);
         setFiltersApplied(true);
         closeModal();
     }
@@ -109,10 +109,14 @@ export default function GeneratorsFiltersModal({ isOpen, setOpen, data, setVisib
             address_city: [],
             address_state: []
         });
-        setVisibleData(users);
+        setFilteredData(users);
         setFiltersApplied(false);
         closeModal();
     }
+
+    useEffect(() => {
+        clearFilters();
+    }, [users])
 
     return (
         <Modal open={isOpen} onClose={closeModal} >

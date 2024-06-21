@@ -22,12 +22,14 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    DialogContentText
+    DialogContentText,
+    TextField,
+    TablePagination
 } from "@mui/material";
-import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit } from "@mui/icons-material";
+import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Close } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
-import { useState, useContext, useEffect, createContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import GeneratorsFiltersModal from "../modals/GeneratorsFiltersModal";
 import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
@@ -83,7 +85,7 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
 }
 
 
-function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, visibleData, selectedData}) {
+function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, filteredData, selectedData }) {
     const open = Boolean(anchorEl);
 
     const handleClose = () => {
@@ -97,8 +99,8 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, visibleData, select
     }
 
     const handleExportVisible = () => {
-        //console.log(visibleData)
-        generateExcelFromJson(visibleData, "Generadores");
+        //console.log(filteredData)
+        generateExcelFromJson(filteredData, "Generadores");
         handleClose();
     }
 
@@ -139,13 +141,83 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, visibleData, select
 
 }
 
-function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersApplied, visibleData, allData}) {
-    
+function SearchField({ filteredData, setVisibleData }) {
+    const [showSearch, setShowSearch] = useState(false);
+    const searchInputRef = useRef();
+    const searchButtonRef = useRef();
+    const [searchValue, setSearchValue] = useState("");
+    useEffect(() => {
+        if (showSearch) {
+            searchInputRef.current.focus();
+        }
+    }, [showSearch])
+
+    const handleSearch = (e) => {
+        if (e.key === "Enter") {
+            const search = searchValue.trim().toLowerCase();
+            if (search === "") {
+                setVisibleData(filteredData);
+            } else {
+                const newData = filteredData.filter((generador) => {
+                    return generador.first_name.toLowerCase().includes(search) ||
+                        generador.last_name.toLowerCase().includes(search) ||
+                        generador.user.toLowerCase().includes(search) ||
+                        generador.rfc.toLowerCase().includes(search)
+                })
+                setVisibleData(newData);
+            }
+        }
+    }
+
+    return (
+        <>
+            <ClickAwayListener onClickAway={(e) => {
+                if (e.target !== searchButtonRef.current && searchValue === "") {
+                    setShowSearch(false)
+                    setVisibleData(filteredData)
+                }
+            }}>
+                <TextField
+                    color="info"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    id="search-field"
+                    inputRef={searchInputRef}
+                    label="Búscar"
+                    variant="standard"
+                    size="small"
+                    sx={{ mt: 1, width: showSearch ? "25rem" : 0, transition: 'all 300ms ease-in' }}
+                    placeholder="Nombre, Apellido, Correo electrónico, RFC, Teléfono"
+                    onKeyUp={handleSearch}
+                />
+
+            </ClickAwayListener>
+            <IconButton
+                color={showSearch ? "error" : "info"}
+                ref={searchButtonRef} onClick={(e) => {
+                    e.stopPropagation()
+                    if (!showSearch) return setShowSearch(true)
+                    setSearchValue("")
+                    setVisibleData(filteredData)
+                    setShowSearch(false)
+                }}>
+                {showSearch ? <Close /> : <Search />}
+            </IconButton>
+        </>
+    )
+}
+
+function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersApplied, filteredData, allData, setVisibleData }) {
     const {
         setOpenModalCreateGenerator,
         setOpenModalDeleteGenerator,
     } = useContext(TodoContext);
     const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
+
+
+
+
+
     if (selected.length > 0) return (
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" py={2} bgcolor={theme.palette.primary.light}>
             <Typography variant="h4" component="div" color="secondary" sx={{ p: 2 }}>
@@ -153,13 +225,13 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
             </Typography>
             <Box>
                 <Button variant="outlined" size="large" color="success" startIcon={<Download />} sx={{ m: 2 }} onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}>Exportar</Button>
-                <Button variant="contained" size="large" color="error" startIcon={<Delete />} sx={{ m: 2 }} onClick={e=>{
+                <Button variant="contained" size="large" color="error" startIcon={<Delete />} sx={{ m: 2 }} onClick={e => {
                     e.stopPropagation()
                     setOpenModalDeleteGenerator(true)
                     setUsersToDelete(selected)
                 }}>Borrar</Button>
             </Box>
-            <ExportOptionsMenu selectedData={selected} visibleData={visibleData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
+            <ExportOptionsMenu selectedData={selected} filteredData={filteredData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
         </Box>
     )
 
@@ -169,13 +241,13 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
                 Generadores
             </Typography>
             <Box>
-                <IconButton color="info" ><Search /></IconButton>
-                <Badge color="error"  overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
-                    <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={   { m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
+                <SearchField filteredData={filteredData} setVisibleData={setVisibleData} />
+                <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
+                    <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
                 </Badge>
                 <Button variant="outlined" size="large" color="success" startIcon={<Download />} sx={{ m: 2 }} onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}>Exportar</Button>
                 <Button variant="contained" size="large" color="primary" startIcon={<Add />} sx={{ m: 2 }} onClick={() => { setOpenModalCreateGenerator(true) }}>Nuevo</Button>
-                <ExportOptionsMenu selectedData={selected} visibleData={visibleData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl}/>
+                <ExportOptionsMenu selectedData={selected} filteredData={filteredData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
             </Box>
         </Box>
     )
@@ -184,11 +256,14 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
 
 
 export default function GeneratorsTable({ data }) {
-    const [visibleData, setVisibleData] = useState(data);
+    const [filteredData, setFilteredData] = useState(data);
     const [generatorsToDelete, setGeneratorsToDelete] = useState([]);
     const [userToEdit, setUserToEdit] = useState(null);
     const [filtersApplied, setFiltersApplied] = useState(false);
+    const [visibleData, setVisibleData] = useState(data);
     const dataUser = useAuth();
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const {
         openModalCreateGenerator,
         openModalEditGenerator,
@@ -211,6 +286,14 @@ export default function GeneratorsTable({ data }) {
         address_locality: [],
     });
 
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
     const handleGenaeralCheckboxClick = (e) => {
         e.stopPropagation()
@@ -253,10 +336,11 @@ export default function GeneratorsTable({ data }) {
         }
     }, [selected]);
 
-    
+
 
     useEffect(() => {
         setSelected([]);
+        setFilteredData(data);
         setVisibleData(data);
         if (data.length > 0) {
             const company = [...new Set(data.map((cliente) => cliente.company))];
@@ -279,7 +363,7 @@ export default function GeneratorsTable({ data }) {
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
             <Paper>
-                <Toolbar selected={selected} allData={data} visibleData={visibleData} setOpenFiltersModal={setOpenFiltersModal} setUsersToDelete={setGeneratorsToDelete} filtersApplied={filtersApplied}/>
+                <Toolbar selected={selected} allData={data} filteredData={filteredData} setOpenFiltersModal={setOpenFiltersModal} setUsersToDelete={setGeneratorsToDelete} filtersApplied={filtersApplied} setVisibleData={setVisibleData} />
                 <TableContainer>
                     <Table>
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
@@ -378,99 +462,118 @@ export default function GeneratorsTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.map((cliente, index) => (
-                                <TableRow
-                                    hover
-                                    role="checkbox"
-                                    key={cliente.user}
-                                    selected={isRowSelected(cliente.user)}
-                                    sx={{ cursor: 'pointer' }}
-                                    aria-checked={isRowSelected(cliente.user) ? true : false}
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        toggleSelected(cliente.user)
-                                    }}
-                                    onContextMenu={(e) => {
-                                        e.preventDefault();
-                                        setUserToEdit(cliente)
-                                        setGeneratorsToDelete([cliente.email])
-                                        setRowContextMenuAnchorEl(e.target);
-                                    }}
-
-                                >
-                                    <TableCell>
-                                        <Checkbox
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                toggleSelected(cliente.user)
-                                            }}
-                                            checked={isRowSelected(cliente.user)}
-                                            inputProps={{
-                                                'aria-labelledby': cliente.user,
-                                            }}
-                                        />
+                            {visibleData.length === 0 ?
+                                <TableRow>
+                                    <TableCell colSpan={14}>
+                                        <Typography variant="h6" color="textSecondary" align="center">
+                                            No se encontraron generadores
+                                        </Typography>
                                     </TableCell>
-                                    <TableCell>{cliente.first_name}</TableCell>
-                                    <TableCell>{cliente.last_name}</TableCell>
-                                    <TableCell>{cliente.user}</TableCell>
-                                    <TableCell>{cliente.rfc}</TableCell>
-                                    <TableCell>{cliente.company}</TableCell>
-                                    <TableCell>{cliente.address_street}</TableCell>
-                                    <TableCell>{cliente.address_number}</TableCell>
-                                    <TableCell>{cliente.address_locality}</TableCell>
-                                    <TableCell>{cliente.address_city}</TableCell>
-                                    <TableCell>{cliente.address_state}</TableCell>
-                                    <TableCell>{cliente.address_postal_code}</TableCell>
-                                    <TableCell>
-                                        <IconButton onClick={(e) => {
+                                </TableRow>
+                                : visibleData
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((cliente, index) => (
+                                    <TableRow
+                                        hover
+                                        role="checkbox"
+                                        key={cliente.user}
+                                        selected={isRowSelected(cliente.user)}
+                                        sx={{ cursor: 'pointer' }}
+                                        aria-checked={isRowSelected(cliente.user) ? true : false}
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            toggleSelected(cliente.user)
+                                        }}
+                                        onContextMenu={(e) => {
+                                            e.preventDefault();
+                                            setUserToEdit(cliente)
+                                            setGeneratorsToDelete([cliente.email])
+                                            setRowContextMenuAnchorEl(e.target);
+                                        }}
+
+                                    >
+                                        <TableCell>
+                                            <Checkbox
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    toggleSelected(cliente.user)
+                                                }}
+                                                checked={isRowSelected(cliente.user)}
+                                                inputProps={{
+                                                    'aria-labelledby': cliente.user,
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell>{cliente.first_name}</TableCell>
+                                        <TableCell>{cliente.last_name}</TableCell>
+                                        <TableCell>{cliente.user}</TableCell>
+                                        <TableCell>{cliente.rfc}</TableCell>
+                                        <TableCell>{cliente.company}</TableCell>
+                                        <TableCell>{cliente.address_street}</TableCell>
+                                        <TableCell>{cliente.address_number}</TableCell>
+                                        <TableCell>{cliente.address_locality}</TableCell>
+                                        <TableCell>{cliente.address_city}</TableCell>
+                                        <TableCell>{cliente.address_state}</TableCell>
+                                        <TableCell>{cliente.address_postal_code}</TableCell>
+                                        <TableCell>
+                                            <IconButton onClick={(e) => {
                                                 e.stopPropagation()
                                                 setUserToEdit(cliente)
                                                 setOpenModalEditGenerator(true)
-                                                }}>
-                                            <Edit />
-                                        </IconButton>
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconButton color="error" onClick={(e) => {
-                                            e.stopPropagation()
-                                            setGeneratorsToDelete([cliente.email])
-                                            setOpenModalDeleteGenerator(true)
-                                        }}>
-                                            <Delete />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                            }}>
+                                                <Edit />
+                                            </IconButton>
+                                        </TableCell>
+                                        <TableCell>
+                                            <IconButton color="error" onClick={(e) => {
+                                                e.stopPropagation()
+                                                setGeneratorsToDelete([cliente.email])
+                                                setOpenModalDeleteGenerator(true)
+                                            }}>
+                                                <Delete />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[ 5, 10, 25]}
+                    component="div"
+                    count={visibleData.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </Paper>
-            <GeneratorsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setVisibleData={setVisibleData} users={data} setFiltersApplied={setFiltersApplied}/>
+            <GeneratorsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} users={data} setFiltersApplied={setFiltersApplied} />
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalCreateGenerator && <ModalGenerator mode={"CREAR"} creatorUser={dataUser.user} />}
-            {openModalEditGenerator && <ModalGenerator mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user}/>}
+            {openModalEditGenerator && <ModalGenerator mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user} />}
             <DeleteGeneratorModal generators={generatorsToDelete} />
             {openModalText && (
-              <Dialog
-                open={openModalText}
-                onClose={() => setOpenModalText(false)}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {textOpenModalText}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    {textOpenModalText}
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setOpenModalText(false)}>
-                    Aceptar
-                  </Button>
-                </DialogActions>
-              </Dialog>
+                <Dialog
+                    open={openModalText}
+                    onClose={() => setOpenModalText(false)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {textOpenModalText}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {textOpenModalText}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenModalText(false)}>
+                            Aceptar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             )}
         </Box>
     );

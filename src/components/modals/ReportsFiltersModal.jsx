@@ -156,7 +156,7 @@ function DateRangeFilter({name, setFilters, label, filters}) {
 }
 
 
-export default function ReportsFiltersModal({ isOpen, setOpen, data, setVisibleData, objects, setFiltersApplied }) {
+export default function ReportsFiltersModal({ isOpen, setOpen, data, setFilteredData, objects, setFiltersApplied }) {
     const [filters, setFilters] = useState({
         fecha_inicio_reporte: {},
         firma_responsiva_generador: [],
@@ -183,7 +183,7 @@ export default function ReportsFiltersModal({ isOpen, setOpen, data, setVisibleD
         console.log('data antes del filtro', newData)
         const keys = Object.keys(filters);
         console.log('claves de filtros', keys)
-        if (keys.every(key => filters[key].length === 0)) return (setFiltersApplied(false), setVisibleData(objects));
+        if (keys.every(key => filters[key].length === 0)) return (setFiltersApplied(false), setFilteredData(objects));
         keys.forEach(key => {
             if(key === 'fecha_inicio_reporte') {
                 console.log('Filtrando por fecha')
@@ -208,7 +208,7 @@ export default function ReportsFiltersModal({ isOpen, setOpen, data, setVisibleD
                 console.log('No hay filtros para', key)
             }
         });
-        setVisibleData(newData);
+        setFilteredData(newData);
         setFiltersApplied(true);
         closeModal();
     }
@@ -230,7 +230,7 @@ export default function ReportsFiltersModal({ isOpen, setOpen, data, setVisibleD
             estado_usuario: [],
             transportista: [],
         })
-        setVisibleData(objects);
+        setFilteredData(objects);
         setFiltersApplied(false);
         closeModal();
     }

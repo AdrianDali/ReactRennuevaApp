@@ -22,12 +22,14 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    DialogContentText
+    DialogContentText,
+    TextField,
+    TablePagination,
 } from "@mui/material";
-import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Draw, SaveAlt } from "@mui/icons-material";
+import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Draw, SaveAlt, Close } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
-import { useState, useContext, useEffect, createContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
@@ -92,7 +94,7 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
 }
 
 
-function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, visibleData, selectedData }) {
+function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, filteredData, selectedData }) {
     const open = Boolean(anchorEl);
 
     const handleClose = () => {
@@ -106,8 +108,8 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, visibleData, select
     }
 
     const handleExportVisible = () => {
-        //console.log(visibleData)
-        generateExcelFromJson(visibleData, "Reportes");
+        //console.log(filteredData)
+        generateExcelFromJson(filteredData, "Reportes");
         handleClose();
     }
 
@@ -148,7 +150,7 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, visibleData, select
 }
 
 
-function Toolbar({ selected, setOpenFiltersModal, setObjectsToDelete, filtersApplied, visibleData, allData }) {
+function Toolbar({ selected, setOpenFiltersModal, setObjectsToDelete, filtersApplied, filteredData, allData, setVisibleData }) {
 
     const {
         setOpenModalDeleteReport,
@@ -168,7 +170,7 @@ function Toolbar({ selected, setOpenFiltersModal, setObjectsToDelete, filtersApp
                     setObjectsToDelete(selected)
                 }}>Borrar</Button>
             </Box>
-            <ExportOptionsMenu selectedData={selected} visibleData={visibleData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
+            <ExportOptionsMenu selectedData={selected} filteredData={filteredData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
         </Box>
     )
 
@@ -178,13 +180,13 @@ function Toolbar({ selected, setOpenFiltersModal, setObjectsToDelete, filtersApp
                 Reportes
             </Typography>
             <Box>
-                <IconButton color="info" ><Search /></IconButton>
+                <SearchField filteredData={filteredData} setVisibleData={setVisibleData} />
                 <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
                     <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
                 </Badge>
                 <Button variant="outlined" size="large" color="success" startIcon={<Download />} sx={{ m: 2 }} onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}>Exportar</Button>
                 <Button variant="contained" size="large" color="primary" startIcon={<Add />} sx={{ m: 2 }} onClick={() => { setOpenModalCreateReport(true) }}>Nuevo</Button>
-                <ExportOptionsMenu selectedData={selected} visibleData={visibleData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
+                <ExportOptionsMenu selectedData={selected} filteredData={filteredData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
             </Box>
         </Box>
     )
@@ -192,38 +194,99 @@ function Toolbar({ selected, setOpenFiltersModal, setObjectsToDelete, filtersApp
 }
 
 
+function SearchField({ filteredData, setVisibleData }) {
+    const [showSearch, setShowSearch] = useState(false);
+    const searchInputRef = useRef();
+    const searchButtonRef = useRef();
+    const [searchValue, setSearchValue] = useState("");
+    useEffect(() => {
+        if (showSearch) {
+            searchInputRef.current.focus();
+        }
+    }, [showSearch])
+
+    const handleSearch = (e) => {
+        if (e.key === "Enter") {
+            const search = searchValue.trim().toLowerCase();
+            if (search === "") {
+                setVisibleData(filteredData);
+            } else {
+                const newData = filteredData.filter((report) => {
+                    return report.nombre_real_usuario.toLowerCase().includes(search) ||
+                        report.apellido_usuario.toLowerCase().includes(search) ||
+                        report.rfc_usuario.toLowerCase().includes(search) ||
+                        report.email_usuario.toLowerCase().includes(search) ||
+                        report.telefono_usuario.toLowerCase().includes(search) ||
+                        report.calle_usuario.toLowerCase().includes(search) ||
+                        report.colonia_usuario.toLowerCase().includes(search)
+                })
+                setVisibleData(newData);
+            }
+        }
+    }
+
+    return (
+        <>
+            <ClickAwayListener onClickAway={(e) => {
+                if (e.target !== searchButtonRef.current && searchValue === "") {
+                    setShowSearch(false)
+                    setVisibleData(filteredData)
+                }
+            }}>
+                <TextField
+                    color="info"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    id="search-field"
+                    inputRef={searchInputRef}
+                    label="Búscar"
+                    variant="standard"
+                    size="small"
+                    sx={{ mt: 1, width: showSearch ? "25rem" : 0, transition: 'all 300ms ease-in' }}
+                    placeholder="Nombre, Apellido, Correo electrónico, RFC, Teléfono"
+                    onKeyUp={handleSearch}
+                />
+
+            </ClickAwayListener>
+            <IconButton
+                color={showSearch ? "error" : "info"}
+                ref={searchButtonRef} onClick={(e) => {
+                    e.stopPropagation()
+                    if (!showSearch) return setShowSearch(true)
+                    setSearchValue("")
+                    setVisibleData(filteredData)
+                    setShowSearch(false)
+                }}>
+                {showSearch ? <Close /> : <Search />}
+            </IconButton>
+        </>
+    )
+}
+
 
 export default function ReportsTable({ data }) {
-    const [visibleData, setVisibleData] = useState(data);
+    const [filteredData, setFilteredData] = useState(data);
     const [reportsToDelete, setReportsToDelete] = useState([]);
     const [reportToEdit, setReportToEdit] = useState({});
     const [filtersApplied, setFiltersApplied] = useState(false);
-    const dataUser = useAuth();
+    const [visibleData, setVisibleData] = useState(data);
     const [signType, setSignType] = useState("Generador");
-    console.log(data)
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    
+    //console.log(data)
     const {
         setTextOpenModalText,
         openModalCreateReport,
-        setOpenModalCreateReport,
         openModalEditReport,
         setOpenModalDeleteReport,
         setOpenModalEditReport,
         openModalText,
         textOpenModalText,
         setOpenModalText,
-        setOpenModalCreateFirma,
-        openModalEditFirma,
         setOpenModalEditResidueReport,
-        setOpenModalEditFirma, 
-        openModalDeleteFirma, 
-        setOpenModalDeleteFirma,
-        openModalCreateFirmaReceptor,
+        setOpenModalEditFirma,
         setUpdateReportInfo,
-        setOpenModalCreateFirmaReceptor,
-        openModalEditFirmaReceptor,
-        setOpenModalEditFirmaReceptor,
-        openModalDeleteFirmaReceptor, 
-        setOpenModalDeleteFirmaReceptor,
     } = useContext(TodoContext);
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
@@ -250,6 +313,14 @@ export default function ReportsTable({ data }) {
         status_reporte: []
     });
 
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
     const handleGenaeralCheckboxClick = (e) => {
         e.stopPropagation()
@@ -260,58 +331,52 @@ export default function ReportsTable({ data }) {
         }
     }
 
-    const handleSavePDF = async (report) =>{
-            const validate = await validateReport(
-              report.id_report
-            )
-            if (validate == true) {
-              const data = await getReportInfo(
-                report.id_report
-              );
+    
 
-              let key_centro = "";
-              if (
+    const handleSavePDF = async (report) => {
+        const validate = await validateReport(
+            report.id_report
+        )
+        if (validate == true) {
+            const data = await getReportInfo(
+                report.id_report
+            );
+
+            let key_centro = "";
+            if (
                 data[0].key_centro_reciclaje !=
                 null
-              ) {
+            ) {
                 key_centro =
-                  data[0].key_centro_reciclaje;
-              }
-              if (
+                    data[0].key_centro_reciclaje;
+            }
+            if (
                 data[0].key_centro_recoleccion !=
                 null
-              ) {
+            ) {
                 key_centro =
-                  data[0].key_centro_recoleccion;
-              }
+                    data[0].key_centro_recoleccion;
+            }
 
-              const folio_busqueda =
+            const folio_busqueda =
                 data[0].key_grupo_usuario +
                 "-" +
                 key_centro +
                 "-" +
                 report.id_report;
 
-              const qrImage = await generateQR(
+            const qrImage = await generateQR(
                 "https://rewards.rennueva.com/tracking-external/" +
-                  folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-              );
-              /*
-              console.log("DATA de la funcion1");
-              console.log(report);
-              console.log(
-                "######SDASDASD el reporte firmado"
-              );
-              console.log(data[0]);
-              */
-              generateReportPDF(report, data, qrImage);
-            } else {
-              setOpenModalText(true);
-              setTextOpenModalText(
+                folio_busqueda // Aquí deberías poner la URL correcta para el reporte
+            );
+            generateReportPDF(report, data, qrImage);
+        } else {
+            setOpenModalText(true);
+            setTextOpenModalText(
                 "No se puede generar el reporte, aun no se han firmado todos los campos"
-              );
-            }
-          }
+            );
+        }
+    }
 
     const onEditGeneratorSign = (id) => {
         setReportToEdit(id);
@@ -366,6 +431,7 @@ export default function ReportsTable({ data }) {
 
     useEffect(() => {
         setSelected([]);
+        setFilteredData(data);
         setVisibleData(data);
         if (data.length > 0) {
             const colonia_usuario = [...new Set(data.map((report) => report.colonia_usuario))];
@@ -413,7 +479,7 @@ export default function ReportsTable({ data }) {
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
             <Paper>
-                <Toolbar selected={selected} allData={data} visibleData={visibleData} setOpenFiltersModal={setOpenFiltersModal} setObjectsToDelete={setReportsToDelete} filtersApplied={filtersApplied} />
+                <Toolbar selected={selected} allData={data} filteredData={filteredData} setOpenFiltersModal={setOpenFiltersModal} setObjectsToDelete={setReportsToDelete} filtersApplied={filtersApplied} setVisibleData={setVisibleData} />
                 <TableContainer>
                     <Table>
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
@@ -532,135 +598,154 @@ export default function ReportsTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.map((report, index) => (
-                                <TableRow
-                                    hover
-                                    role="checkbox"
-                                    key={report.id_report}
-                                    selected={isRowSelected(report.id_report)}
-                                    sx={{ cursor: 'pointer' }}
-                                    aria-checked={isRowSelected(report.id_report) ? true : false}
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        toggleSelected(report.id_report)
-                                    }}
-                                    onContextMenu={(e) => {
-                                        e.preventDefault();
-                                        setReportToEdit(report)
-                                        setReportsToDelete([report.id_report])
-                                        setRowContextMenuAnchorEl(e.target);
-                                    }}
-
-                                >
-                                    <TableCell>
-                                        <Checkbox
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                toggleSelected(report.id_report)
-                                            }}
-                                            checked={isRowSelected(report.id_report)}
-                                            inputProps={{
-                                                'aria-labelledby': report.id_report,
-                                            }}
-                                        />
-                                    </TableCell>
-                                    <TableCell>{report.id_report}</TableCell>
-                                    <TableCell>{report.nombre_real_usuario}</TableCell>
-                                    <TableCell>{report.apellido_usuario}</TableCell>
-                                    <TableCell>{report.rfc_usuario}</TableCell>
-                                    <TableCell>{report.email_usuario}</TableCell>
-                                    <TableCell>{report.telefono_usuario}</TableCell>
-                                    <TableCell>{report.calle_usuario}</TableCell>
-                                    <TableCell>{report.colonia_usuario}</TableCell>
-                                    <TableCell>{report.cp_usuario}</TableCell>
-                                    <TableCell>{report.ciudad_usuario}</TableCell>
-                                    <TableCell>{report.estado_usuario}</TableCell>
-                                    <TableCell>{dateFormater(report.fecha_inicio_reporte)}</TableCell>
-                                    <TableCell>
-                                        <Button 
-                                            startIcon={<Draw/>} 
-                                            variant="contained" 
-                                            size="small" 
-                                            color={report.firma_responsiva_generador ? "success" : "warning"}
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                onEditGeneratorSign(report.id_report)
-                                            }}
-                                            >
-                                            Firmar
-                                        </Button>
-                                    </TableCell>
-                                    
-                                    <TableCell>
-                                        <Button 
-                                            startIcon={<Add />} 
-                                            variant="contained" 
-                                            size="small" 
-                                            color={report.residuos_agregados ? "success" : "warning"}
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleEditResidues(report)
-                                            }}
-                                            >
-                                            Agregar
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button 
-                                            startIcon={<Draw />} 
-                                            variant="contained" 
-                                            size="small" 
-                                            color={report.firma_responsiva_receptor ? "success" : "warning"}
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                onEditReceiverSign(report.id_report)
-                                            }}
-                                            >
-                                            Firmar
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button 
-                                            startIcon={<SaveAlt/>} 
-                                            variant="contained" 
-                                            size="small" 
-                                            color={report.firma_responsiva_generador && report.firma_responsiva_receptor && report.residuos_agregados? "success" : "warning"}
-                                            onClick={async (e) => {
-                                                e.stopPropagation();
-                                                await handleSavePDF(report)
-                                            }}
-                                            >
-                                            Descargar
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconButton onClick={(e) => {
-                                            e.stopPropagation()
-                                            setReportToEdit(report)
-                                            setOpenModalEditReport(true)
-                                        }}>
-                                            <Edit />
-                                        </IconButton>
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconButton color="error" onClick={(e) => {
-                                            e.stopPropagation()
-                                            setReportsToDelete([report.id_report])
-                                            setOpenModalDeleteReport(true)
-                                        }} >
-                                            <Delete />
-                                        </IconButton>
+                            {visibleData.length === 0 ?
+                                <TableRow>
+                                    <TableCell colSpan={18}>
+                                        <Typography variant="h6" color="textSecondary" align="center">
+                                            No se encontraron reportes
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                                : visibleData
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((report, index) => (
+                                    <TableRow
+                                        hover
+                                        role="checkbox"
+                                        key={report.id_report}
+                                        selected={isRowSelected(report.id_report)}
+                                        sx={{ cursor: 'pointer' }}
+                                        aria-checked={isRowSelected(report.id_report) ? true : false}
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            toggleSelected(report.id_report)
+                                        }}
+                                        onContextMenu={(e) => {
+                                            e.preventDefault();
+                                            setReportToEdit(report)
+                                            setReportsToDelete([report.id_report])
+                                            setRowContextMenuAnchorEl(e.target);
+                                        }}
+
+                                    >
+                                        <TableCell>
+                                            <Checkbox
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    toggleSelected(report.id_report)
+                                                }}
+                                                checked={isRowSelected(report.id_report)}
+                                                inputProps={{
+                                                    'aria-labelledby': report.id_report,
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell>{report.id_report}</TableCell>
+                                        <TableCell>{report.nombre_real_usuario}</TableCell>
+                                        <TableCell>{report.apellido_usuario}</TableCell>
+                                        <TableCell>{report.rfc_usuario}</TableCell>
+                                        <TableCell>{report.email_usuario}</TableCell>
+                                        <TableCell>{report.telefono_usuario}</TableCell>
+                                        <TableCell>{report.calle_usuario}</TableCell>
+                                        <TableCell>{report.colonia_usuario}</TableCell>
+                                        <TableCell>{report.cp_usuario}</TableCell>
+                                        <TableCell>{report.ciudad_usuario}</TableCell>
+                                        <TableCell>{report.estado_usuario}</TableCell>
+                                        <TableCell>{dateFormater(report.fecha_inicio_reporte)}</TableCell>
+                                        <TableCell>
+                                            <Button
+                                                startIcon={<Draw />}
+                                                variant="contained"
+                                                size="small"
+                                                color={report.firma_responsiva_generador ? "success" : "warning"}
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    onEditGeneratorSign(report.id_report)
+                                                }}
+                                            >
+                                                Firmar
+                                            </Button>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <Button
+                                                startIcon={<Add />}
+                                                variant="contained"
+                                                size="small"
+                                                color={report.residuos_agregados ? "success" : "warning"}
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    handleEditResidues(report)
+                                                }}
+                                            >
+                                                Agregar
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                startIcon={<Draw />}
+                                                variant="contained"
+                                                size="small"
+                                                color={report.firma_responsiva_receptor ? "success" : "warning"}
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    onEditReceiverSign(report.id_report)
+                                                }}
+                                            >
+                                                Firmar
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                startIcon={<SaveAlt />}
+                                                variant="contained"
+                                                size="small"
+                                                color={report.firma_responsiva_generador && report.firma_responsiva_receptor && report.residuos_agregados ? "success" : "warning"}
+                                                onClick={async (e) => {
+                                                    e.stopPropagation();
+                                                    await handleSavePDF(report)
+                                                }}
+                                            >
+                                                Descargar
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell>
+                                            <IconButton onClick={(e) => {
+                                                e.stopPropagation()
+                                                setReportToEdit(report)
+                                                setOpenModalEditReport(true)
+                                            }}>
+                                                <Edit />
+                                            </IconButton>
+                                        </TableCell>
+                                        <TableCell>
+                                            <IconButton color="error" onClick={(e) => {
+                                                e.stopPropagation()
+                                                setReportsToDelete([report.id_report])
+                                                setOpenModalDeleteReport(true)
+                                            }} >
+                                                <Delete />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[ 5, 10, 25]}
+                    component="div"
+                    count={visibleData.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </Paper>
-            <ModalFirmar type={signType} id={reportToEdit}/>
-            <ModalResidueReport report={reportToEdit}/>
-            <DeleteReportsModal reports={reportsToDelete}/>
-            <ReportsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setVisibleData={setVisibleData} objects={data} setFiltersApplied={setFiltersApplied} />
+            <ModalFirmar type={signType} id={reportToEdit} />
+            <ModalResidueReport report={reportToEdit} />
+            <DeleteReportsModal reports={reportsToDelete} />
+            <ReportsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} objects={data} setFiltersApplied={setFiltersApplied} />
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalCreateReport && <ModalReport mode={"CREAR"} />}
             {openModalEditReport && <ModalReport mode={"EDITAR"} report={reportToEdit} />}
@@ -669,7 +754,8 @@ export default function ReportsTable({ data }) {
                     open={openModalText}
                     onClose={() => {
                         setOpenModalText(false)
-                        setUpdateReportInfo(prev => !prev)}}
+                        setUpdateReportInfo(prev => !prev)
+                    }}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
