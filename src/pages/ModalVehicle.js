@@ -6,14 +6,13 @@ import axios from 'axios';
 import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
 import Title from '../components/Title';
 
-function ModalVehicle({ children, mode, creatorUser }) {
+function ModalVehicle({ mode, creatorUser }) {
   const [vehicles, setVehicles] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [driver, setDriver] = useState("");
   const [residue, setVehicle] = useState("");
   const [oldVehicle, setOldVehicle] = useState("");
   const [id, setId] = useState("");
-  const [descripcion, setDescripcion] = useState("");
 
     const [nombre, setNombre] = useState("");
     const [placas, setPlacas] = useState("");

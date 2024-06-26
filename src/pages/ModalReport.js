@@ -55,11 +55,6 @@ function ModalReport({ children, mode, report }) {
   const [street_2, setStreet_2] = useState("");
   const [postal_code_2, setPostalCode_2] = useState("");
 
-  const [state_3, setState_3] = useState("");
-  const [city_3, setCity_3] = useState("");
-  const [locality_3, setLocality_3] = useState("");
-  const [street_3, setStreet_3] = useState("");
-  const [postal_code_3, setPostalCode_3] = useState("");
 
   const [completeName, setCompleteName] = useState("");
   const [addrees_different, setAddressDifferent] = useState(true);
@@ -68,7 +63,6 @@ function ModalReport({ children, mode, report }) {
   const {
     setOpenModalText,
     setTextOpenModalText,
-    updateReportInfo,
     setUpdateReportInfo,
     openModalCreateReport,
     setOpenModalCreateReport,
