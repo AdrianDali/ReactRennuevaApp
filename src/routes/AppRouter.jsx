@@ -34,6 +34,7 @@ import ExportsMenu from '../pages/Menus/ExportsMenu.jsx';
 import DriverList from '../containers/ListSideBarDriver/DriverList.jsx';
 import { MenuAssignedOrders } from '../pages/Menus/MenuAssignedOrders.js';
 import { MenuOrderAssignment } from '../pages/Menus/MenuOrderAssignmentMenu.js';
+import ContainerMenu from '../pages/Menus/ContainerMenu.jsx';
 
 function App() {
 
@@ -109,6 +110,8 @@ function App() {
   
     //menus para grupo de conductores 
     { path: '/driver/assigned-orders', element: <CentroLayout List={<DriverList/>}><MenuAssignedOrders/></CentroLayout> },
+    //menu para grupo de contenedor
+    {path:'/container/home', element: <CentroLayout List={<RegisterList/>}><ContainerMenu/></CentroLayout> },
     
 
     // menus para resetear contraseña
