@@ -35,7 +35,7 @@ import ProduccionList from '../containers/ListSideBarProduccion/ProduccionList.j
 import RegisterList from '../containers/ListSideBarRegister/RegisterList.jsx';
 import ExportsMenu from '../pages/Menus/ExportsMenu.jsx';
 import DriverList from '../containers/ListSideBarDriver/DriverList.jsx';
-import { MenuAssignedOrders } from '../pages/Menus/MenuAssignedOrders.js';
+import  MenuAssignedOrders  from '../pages/Menus/MenuAssignedOrders.js';
 import { MenuOrderAssignment } from '../pages/Menus/MenuOrderAssignmentMenu.js';
 
 function App() {
