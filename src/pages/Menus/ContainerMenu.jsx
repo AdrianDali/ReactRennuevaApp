@@ -5,10 +5,10 @@ export default function ContainerMenu(){
     const sampleData = [
         {
             "id_report": "12345",
-            "email": "example@example.com",
-            "first_name": "John",
-            "last_name": "Doe",
-            "phone": "+1234567890",
+            "email": "rodolfo@rennueva.com",
+            "first_name": "Rodolfo",
+            "last_name": "Domínguez Ríos",
+            "phone": "5612603878",
             "recollection_address_street": "Main St",
             "recollection_address_num_int": "Apt 4B",
             "recollection_address_num_ext": "123",

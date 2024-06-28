@@ -49,6 +49,7 @@ import DeleteReportsModal from "../modals/DeleteReportsModal";
 import ReportsFiltersModal from "../modals/ReportsFiltersModal";
 import CreateDonorReportModal from "../modals/CreateDonorReportModal";
 import DonorSubtable from "./DonorSubtable";
+import DonorReportsFiltersModal from "../modals/DonorReportsFiltersModal";
 
 
 
@@ -106,61 +107,6 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
 }
 
 
-function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, filteredData, selectedData }) {
-    const open = Boolean(anchorEl);
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleExportAll = () => {
-        //console.log(allData)
-        generateExcelFromJson(allData, "Reportes");
-        handleClose();
-    }
-
-    const handleExportVisible = () => {
-        //console.log(filteredData)
-        generateExcelFromJson(filteredData, "Reportes");
-        handleClose();
-    }
-
-    const handleExportSelected = () => {
-        //console.log(selectedData)
-        const dataToExport = allData.filter((report) => selectedData.includes(report.id_report));
-        //console.log(dataToExport)
-        generateExcelFromJson(dataToExport, "Reportes");
-        handleClose();
-    }
-
-    return (
-        <Menu anchorEl={anchorEl} open={open}>
-            <ClickAwayListener onClickAway={handleClose}>
-                <MenuList>
-                    <MenuItem onClick={handleExportAll}>
-                        <ListItemIcon>
-                            <Download />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar todos" />
-                    </MenuItem>
-                    <MenuItem onClick={handleExportVisible}>
-                        <ListItemIcon>
-                            <Visibility />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar visibles" />
-                    </MenuItem>
-                    <MenuItem onClick={handleExportSelected}>
-                        <ListItemIcon>
-                            <Check />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar selección" />
-                    </MenuItem>
-                </MenuList>
-            </ClickAwayListener>
-        </Menu>
-    )
-}
-
 
 function Toolbar({ selected, setOpenFiltersModal, setObjectsToDelete, filtersApplied, filteredData, allData, setVisibleData }) {
     const [openModalCreateReport, setOpenModalCreateReport] = useState(false);
@@ -216,13 +162,10 @@ function SearchField({ filteredData, setVisibleData }) {
                 setVisibleData(filteredData);
             } else {
                 const newData = filteredData.filter((report) => {
-                    return report.nombre_real_usuario.toLowerCase().includes(search) ||
-                        report.apellido_usuario.toLowerCase().includes(search) ||
-                        report.rfc_usuario.toLowerCase().includes(search) ||
-                        report.email_usuario.toLowerCase().includes(search) ||
-                        report.telefono_usuario.toLowerCase().includes(search) ||
-                        report.calle_usuario.toLowerCase().includes(search) ||
-                        report.colonia_usuario.toLowerCase().includes(search)
+                    return report.email.toLowerCase().includes(search) ||
+                        report.first_name.toLowerCase().includes(search) ||
+                        report.last_name.toLowerCase().includes(search) ||
+                        report.phone.toLowerCase().includes(search)
                 })
                 setVisibleData(newData);
             }
@@ -247,7 +190,7 @@ function SearchField({ filteredData, setVisibleData }) {
                     variant="standard"
                     size="small"
                     sx={{ mt: 1, width: showSearch ? "25rem" : 0, transition: 'all 300ms ease-in' }}
-                    placeholder="Nombre, Apellido, Correo electrónico, RFC, Teléfono"
+                    placeholder="Nombre, Apellido, Correo electrónico, Teléfono"
                     onKeyUp={handleSearch}
                 />
 
@@ -297,25 +240,9 @@ export default function DonorReportsTable({ data }) {
     const [generalCheckboxStatus, setGeneralCheckboxStatus] = useState("unchecked");
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
     const [dataForFilters, setDataForFilters] = useState({
-        colonia_usuario: [],
-        ciudad_usuario: [],
-        estado_usuario: [],
-        cp_usuario: [],
-        fecha_inicio_reporte: [],
-        centro_recoleccion: [],
-        centro_reciclaje: [],
-        compania_usuario: [],
-        firma_responsiva_generador: [],
-        firma_responsiva_receptor: [],
-        residuos_agregados: [],
-        transportista: [],
-        calle_reporte: [],
-        colonia_reporte: [],
-        ciudad_reporte: [],
-        estado_reporte: [],
-        cp_reporte: [],
-        status_reporte: []
-    });
+            donador_signature: [],
+            recollection_signature: [] 
+        })
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -325,15 +252,6 @@ export default function DonorReportsTable({ data }) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-    const handleGenaeralCheckboxClick = (e) => {
-        e.stopPropagation()
-        if (generalCheckboxStatus === "checked") {
-            setGeneralCheckboxStatus("unchecked");
-        } else {
-            setGeneralCheckboxStatus("checked");
-        }
-    }
 
 
 
@@ -394,24 +312,6 @@ export default function DonorReportsTable({ data }) {
         setOpenModalEditFirma(true);
     }
 
-    const handleEditResidues = (report) => {
-        setReportToEdit(report);
-        setOpenModalEditResidueReport(true);
-    }
-
-    const handleGeneralCheckboxChange = (e) => {
-        if (e.target.checked) {
-            setSelected(data.map((report) => report.id_report));
-        } else if (e.target.indeterminate) {
-            setSelected(selected);
-        } else {
-            setSelected([]);
-        }
-    }
-
-
-    const isRowSelected = (id) => selected.indexOf(id) !== -1;
-
     const handleShowCompleteInfo = (id) => {
         if (showCompleteInfo === id) {
             setShowCompleteInfo(null);
@@ -439,43 +339,13 @@ export default function DonorReportsTable({ data }) {
         setFilteredData(data);
         setVisibleData(data);
         if (data.length > 0) {
-            const colonia_usuario = [...new Set(data.map((report) => report.colonia_usuario))];
-            const ciudad_usuario = [...new Set(data.map((report) => report.ciudad_usuario))];
-            const estado_usuario = [...new Set(data.map((report) => report.estado_usuario))];
-            const cp_usuario = [...new Set(data.map((report) => report.cp_usuario))];
-            const fecha_inicio_reporte = [...new Set(data.map((report) => new Date(report.fecha_inicio_reporte)))];
-            const centro_recoleccion = [...new Set(data.map((report) => report.centro_recoleccion))];
-            const centro_reciclaje = [...new Set(data.map((report) => report.centro_reciclaje))];
-            const compania_usuario = [...new Set(data.map((report) => report.compania_usuario))];
-            const firma_responsiva_generador = [...new Set(data.map((report) => report.firma_responsiva_generador))];
-            const firma_responsiva_receptor = [...new Set(data.map((report) => report.firma_responsiva_receptor))];
-            const residuos_agregados = [...new Set(data.map((report) => report.residuos_agregados))];
-            const transportista = [...new Set(data.map((report) => report.transportista))];
-            const calle_reporte = [...new Set(data.map((report) => report.calle_reporte))];
-            const colonia_reporte = [...new Set(data.map((report) => report.colonia_reporte))];
-            const ciudad_reporte = [...new Set(data.map((report) => report.ciudad_reporte))];
-            const estado_reporte = [...new Set(data.map((report) => report.estado_reporte))];
-            const cp_reporte = [...new Set(data.map((report) => report.cp_reporte))];
-            const status_reporte = [...new Set(data.map((report) => report.status_reporte))];
+            const donador_signature = [...new Set(data.map((report) => report.donador_signature))];
+            const recollection_signature = [...new Set(data.map((report) => report.recollection_signature))];
+
+            
             setDataForFilters({
-                colonia_usuario,
-                ciudad_usuario,
-                estado_usuario,
-                cp_usuario,
-                fecha_inicio_reporte,
-                centro_recoleccion,
-                centro_reciclaje,
-                compania_usuario,
-                firma_responsiva_generador,
-                firma_responsiva_receptor,
-                residuos_agregados,
-                transportista,
-                calle_reporte,
-                colonia_reporte,
-                ciudad_reporte,
-                estado_reporte,
-                cp_reporte,
-                status_reporte
+                donador_signature,
+                recollection_signature 
             })
         }
     }, [data])
@@ -490,7 +360,6 @@ export default function DonorReportsTable({ data }) {
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                             <TableRow>
                                 <TableCell>
-
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
@@ -522,7 +391,7 @@ export default function DonorReportsTable({ data }) {
                         </TableHead>
                         <TableBody>
                             {visibleData.length === 0 ?
-                                <TableRow>
+                                <TableRow key="NoReports">
                                     <TableCell colSpan={18}>
                                         <Typography variant="h6" color="textSecondary" align="center">
                                             No se encontraron reportes
@@ -639,7 +508,7 @@ export default function DonorReportsTable({ data }) {
             <ModalFirmar type={signType} id={reportToEdit} />
             <ModalResidueReport report={reportToEdit} />
             <DeleteReportsModal reports={reportsToDelete} />
-            <ReportsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} objects={data} setFiltersApplied={setFiltersApplied} />
+            <DonorReportsFiltersModal isOpen={openFiltersModal} users={data} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} objects={data} setFiltersApplied={setFiltersApplied} />
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalEditReport && <ModalReport mode={"EDITAR"} report={reportToEdit} />}
             {openModalText && (
