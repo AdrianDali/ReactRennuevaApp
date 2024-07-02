@@ -4,37 +4,81 @@ import {
     Box,
     Button,
     IconButton,
-    Autocomplete
+    Autocomplete,
+    Typography
 } from "@mui/material"
 
 import Title from "../Title"
 import { Close } from "@mui/icons-material"
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import useAuth from "../../hooks/useAuth";
+import NotificationModal from "./NotificationModal";
+import { ContainerMenuContext } from "../../pages/Menus/ContainerMenu";
 
 
 export default function CreateDonorReportModal({ isOpen, setOpen }) {
     const [correoCliente, setCorreoCliente] = useState([]);
     const [selectedDonor, setSelectedDonor] = useState(null);
+    const [openNotificationModal, setOpenNotificationModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [successAtCreating, setSuccessAtCreating] = useState(false);
+    const [error, setError] = useState({});
+    const { setUpdateDonorReports } = useContext(ContainerMenuContext);
+    const dataUser = useAuth();
 
     useEffect(() => {
         axios
-          .get(`${process.env.REACT_APP_API_URL}/get-all-donor-email/`)
-          .then((response) => {
-            console.log("Donor recolection data");
-            console.log(response.data);
-            setCorreoCliente(response.data);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }, []);
+            .get(`${process.env.REACT_APP_API_URL}/get-all-donor-email/`)
+            .then((response) => {
+                console.log("Donor recolection data");
+                console.log(response.data);
+                setCorreoCliente(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+                setError(error)
+            });
+    }, []);
 
     const closeModal = () => {
         setOpen(false)
     }
 
+    const handleCreateDonorReport = async () => {
+        setLoading(true);
+        if (selectedDonor === null) return
+        const data = {
+            username: selectedDonor,
+            creator_user: dataUser.user.id_user
+        }
+
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/create-donor-report/`, data);
+            console.log(response.data);
+            setSuccessAtCreating(true);
+            setError({});
+        } catch (error) {
+            console.error(error);
+            setSuccessAtCreating(false);
+        } finally {
+            setLoading(false);
+            setOpenNotificationModal(true);
+        }
+
+    }
+
+    const notificationBody = (
+        <Box px={1} pt={1}>
+            <Typography variant='body1'>
+                {successAtCreating ? "El reporte se creó exitosamente." : "Ocurrió un error al intentar crear el reporte."}
+            </Typography>
+            <Typography variant='body1'>{error.errorMessage}</Typography>
+        </Box>
+    )
+
     return (
+        <>
         <Modal open={isOpen} onClose={closeModal} >
             <Box className="ModalContent" sx={{
                 position: 'absolute',
@@ -62,20 +106,28 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
                         sx={{ width: "100%" }} // Usa el ancho completo del Grid item
                         getOptionLabel={(option) => option.email}
                         renderInput={(params) => (
-                            <TextField {...params} label="Donador" />
+                            <TextField {...params} label="Donador" required error={selectedDonor === null} />
                         )}
                         onChange={(event, value) => {
                             if (value) {
                                 setSelectedDonor(value.email);
+                            } else {
+                                setSelectedDonor(null);
                             }
                         }}
                     />
-
-
-
-                    <Button color="success" variant="contained">Crear</Button>
+                    <Button disabled={loading || selectedDonor === null} color="success" variant="contained" onClick={() => {
+                        handleCreateDonorReport()
+                    }}>{loading ? "Cargando..." : "Crear"}</Button>
                 </Box>
             </Box>
         </Modal>
+        <NotificationModal isOpen={openNotificationModal} setOpen={setOpenNotificationModal} title="Creación de reporte de donador" severity={successAtCreating ? 'success' : 'error'} onAccept={()=>{
+            setUpdateDonorReports(prev => !prev)
+            setOpen(false)
+        }}>
+            {notificationBody}
+        </NotificationModal>
+        </>
     )
 }

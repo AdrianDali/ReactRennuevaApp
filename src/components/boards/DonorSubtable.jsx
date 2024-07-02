@@ -1,8 +1,8 @@
-import { Box, Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell } from "@mui/material";
+import { Box, Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Divider } from "@mui/material";
 
 export default function DonorSubtable({ report }) {
     return (
-        <Box display="flex" justifyContent="start" gap={10} padding={1} flexWrap="wrap">
+        <Box display="flex" justifyContent="start" gap={10} padding={4} py={6} flexWrap="wrap">
             <Box>
                 <Typography variant="h6" gutterBottom>Información del donador</Typography>
                 <Box paddingLeft={2}>
@@ -25,7 +25,7 @@ export default function DonorSubtable({ report }) {
                 </Box>
                 
             </Box>
-
+            <Divider orientation="vertical" flexItem />
 
             <Box>
                 <Typography variant="h6" gutterBottom>Información del contenedor</Typography>

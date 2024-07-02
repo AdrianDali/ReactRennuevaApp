@@ -50,61 +50,8 @@ import ReportsFiltersModal from "../modals/ReportsFiltersModal";
 import CreateDonorReportModal from "../modals/CreateDonorReportModal";
 import DonorSubtable from "./DonorSubtable";
 import DonorReportsFiltersModal from "../modals/DonorReportsFiltersModal";
+import DeleteDonorReportsModal from "../modals/DeleteDonorReportModal";
 
-
-
-
-function RowContextMenu({ anchorEl, setAnchorEl }) {
-    const {
-        setOpenModalEditReport,
-        setOpenModalDeleteReport
-    } = useContext(TodoContext);
-    const open = Boolean(anchorEl);
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleEdit = () => {
-        setOpenModalEditReport(true);
-        handleClose();
-    }
-
-    const handleDelete = () => {
-        setOpenModalDeleteReport(true);
-        handleClose();
-    }
-
-
-    return (
-        <Menu anchorEl={anchorEl} open={open}>
-            <ClickAwayListener onClickAway={handleClose}>
-                <MenuList>
-                    <MenuItem onClick={handleEdit}>
-                        <ListItemIcon>
-                            <Favorite />
-                        </ListItemIcon>
-                        <ListItemText primary="Mostrar donador" />
-                    </MenuItem>
-                    <MenuItem onClick={handleEdit}>
-                        <ListItemIcon>
-                            <Recycling />
-                        </ListItemIcon>
-                        <ListItemText primary="Mostrar contenedor" />
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem onClick={handleDelete}>
-                        <ListItemIcon>
-                            <Delete color="error" />
-                        </ListItemIcon>
-                        <ListItemText primary="Borrar" />
-                    </MenuItem>
-
-                </MenuList>
-            </ClickAwayListener>
-        </Menu>
-    )
-}
 
 
 
@@ -300,15 +247,15 @@ export default function DonorReportsTable({ data }) {
         }
     }
 
-    const onEditGeneratorSign = (id) => {
+    const onEditDonorSign = (id) => {
         setReportToEdit(id);
-        setSignType("Generador");
+        setSignType("Donador");
         setOpenModalEditFirma(true);
     }
 
     const onEditReceiverSign = (id) => {
         setReportToEdit(id);
-        setSignType("Receptor");
+        setSignType("Recolector");
         setOpenModalEditFirma(true);
     }
 
@@ -435,10 +382,8 @@ export default function DonorReportsTable({ data }) {
                                                         size="small"
                                                         color={report.donador_signature ? "success" : "warning"}
                                                         onClick={(e) => {
-                                                            /*
                                                             e.stopPropagation()
-                                                            onEditGeneratorSign(report.id_report)
-                                                            */
+                                                            onEditDonorSign(report.id_report)
                                                         }}
                                                     >
                                                         Firmar
@@ -452,8 +397,8 @@ export default function DonorReportsTable({ data }) {
                                                         size="small"
                                                         color={report.recollection_signature ? "success" : "warning"}
                                                         onClick={(e) => {
-                                                            /* e.stopPropagation()
-                                                            onEditReceiverSign(report.id_report) */
+                                                            e.stopPropagation()
+                                                            onEditReceiverSign(report.id_report)
                                                         }}
                                                     >
                                                         Firmar
@@ -507,35 +452,8 @@ export default function DonorReportsTable({ data }) {
             </Paper>
             <ModalFirmar type={signType} id={reportToEdit} />
             <ModalResidueReport report={reportToEdit} />
-            <DeleteReportsModal reports={reportsToDelete} />
+            <DeleteDonorReportsModal reports={reportsToDelete} />
             <DonorReportsFiltersModal isOpen={openFiltersModal} users={data} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} objects={data} setFiltersApplied={setFiltersApplied} />
-            <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
-            {openModalEditReport && <ModalReport mode={"EDITAR"} report={reportToEdit} />}
-            {openModalText && (
-                <Dialog
-                    open={openModalText}
-                    onClose={() => {
-                        setOpenModalText(false)
-                        setUpdateReportInfo(prev => !prev)
-                    }}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {textOpenModalText}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            {textOpenModalText}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setOpenModalText(false)}>
-                            Aceptar
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            )}
         </Box>
     );
 }
