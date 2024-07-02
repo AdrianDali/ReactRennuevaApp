@@ -14,8 +14,8 @@ function ModalFirmar({ id, type }) {
         openModalEditFirma, 
         setOpenModalEditFirma, 
         setUpdateReportInfo,
+        setUpdateDonorReports
     } = useContext(TodoContext);
-    const { setUpdateDonorReports } = useContext(ContainerMenuContext);
     console.log("ID DE QUIERN SE FIRMA", id)
 
     const closeModal = () => {

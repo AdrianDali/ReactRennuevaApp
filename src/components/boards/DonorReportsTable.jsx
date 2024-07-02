@@ -28,25 +28,17 @@ import {
     Divider,
     Collapse
 } from "@mui/material";
-import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Draw, SaveAlt, Close, Favorite, Recycling, KeyboardArrowDown } from "@mui/icons-material";
+import { Add, FilterList, Delete, Search, Draw, SaveAlt, Close, KeyboardArrowDown } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect, useRef } from "react";
-import { ModalGenerator } from "../../pages/ModalGenerator";
-import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
-import { generateExcelFromJson } from "../../services/Excel";
-import { ModalReport } from "../../pages/ModalReport";
-import dateFormater from "../../services/dateFormater";
 import { ModalFirmar } from "../../pages/ModalFirmar";
 import { ModalResidueReport } from "../../pages/ModalResidueReport";
 import validateReport from "../../services/validateReport";
 import getReportInfo from "../../services/getReportInfo";
 import generateReportPDF from "../../services/generateReportPDF";
 import generateQR from "../../services/generateQR";
-import DeleteReportsModal from "../modals/DeleteReportsModal";
-import ReportsFiltersModal from "../modals/ReportsFiltersModal";
 import CreateDonorReportModal from "../modals/CreateDonorReportModal";
 import DonorSubtable from "./DonorSubtable";
 import DonorReportsFiltersModal from "../modals/DonorReportsFiltersModal";
@@ -109,10 +101,10 @@ function SearchField({ filteredData, setVisibleData }) {
                 setVisibleData(filteredData);
             } else {
                 const newData = filteredData.filter((report) => {
-                    return report.email.toLowerCase().includes(search) ||
-                        report.first_name.toLowerCase().includes(search) ||
-                        report.last_name.toLowerCase().includes(search) ||
-                        report.phone.toLowerCase().includes(search)
+                    return report.email_usuario.toLowerCase().includes(search) ||
+                        report.nombre_real_usuario.toLowerCase().includes(search) ||
+                        report.apellido_usuario.toLowerCase().includes(search) ||
+                        report.telefono_usuario.toLowerCase().includes(search)
                 })
                 setVisibleData(newData);
             }
@@ -172,19 +164,11 @@ export default function DonorReportsTable({ data }) {
     //console.log(data)
     const {
         setTextOpenModalText,
-        openModalEditReport,
         setOpenModalDeleteReport,
-        setOpenModalEditReport,
-        openModalText,
-        textOpenModalText,
         setOpenModalText,
-        setOpenModalEditResidueReport,
         setOpenModalEditFirma,
-        setUpdateReportInfo,
     } = useContext(TodoContext);
-    const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
-    const [generalCheckboxStatus, setGeneralCheckboxStatus] = useState("unchecked");
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
     const [dataForFilters, setDataForFilters] = useState({
             donador_signature: [],
@@ -269,16 +253,6 @@ export default function DonorReportsTable({ data }) {
     }
 
 
-    useEffect(() => {
-        if (selected.length === data.length && data.length !== 0) {
-            setGeneralCheckboxStatus("checked");
-        } else if (selected.length === 0) {
-            setGeneralCheckboxStatus("unchecked");
-        } else {
-            setGeneralCheckboxStatus("indeterminate");
-        }
-    }, [selected]);
-
 
 
     useEffect(() => {
@@ -286,13 +260,13 @@ export default function DonorReportsTable({ data }) {
         setFilteredData(data);
         setVisibleData(data);
         if (data.length > 0) {
-            const donador_signature = [...new Set(data.map((report) => report.donador_signature))];
-            const recollection_signature = [...new Set(data.map((report) => report.recollection_signature))];
+            const firma_responsiva_generador = [...new Set(data.map((report) => report.firma_responsiva_generador))];
+            const firma_responsiva_receptor = [...new Set(data.map((report) => report.firma_responsiva_receptor))];
 
             
             setDataForFilters({
-                donador_signature,
-                recollection_signature 
+                firma_responsiva_generador,
+                firma_responsiva_receptor
             })
         }
     }, [data])
@@ -320,6 +294,13 @@ export default function DonorReportsTable({ data }) {
                                         direction="asc"
                                     >
                                         <Typography variant="subtitle2">Donador</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        <Typography variant="subtitle2">Fecha</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -374,13 +355,18 @@ export default function DonorReportsTable({ data }) {
                                                     </IconButton>
                                                 </TableCell>
                                                 <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>{report.id_report}</TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>{report.email}</TableCell>
+                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>{report.nombre_usuario}</TableCell>
+                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>{new Date(report.fecha_inicio_reporte).toLocaleDateString("es-MX", {
+                                                    year: "numeric",
+                                                    month: "short",
+                                                    day: "numeric"
+                                                })}</TableCell>
                                                 <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
                                                     <Button
                                                         startIcon={<Draw />}
                                                         variant="contained"
                                                         size="small"
-                                                        color={report.donador_signature ? "success" : "warning"}
+                                                        color={report.firma_responsiva_generador? "success" : "warning"}
                                                         onClick={(e) => {
                                                             e.stopPropagation()
                                                             onEditDonorSign(report.id_report)
@@ -395,7 +381,7 @@ export default function DonorReportsTable({ data }) {
                                                         startIcon={<Draw />}
                                                         variant="contained"
                                                         size="small"
-                                                        color={report.recollection_signature ? "success" : "warning"}
+                                                        color={report.firma_responsiva_receptor ? "success" : "warning"}
                                                         onClick={(e) => {
                                                             e.stopPropagation()
                                                             onEditReceiverSign(report.id_report)

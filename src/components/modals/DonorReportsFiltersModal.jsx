@@ -117,8 +117,8 @@ function SelectForBooleans({ data, label, name, setFilters, filters, trueValueLa
 
 export default function DonorReportsFiltersModal({ isOpen, setOpen, data, setFilteredData, users, setFiltersApplied }) {
     const [filters, setFilters] = useState({
-            donador_signature: [],
-            recollection_signature: [] 
+            firma_responsiva_generador: [],
+            firma_responsiva_receptor: [] 
         
     });
     const closeModal = () => {
@@ -149,8 +149,8 @@ export default function DonorReportsFiltersModal({ isOpen, setOpen, data, setFil
 
     const clearFilters = () => {
         setFilters({
-            donador_signature: [],
-            recollection_signature: [] 
+            firma_responsiva_generador: [],
+            firma_responsiva_receptor: [] 
         });
         setFilteredData(users);
         setFiltersApplied(false);
@@ -181,8 +181,8 @@ export default function DonorReportsFiltersModal({ isOpen, setOpen, data, setFil
                 </IconButton>
                 <Title>Filtros</Title>
                 <Box display='flex' flexDirection='column' gap={2} sx={{ padding: 2 }} >
-                    <SelectForBooleans falseValueLabel="Sin firmar" name="donador_signature" filters={filters} setFilters={setFilters} label="Firma del donador" trueValueLabel="Firmado" data={data.donador_signature}/>
-                    <SelectForBooleans falseValueLabel="Sin firmar" name="recollection_signature" filters={filters} setFilters={setFilters} label="Firma del contenedor" trueValueLabel="Firmado" data={data.donador_signature}/>
+                    <SelectForBooleans falseValueLabel="Sin firmar" name="firma_responsiva_generador" filters={filters} setFilters={setFilters} label="Firma del donador" trueValueLabel="Firmado" data={data.firma_responsiva_generador}/>
+                    <SelectForBooleans falseValueLabel="Sin firmar" name="firma_responsiva_receptor" filters={filters} setFilters={setFilters} label="Firma del contenedor" trueValueLabel="Firmado" data={data.firma_responsiva_generador}/>
                     <Button variant='contained' fullWidth onClick={applyFilters}>Aplicar</Button>
                     <Button variant='outlined' color='secondary' onClick={clearFilters} fullWidth>Limpiar filtros</Button>
                 </Box>

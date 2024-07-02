@@ -5,7 +5,6 @@ import useAuth from '../../hooks/useAuth';
 import { TodoContext } from '../../context';
 import NotificationModal from './NotificationModal';
 import deleteReports from '../../services/deleteReports';
-import { ContainerMenuContext } from '../../pages/Menus/ContainerMenu';
 import deleteDonorReports from '../../services/deleteDonorReports';
 
 export default function DeleteDonorReportsModal({ reports}) {
@@ -13,8 +12,8 @@ export default function DeleteDonorReportsModal({ reports}) {
     const {
         setOpenModalDeleteReport,
         openModalDeleteReport,
+        setUpdateDonorReports
     } = useContext(TodoContext);
-    const { setUpdateDonorReports } = useContext(ContainerMenuContext);
 
     const title = `¿Está seguro de realizar esta operación?`;
     const [success, setSuccess] = useState(false);

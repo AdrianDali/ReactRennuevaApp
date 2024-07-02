@@ -14,7 +14,7 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import useAuth from "../../hooks/useAuth";
 import NotificationModal from "./NotificationModal";
-import { ContainerMenuContext } from "../../pages/Menus/ContainerMenu";
+import { TodoContext } from "../../context";
 
 
 export default function CreateDonorReportModal({ isOpen, setOpen }) {
@@ -24,7 +24,7 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
     const [loading, setLoading] = useState(false);
     const [successAtCreating, setSuccessAtCreating] = useState(false);
     const [error, setError] = useState({});
-    const { setUpdateDonorReports } = useContext(ContainerMenuContext);
+    const { setUpdateDonorReports } = useContext(TodoContext);
     const dataUser = useAuth();
 
     useEffect(() => {
@@ -47,14 +47,15 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
 
     const handleCreateDonorReport = async () => {
         setLoading(true);
+        //console.log(dataUser)
         if (selectedDonor === null) return
         const data = {
             username: selectedDonor,
-            creator_user: dataUser.user.id_user
+            creator_user: dataUser.user
         }
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/create-donor-report/`, data);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/donor-create-initial-report/`, data);
             console.log(response.data);
             setSuccessAtCreating(true);
             setError({});
