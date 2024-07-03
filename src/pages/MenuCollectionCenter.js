@@ -30,13 +30,9 @@ import { Typography } from "@mui/material";
 function MenuCollectionCenter() {
   const { 
     openModalCreateCollectionCenter, 
-    setOpenModalCreateCollectionCenter, 
-    setOpenModalEditCollectionCenter,
     openModalEditCollectionCenter, 
-    setOpenModalDeleteCollectionCenter, 
-    openModalDeleteCollectionCenter , openModalText, setOpenModalText ,textOpenModalText,setTextOpenModalText
+    openModalDeleteCollectionCenter , openModalText, setOpenModalText ,textOpenModalText
   } = useContext(TodoContext);
-
   const dataUser = useAuth();
 
   // ... otros handlers y useEffect ...

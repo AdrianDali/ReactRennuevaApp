@@ -164,9 +164,6 @@ const MobileMenu = ({ children, open, setOpen }) => {
 
 
 const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
-    const theme = useTheme();
-    console.log(dataUser);
-
 
     return (
         <StyledDrawer variant="permanent" open={open}>
@@ -181,6 +178,7 @@ const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
                 height: '100%',
                 overflowY: 'scroll',
                 pb: '1rem',
+                overflowX: 'hidden',
             }}>
                 {children}
             </Box>
@@ -199,7 +197,7 @@ export default function CentroLayout({ children, List }) {
     const navigate = useNavigate();
 
     const dataUser = useAuth();
-    console.log(dataUser);
+    //console.log(dataUser);
 
 
     const handleOpenUserMenu = (event) => {
@@ -211,27 +209,6 @@ export default function CentroLayout({ children, List }) {
         setAnchorElUser(null);
     };
 
-
-    // useEffect(() => {
-    //     window.addEventListener('resize', () => {
-    //         if (window.innerWidth > 899) {
-    //             setDesktop(true);
-    //         } else {
-    //             setDesktop(false);
-    //         }
-    //     });
-
-    //     return () => {
-    //         window.removeEventListener('resize', () => {
-    //             if (window.innerWidth > 899) {
-    //                 setDesktop(true);
-    //             } else {
-    //                 setDesktop(false);
-    //             }
-    //         });
-    //     }
-
-    // }, []);
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth > 899) {
@@ -298,7 +275,6 @@ export default function CentroLayout({ children, List }) {
                                     <MenuItem onClick={handleCloseUserMenu}>
                                         <Typography textAlign="center">Cerrar sesión</Typography>
                                     </MenuItem>
-
                                 </Menu>
                             </Box>
                         </Toolbar>
@@ -315,7 +291,6 @@ export default function CentroLayout({ children, List }) {
                     }
 
                     {children}
-
 
                 </Box>
             </Box>

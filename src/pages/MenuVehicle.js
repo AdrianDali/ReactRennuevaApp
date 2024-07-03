@@ -28,15 +28,11 @@ import useAuth from "../hooks/useAuth.js";
 function MenuVehicle() {
   const {
     openModalCreateVehicle,
-    setOpenModalCreateVehicle,
-    setOpenModalEditVehicle,
     openModalEditVehicle,
-    setOpenModalDeleteVehicle,
     openModalDeleteVehicle,
     openModalText,
     setOpenModalText,
     textOpenModalText,
-    setTextOpenModalText,
   } = useContext(TodoContext);
 
   const dataUser = useAuth();

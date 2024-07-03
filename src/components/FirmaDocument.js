@@ -14,20 +14,41 @@ const SignatureComponent = ({id, type}) => {
 
   // Para guardar la imagen y posiblemente hacer algo más con ella (por ejemplo, enviarla a un servidor)
   const save = async () => {
-    let url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`
+    let url = ""
     if (type == "Receptor"){
       url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`
-      
+    }else if (type == "Donador"){
+      url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`
+    }else if (type == "Recolector"){
+      url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`
+    }else if (type == "Generador"){
+      url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`
     }
 
     setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
     console.log(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
     try {
       // Usamos 'await' para esperar a que la solicitud se complete y para obtener la respuesta
-      const response = await axios.post(url, {
-        reportId: id,
-        reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
-      });
+      let data
+
+      if (type == "Receptor" || type == "Generador"){
+        data = {
+          reportId: id,
+          reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
+        }
+      }else if(type == "Donador"){
+        data = {
+          reportId: id,
+          reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
+        }
+        }else if(type == "Recolector"){
+          data = {
+            reportId: id,
+            reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
+          }
+        }
+
+      const response = await axios.post(url, data);
   
       // Retorna directamente los datos de la respuesta
       return response.data;
@@ -43,7 +64,7 @@ const SignatureComponent = ({id, type}) => {
 
   return (
     <div>
-      <h3>Firma aquí del Receptor</h3>
+      <h3>{`Firma del ${type}`}</h3>
       <SignaturePad
         ref={sigCanvas}
         canvasProps={{
@@ -51,7 +72,7 @@ const SignatureComponent = ({id, type}) => {
         }}
       />
       {/* Botones para guardar o limpiar la firma */}
-      <Button type="submit" variant="contained" fullWidth onClick={clear}>
+      <Button type="submit" variant="outlined" color='secondary' fullWidth onClick={clear} sx={{my: 2}}>
         Limpiar
       </Button>
       <Button type="submit" variant="contained" fullWidth onClick={save}>
@@ -63,6 +84,7 @@ const SignatureComponent = ({id, type}) => {
         <div>
           <h3>Tu firma:</h3>
           <img
+            width="100%"
             src={imageURL}
             alt="Tu firma"
           />

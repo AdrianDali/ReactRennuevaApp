@@ -1,32 +1,29 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, } from 'react';
 import ReactDOM from 'react-dom';
 import '../styles/user/CreateUser.css';
 import { TodoContext } from '../context/index.js';
 import axios from 'axios';
-import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
+import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel, IconButton } from '@mui/material';
 import Title from '../components/Title';
 import Grid from '@mui/material/Grid';
 import SignatureComponent from "../components/FirmaDocument";
-
+import { Close } from '@mui/icons-material';
+import { ContainerMenuContext } from './Menus/ContainerMenu.jsx';
 function ModalFirmar({ id, type }) {
-    const { openModalCreateFirma,
-        setOpenModalCreateFirma,
+    const { 
         openModalEditFirma, 
         setOpenModalEditFirma, 
-        openModalDeleteFirma, 
-        setOpenModalDeleteFirma,
-        openModalCreateFirmaReceptor,
         setUpdateReportInfo,
-        setOpenModalCreateFirmaReceptor,
-        openModalEditFirmaReceptor,
-        setOpenModalEditFirmaReceptor,
-        openModalDeleteFirmaReceptor, 
-        setOpenModalDeleteFirmaReceptor,
+        setUpdateDonorReports
     } = useContext(TodoContext);
     console.log("ID DE QUIERN SE FIRMA", id)
 
     const closeModal = () => {
-        setUpdateReportInfo(prev => !prev);
+        if(type === "Receptor" || type === "Generador"){
+            setUpdateReportInfo(prev => !prev);
+        }else if(type === "Donador" || type === "Recolector"){
+            setUpdateDonorReports(prev => !prev);
+        }
         setOpenModalEditFirma(false)
     };
 
@@ -45,7 +42,9 @@ function ModalFirmar({ id, type }) {
                 borderRadius: 2,
 
             }}>
-                <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
+                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>
+                    <Close />
+                </IconButton>
                 <Box>
                     <SignatureComponent id={id} type={type} />
                 </Box>
