@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {  useContext } from "react";
 import "../../styles/user/MenuUser.css";
 import { TodoContext } from "../../context/index.js";
 import { ModalGroup } from "./ModalGroup";
-import { OptionButton } from "../../components/OptionButton";
-import UserTable from "../../components/Table";
 import CUDButtons from "../../containers/CUDButtons";
-import BarsChart from "../../components/BarsChart";
 import BarsChartGroup from "../../components/BarsChartGroup";
 import GroupTable from "../../components/GroupTable";
 
@@ -16,13 +13,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import {
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   Paper,
   Container,
-  Toolbar,
   CssBaseline,
 } from "@mui/material";
 import Title from "../../components/Title";
@@ -36,8 +30,6 @@ function MenuGroups() {
     textOpenModalText,
     openModalEditGroup,
     openModalDeleteGroup,
-    setOpenModalEditGroup,
-    setOpenModalDeleteGroup,
   } = useContext(TodoContext);
 
   const dataUser = useAuth();

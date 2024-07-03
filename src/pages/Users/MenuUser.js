@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import "../../styles/user/MenuUser.css";
 import { TodoContext } from "../../context/index.js";
 import { ModalUser } from "./ModalUser.js";
 import UserTable from "../../components/Table";
 import CUDButtons from "../../containers/CUDButtons";
 import BarsChart from "../../components/BarsChart";
-import {createTheme, ThemeProvider } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import CssBaseline from "@mui/material/CssBaseline";
-import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Title from "../../components/Title";
 import Dialog from "@mui/material/Dialog";
@@ -19,18 +17,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import getCookieValue from "../../services/GetCookie.js";
-import GetUser from "../../services/ApiGetUser.js"
 import { Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
-import { CommentsDisabledOutlined } from "@mui/icons-material";
-import theme from '../../context/theme';
 
 function MenuUser() {
 
-  const defaultTheme = createTheme();
-  const navigate = useNavigate();
   const {
     textOpenModalText,
     openModalCreate,

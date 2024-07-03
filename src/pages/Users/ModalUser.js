@@ -9,13 +9,11 @@ import Title from '../../components/Title';
 import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { Group } from '@mui/icons-material';
 
 
 
 
-function ModalUser({ children, mode , creatorUser}) {
-  const [datos, setDatos] = useState([""]);
+function ModalUser({ mode , creatorUser}) {
   const [groups, setGroups] = useState([""])
   const [users, setUsers] = useState([""])
   const [companies, setCompanies] = useState([""])
@@ -51,7 +49,7 @@ function ModalUser({ children, mode , creatorUser}) {
 
 
 
-  const { setUpdateUserInfo, openModalText, setTextOpenModalText, setOpenModalText, openModalCreate, setOpenModalCreate, openModalEdit, openModalDelete, setOpenModalEdit, setOpenModalDelete } = useContext(TodoContext);
+  const { setUpdateUserInfo, setTextOpenModalText, setOpenModalText, openModalCreate, setOpenModalCreate, openModalEdit, openModalDelete, setOpenModalEdit, setOpenModalDelete } = useContext(TodoContext);
   const closeModal = () => {
     if (openModalCreate) {
       setOpenModalCreate(false);
