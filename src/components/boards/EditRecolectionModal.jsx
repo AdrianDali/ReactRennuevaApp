@@ -12,16 +12,15 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   FormControlLabel,
   FormGroup,
-  Checkbox,
   TextField,
   FormLabel,
 } from "@mui/material";
-import { act } from "react";
 import { Radio, RadioGroup } from "@mui/material";
 
 const style = {
@@ -49,34 +48,50 @@ export default function EditRecolectionModal({
   const [status, setStatus] = useState("");
   const [conductores, setConductores] = useState([]);
   const [conductorAsignado, setConductorAsignado] = useState();
+  const [Date, setDate] = useState(null);
 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
       .then((response) => {
-        console.log(response.data);
+      //console.log(response.data);
         setConductores(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
+
   }, []);
 
 
 
   useEffect(() => {
-    if (recolection != null) {
-      if (recolection.status === "recolectada") {
+    if(recolection === null) return
+    switch (recolection?.status) {
+      case null:
+        setStatus("");
+      case "solicitada":
+        setStatus("solicitada");
+        break;
+      case "pendienteRecoleccion":
+        setStatus("pendienteRecoleccion");
+        setDate(recolection.fecha_estimada_recoleccion? dayjs(recolection.fecha_estimada_recoleccion): null)
+        setConductorAsignado(recolection.conductor_designado)
+        break;
+      case "recolectada":
         setStatus("recolectado");
-      } else if (recolection.status === "entregadaCentro") {
+        break;
+      case "entregadaCentro":
         setStatus("entregado");
-      } else {
+        break;
+      case "cancelada":
+        setStatus("cancelado");
+        break;
+      default:
         setStatus(recolection.status);
-      }
-    } else {
-      setStatus("");
+        break;
     }
-  }, [recolection]);
+  }, [recolection, open]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -264,6 +279,10 @@ export default function EditRecolectionModal({
   <>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
+        onChange={(newDate) => {
+          setDate(newDate);
+        }}
+        value={Date}
         disablePast
         format="DD/MM/YYYY"
         onAccept={(date) => {
@@ -299,7 +318,7 @@ export default function EditRecolectionModal({
         value={conductorAsignado}
         label="Conductor Asignado"
         onChange={(e) => {
-          console.log(e.target.value);
+          //console.log(e.target.value);
           setConductorAsignado(e.target.value);
         }}
         fullWidth

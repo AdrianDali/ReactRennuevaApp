@@ -111,7 +111,7 @@ function App() {
     //menus para grupo de conductores 
     { path: '/driver/assigned-orders', element: <CentroLayout List={<DriverList/>}><MenuAssignedOrders/></CentroLayout> },
     //menu para grupo de contenedor
-    {path:'/container/home', element: <CentroLayout List={<RegisterList/>}><ContainerMenu/></CentroLayout> },
+    {path:'/centro/home', element: <CentroLayout List={<RegisterList/>}><ContainerMenu/></CentroLayout> },
     
 
     // menus para resetear contraseña
