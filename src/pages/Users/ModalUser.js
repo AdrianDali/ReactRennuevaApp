@@ -117,7 +117,8 @@ function ModalUser({ mode , creatorUser}) {
         address_lng: 0,
         razon_social: e.target.razon_social.value,
         user_permissions: permiso,
-        creator_user: creator
+        creator_user: creator,
+        associated_center : center.CollectionCenterName
       };
 
 
