@@ -12,17 +12,18 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   FormControlLabel,
   FormGroup,
-  Checkbox,
   TextField,
   FormLabel,
 } from "@mui/material";
-import { act } from "react";
 import { Radio, RadioGroup } from "@mui/material";
+import useAuth from "../../hooks/useAuth";
+import ConfirmationModal from "../modals/ConfirmationModal";
 
 const style = {
   position: "absolute",
@@ -44,39 +45,66 @@ export default function EditRecolectionModal({
   setOpenMessageModal,
   update,
   setUpdate,
+
 }) {
   const [isDateCorrect, setIsDateCorrect] = useState(false);
   const [status, setStatus] = useState("");
   const [conductores, setConductores] = useState([]);
   const [conductorAsignado, setConductorAsignado] = useState();
+  const [Date, setDate] = useState(null);
+  const userData = useAuth();
+  const [value, setValue] = useState("");
+  const [otroTexto, setOtroTexto] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false)
 
   useEffect(() => {
+    console.log(userData);
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         setConductores(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
+
   }, []);
 
 
 
   useEffect(() => {
-    if (recolection != null) {
-      if (recolection.status === "recolectada") {
+    if (recolection === null) return
+    switch (recolection?.status) {
+      case null:
+        setStatus("");
+      case "solicitada":
+        setStatus("solicitada");
+        break;
+      case "pendienteRecoleccion":
+        if (userData?.groups[0] === "Conductor") {
+          setStatus("");
+        } else {
+          setStatus("pendienteRecoleccion");
+          setDate(recolection.fecha_estimada_recoleccion ? dayjs(recolection.fecha_estimada_recoleccion) : null)
+          setConductorAsignado(recolection.conductor_asignado)
+        }
+        break;
+      case "recolectada":
         setStatus("recolectado");
-      } else if (recolection.status === "entregadaCentro") {
+        break;
+      case "entregadaCentro":
         setStatus("entregado");
-      } else {
+        break;
+      case "cancelada":
+        setStatus("cancelado");
+        break;
+      default:
         setStatus(recolection.status);
-      }
-    } else {
-      setStatus("");
+        break;
     }
-  }, [recolection]);
+  }, [recolection, open]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -91,7 +119,7 @@ export default function EditRecolectionModal({
         user: recolection.donador,
         id_order: recolection.id,
         fecha_estimada_recoleccion: reformattedDate,
-        conductor : conductorAsignado
+        conductor: conductorAsignado
       };
       console.log(data);
       axios
@@ -164,8 +192,7 @@ export default function EditRecolectionModal({
     }
   };
 
-  const [value, setValue] = useState("");
-  const [otroTexto, setOtroTexto] = useState("");
+
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -201,10 +228,10 @@ export default function EditRecolectionModal({
                 setStatus(e.target.value);
               }}
             >
-              <MenuItem value="solicitado">Solicitada</MenuItem>
-              <MenuItem value="pendienteRecoleccion">
+              {userData?.groups[0] !== "Conductor" && <MenuItem value="solicitado">Solicitada</MenuItem>}
+              {userData?.groups[0] !== "Conductor" && <MenuItem value="pendienteRecoleccion">
                 Recolección pendiente
-              </MenuItem>
+              </MenuItem>}
               <MenuItem value="recolectado">Recolectada</MenuItem>
               <MenuItem value="entregado">Entregado</MenuItem>
               <MenuItem value="cancelado">Cancelado</MenuItem>
@@ -255,65 +282,69 @@ export default function EditRecolectionModal({
                     onChange={handleTextChange}
                   />
                 )}
-                
+
               </FormGroup>
             </FormControl>
           )}
 
-{status === "pendienteRecoleccion" && (
-  <>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker
-        disablePast
-        format="DD/MM/YYYY"
-        onAccept={(date) => {
-          setIsDateCorrect(true);
-        }}
-        onError={(reason, value) => {
-          if (reason === null) {
-            setIsDateCorrect(true);
-          } else {
-            setIsDateCorrect(false);
-          }
-        }}
-        slotProps={{
-          field: {
-            margin: "normal",
-            fullWidth: true,
-            required: true,
-            name: "date",
-          },
-          textField: {
-            label: "Fecha de recolección",
-            name: "date",
-          },
-        }}
-      />
-    </LocalizationProvider>
-    
-    <FormControl fullWidth margin="normal">
-      <InputLabel id="select-status-label">Conductor Asignado</InputLabel>
-      <Select
-        labelId="select-status-label"
-        id="select-status"
-        value={conductorAsignado}
-        label="Conductor Asignado"
-        onChange={(e) => {
-          console.log(e.target.value);
-          setConductorAsignado(e.target.value);
-        }}
-        fullWidth
-        required
-      >
-        {conductores.map((conductor) => (
-          <MenuItem key={conductor.id} value={conductor.user}>
-            {conductor.first_name} {conductor.last_name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  </>
-)}
+          {status === "pendienteRecoleccion" && (
+            <>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  onChange={(newDate) => {
+                    setDate(newDate);
+                  }}
+                  value={Date}
+                  disablePast
+                  format="DD/MM/YYYY"
+                  onAccept={(date) => {
+                    setIsDateCorrect(true);
+                  }}
+                  onError={(reason, value) => {
+                    if (reason === null) {
+                      setIsDateCorrect(true);
+                    } else {
+                      setIsDateCorrect(false);
+                    }
+                  }}
+                  slotProps={{
+                    field: {
+                      margin: "normal",
+                      fullWidth: true,
+                      required: true,
+                      name: "date",
+                    },
+                    textField: {
+                      label: "Fecha de recolección",
+                      name: "date",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="select-status-label">Conductor Asignado</InputLabel>
+                <Select
+                  labelId="select-status-label"
+                  id="select-status"
+                  value={conductorAsignado}
+                  label="Conductor Asignado"
+                  onChange={(e) => {
+                    //console.log(e.target.value);
+                    setConductorAsignado(e.target.value);
+                  }}
+                  fullWidth
+                  required
+                >
+                  {conductores.map((conductor) => (
+                    <MenuItem key={conductor.id} value={conductor.user}>
+                      {conductor.first_name} {conductor.last_name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
 
 
 
@@ -330,10 +361,12 @@ export default function EditRecolectionModal({
           ) : status === "cancelado" ? (
             <Button
               fullWidth
-              color="success"
+              color="error"
               variant="contained"
               type="submit"
+              disabled={loading}
               onClick={() => {
+                setLoading(true)
                 const data = {
                   user: recolection.donador,
                   id_order: recolection.id,
@@ -358,12 +391,17 @@ export default function EditRecolectionModal({
                       "Ha ocurrido un error al cancelar la recolección"
                     );
                     setOpenMessageModal(true);
+                  }).finally(() => {
+                    setLoading(false)
                   });
-              }}
+              }
 
-              
+              }
+
+
+
             >
-              Cancelar recolección
+              {!loading ? "Cancelar recolección" : "Cargando..."}
             </Button>
           ) : (
             <Button

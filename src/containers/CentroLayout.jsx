@@ -35,6 +35,7 @@ import '@fontsource/poppins/700.css';
 import '@fontsource/poppins/800.css';
 import '@fontsource/poppins/900.css';
 import { useNavigate } from 'react-router-dom';
+import deleteCookie from '../helpers/deleteCookie';
 
 
 
@@ -205,9 +206,17 @@ export default function CentroLayout({ children, List }) {
     };
 
     const handleCloseUserMenu = () => {
-        navigate('/');
         setAnchorElUser(null);
     };
+
+    const handleSignOut = () => {
+        handleCloseUserMenu();
+        //deleteCookie('token');
+        deleteCookie('refresh');
+        deleteCookie('access');
+        deleteCookie('user');
+        navigate('/');
+    }
 
     useEffect(() => {
         const handleResize = () => {
@@ -272,7 +281,7 @@ export default function CentroLayout({ children, List }) {
                                     open={Boolean(anchorElUser)}
                                     onClose={handleCloseUserMenu}
                                 >
-                                    <MenuItem onClick={handleCloseUserMenu}>
+                                    <MenuItem onClick={handleSignOut}>
                                         <Typography textAlign="center">Cerrar sesión</Typography>
                                     </MenuItem>
                                 </Menu>
