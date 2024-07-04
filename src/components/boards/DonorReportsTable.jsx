@@ -43,6 +43,8 @@ import CreateDonorReportModal from "../modals/CreateDonorReportModal";
 import DonorSubtable from "./DonorSubtable";
 import DonorReportsFiltersModal from "../modals/DonorReportsFiltersModal";
 import DeleteDonorReportsModal from "../modals/DeleteDonorReportModal";
+import generateDonorReportPDF from "../../services/generateDonorReportPDF";
+import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
 
 
 
@@ -161,7 +163,7 @@ export default function DonorReportsTable({ data }) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [showCompleteInfo, setShowCompleteInfo] = useState(null);
 
-    //console.log(data)
+    console.log(data)
     const {
         setTextOpenModalText,
         setOpenModalDeleteReport,
@@ -184,12 +186,8 @@ export default function DonorReportsTable({ data }) {
         setPage(0);
     };
 
-
-
-    const handleSavePDF = async (report) => {
-        const validate = await validateReport(
-            report.id_report
-        )
+    const handleSaveTalonPDF = async (report) => {
+        const validate = true;
         if (validate == true) {
             const data = await getReportInfo(
                 report.id_report
@@ -222,7 +220,50 @@ export default function DonorReportsTable({ data }) {
                 "https://rewards.rennueva.com/tracking-external/" +
                 folio_busqueda // Aquí deberías poner la URL correcta para el reporte
             );
-            generateReportPDF(report, data, qrImage);
+            generateDonorTalonPDF(report, data, qrImage);
+        } else {
+            setOpenModalText(true);
+            setTextOpenModalText(
+                "No se puede generar el reporte, aun no se han firmado todos los campos"
+            );
+        }
+    }
+
+    const handleSavePDF = async (report) => {
+        const validate = true;
+        if (validate == true) {
+            const data = await getReportInfo(
+                report.id_report
+            );
+
+            let key_centro = "";
+            if (
+                data[0].key_centro_reciclaje !=
+                null
+            ) {
+                key_centro =
+                    data[0].key_centro_reciclaje;
+            }
+            if (
+                data[0].key_centro_recoleccion !=
+                null
+            ) {
+                key_centro =
+                    data[0].key_centro_recoleccion;
+            }
+
+            const folio_busqueda =
+                data[0].key_grupo_usuario +
+                "-" +
+                key_centro +
+                "-" +
+                report.id_report;
+
+            const qrImage = await generateQR(
+                "https://rewards.rennueva.com/tracking-external/" +
+                folio_busqueda // Aquí deberías poner la URL correcta para el reporte
+            );
+            generateDonorReportPDF(report, data, qrImage);
         } else {
             setOpenModalText(true);
             setTextOpenModalText(
@@ -310,7 +351,10 @@ export default function DonorReportsTable({ data }) {
                                     <Typography variant="subtitle2">Firma receptor</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="subtitle2">Talón</Typography>
+                                    <Typography variant="subtitle2">Talon</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography variant="subtitle2">Responsiva</Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Typography variant="subtitle2">Borrar</Typography>
@@ -395,13 +439,28 @@ export default function DonorReportsTable({ data }) {
                                                         startIcon={<SaveAlt />}
                                                         variant="contained"
                                                         size="small"
-                                                        color={report.donador_signature && report.recollection_signature ? "success" : "warning"}
+                                                        color={report.firma_responsiva_generador && report.firma_responsiva_receptor ? "success" : "warning"}
+                                                        onClick={async (e) => {
+                                                            console.log(report)
+                                                            e.stopPropagation();
+                                                            await handleSaveTalonPDF(report)
+                                                        }}
+                                                    >
+                                                        Generar Talon
+                                                    </Button>
+                                                </TableCell>
+                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
+                                                    <Button
+                                                        startIcon={<SaveAlt />}
+                                                        variant="contained"
+                                                        size="small"
+                                                        color={report.firma_responsiva_generador && report.firma_responsiva_receptor ? "success" : "warning"}
                                                         onClick={async (e) => {
                                                             e.stopPropagation();
                                                             await handleSavePDF(report)
                                                         }}
                                                     >
-                                                        Generar talón
+                                                        Generar Responsiva
                                                     </Button>
                                                 </TableCell>
                                                 <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>

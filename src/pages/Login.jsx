@@ -83,10 +83,11 @@ export default function SignInSide() {
       } else {
         console.log("Login failed:", message);
       }
-
+      console.log("data", data);
+      
       // Almacenar el token en el estado (y posiblemente en un almacenamiento persistente como localStorage)
-      document.cookie = `refresh=${data.refresh}; SameSite=Lax; Secure`;
       document.cookie = `user=${username}; SameSite=Lax; Secure`;
+      document.cookie = `refresh=${data.refresh}; SameSite=Lax; Secure`;
       document.cookie = `access=${data.access}; SameSite=Lax; Secure`;
 
       setError(null);
@@ -130,8 +131,8 @@ export default function SignInSide() {
       } else if (dataUser.groups[0] === "Conductor") {
         console.log("Conductor");
         navigate("/driver/assigned-orders");
-      }else if (dataUser.groups[0] === "Centro") {
-        console.log("centro");
+      } else if (dataUser.groups[0] === "Centro") {
+        console.log("Centro");
         navigate("/centro/home");
       }
 

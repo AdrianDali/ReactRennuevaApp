@@ -32,9 +32,10 @@ import ProduccionList from '../containers/ListSideBarProduccion/ProduccionList.j
 import RegisterList from '../containers/ListSideBarRegister/RegisterList.jsx';
 import ExportsMenu from '../pages/Menus/ExportsMenu.jsx';
 import DriverList from '../containers/ListSideBarDriver/DriverList.jsx';
-import { MenuAssignedOrders } from '../pages/Menus/MenuAssignedOrders.js';
+import  MenuAssignedOrders  from '../pages/Menus/MenuAssignedOrders.js';
 import { MenuOrderAssignment } from '../pages/Menus/MenuOrderAssignmentMenu.js';
 import ContainerMenu from '../pages/Menus/ContainerMenu.jsx';
+import CentroList from '../containers/ListSideBarCentro/CentroList.jsx';
 
 function App() {
 
@@ -111,7 +112,7 @@ function App() {
     //menus para grupo de conductores 
     { path: '/driver/assigned-orders', element: <CentroLayout List={<DriverList/>}><MenuAssignedOrders/></CentroLayout> },
     //menu para grupo de contenedor
-    {path:'/centro/home', element: <CentroLayout List={<RegisterList/>}><ContainerMenu/></CentroLayout> },
+    {path:'/centro/home', element: <CentroLayout List={<CentroList/>}><ContainerMenu/></CentroLayout> },
     
 
     // menus para resetear contraseña
