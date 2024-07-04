@@ -11,6 +11,8 @@ import {
     TableRow,
     TablePagination,
     Button,
+    Dialog,
+
 } from "@mui/material";
 import { TodoContext } from "../../context";
 import EditRecolectionModal from "./EditRecolectionModal";
@@ -25,6 +27,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { ModalFirmar } from "../../pages/ModalFirmar";
+import ConfirmationModal from "../modals/ConfirmationModal";
 
 function Row(props) {
     const { row } = props;
@@ -41,8 +44,9 @@ function Row(props) {
     } = useContext(TodoContext);
     const [reportToEdit, setReportToEdit] = useState();
     const [signType, setSignType] = useState("Recoleccion");
- 
-    
+
+
+
 
     const statusText = (status) => {
         switch (status) {
@@ -125,7 +129,7 @@ function Row(props) {
 
     const onEditDonorSign = (id) => {
         setReportToEdit(id);
-        
+
         setSignType("Donador");
         setOpenModalEditFirma(true);
     }
@@ -133,7 +137,7 @@ function Row(props) {
     const onEditReceiverSign = (id) => {
         console.log("Editando firma de receptor");
         console.log(id);
-        
+
         setReportToEdit(id);
         setSignType("Recolector");
         setOpenModalEditFirma(true);
@@ -356,8 +360,7 @@ const DriverOrderAssignedTable = ({ data }) => {
     const [recolectionToEdit, setRecolectionToEdit] = useState(null);
     const [filterClient, setFilterClient] = useState(null);
     const [auxClientes, setAuxClientes] = useState(null);
-    const [signType, setSignType] = useState("Generador");
-    const [reportToEdit, setReportToEdit] = useState({});
+    const [openConfirmation, setOpenConfirmation] = useState(false);
 
 
     useEffect(() => {
@@ -489,7 +492,6 @@ const DriverOrderAssignedTable = ({ data }) => {
                 update={updateDonorInfo}
                 setUpdate={setUpdateDonorInfo}
             />
-            
         </>
     );
 };
