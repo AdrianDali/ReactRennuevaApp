@@ -15,26 +15,16 @@ import {
 import { TodoContext } from "../../context";
 import EditRecolectionModal from "./EditRecolectionModal";
 import { IconButton } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-
-import DeleteIcon from "@mui/icons-material/Delete";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Collapse from "@mui/material/Collapse";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { OptionButton, ActionButtonOrdersExcel } from '../../components/OptionButton';
-
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { ModalFirmar } from "../../pages/ModalFirmar";
-
 
 function Row(props) {
     const { row } = props;
@@ -47,7 +37,11 @@ function Row(props) {
         setUpdateDonorInfo,
         setOpenModalText,
         setTextOpenModalText,
+        setOpenModalEditFirma
     } = useContext(TodoContext);
+    const [reportToEdit, setReportToEdit] = useState();
+    const [signType, setSignType] = useState("Recoleccion");
+ 
     
 
     const statusText = (status) => {
@@ -129,6 +123,22 @@ function Row(props) {
 
     ];
 
+    const onEditDonorSign = (id) => {
+        setReportToEdit(id);
+        
+        setSignType("Donador");
+        setOpenModalEditFirma(true);
+    }
+
+    const onEditReceiverSign = (id) => {
+        console.log("Editando firma de receptor");
+        console.log(id);
+        
+        setReportToEdit(id);
+        setSignType("Recolector");
+        setOpenModalEditFirma(true);
+    }
+
     return (
         <React.Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -155,11 +165,12 @@ function Row(props) {
                         color="primary"
                         onClick={(e) => {
                             e.stopPropagation()
+                            onEditDonorSign(row.id)
 
 
                         }}
                     >
-                        Agregar
+                        Firmar
                     </Button>
                 </TableCell>
                 <TableCell>
@@ -170,11 +181,12 @@ function Row(props) {
                         color="primary"
                         onClick={(e) => {
                             e.stopPropagation()
+                            onEditReceiverSign(row.id)
 
 
                         }}
                     >
-                        Agregar
+                        Firmar
                     </Button>
                 </TableCell>
                 <TableCell>
@@ -185,7 +197,7 @@ function Row(props) {
                         color="primary"
                         onClick={(e) => {
                             e.stopPropagation()
-
+                            onEditDonorSign(row.id)
 
                         }}
                     >
@@ -312,6 +324,7 @@ function Row(props) {
                 update={updateDonorInfo}
                 setUpdate={setUpdateDonorInfo}
             />
+            <ModalFirmar type={signType} id={reportToEdit} />
         </React.Fragment>
     );
 }
@@ -386,13 +399,6 @@ const DriverOrderAssignedTable = ({ data }) => {
     ];
 
 
-    const onEditDriverSignature = (id) => {
-        console.log("Editando firma de conductor");
-    }
-
-    const onEditDonorSignature = (id) => {
-        console.log("Editando firma de donador");
-    }
 
     return (
         <>
@@ -483,7 +489,7 @@ const DriverOrderAssignedTable = ({ data }) => {
                 update={updateDonorInfo}
                 setUpdate={setUpdateDonorInfo}
             />
-            <ModalFirmar type={signType} id={reportToEdit} />
+            
         </>
     );
 };

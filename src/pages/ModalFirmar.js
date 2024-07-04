@@ -17,12 +17,14 @@ function ModalFirmar({ id, type }) {
         setUpdateDonorReports
     } = useContext(TodoContext);
     console.log("ID DE QUIERN SE FIRMA", id)
-
+    console.log("TYPE DE QUIERN SE FIR MA", type)
     const closeModal = () => {
         if(type === "Receptor" || type === "Generador"){
             setUpdateReportInfo(prev => !prev);
         }else if(type === "Donador" || type === "Recolector"){
             setUpdateDonorReports(prev => !prev);
+        }else{
+            console.log("Firma ")
         }
         setOpenModalEditFirma(false)
     };
