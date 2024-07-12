@@ -10,11 +10,9 @@ import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function ModalDriver({ children, mode , creatorUser}) {
+export default function ModalDriver({ mode , creatorUser, userToEdit}) {
 
     const [creator, setCreator] = useState(creatorUser);
-
-    const [datos, setDatos] = useState([]);
     const [groups, setGroups] = useState([])
     const [users, setUsers] = useState([])
     const [companies, setCompanies] = useState([""])
@@ -24,17 +22,7 @@ function ModalDriver({ children, mode , creatorUser}) {
     const [first_name, setFirstName] = useState("");
     const [last_name, setLastName] = useState("");
     const [license, setLicense] = useState("");
-    const [group, setGroup] = useState("");
-    const [company, setCompany] = useState("");
-    const [state, setState] = useState("");
-    const [city, setCity] = useState("");
-    const [locality, setLocality] = useState("");
-    const [street, setStreet] = useState("");
-    const [postal_code, setPostalCode] = useState("");
-    const [rfc, setRfc] = useState("");
     const [phone, setPhone] = useState("");
-    const [address_num_int, setAddressNumInt] = useState("");
-    const [address_num_ext, setAddressNumExt] = useState("");
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const [old_user, setOldUser] = useState("");
     const togglePasswordVisibility = () => {
@@ -78,7 +66,7 @@ function ModalDriver({ children, mode , creatorUser}) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Conductor creado correctamente")
-                    setUpdateDriverInfo(true);
+                    setUpdateDriverInfo((prev)=>!prev);
                     e.target.reset();
                     closeModal()
 
@@ -103,7 +91,6 @@ function ModalDriver({ children, mode , creatorUser}) {
 
             const editarDato = {
                 user: e.target.email.value,
-                
                 email: e.target.email.value,
                 first_name: e.target.nombre.value,
                 last_name: e.target.apellido.value,
@@ -115,8 +102,6 @@ function ModalDriver({ children, mode , creatorUser}) {
 
                 old_license: old_user,
             };
-            console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF")
-            console.log(editarDato)
 
             axios
                 .put(`${process.env.REACT_APP_API_URL}/update-driver/`, editarDato)
@@ -125,7 +110,7 @@ function ModalDriver({ children, mode , creatorUser}) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Donador editado correctamente")
-                    setUpdateDriverInfo(true);
+                    setUpdateDriverInfo((prev)=>!prev);
                     e.target.reset();
                     closeModal()
                     // Limpiar los campos del formulario
@@ -148,7 +133,6 @@ function ModalDriver({ children, mode , creatorUser}) {
         }
         if (mode === "BORRAR") {
             const antiguo_user = document.getElementById("user-select")
-            var user_ant = antiguo_user ? antiguo_user.value : null;
 
             const deleteDato = {
                 user: e.target.email.value,
@@ -163,7 +147,7 @@ function ModalDriver({ children, mode , creatorUser}) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Donador borrado correctamente")
-                    setUpdateDriverInfo(true);
+                    setUpdateDriverInfo(prev => !prev);
                     e.target.reset();
                     closeModal()
 
@@ -217,29 +201,19 @@ function ModalDriver({ children, mode , creatorUser}) {
             .catch((err) => console.log(err));
                 
             }, []);
+        
+        useEffect(() => {
+            if (mode === "EDITAR") {
+                setUser(userToEdit.user);
+                setPhone(userToEdit.phone);
+                setLicense(userToEdit.license);
+                setFirstName(userToEdit.first_name);
+                setLastName(userToEdit.last_name);
+                setEmail(userToEdit.user);
+                setOldUser(userToEdit.license);
+            }
+        }, [userToEdit, mode]);
 
-        const handleSelectChange = (event) => {
-            const selectedOption = event.target.value; // Obtener la opción seleccionada
-            console.log(selectedOption)
-            // Buscar el dato seleccionado en el arreglo de datos
-            const datoEncontrado = users.find((users) => users.license === selectedOption);
-            console.log(datoEncontrado)
-            setUser(datoEncontrado.user);
-            setPassword(datoEncontrado.password);
-            setEmail(datoEncontrado.email);
-            setFirstName(datoEncontrado.first_name);
-            setLastName(datoEncontrado.last_name);
-            setGroup(datoEncontrado.group);
-            setRfc(datoEncontrado.rfc);
-            setCompany(datoEncontrado.company);
-            setPhone(datoEncontrado.phone);
-            setLicense(datoEncontrado.license);
-            
-            setOldUser(selectedOption);
-
-
-
-        }
 
         const handleInputChange = (e, setState, mode) => {
             const currentInputValue = e.target.value;
@@ -274,28 +248,6 @@ function ModalDriver({ children, mode , creatorUser}) {
                     <form onSubmit={handleSubmit} >
                         <Box mb={2}>
                             <Title> Conductores</Title>
-                            {mode === "EDITAR" || mode === "BORRAR" ? (
-                                <FormControl fullWidth>
-                                    <InputLabel id="user-select-label">Conductor</InputLabel>
-                                    <Select
-                                        labelId="user-select-label"
-                                        id="user-select"
-                                        onChange={(e) => {
-
-                                            handleSelectChange(e, setUser)
-
-
-                                        }}
-                                        required
-                                        //value={user}
-                                        w
-                                    >
-                                        {users.map((name, index) => (
-                                            <MenuItem key={index} value={name.license}>{name.license}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            ) : null}
                         </Box>
                         <Box mt={2} mb={2} sx={{ overflowY: 'auto', maxHeight: 500 }}>
                             <TextField
@@ -395,5 +347,3 @@ function ModalDriver({ children, mode , creatorUser}) {
 
         );
     }
-
-export { ModalDriver };
