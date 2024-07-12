@@ -36,14 +36,15 @@ import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
-
+import ModalDriver from "../../pages/ModalDriver";
+import DeleteDriverModal from "../modals/DeleteDriverModal";
 
 
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const {
-        setOpenModalEditGenerator,
-        setOpenModalDeleteGenerator,
+        setOpenModalEditDriver,
+        setOpenModalDeleteDriver,
     } = useContext(TodoContext);
     const open = Boolean(anchorEl);
 
@@ -52,12 +53,12 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
     };
 
     const handleEdit = () => {
-        setOpenModalEditGenerator(true);
+        setOpenModalEditDriver(true);
         handleClose();
     }
 
     const handleDelete = () => {
-        setOpenModalDeleteGenerator(true);
+        setOpenModalDeleteDriver(true);
         handleClose();
     }
 
@@ -94,13 +95,13 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, filteredData, selec
 
     const handleExportAll = () => {
         //console.log(allData)
-        generateExcelFromJson(allData, "Generadores");
+        generateExcelFromJson(allData, "Conductores");
         handleClose();
     }
 
     const handleExportVisible = () => {
         //console.log(filteredData)
-        generateExcelFromJson(filteredData, "Generadores");
+        generateExcelFromJson(filteredData, "Conductores");
         handleClose();
     }
 
@@ -108,7 +109,7 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, filteredData, selec
         //console.log(selectedData)
         const dataToExport = allData.filter((generador) => selectedData.includes(generador.user));
         //console.log(dataToExport)
-        generateExcelFromJson(dataToExport, "Generadores");
+        generateExcelFromJson(dataToExport, "Conductores");
         handleClose();
     }
 
@@ -162,7 +163,8 @@ function SearchField({ filteredData, setVisibleData }) {
                     return generador.first_name.toLowerCase().includes(search) ||
                         generador.last_name.toLowerCase().includes(search) ||
                         generador.user.toLowerCase().includes(search) ||
-                        generador.rfc.toLowerCase().includes(search)
+                        generador.phone.toLowerCase().includes(search) ||
+                        generador.license.toLowerCase().includes(search)
                 })
                 setVisibleData(newData);
             }
@@ -209,8 +211,8 @@ function SearchField({ filteredData, setVisibleData }) {
 
 function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersApplied, filteredData, allData, setVisibleData }) {
     const {
-        setOpenModalCreateGenerator,
-        setOpenModalDeleteGenerator,
+        setOpenModalCreateDriver,
+        setOpenModalDeleteDriver,
     } = useContext(TodoContext);
     const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
 
@@ -227,7 +229,7 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
                 <Button variant="outlined" size="large" color="success" startIcon={<Download />} sx={{ m: 2 }} onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}>Exportar</Button>
                 <Button variant="contained" size="large" color="error" startIcon={<Delete />} sx={{ m: 2 }} onClick={e => {
                     e.stopPropagation()
-                    setOpenModalDeleteGenerator(true)
+                    setOpenModalDeleteDriver(true)
                     setUsersToDelete(selected)
                 }}>Borrar</Button>
             </Box>
@@ -238,15 +240,15 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
     return (
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" py={2}>
             <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
-                Generadores
+                Conductores
             </Typography>
             <Box>
                 <SearchField filteredData={filteredData} setVisibleData={setVisibleData} />
                 <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
-                    <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
+                    {/*<Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>*/}
                 </Badge>
                 <Button variant="outlined" size="large" color="success" startIcon={<Download />} sx={{ m: 2 }} onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}>Exportar</Button>
-                <Button variant="contained" size="large" color="primary" startIcon={<Add />} sx={{ m: 2 }} onClick={() => { setOpenModalCreateGenerator(true) }}>Nuevo</Button>
+                <Button variant="contained" size="large" color="primary" startIcon={<Add />} sx={{ m: 2 }} onClick={() => { setOpenModalCreateDriver(true) }}>Nuevo</Button>
                 <ExportOptionsMenu selectedData={selected} filteredData={filteredData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
             </Box>
         </Box>
@@ -265,10 +267,10 @@ export default function DriversTable({ data }) {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const {
-        openModalCreateGenerator,
-        openModalEditGenerator,
-        setOpenModalEditGenerator,
-        setOpenModalDeleteGenerator,
+        openModalCreateDriver,
+        openModalEditDriver,
+        setOpenModalEditDriver,
+        setOpenModalDeleteDriver,
         openModalText,
         textOpenModalText,
         setOpenModalText
@@ -336,7 +338,6 @@ export default function DriversTable({ data }) {
     }, [selected]);
 
 
-
     useEffect(() => {
         setSelected([]);
         setFilteredData(data);
@@ -400,56 +401,14 @@ export default function DriversTable({ data }) {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        <Typography variant="subtitle2">RFC</Typography>
+                                        <Typography variant="subtitle2">Teléfono</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        <Typography variant="subtitle2">Compañía</Typography>
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell>
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        <Typography variant="subtitle2">Calle</Typography>
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell>
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        <Typography variant="subtitle2">Número</Typography>
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell>
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        <Typography variant="subtitle2">Colonia</Typography>
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell>
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        <Typography variant="subtitle2">Ciudad</Typography>
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell>
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        <Typography variant="subtitle2">Estado</Typography>
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell>
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        <Typography variant="subtitle2">Código postal</Typography>
+                                        <Typography variant="subtitle2">Licencia</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -465,7 +424,7 @@ export default function DriversTable({ data }) {
                                 <TableRow>
                                     <TableCell colSpan={14}>
                                         <Typography variant="h6" color="textSecondary" align="center">
-                                            No se encontraron generadores
+                                            No se encontraron conductores
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
@@ -506,19 +465,13 @@ export default function DriversTable({ data }) {
                                         <TableCell>{cliente.first_name}</TableCell>
                                         <TableCell>{cliente.last_name}</TableCell>
                                         <TableCell>{cliente.user}</TableCell>
-                                        <TableCell>{cliente.rfc}</TableCell>
-                                        <TableCell>{cliente.company}</TableCell>
-                                        <TableCell>{cliente.address_street}</TableCell>
-                                        <TableCell>{cliente.address_number}</TableCell>
-                                        <TableCell>{cliente.address_locality}</TableCell>
-                                        <TableCell>{cliente.address_city}</TableCell>
-                                        <TableCell>{cliente.address_state}</TableCell>
-                                        <TableCell>{cliente.address_postal_code}</TableCell>
+                                        <TableCell>{cliente.phone}</TableCell>
+                                        <TableCell>{cliente.license}</TableCell>
                                         <TableCell>
                                             <IconButton onClick={(e) => {
                                                 e.stopPropagation()
                                                 setUserToEdit(cliente)
-                                                setOpenModalEditGenerator(true)
+                                                setOpenModalEditDriver(true)
                                             }}>
                                                 <Edit />
                                             </IconButton>
@@ -526,8 +479,8 @@ export default function DriversTable({ data }) {
                                         <TableCell>
                                             <IconButton color="error" onClick={(e) => {
                                                 e.stopPropagation()
-                                                setGeneratorsToDelete([cliente.email])
-                                                setOpenModalDeleteGenerator(true)
+                                                setGeneratorsToDelete([cliente.user])
+                                                setOpenModalDeleteDriver(true)
                                             }}>
                                                 <Delete />
                                             </IconButton>
@@ -549,9 +502,9 @@ export default function DriversTable({ data }) {
             </Paper>
             <GeneratorsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} users={data} setFiltersApplied={setFiltersApplied} />
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
-            {openModalCreateGenerator && <ModalGenerator mode={"CREAR"} creatorUser={dataUser.user} />}
-            {openModalEditGenerator && <ModalGenerator mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user} />}
-            <DeleteGeneratorModal generators={generatorsToDelete} />
+            {openModalCreateDriver && <ModalDriver mode={"CREAR"} creatorUser={dataUser.user} />}
+            {openModalEditDriver && <ModalDriver mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user} />}
+            <DeleteDriverModal drivers={generatorsToDelete} />
             {openModalText && (
                 <Dialog
                     open={openModalText}

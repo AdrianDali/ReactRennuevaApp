@@ -4,15 +4,15 @@ import { Box, Typography, List, ListItem } from '@mui/material';
 import useAuth from '../../hooks/useAuth';
 import deleteUsers from '../../services/deleteUsers';
 import { TodoContext } from '../../context';
-import axios from 'axios';
 import NotificationModal from './NotificationModal';
+import deleteDrivers from '../../services/deleteDrivers';
 
-export default function DeleteGeneratorModal({ generators }) {
+export default function DeleteDriverModal({ drivers }) {
     const [opneNotification, setOpenNotification] = useState(false);
     const {
-        setUpdateGeneratorInfo,
-        openModalDeleteGenerator,
-        setOpenModalDeleteGenerator,
+        setUpdateDriverInfo,
+        openModalDeleteDriver,
+        setOpenModalDeleteDriver,
     } = useContext(TodoContext);
     const userData = useAuth();
     const title = `¿Está seguro de realizar esta operación?`;
@@ -20,28 +20,28 @@ export default function DeleteGeneratorModal({ generators }) {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState([]);
 
-    const handleDeleteGenerators = async () => {
+    const handleDeleteDrivers = async () => {
         setLoading(true);
         if (userData === null) return;
         const creator = userData.user;
-        const usersToDelete = generators.map(generator => ({ email: generator, 'creator_user': creator }));
-        const promises = deleteUsers(usersToDelete);
+        const usersToDelete = drivers.map(driver => ({ user: driver, user_permissions: "Escritura", 'creator_user': creator }));
+        const promises = deleteDrivers(usersToDelete);
         await promises.then(async (response) => {
             setResult(response);
             setLoading(false);
             setSuccess(response.every(res => res.status === 'fulfilled'));
             setOpenNotification(true);
-            setOpenModalDeleteGenerator(false);
+            setOpenModalDeleteDriver(false);
         })
 
     }
 
     const body = (
         <Box px={1} pt={1}>
-            <Typography variant='body1'>Se eliminarán los siguientes generadores:</Typography>
+            <Typography variant='body1'>Se eliminarán los siguientes conductores:</Typography>
             <List sx={{ p: 0, pt: 1, pl: 1 }} >
-                {generators.map(generator => <ListItem sx={{ p: 0 }} key={generator}>
-                    <Typography variant='body1'>{generator}</Typography>
+                {drivers.map(driver => <ListItem sx={{ p: 0 }} key={driver}>
+                    <Typography variant='body1'>{driver}</Typography>
                 </ListItem>)}
             </List>
         </Box>
@@ -51,7 +51,7 @@ export default function DeleteGeneratorModal({ generators }) {
     const notificationBody = (
         <Box px={1} pt={1}>
             <Typography variant='body1'>
-                {success ? "Los generadores se eliminaron correctamente." : "Ocurrió un error al intentar eliminar los generadores. No se pudo eliminar a los siguientes generadores:"}
+                {success ? "Los conductores se eliminaron correctamente." : "Ocurrió un error al realizar la operación. No se pudo eliminar a los siguientes conductores:"}
             </Typography>
             <List sx={{ p: 0, pt: 1, pl: 1 }} >
                 {result.map(res => {
@@ -59,8 +59,8 @@ export default function DeleteGeneratorModal({ generators }) {
                     const user = JSON.parse(res.reason.config.data);
                     const errorMessage = res.reason.response.data.errorMessage? res.reason.response.data.errorMessage : res.reason.response.statusText;
                     return (
-                        <ListItem sx={{ p: 0 }} key={user.email}>
-                            <Typography variant='body1'>{`${user.email} - ${errorMessage}`}</Typography>
+                        <ListItem sx={{ p: 0 }} key={user.user}>
+                            <Typography variant='body1'>{`${user.user} - ${errorMessage}`}</Typography>
                         </ListItem>
                     )
                 })}
@@ -70,8 +70,8 @@ export default function DeleteGeneratorModal({ generators }) {
 
     return (
         <>
-            <ConfirmationModal isOpen={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator} title={title} severity='error' loading={loading} onConfirm={async () => {
-                await handleDeleteGenerators();
+            <ConfirmationModal isOpen={openModalDeleteDriver} setOpen={setOpenModalDeleteDriver} title={title} severity='error' loading={loading} onConfirm={async () => {
+                await handleDeleteDrivers();
             }}>
                 {body}
             </ConfirmationModal>
@@ -79,10 +79,10 @@ export default function DeleteGeneratorModal({ generators }) {
             <NotificationModal 
                 isOpen={opneNotification} 
                 setOpen={setOpenNotification}
-                title={success ? "Generadores eliminados con éxito" : "Ocurrió un error"} 
+                title={success ? "Conductores eliminados con éxito" : "Ocurrió un error"} 
                 severity={success ? "success" : "error"} 
                 onAccept={()=>{
-                    setUpdateGeneratorInfo(prev => !prev)
+                    setUpdateDriverInfo(prev => !prev)
                     }}>
                 {success ? "Los generadores se eliminaron correctamente" : notificationBody}
             </NotificationModal>
