@@ -34,24 +34,15 @@ const usersItem = new ListTemplateItem({
 
 
 const reportItem = new ListTemplateItem({
-    tag: "Reportes",
+    tag: "Recolecciones",
     icon: <BarChartIcon />,
     subElemnets: [
         new ListTemplateItem({
-            tag: "Reporte",
+            tag: "Ordenes asignadas",
             icon: <BarChartIcon />,
-            redirection: "/register/report",
+            redirection: "/driver/assigned-orders",
         }),
-        new ListTemplateItem({
-            tag: "Seguiemiento",
-            icon: <TrackChangesIcon />,
-            redirection: "/register/tracking",
-        }),
-        new ListTemplateItem({
-            tag: "Historial de reportes",
-            icon: <HistoryIcon />,
-            redirection: "/register/report-history",
-        }),
+        ,
     ]
 })
 
@@ -75,7 +66,7 @@ const collectRequestItem = new ListTemplateItem({
 
 export default function DriverList() {
     return (
-        <ListTemplate items={[ usersItem, reportItem, collectRequestItem]} />
+        <ListTemplate items={[ reportItem]} />
     )
 }
 
