@@ -22,7 +22,7 @@ import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
-function ModalReport({ children, mode, report }) {
+function ModalReport({ children, mode, report , creatorUser }) {
   const [datos, setDatos] = useState([]);
   const [carriers, setCarriers] = useState([]);
   const [recyclingCollectionCenters, setRecyclingCollectionCenters] = useState(
@@ -59,6 +59,9 @@ function ModalReport({ children, mode, report }) {
   const [completeName, setCompleteName] = useState("");
   const [addrees_different, setAddressDifferent] = useState(true);
   const [isFirstRun, setIsFirstRun] = useState(true);
+
+  const [creator , setCreator] = useState(creatorUser);
+
 
   const {
     setOpenModalText,
@@ -361,18 +364,22 @@ function ModalReport({ children, mode, report }) {
         postalCode: postal_code,
         recyclingCollection: recyclingCollection,
         carrier: carrier,
+        creator_user: creator,
       });
 
       axios
         .post(`${process.env.REACT_APP_API_URL}/create-initial-report/`, {
-          username: user,
-          street: street,
-          locality: locality,
-          city: city,
-          state: state,
-          postalCode: postal_code,
-          recyclingCollection: recyclingCollection,
-          carrier: carrier,
+          username :  user,
+          street : street,
+          locality : locality,
+          creator_user : creator,
+          city : city,
+          state : state,
+          postalCode : postal_code,
+          recyclingCollection : recyclingCollection,
+          carrier : carrier,
+          report_for : "Generador"
+          
         })
         .then((response) => {
           console.log(response);

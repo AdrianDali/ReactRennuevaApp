@@ -273,6 +273,8 @@ export default function ReportsTable({ data }) {
     const [signType, setSignType] = useState("Generador");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const dataUser = useAuth();
     
     //console.log(data)
     const {
@@ -747,8 +749,8 @@ export default function ReportsTable({ data }) {
             <DeleteReportsModal reports={reportsToDelete} />
             <ReportsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} objects={data} setFiltersApplied={setFiltersApplied} />
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
-            {openModalCreateReport && <ModalReport mode={"CREAR"} />}
-            {openModalEditReport && <ModalReport mode={"EDITAR"} report={reportToEdit} />}
+            {openModalCreateReport && <ModalReport mode={"CREAR"} creatorUser={dataUser.user} />}
+            {openModalEditReport && <ModalReport mode={"EDITAR"} report={reportToEdit} creatorUser={dataUser.user} />}
             {openModalText && (
                 <Dialog
                     open={openModalText}
