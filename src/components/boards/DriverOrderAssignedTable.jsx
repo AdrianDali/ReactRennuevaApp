@@ -11,7 +11,7 @@ import {
     TableRow,
     TablePagination,
     Button,
-    Dialog,
+    Chip
 
 } from "@mui/material";
 import { TodoContext } from "../../context";
@@ -22,17 +22,16 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Collapse from "@mui/material/Collapse";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { OptionButton, ActionButtonOrdersExcel } from '../../components/OptionButton';
+import { ActionButtonOrdersExcel } from '../../components/OptionButton';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { ModalFirmar } from "../../pages/ModalFirmar";
-import ConfirmationModal from "../modals/ConfirmationModal";
+import { statusText, statusColor } from "../../helpers/statusModifiers";
 
 function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
-    const [openCancelModal, setOpenCancelModal] = React.useState(false);
     const [openEditModal, setOpenEditModal] = React.useState(false);
     const [recolectionToEdit, setRecolectionToEdit] = React.useState(null);
     const {
@@ -47,86 +46,6 @@ function Row(props) {
 
 
 
-
-    const statusText = (status) => {
-        switch (status) {
-            case 'solicitado':
-                return 'Solicitada'
-            case 'pendienteRecoleccion':
-                return 'Pendiente de recolección'
-            case 'recolectada':
-                return 'Recolectada'
-            case 'cancelado':
-                return 'Cancelada'
-            case 'entregadaCentro':
-                return 'Entregada al centro'
-            default:
-                return 'indefinido'
-        }
-    }
-
-    const statusColor = (status) => {
-        switch (status) {
-            case 'solicitada':
-                return '#0588d1'
-            case 'pendienteRecoleccion':
-                return '#ed6c03'
-            case 'recolectada':
-                return '#2e7d32'
-            case 'cancelado':
-                return 'error'
-            case 'entregadaCentro':
-                return '#2e7d32'
-            default:
-                return '#0588d1'
-        }
-    }
-
-
-
-    const handleClickOpen = (id) => {
-        setOpenCancelModal(true);
-    }
-
-    const handleConfirmDelete = (user, id) => {
-        console.log("Borrado confirmado");
-        console.log(user);
-        console.log(id);
-
-        axios
-            .post(`${process.env.REACT_APP_API_URL}/delete-donor-recollection/`, {
-                user: user,
-                id_order: id
-            })
-            .then((response) => {
-                console.log(response);
-                setOpen(false);
-                setOpenModalText(true);
-                setTextOpenModalText("Donación eliminada correctamente");
-                setUpdateDonorInfo(true);
-
-
-            })
-            .catch((error) => {
-                console.error(error);
-                setOpen(false);
-                setOpenModalText(true);
-                setTextOpenModalText("Error al eliminar la donación");
-            });
-
-
-        handleClose();
-    };
-
-    const handleClose = () => {
-        setOpenCancelModal(false);
-    };
-
-
-    const rows = [
-
-    ];
-
     const onEditDonorSign = (id) => {
         setReportToEdit(id);
 
@@ -135,9 +54,8 @@ function Row(props) {
     }
 
     const onEditReceiverSign = (id) => {
-        console.log("Editando firma de receptor");
-        console.log(id);
-
+        //console.log("Editando firma de receptor");
+        //console.log(id);
         setReportToEdit(id);
         setSignType("Recolector");
         setOpenModalEditFirma(true);
@@ -223,27 +141,8 @@ function Row(props) {
                         <Edit />
                     </Button>
                 </TableCell>
-
-
-                <TableCell
-                    bgcolor={
-                        statusColor(row.status)
-                    }
-                    sx={{
-                        borderRadius: "10px", // Adjust the radius to your preference
-                        padding: "1px", // Example of adjusting padding
-                        marginRight: "10px", // Example of adjusting margin
-                        marginTop: "15px", // Example of adjusting margin  
-                        display: "flex", // Center the content horizontally and vertically
-                        justifyContent: "center", // Center the content horizontally
-                        width: "100px", // Adjust the width to your preference
-                        alignItems: "center", // Center the content horizontally and vertically
-                        color: "white", // Change the text color
-
-                        // Add more styles here
-                    }}
-                >
-                    {statusText(row.status)}
+                <TableCell>
+                    <Chip label={statusText(row.status)} color={statusColor(row.status)} />
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -309,13 +208,11 @@ function Row(props) {
                                             <TableCell>{row.numero_ext}</TableCell>
                                             <TableCell>{row.numero_int}</TableCell>
                                             <TableCell>{row.codigo_postal}</TableCell>
-
                                         </TableRow>
                                     </TableBody>
                                 </Table>
                             </Box>
                         </Box>
-
                     </Collapse>
                 </TableCell>
             </TableRow>

@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import Title from '../components/Title';
 import CUDButtons from "../containers/CUDButtons";
-import { ModalDonor } from "./ModalDonor.js";
+import ModalDonor from "./ModalDonor.js";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -26,7 +26,7 @@ import DonorTable from "../components/boards/DonorTable.jsx";
 import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollection';
 import useAuth from "../hooks/useAuth.js";
 
-function MenuDonor() {
+export default function MenuDonor() {
   const {
     openModalCreateDonor,
     setOpenModalCreate,
@@ -132,4 +132,4 @@ function MenuDonor() {
   );
 }
 
-export { MenuDonor };
+
