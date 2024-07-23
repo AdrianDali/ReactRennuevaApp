@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import Title from "../components/Title";
 
-function ModalDonor({ children, mode, creatorUser }) {
+export default function ModalDonor({ children, mode, creatorUser }) {
   const [datos, setDatos] = useState([]);
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -624,4 +624,4 @@ function ModalDonor({ children, mode, creatorUser }) {
   );
 }
 
-export { ModalDonor };
+

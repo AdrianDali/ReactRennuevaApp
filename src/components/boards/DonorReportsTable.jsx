@@ -9,23 +9,11 @@ import {
     Box,
     Typography,
     Button,
-    Checkbox,
     TableSortLabel,
     IconButton,
-    Menu,
-    MenuItem,
-    MenuList,
-    ListItemIcon,
-    ListItemText,
     Badge,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    DialogContentText,
     TextField,
     TablePagination,
-    Divider,
     Collapse
 } from "@mui/material";
 import { Add, FilterList, Delete, Search, Draw, SaveAlt, Close, KeyboardArrowDown } from "@mui/icons-material";
@@ -35,9 +23,7 @@ import { useState, useContext, useEffect, useRef } from "react";
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { ModalFirmar } from "../../pages/ModalFirmar";
 import { ModalResidueReport } from "../../pages/ModalResidueReport";
-import validateReport from "../../services/validateReport";
 import getReportInfo from "../../services/getReportInfo";
-import generateReportPDF from "../../services/generateReportPDF";
 import generateQR from "../../services/generateQR";
 import CreateDonorReportModal from "../modals/CreateDonorReportModal";
 import DonorSubtable from "./DonorSubtable";
@@ -49,12 +35,8 @@ import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
 
 
 
-function Toolbar({ selected, setOpenFiltersModal, setObjectsToDelete, filtersApplied, filteredData, allData, setVisibleData }) {
+function Toolbar({ selected, setOpenFiltersModal, filtersApplied, filteredData, setVisibleData }) {
     const [openModalCreateReport, setOpenModalCreateReport] = useState(false);
-    const {
-        setOpenModalDeleteReport,
-    } = useContext(TodoContext);
-    const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
     if (selected.length > 0) return (
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" py={2} bgcolor={theme.palette.primary.light}>
             <Typography variant="h4" component="div" color="secondary" sx={{ p: 2 }}>
