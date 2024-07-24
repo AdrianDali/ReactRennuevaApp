@@ -172,6 +172,7 @@ export default function ReportsFiltersModal({ isOpen, setOpen, data, setFiltered
         estado_reporte: [],
         estado_usuario: [],
         transportista: [],
+        grupo_usuario: [],
     });
     const closeModal = () => {
         setOpen(false);
@@ -229,6 +230,7 @@ export default function ReportsFiltersModal({ isOpen, setOpen, data, setFiltered
             estado_reporte: [],
             estado_usuario: [],
             transportista: [],
+            grupo_usuario: [],
         })
         setFilteredData(objects);
         setFiltersApplied(false);
@@ -261,6 +263,8 @@ export default function ReportsFiltersModal({ isOpen, setOpen, data, setFiltered
                     <SelectForBooleans data={data.firma_responsiva_generador} label="Firmado por generador" name='firma_responsiva_generador' setFilters={setFilters} filters={filters} falseValueLabel="Sin firmar" trueValueLabel="Firmado" />
                     <SelectForBooleans data={data.firma_responsiva_receptor} label="Firmado por receptor" name='firma_responsiva_receptor' setFilters={setFilters} filters={filters} falseValueLabel="Sin firmar" trueValueLabel="Firmado" />
                     <MultipleSelect data={data.centro_recoleccion} label="Centro de recolección" name='centro_recoleccion' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.grupo_usuario} label="Grupo usuario" name='grupo_usuario' setFilters={setFilters} filters={filters} />
+                    
                     <MultipleSelect data={data.centro_reciclaje} label="Centro de recilaje" name='centro_reciclaje' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.ciudad_reporte} label="Ciudad del reporte" name='ciudad_reporte' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.ciudad_usuario} label="Ciudad del generador" name='ciudad_usuario' setFilters={setFilters} filters={filters} />
