@@ -17,6 +17,7 @@ export function MenuReport() {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-reports/`)
       .then((response) => {
+        console.log(response.data);
         setReports(response.data);
       })
       .catch((error) => {

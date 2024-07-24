@@ -25,6 +25,7 @@ import {
     DialogContentText,
     TextField,
     TablePagination,
+    Collapse
 } from "@mui/material";
 import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Draw, SaveAlt, Close } from "@mui/icons-material";
 import theme from "../../context/theme";
@@ -294,6 +295,13 @@ export default function ReportsTable({ data }) {
     const [selected, setSelected] = useState([]);
     const [generalCheckboxStatus, setGeneralCheckboxStatus] = useState("unchecked");
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
+    const [expanded, setExpanded] = useState(false);
+    const [expandedRow, setExpandedRow] = useState(null);
+
+    const handleExpandClick = (id) => {
+      setExpandedRow(prev => (prev === id ? null : id));
+    };
+
     const [dataForFilters, setDataForFilters] = useState({
         colonia_usuario: [],
         ciudad_usuario: [],
@@ -498,6 +506,13 @@ export default function ReportsTable({ data }) {
                                     <TableSortLabel
                                         direction="asc"
                                     >
+                                        <Typography variant="subtitle2"> </Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
                                         <Typography variant="subtitle2">ID</Typography>
                                     </TableSortLabel>
                                 </TableCell>
@@ -611,125 +626,149 @@ export default function ReportsTable({ data }) {
                                 : visibleData
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((report, index) => (
-                                    <TableRow
-                                        hover
-                                        role="checkbox"
-                                        key={report.id_report}
-                                        selected={isRowSelected(report.id_report)}
-                                        sx={{ cursor: 'pointer' }}
-                                        aria-checked={isRowSelected(report.id_report) ? true : false}
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            toggleSelected(report.id_report)
-                                        }}
-                                        onContextMenu={(e) => {
-                                            e.preventDefault();
-                                            setReportToEdit(report)
-                                            setReportsToDelete([report.id_report])
-                                            setRowContextMenuAnchorEl(e.target);
-                                        }}
-
-                                    >
-                                        <TableCell>
-                                            <Checkbox
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    toggleSelected(report.id_report)
-                                                }}
-                                                checked={isRowSelected(report.id_report)}
-                                                inputProps={{
-                                                    'aria-labelledby': report.id_report,
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <TableCell>{report.id_report}</TableCell>
-                                        <TableCell>{report.nombre_real_usuario}</TableCell>
-                                        <TableCell>{report.apellido_usuario}</TableCell>
-                                        <TableCell>{report.rfc_usuario}</TableCell>
-                                        <TableCell>{report.email_usuario}</TableCell>
-                                        <TableCell>{report.telefono_usuario}</TableCell>
-                                        <TableCell>{report.calle_usuario}</TableCell>
-                                        <TableCell>{report.colonia_usuario}</TableCell>
-                                        <TableCell>{report.cp_usuario}</TableCell>
-                                        <TableCell>{report.ciudad_usuario}</TableCell>
-                                        <TableCell>{report.estado_usuario}</TableCell>
-                                        <TableCell>{dateFormater(report.fecha_inicio_reporte)}</TableCell>
-                                        <TableCell>
-                                            <Button
-                                                startIcon={<Draw />}
-                                                variant="contained"
-                                                size="small"
-                                                color={report.firma_responsiva_generador ? "success" : "warning"}
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    onEditGeneratorSign(report.id_report)
-                                                }}
-                                            >
-                                                Firmar
-                                            </Button>
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <Button
-                                                startIcon={<Add />}
-                                                variant="contained"
-                                                size="small"
-                                                color={report.residuos_agregados ? "success" : "warning"}
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    handleEditResidues(report)
-                                                }}
-                                            >
-                                                Agregar
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                startIcon={<Draw />}
-                                                variant="contained"
-                                                size="small"
-                                                color={report.firma_responsiva_receptor ? "success" : "warning"}
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    onEditReceiverSign(report.id_report)
-                                                }}
-                                            >
-                                                Firmar
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                startIcon={<SaveAlt />}
-                                                variant="contained"
-                                                size="small"
-                                                color={report.firma_responsiva_generador && report.firma_responsiva_receptor && report.residuos_agregados ? "success" : "warning"}
-                                                onClick={async (e) => {
-                                                    e.stopPropagation();
-                                                    await handleSavePDF(report)
-                                                }}
-                                            >
-                                                Descargar
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell>
-                                            <IconButton onClick={(e) => {
-                                                e.stopPropagation()
-                                                setReportToEdit(report)
-                                                setOpenModalEditReport(true)
-                                            }}>
-                                                <Edit />
-                                            </IconButton>
-                                        </TableCell>
-                                        <TableCell>
-                                            <IconButton color="error" onClick={(e) => {
-                                                e.stopPropagation()
-                                                setReportsToDelete([report.id_report])
-                                                setOpenModalDeleteReport(true)
-                                            }} >
-                                                <Delete />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
+                                    <>
+      <TableRow
+        hover
+        role="checkbox"
+        key={report.id_report}
+        selected={isRowSelected(report.id_report)}
+        sx={{ cursor: 'pointer' }}
+        aria-checked={isRowSelected(report.id_report) ? true : false}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleSelected(report.id_report);
+        }}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setReportToEdit(report);
+          setReportsToDelete([report.id_report]);
+          setRowContextMenuAnchorEl(e.target);
+        }}
+      >
+        <TableCell>
+          <Checkbox
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSelected(report.id_report);
+            }}
+            checked={isRowSelected(report.id_report)}
+            inputProps={{
+              'aria-labelledby': report.id_report,
+            }}
+          />
+        </TableCell>
+        <TableCell>{report.id_report}</TableCell>
+        <TableCell>{report.nombre_real_usuario}</TableCell>
+        <TableCell>{report.apellido_usuario}</TableCell>
+        <TableCell>{report.rfc_usuario}</TableCell>
+        <TableCell>{report.email_usuario}</TableCell>
+        <TableCell>{report.telefono_usuario}</TableCell>
+        <TableCell>{report.calle_usuario}</TableCell>
+        <TableCell>{report.colonia_usuario}</TableCell>
+        <TableCell>{report.cp_usuario}</TableCell>
+        <TableCell>{report.ciudad_usuario}</TableCell>
+        <TableCell>{report.estado_usuario}</TableCell>
+        <TableCell>{dateFormater(report.fecha_inicio_reporte)}</TableCell>
+        <TableCell>
+          <Button
+            startIcon={<Draw />}
+            variant="contained"
+            size="small"
+            color={report.firma_responsiva_generador ? "success" : "warning"}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditGeneratorSign(report.id_report);
+            }}
+          >
+            Firmar
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            startIcon={<Add />}
+            variant="contained"
+            size="small"
+            color={report.residuos_agregados ? "success" : "warning"}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditResidues(report);
+            }}
+          >
+            Agregar
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            startIcon={<Draw />}
+            variant="contained"
+            size="small"
+            color={report.firma_responsiva_receptor ? "success" : "warning"}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditReceiverSign(report.id_report);
+            }}
+          >
+            Firmar
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            startIcon={<SaveAlt />}
+            variant="contained"
+            size="small"
+            color={report.firma_responsiva_generador && report.firma_responsiva_receptor && report.residuos_agregados ? "success" : "warning"}
+            onClick={async (e) => {
+              e.stopPropagation();
+              await handleSavePDF(report);
+            }}
+          >
+            Descargar
+          </Button>
+        </TableCell>
+        <TableCell>
+          <IconButton onClick={(e) => {
+            e.stopPropagation();
+            setReportToEdit(report);
+            setOpenModalEditReport(true);
+          }}>
+            <Edit />
+          </IconButton>
+        </TableCell>
+        <TableCell>
+          <IconButton color="error" onClick={(e) => {
+            e.stopPropagation();
+            setReportsToDelete([report.id_report]);
+            setOpenModalDeleteReport(true);
+          }}>
+            <Delete />
+          </IconButton>
+        </TableCell>
+        <TableCell>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleExpandClick(report.id_report);
+            }}
+          >
+            {expandedRow === report.id_report ? 'Ocultar' : 'Mostrar'} detalles
+          </Button>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={18}>
+          <Collapse in={expandedRow === report.id_report} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+              <Typography variant="h6" gutterBottom component="div">
+                Detalles Adicionales
+              </Typography>
+              <Typography variant="body2">
+                Aquí puedes añadir información adicional del reporte, como notas, comentarios, o cualquier otra información relevante.
+              </Typography>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
                                 ))}
                         </TableBody>
                     </Table>
