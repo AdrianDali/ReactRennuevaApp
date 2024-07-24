@@ -46,6 +46,7 @@ import generateReportPDF from "../../services/generateReportPDF";
 import generateQR from "../../services/generateQR";
 import DeleteReportsModal from "../modals/DeleteReportsModal";
 import ReportsFiltersModal from "../modals/ReportsFiltersModal";
+import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 
 
 
@@ -379,7 +380,11 @@ export default function ReportsTable({ data }) {
                 "https://rewards.rennueva.com/tracking-external/" +
                 folio_busqueda // Aquí deberías poner la URL correcta para el reporte
             );
-            generateReportPDF(report, data, qrImage);
+            if(report.grupo === "Donador"){
+                generateDonorReportPDF(report, data, qrImage);
+            }else{
+                generateReportPDF(report, data, qrImage);
+            }
         } else {
             setOpenModalText(true);
             setTextOpenModalText(
