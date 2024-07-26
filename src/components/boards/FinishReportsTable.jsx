@@ -383,7 +383,7 @@ import {
     );
   }
   
-  export default function ReportsTable({ data }) {
+  export default function FinishReportsTable({ data }) {
     const [filteredData, setFilteredData] = useState(data);
     const [reportsToDelete, setReportsToDelete] = useState([]);
     const [reportToEdit, setReportToEdit] = useState({});

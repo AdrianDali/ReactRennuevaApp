@@ -14,7 +14,7 @@ function ModalResidueReport({ report }) { // Asegúrate de manejar el evento de 
     const [botonAdd, setBotonAdd] = useState(false);
     //console.log("####################ReporteSeleccionado###############################SDFDFDSFDSFDSGHMN")
     //console.log(userselect)
-    //console.log(report)
+    console.log(report)
     const { openModalCreateResidueReport, setOpenModalCreateResidueReport, openModalEditResidueReport, setOpenModalEditResidueReport, openModalDeleteResidueReport, setOpenModalDeleteReportResidue, setUpdateReportInfo } = useContext(TodoContext);
 
 
