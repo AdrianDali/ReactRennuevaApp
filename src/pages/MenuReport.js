@@ -10,9 +10,19 @@ export function MenuReport() {
   const [reportsFinish, setReportsFinish] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { 
-          updateReportInfo, 
-          setUpdateReportInfo } = useContext(TodoContext);
+  const { updateReportInfo, setUpdateReportInfo } = useContext(TodoContext);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-reports-finish/`)
+      .then((response) => {
+        console.log(response.data);
+        setReportsFinish(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [updateReportInfo]);
 
   useEffect(() => {
     axios
@@ -26,18 +36,6 @@ export function MenuReport() {
       });
   }, [updateReportInfo]);
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-reports-finish/`)
-      .then((response) => {
-        console.log(response.data);
-        setReportsFinish(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [updateReportInfo]);
-  
   return (
     <Container
       maxWidth={false}
@@ -48,9 +46,11 @@ export function MenuReport() {
         height: "100%",
       }}
     >
-      <ReportsTable data={reports}/>
-      <FinishReportsTable data = {reportsFinish}/>
       
+      
+      {/* <FinishReportsTable data={reportsFinish} /> */}
+      <ReportsTable data={reports} />
+     
     </Container>
   );
 }

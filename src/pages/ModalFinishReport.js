@@ -7,7 +7,7 @@ import Title from '../components/Title';
 import { TodoContext } from '../context/index.js';
 
 function ModalFinishReport({ report }) {
-  const { setUpdateResidueInfo, openModalCreateResidue, setOpenModalText, setTextOpenModalText, setOpenModalCreateResidue, openModalEditResidue, setOpenModalEditResidue, openModalDeleteResidue, setOpenModalDeleteResidue,openModalFinishReport, setOpenModalFinishReport } = useContext(TodoContext);
+  const { setUpdateReportInfo, setUpdateResidueInfo, openModalCreateResidue, setOpenModalText, setTextOpenModalText, setOpenModalCreateResidue, openModalEditResidue, setOpenModalEditResidue, openModalDeleteResidue, setOpenModalDeleteResidue,openModalFinishReport, setOpenModalFinishReport } = useContext(TodoContext);
   
   console.log("ModalFinishReport");
   console.log(report);
@@ -31,6 +31,8 @@ function ModalFinishReport({ report }) {
         setOpenModalText(true);
         setTextOpenModalText("Reporte finalizado con éxito");
         setUpdateResidueInfo(true);
+        setUpdateReportInfo(true);
+        
         closeModal();
       })
       .catch(error => {

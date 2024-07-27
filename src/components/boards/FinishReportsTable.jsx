@@ -63,6 +63,9 @@ import {
   import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
   import DonorRecollectionInfo from "./DonorRecollectionInfo";
   import ReportInfo from "./ReportInfo";
+
+
+
   
   function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -113,6 +116,79 @@ import {
     selectedData,
   }) {
     const open = Boolean(anchorEl);
+
+
+    const handleDataImported = async (data) => {
+        console.log("Datos importados:", data);
+        console.log(data[0].Tipo);
+    
+        let url = "http://127.0.0.1:8000/Rennueva"; // URL base
+    
+        if (data[0].Tipo === "Generador") {
+          console.log("Es un archivo de usuarios");
+          // Suponiendo que tienes una URL para crear usuarios
+          url += "/create-generator/";
+        } else if (data[0].Tipo === "Centro de Reciclaje") {
+          console.log("Es un archivo de reciclaje");
+          url += "/creat-recycling-center/";
+        } else if (data[0].Tipo === "Centro de Recoleccion") {
+          console.log("Es un archivo de recolección");
+          url += "/creat-collection-center/";
+        } else if (data[0].Tipo === "Responsiva") {
+          console.log("Es un archivo de responsiva");
+          url += "/import-report/";
+        }
+        else {
+          console.log("Tipo desconocido");
+          return; // Salir si el tipo no es reconocido
+        }
+    
+        // Realizar la consulta
+        try {
+          console.log("####################################");
+          console.log("Enviando datos:", JSON.stringify(data));
+    
+          const response = axios
+            .post(`${url}`, data)
+            .then(response => {
+              const data = response.data;
+              console.log("Respuesta del servidor:", data);
+              if (data.error) {
+                setTextOpenModalText("Error al crear Generador(es) con el archivo Excel, se lograron crear: " + data.usuarios_creados + " Generadores error en la creacion por: " + data.error);
+                setOpenModalText(true);
+              }
+              if (data.message === "Responsivas creadas") {
+                setTextOpenModalText("Responsivas creadas correctamente con el archivo Excel, se crearon: " + data.responsivas_creadas + " Responsivas");
+                setOpenModalText(true);
+              }
+              if (data.error_responsiva) {
+                setTextOpenModalText("Error al crear Responsivas con el archivo Excel, se lograron crear: " + data.responsivas_creadas + " Responsivas error en la creacion por: " + data.error_responsiva);
+                setOpenModalText(true);
+              }
+              if (data.message === "Generador creado") {
+                setTextOpenModalText("Generador(es) creado(s) correctamente con el archivo Excel, se crearon: " + data.usuarios_creados + " Generadores");
+                setOpenModalText(true);
+              }
+              if (data.message === "error") {
+                setTextOpenModalText("Error al crear Generador(es) con el archivo Excel, se lograron crear: " + data.usuarios_creados + " Generadores error en la creacion por: " + data.error);
+                setOpenModalText(true);
+              }
+    
+    
+    
+    
+    
+    
+            })
+            .catch(error => {
+              console.error(error);
+            })
+    
+          console.log("Respuesta del servidor:", response.data);
+        } catch (error) {
+          console.error("Error al realizar la consulta:", error);
+        }
+      };
   
     const handleClose = () => {
       setAnchorEl(null);
@@ -190,6 +266,8 @@ import {
           py={2}
           bgcolor={theme.palette.primary.light}
         >
+          
+
           <Typography
             variant="h4"
             component="div"
@@ -245,7 +323,7 @@ import {
         py={2}
       >
         <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
-          Reportes
+          Historial Responsivas
         </Typography>
         <Box>
           <SearchField
@@ -280,7 +358,7 @@ import {
           >
             Exportar
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             size="large"
             color="primary"
@@ -291,7 +369,7 @@ import {
             }}
           >
             Nuevo
-          </Button>
+          </Button> */}
           <ExportOptionsMenu
             selectedData={selected}
             filteredData={filteredData}
@@ -626,7 +704,7 @@ import {
       <Box sx={{ width: "100%", mb: "3rem" }}>
         <Paper 
         sx={{ 
-          maxHeight: '50vh', 
+          height: '50vh', 
           overflow: 'auto', 
           padding: 2 
         }}
@@ -640,8 +718,8 @@ import {
             filtersApplied={filtersApplied}
             setVisibleData={setVisibleData}
           />
-          <TableContainer>
-            <Table>
+          <TableContainer sx = {{ maxHeight: '34vh' }}>
+            <Table stickyHeader>
               <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                 <TableRow>
                   <TableCell>
@@ -702,7 +780,7 @@ import {
                       <Typography variant="subtitle2">Fecha de inicio</Typography>
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Typography variant="subtitle2">Firma generador</Typography>
                   </TableCell>
                   <TableCell>
@@ -710,16 +788,16 @@ import {
                   </TableCell>
                   <TableCell>
                     <Typography variant="subtitle2">Firma receptor</Typography>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Typography variant="subtitle2">PDF</Typography>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Typography variant="subtitle2">Editar</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="subtitle2">Borrar</Typography>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -802,7 +880,7 @@ import {
                           <TableCell>
                             {dateFormater(report.fecha_inicio_reporte)}
                           </TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             <Button
                               startIcon={<Draw />}
                               variant="contained"
@@ -853,7 +931,7 @@ import {
                             >
                               Firmar
                             </Button>
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell>
                             <Button
                               startIcon={<SaveAlt />}
@@ -874,7 +952,7 @@ import {
                               Descargar
                             </Button>
                           </TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             <IconButton
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -896,7 +974,7 @@ import {
                             >
                               <Delete />
                             </IconButton>
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                         <TableRow>
                           <TableCell
