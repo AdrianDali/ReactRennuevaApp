@@ -331,7 +331,7 @@ function SearchField({ filteredData, setVisibleData }) {
             report.telefono_usuario.toLowerCase().includes(search) ||
             report.calle_usuario.toLowerCase().includes(search) ||
             report.colonia_usuario.toLowerCase().includes(search) ||
-            report.grupo_usuario.toLowerCase().includes(search) 
+            report.grupo_usuario.toLowerCase().includes(search)
           );
         });
         setVisibleData(newData);
@@ -396,7 +396,7 @@ export default function ReportsTable({ data }) {
 
   const dataUser = useAuth();
 
-  console.log(data)
+  console.log(data);
   const {
     setTextOpenModalText,
     openModalCreateReport,
@@ -410,7 +410,7 @@ export default function ReportsTable({ data }) {
     setOpenModalEditFirma,
     setUpdateReportInfo,
     openModalFinishReport,
-    setOpenModalFinishReport
+    setOpenModalFinishReport,
   } = useContext(TodoContext);
   //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
   const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
@@ -444,8 +444,7 @@ export default function ReportsTable({ data }) {
     estado_reporte: [],
     cp_reporte: [],
     status_reporte: [],
-    grupo_usuario : []
-
+    grupo_usuario: [],
   });
 
   const handleChangePage = (event, newPage) => {
@@ -600,7 +599,9 @@ export default function ReportsTable({ data }) {
       const status_reporte = [
         ...new Set(data.map((report) => report.status_reporte)),
       ];
-      const grupo_usuario = [ ...new Set(data.map((report) => report.grupo_usuario))];
+      const grupo_usuario = [
+        ...new Set(data.map((report) => report.grupo_usuario)),
+      ];
 
       setDataForFilters({
         colonia_usuario,
@@ -621,20 +622,20 @@ export default function ReportsTable({ data }) {
         estado_reporte,
         cp_reporte,
         status_reporte,
-        grupo_usuario
+        grupo_usuario,
       });
     }
   }, [data]);
 
   return (
     <Box sx={{ width: "100%", mb: "3rem" }}>
-      <Paper 
-      sx={{ 
-        maxHeight: '50vh', 
-        overflow: 'auto', 
-        padding: 2 
-      }}
-    >
+      <Paper
+        sx={{
+          maxHeight: "50vh",
+          overflow: "auto",
+          padding: 2,
+        }}
+      >
         <Toolbar
           selected={selected}
           allData={data}
@@ -644,8 +645,8 @@ export default function ReportsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ maxHeight: "34vh" }}>
+          <Table stickyHeader aria-label="sticky table">
             <TableHead sx={{ bgcolor: theme.palette.background.default }}>
               <TableRow>
                 <TableCell>
@@ -695,10 +696,12 @@ export default function ReportsTable({ data }) {
                   <TableSortLabel direction="asc">
                     <Typography variant="subtitle2">Teléfono</Typography>
                   </TableSortLabel>
-                </TableCell>                
+                </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Direccion Completa</Typography>
+                    <Typography variant="subtitle2">
+                      Direccion Completa
+                    </Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
@@ -722,7 +725,7 @@ export default function ReportsTable({ data }) {
                 <TableCell>
                   <Typography variant="subtitle2">Finalizar</Typography>
                 </TableCell>
-                
+
                 <TableCell>
                   <Typography variant="subtitle2">Editar</Typography>
                 </TableCell>
@@ -802,7 +805,9 @@ export default function ReportsTable({ data }) {
                         {/* <TableCell>{report.rfc_usuario}</TableCell>
                         <TableCell>{report.email_usuario}</TableCell> */}
                         <TableCell>{report.telefono_usuario}</TableCell>
-                        <TableCell>{report.direccion_completa_usuario}</TableCell>
+                        <TableCell>
+                          {report.direccion_completa_usuario}
+                        </TableCell>
                         {/* <TableCell>{report.calle_usuario}</TableCell>
                         <TableCell>{report.colonia_usuario}</TableCell>
                         <TableCell>{report.cp_usuario}</TableCell>
@@ -896,11 +901,21 @@ export default function ReportsTable({ data }) {
                                 : "warning"
                             }
                             onClick={async (e) => {
-                              e.stopPropagation();
-                              setOpenModalFinishReport(true);
-                              setReportToEdit(report);
-                            }
-                            }
+                              if (
+                                report.firma_responsiva_generador &&
+                                report.firma_responsiva_receptor &&
+                                report.residuos_agregados
+                              ) {
+                                e.stopPropagation();
+                                setOpenModalFinishReport(true);
+                                setReportToEdit(report);
+                              } else {
+                                setOpenModalText(true);
+                                setTextOpenModalText(
+                                  "No se puede finalizar el reporte, aun no se han firmado todos los campos o no se han agregado los residuos"
+                                );
+                              }
+                            }}
                           >
                             Finalizar
                           </Button>
@@ -959,7 +974,7 @@ export default function ReportsTable({ data }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      
+
       <ModalFirmar type={signType} id={reportToEdit} />
       <ModalResidueReport report={reportToEdit} />
       {/* <ModalFinishReport report={reportToEdit} /> */}
@@ -976,9 +991,7 @@ export default function ReportsTable({ data }) {
         anchorEl={rowContextMenuAnchorEl}
         setAnchorEl={setRowContextMenuAnchorEl}
       />
-      {openModalFinishReport && (
-        <ModalFinishReport report={reportToEdit} />
-      )}
+      {openModalFinishReport && <ModalFinishReport report={reportToEdit} />}
       {openModalCreateReport && (
         <ModalReport mode={"CREAR"} creatorUser={dataUser.user} />
       )}

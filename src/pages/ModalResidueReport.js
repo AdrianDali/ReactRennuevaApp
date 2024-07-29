@@ -1,59 +1,29 @@
 import React, { useState, useEffect, useContext } from 'react';
 import ReactDOM from 'react-dom';
-import { Modal, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, IconButton, Stack } from '@mui/material';
+import { Modal, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, IconButton, Stack, Typography } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import axios from 'axios';
 import { TodoContext } from '../context/index.js';
 import { Close } from '@mui/icons-material';
 
-function ModalResidueReport({ report }) { // Asegúrate de manejar el evento de cierre adecuadamente
+function ModalResidueReport({ report }) {
     const [residues, setResidues] = useState([]);
-    const [reportResidues, setReportResidues] = useState([]);
     const [entries, setEntries] = useState([{ user: report.nombre_usuario, report: report.id_report, residue: '', peso: '', volumen: '' }]);
     const [botonAdd, setBotonAdd] = useState(false);
-    //console.log("####################ReporteSeleccionado###############################SDFDFDSFDSFDSGHMN")
-    //console.log(userselect)
-    console.log(report)
-    const { openModalCreateResidueReport, setOpenModalCreateResidueReport, openModalEditResidueReport, setOpenModalEditResidueReport, openModalDeleteResidueReport, setOpenModalDeleteReportResidue, setUpdateReportInfo } = useContext(TodoContext);
-
-
-
-
+    const { openModalEditResidueReport, setOpenModalEditResidueReport, setUpdateReportInfo } = useContext(TodoContext);
 
     const closeModal = () => {
-        // console.log("##################################################################SDFDFDSFDSFDSGHMN")
-        //console.log("Cerrar moda")
-        setUpdateReportInfo(prev=>!prev);
+        setUpdateReportInfo(prev => !prev);
         setOpenModalEditResidueReport(false);
     };
 
     useEffect(() => {
+        const getResidues = { reportId: report.id_report };
 
-        // const fetchResidues = axios.get('${process.env.REACT_APP_API_URL}/get-all-residue/');
-        // const fetchReportResidues = axios.post('${process.env.REACT_APP_API_URL}/get-all-residues-per-report/', "14");
-
-
-        // Promise.all([fetchResidues, fetchReportResidues]) 
-        //     .then((res) => {
-        //         setResidues(res[0].data);
-        //         setReportResidues(res[1].data);
-        //         console.log("todos los residuos") 
-        //         console.log(res[1].data)
-        //     })
-        //     .catch((err) => {
-        //         console.log(err);
-        //     });
-        const getResidues = {
-            reportId: report.id_report,
-        }
         axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
             .then(response => {
-                const data = response.data;
-                //console.log("todos los residuos de get all residue")
-                //console.log(data)
-                setResidues( [...data]);
-                // Asumiendo que 'data' es un array.
+                setResidues(response.data);
             })
             .catch(error => {
                 console.error('Hubo un problema al obtener los residuos:', error);
@@ -62,74 +32,47 @@ function ModalResidueReport({ report }) { // Asegúrate de manejar el evento de 
         axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, getResidues)
             .then(response => {
                 const data = response.data;
-                setEntries(data); // Asumiendo que 'data' es un array.
-                //console.log("todos los residuos por reporte")
-                //console.log(data)
+                setEntries(data);
                 if (data.length < 1) {
-                    //console.log("####################largo menor a 1")
-                    setBotonAdd(true)
+                    setBotonAdd(true);
                 }
-
             })
             .catch(error => {
                 console.error('Hubo un problema al obtener los residuos:', error);
             });
     }, [report]);
 
-
-
     const handleInputChange = (index, event) => {
         const values = [...entries];
-        if (event.target.name === "residue") {
-            values[index].residue = event.target.value;
-        } else if (event.target.name === "peso") {
-            values[index].peso = event.target.value;
-        } else {
-            values[index].volumen = event.target.value;
-        }
+        values[index][event.target.name] = event.target.value;
         setEntries(values);
     };
 
     const handleAddFields = () => {
-        //console.log("###########dfdfdfdf####################################SDFDFDSFDSFDSGHMN")
-        //console.log(userselect)
-        //console.log(report)
-
         setEntries([...entries, { user: report.nombre_usuario, report: report.id_report, residue: '', peso: '', volumen: '' }]);
     };
+
     const handleAddFirstFields = () => {
-        setEntries([...entries, { user: report.nombre_usuario, report: report.id_report, residue: '', peso: '', volumen: '' }]);
-        setBotonAdd(false)
+        handleAddFields();
+        setBotonAdd(false);
     };
 
     const handleRemoveFields = (index) => {
         const values = [...entries];
         values.splice(index, 1);
         setEntries(values);
-        //console.log("###########dfdfdfdf#######asdasdasdas########asdasdasd#####################SDFDFDSFDSFDSGHMN")
-        //console.log(values)
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Lógica para enviar 'entries' a tu backend
-        //console.log('Enviando datos:', entries);
-        axios
-            .post(`${process.env.REACT_APP_API_URL}/create-report-residue-user/`, entries)
+        axios.post(`${process.env.REACT_APP_API_URL}/create-report-residue-user/`, entries)
             .then(response => {
-                const data = response.data;
-                //console.log(data)
-
-                // setOpenModalText(true);
                 e.target.reset();
-                closeModal()
-
+                closeModal();
             })
             .catch(error => {
                 console.error(error);
-            })
-        // Aquí deberías colocar la lógica para cerrar el modal si la operación es exitosa
-        //onClose(); 
+            });
     };
 
     return ReactDOM.createPortal(
@@ -137,17 +80,17 @@ function ModalResidueReport({ report }) { // Asegúrate de manejar el evento de 
             <Box
                 sx={{
                     position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                    width: 700, bgcolor: 'background.paper', boxShadow: 24, p: 4, borderRadius: 2,
+                    width: { xs: '90%', md: 700 }, bgcolor: 'background.paper', boxShadow: 24, p: 4, borderRadius: 2,
                 }}
             >
-                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>
+                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 8, top: 8 }}>
                     <Close />
                 </IconButton>
-
+                <Typography variant="h6" component="h2" mb={2}>Reporte de Residuos</Typography>
                 <form onSubmit={handleSubmit}>
                     <Stack spacing={2}>
                         {entries.map((entry, index) => (
-                            <Box key={index} display="flex" flexDirection="row" alignItems="center">
+                            <Box key={index} display="flex" flexDirection={{ xs: 'column', md: 'row' }} alignItems="center">
                                 <FormControl fullWidth sx={{ m: 1 }}>
                                     <InputLabel>Residuo</InputLabel>
                                     <Select
@@ -158,11 +101,10 @@ function ModalResidueReport({ report }) { // Asegúrate de manejar el evento de 
                                         {residues.map((residue, idx) => (
                                             <MenuItem key={idx} value={residue.nombre}>{residue.nombre}</MenuItem>
                                         ))}
-
                                     </Select>
                                 </FormControl>
                                 <TextField
-                                    sx={{ m: 1 }}
+                                    sx={{ m: 1, flexBasis: { xs: '100%', md: '25%' } }}
                                     name="peso"
                                     label="Peso en kg"
                                     variant="outlined"
@@ -171,7 +113,7 @@ function ModalResidueReport({ report }) { // Asegúrate de manejar el evento de 
                                     onChange={event => handleInputChange(index, event)}
                                 />
                                 <TextField
-                                    sx={{ m: 1 }}
+                                    sx={{ m: 1, flexBasis: { xs: '100%', md: '25%' } }}
                                     name="volumen"
                                     label="Volumen en m³"
                                     variant="outlined"
@@ -179,27 +121,24 @@ function ModalResidueReport({ report }) { // Asegúrate de manejar el evento de 
                                     value={entry.volumen}
                                     onChange={event => handleInputChange(index, event)}
                                 />
-                                <IconButton onClick={() => handleRemoveFields(index)}>
+                                <IconButton onClick={() => handleRemoveFields(index)} sx={{ m: 1 }}>
                                     <RemoveCircleOutlineIcon />
                                 </IconButton>
-                                <IconButton onClick={handleAddFields}>
+                                <IconButton onClick={handleAddFields} sx={{ m: 1 }}>
                                     <AddCircleOutlineIcon />
                                 </IconButton>
                             </Box>
                         ))}
-
                         {!botonAdd &&
-                            <Button type="submit" variant="contained" fullWidth>Enviar</Button>}
-
+                            <Button type="submit" variant="contained" fullWidth>Enviar</Button>
+                        }
                     </Stack>
                 </form>
-                {
-                    botonAdd &&
-                    <Button type='submit' variant="contained" fullWidth onClick={handleAddFirstFields}>
+                {botonAdd &&
+                    <Button type='button' variant="contained" fullWidth onClick={handleAddFirstFields}>
                         Agregar Residuo
                     </Button>
                 }
-
             </Box>
         </Modal>,
         document.getElementById('modal')
