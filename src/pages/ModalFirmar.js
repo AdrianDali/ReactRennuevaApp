@@ -1,14 +1,10 @@
-import React, { useState, useContext, useEffect, } from 'react';
+import React, { useContext } from 'react';
 import ReactDOM from 'react-dom';
-import '../styles/user/CreateUser.css';
 import { TodoContext } from '../context/index.js';
-import axios from 'axios';
-import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel, IconButton } from '@mui/material';
-import Title from '../components/Title';
-import Grid from '@mui/material/Grid';
-import SignatureComponent from "../components/FirmaDocument";
+import { Modal, Box, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { ContainerMenuContext } from './Menus/ContainerMenu.jsx';
+import SignatureComponent from "../components/FirmaDocument";
+
 function ModalFirmar({ id, type }) {
     const { 
         openModalEditFirma, 
@@ -16,48 +12,39 @@ function ModalFirmar({ id, type }) {
         setUpdateReportInfo,
         setUpdateDonorReports
     } = useContext(TodoContext);
-    console.log("ID DE QUIERN SE FIRMA", id)
-    console.log("TYPE DE QUIERN SE FIR MA", type)
+
     const closeModal = () => {
-        if(type === "Receptor" || type === "Generador"){
+        if (type === "Receptor" || type === "Generador") {
             setUpdateReportInfo(prev => !prev);
-        }else if(type === "Donador" || type === "Recolector"){
+        } else if (type === "Donador" || type === "Recolector") {
             setUpdateDonorReports(prev => !prev);
-        }else{
-            console.log("Firma ")
         }
-        setOpenModalEditFirma(false)
+        setOpenModalEditFirma(false);
     };
 
     return ReactDOM.createPortal(
         <Modal open={openModalEditFirma} onClose={closeModal}>
-
-            <Box className="ModalContent" sx={{
+            <Box sx={{
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: 600,
+                width: { xs: '90%', md: 600 },  // Ajuste de tamaño para dispositivos móviles y de escritorio
                 bgcolor: 'background.paper',
                 boxShadow: 24,
                 p: 4,
                 borderRadius: 2,
-
             }}>
-                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>
+                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 8, top: 8 }}>
                     <Close />
                 </IconButton>
-                <Box>
+                <Box mt={2}>
                     <SignatureComponent id={id} type={type} />
                 </Box>
             </Box>
-
-        </Modal>
-
-        , document.getElementById('modal')
-
-    )
-
+        </Modal>,
+        document.getElementById('modal')
+    );
 }
 
 export { ModalFirmar };
