@@ -704,7 +704,7 @@ import {
       <Box sx={{ width: "100%", mb: "3rem" }}>
         <Paper 
         sx={{ 
-          height: '50vh', 
+          height: '80vh', 
           overflow: 'auto', 
           padding: 2 
         }}
@@ -718,7 +718,7 @@ import {
             filtersApplied={filtersApplied}
             setVisibleData={setVisibleData}
           />
-          <TableContainer sx = {{ maxHeight: '34vh' }}>
+          <TableContainer sx = {{ maxHeight: '68vh' }}>
             <Table stickyHeader>
               <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                 <TableRow>

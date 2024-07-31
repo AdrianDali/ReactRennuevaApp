@@ -631,7 +631,7 @@ export default function ReportsTable({ data }) {
     <Box sx={{ width: "100%", mb: "3rem" }}>
       <Paper
         sx={{
-          maxHeight: "90vh",
+          height: "80%",
           overflow: "auto",
           padding: 2,
         }}
