@@ -631,7 +631,7 @@ export default function ReportsTable({ data }) {
     <Box sx={{ width: "100%", mb: "3rem" }}>
       <Paper
         sx={{
-          maxHeight: "50vh",
+          maxHeight: "90vh",
           overflow: "auto",
           padding: 2,
         }}
@@ -645,7 +645,7 @@ export default function ReportsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{ maxHeight: "34vh" }}>
+        <TableContainer sx={{ maxHeight: "100vh" }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead sx={{ bgcolor: theme.palette.background.default }}>
               <TableRow>

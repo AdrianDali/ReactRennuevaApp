@@ -1,4 +1,5 @@
-import { jsPDF } from "jspdf";
+import  jsPDF  from "jspdf";
+import autotable from "jspdf-autotable";
 import axios from "axios";
 
 const savePdf = async (pdfBase64, id_report) => {
