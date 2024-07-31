@@ -22,18 +22,15 @@ import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
-function ModalReport({ children, mode, report , creatorUser }) {
-  const [datos, setDatos] = useState([]);
+function ModalReport({ mode, report , creatorUser }) {
   const [carriers, setCarriers] = useState([]);
   const [recyclingCollectionCenters, setRecyclingCollectionCenters] = useState(
     []
   );
   const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
-  const [group, setGroup] = useState("");
   const [company, setCompany] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
@@ -41,13 +38,11 @@ function ModalReport({ children, mode, report , creatorUser }) {
   const [street, setStreet] = useState("");
   const [postal_code, setPostalCode] = useState("");
   const [rfc, setRfc] = useState("");
-  const [phone, setPhone] = useState("");
   const [recyclingCollection, setRecyclingCollection] = useState("");
   const [nameGenerator, setNameGenerator] = useState([]);
   const [isSameLocation, setIsSameLocation] = useState(false);
   const [haveTransport, setHaveTransport] = useState(true);
   const [carrier, setCarrier] = useState("");
-  const [userToEdit, setUserToEdit] = useState("");
   const [transportAvailable, setTransportAvailable] = useState(true);
   const [state_2, setState_2] = useState("");
   const [city_2, setCity_2] = useState("");
@@ -237,8 +232,7 @@ function ModalReport({ children, mode, report , creatorUser }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-users-responsiva/`)
       .then((response) => {
-        const data = response.data;
-        setDatos(data); // Asumiendo que 'data' es un array.
+        const data = response.data;// Asumiendo que 'data' es un array.
 
         var nameGenerator = data.map(function (item) {
           var name = item.first_name + " " + item.last_name;
@@ -395,13 +389,6 @@ function ModalReport({ children, mode, report , creatorUser }) {
     }
   };
 
-  const handleInputChange = (e, setState, mode) => {
-    const currentInputValue = e.target.value;
-
-    if (mode !== "BORRAR") {
-      setState(currentInputValue);
-    }
-  };
 
   const handleCarrierChange = (event) => {
     setCarrier(event.target.value);
@@ -424,21 +411,18 @@ function ModalReport({ children, mode, report , creatorUser }) {
     console.log("Dato encontrado");
     console.log(datoEncontrado);
     setUser(datoEncontrado.user);
-    setPassword(datoEncontrado.password);
+
     setEmail(datoEncontrado.email);
     console.log(datoEncontrado.first_name);
     setFirstName(datoEncontrado.first_name);
     setLastName(datoEncontrado.last_name);
-    setGroup(datoEncontrado.group);
     setRfc(datoEncontrado.rfc);
     setCompany(datoEncontrado.company);
-    setPhone(datoEncontrado.phone);
     setState(datoEncontrado.address_state);
     setCity(datoEncontrado.address_city);
     setLocality(datoEncontrado.address_locality);
     setStreet(datoEncontrado.address_street);
     setPostalCode(datoEncontrado.address_postal_code);
-    setUserToEdit(datoEncontrado.user);
     if (mode === "CREAR") {
     setStreet_2(datoEncontrado.address_street);
     setLocality_2(datoEncontrado.address_locality);

@@ -9,11 +9,10 @@ import Title from '../components/Title';
 import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { Close } from '@mui/icons-material';
 
-function ModalCarrier({ children, mode, creatorUser }) {
-    const [datos, setDatos] = useState([]);
+function ModalCarrier({ children, mode, creatorUser, userToEdit }) {
     const [groups, setGroups] = useState([])
-    const [users, setUsers] = useState([])
     const [carriers, setCarriers] = useState([])
     const [companies, setCompanies] = useState([""])
     const [user, setUser] = useState("");
@@ -24,15 +23,8 @@ function ModalCarrier({ children, mode, creatorUser }) {
     const [license, setLicense] = useState("");
     const [group, setGroup] = useState("");
     const [company, setCompany] = useState("");
-    const [state, setState] = useState("");
-    const [city, setCity] = useState("");
-    const [locality, setLocality] = useState("");
-    const [street, setStreet] = useState("");
-    const [postal_code, setPostalCode] = useState("");
     const [rfc, setRfc] = useState("");
     const [phone, setPhone] = useState("");
-    const [address_num_int, setAddressNumInt] = useState("");
-    const [address_num_ext, setAddressNumExt] = useState("");
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const [old_user, setOldUser] = useState("");
     const [comments, setComments] = useState("");
@@ -101,7 +93,7 @@ function ModalCarrier({ children, mode, creatorUser }) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Transportista creado correctamente")
-                    setUpdateCarrierInfo(true)
+                    setUpdateCarrierInfo(prev => !prev)
                     e.target.reset();
                     closeModal()
 
@@ -129,8 +121,6 @@ function ModalCarrier({ children, mode, creatorUser }) {
             }
 
             const editarDato = {
-
-
                 email: e.target.email.value,
                 first_name: e.target.nombre.value,
                 last_name: e.target.apellido.value,
@@ -139,17 +129,11 @@ function ModalCarrier({ children, mode, creatorUser }) {
                 rfc: rfcValue,
                 comments: e.target.comments.value,
                 razon_social: e.target.razon_social.value,
-
                 //permiso: e.target.permiso.value,
-
                 user_permission: permiso,
                 creator_user: creator,
-
-
                 old_user: old_user,
             };
-            console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF")
-            console.log(editarDato)
 
             axios
                 .put(`${process.env.REACT_APP_API_URL}/update-carrier/`, editarDato)
@@ -158,7 +142,7 @@ function ModalCarrier({ children, mode, creatorUser }) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Transportista editado correctamente")
-                    setUpdateCarrierInfo(true)
+                    setUpdateCarrierInfo(prev => !prev)
                     e.target.reset();
                     closeModal()
                     // Limpiar los campos del formulario
@@ -195,7 +179,7 @@ function ModalCarrier({ children, mode, creatorUser }) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Transportista borrado correctamente")
-                    setUpdateCarrierInfo(true)
+                    setUpdateCarrierInfo(prev => !prev)
                     e.target.reset();
                     closeModal()
 
@@ -258,33 +242,26 @@ function ModalCarrier({ children, mode, creatorUser }) {
                 console.log("######################USUARIOS##################################")
             })
             .catch((err) => console.log(err));
+        if(mode === "EDITAR" && userToEdit){
+            setUser(userToEdit)
+            setPassword(userToEdit.password)
+            setEmail(userToEdit.email)
+            setFirstName(userToEdit.first_name)
+            setLastName(userToEdit.last_name)
+            setGroup(userToEdit.group)
+            setRfc(userToEdit.rfc)
+            setPhone(userToEdit.phone)
+            setLicense(userToEdit.license)
+            setComments(userToEdit.comments)
+            setRazonSocial(userToEdit.razon_social)
+            setCompany(userToEdit.company_name)
+            setOldUser(userToEdit.email)
+            setPermiso(userToEdit.permiso)
+        }
 
     }, []);
 
-    const handleSelectChange = (event) => {
-        const selectedOption = event.target.value; // Obtener la opción seleccionada
-        console.log(selectedOption)
-        // Buscar el dato seleccionado en el arreglo de datos
-        const datoEncontrado = carriers.find((users) => users.email === selectedOption);
-        console.log(datoEncontrado)
-        setUser(datoEncontrado.user);
-        setPassword(datoEncontrado.password);
-        setEmail(datoEncontrado.email);
-        setFirstName(datoEncontrado.first_name);
-        setLastName(datoEncontrado.last_name);
-        setGroup(datoEncontrado.group);
-        setRfc(datoEncontrado.rfc);
-        setPhone(datoEncontrado.phone);
-        setLicense(datoEncontrado.license);
-        setComments(datoEncontrado.comments);
-        setRazonSocial(datoEncontrado.razon_social);
-        setCompany(datoEncontrado.company_name);
-        setOldUser(selectedOption);
-        setPermiso(datoEncontrado.permiso);
 
-
-
-    }
 
     const handleInputChange = (e, setState, mode) => {
         const currentInputValue = e.target.value;
@@ -315,32 +292,12 @@ function ModalCarrier({ children, mode, creatorUser }) {
                 borderRadius: 2,
 
             }}>
-                <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
+                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>
+                    <Close />
+                </IconButton>
                 <form onSubmit={handleSubmit} >
                     <Box mb={2}>
                         <Title> Transportistas</Title>
-                        {mode === "EDITAR" || mode === "BORRAR" ? (
-                            <FormControl fullWidth>
-                                <InputLabel id="user-select-label">Conductor</InputLabel>
-                                <Select
-                                    labelId="user-select-label"
-                                    id="user-select"
-                                    onChange={(e) => {
-
-                                        handleSelectChange(e, setUser)
-
-
-                                    }}
-                                    required
-                                //value={user}
-
-                                >
-                                    {carriers.map((name, index) => (
-                                        <MenuItem key={index} value={name.email}>{name.email}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        ) : null}
                     </Box>
                     <Box mt={2} mb={2} sx={{ overflowY: 'auto', maxHeight: 500 }}>
                         <TextField
