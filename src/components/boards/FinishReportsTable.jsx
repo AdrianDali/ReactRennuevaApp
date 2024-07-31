@@ -1,68 +1,70 @@
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
-    Table,
-    TableHead,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Paper,
-    Box,
-    Typography,
-    Button,
-    Checkbox,
-    TableSortLabel,
-    IconButton,
-    Menu,
-    MenuItem,
-    MenuList,
-    ListItemIcon,
-    ListItemText,
-    Badge,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    DialogContentText,
-    TextField,
-    TablePagination,
-    Collapse,
-  } from "@mui/material";
-  import {
-    Add,
-    Download,
-    FilterList,
-    Delete,
-    Search,
-    Visibility,
-    Check,
-    Edit,
-    Draw,
-    SaveAlt,
-    Close,
-  } from "@mui/icons-material";
-  import theme from "../../context/theme";
-  import { TodoContext } from "../../context";
-  import { useState, useContext, useEffect, useRef } from "react";
-  import { ModalGenerator } from "../../pages/ModalGenerator";
-  import useAuth from "../../hooks/useAuth";
-  import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-  import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
-  import { generateExcelFromJson } from "../../services/Excel";
-  import { ModalReport } from "../../pages/ModalReport";
-  import dateFormater from "../../services/dateFormater";
-  import { ModalFirmar } from "../../pages/ModalFirmar";
-  import { ModalResidueReport } from "../../pages/ModalResidueReport";
-  import validateReport from "../../services/validateReport";
-  import getReportInfo from "../../services/getReportInfo";
-  import generateReportPDF from "../../services/generateReportPDF";
-  import generateQR from "../../services/generateQR";
-  import DeleteReportsModal from "../modals/DeleteReportsModal";
-  import ReportsFiltersModal from "../modals/ReportsFiltersModal";
-  import generateDonorReportPDF from "../../services/generateDonorReportPDF";
-  import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-  import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-  import DonorRecollectionInfo from "./DonorRecollectionInfo";
-  import ReportInfo from "./ReportInfo";
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Checkbox,
+  TableSortLabel,
+  IconButton,
+  Menu,
+  MenuItem,
+  MenuList,
+  ListItemIcon,
+  ListItemText,
+  Badge,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  TextField,
+  TablePagination,
+  Collapse,
+  ClickAwayListener,
+} from "@mui/material";
+import {
+  Add,
+  Download,
+  FilterList,
+  Delete,
+  Search,
+  Visibility,
+  Check,
+  Edit,
+  Draw,
+  SaveAlt,
+  Close,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+} from "@mui/icons-material";
+import theme from "../../context/theme";
+import { TodoContext } from "../../context";
+import useAuth from "../../hooks/useAuth";
+import { ModalGenerator } from "../../pages/ModalGenerator";
+import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
+import { generateExcelFromJson } from "../../services/Excel";
+import { ModalReport } from "../../pages/ModalReport";
+import dateFormater from "../../services/dateFormater";
+import { ModalFirmar } from "../../pages/ModalFirmar";
+import { ModalResidueReport } from "../../pages/ModalResidueReport";
+import validateReport from "../../services/validateReport";
+import getReportInfo from "../../services/getReportInfo";
+import generateReportPDF from "../../services/generateReportPDF";
+import generateQR from "../../services/generateQR";
+import DeleteReportsModal from "../modals/DeleteReportsModal";
+import ReportsFiltersModal from "../modals/ReportsFiltersModal";
+import generateDonorReportPDF from "../../services/generateDonorReportPDF";
+import DonorRecollectionInfo from "./DonorRecollectionInfo";
+import ReportInfo from "./ReportInfo";
+import axios from "axios";
+
 
 
 
