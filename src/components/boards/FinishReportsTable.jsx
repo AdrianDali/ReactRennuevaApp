@@ -1,68 +1,70 @@
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
-    Table,
-    TableHead,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Paper,
-    Box,
-    Typography,
-    Button,
-    Checkbox,
-    TableSortLabel,
-    IconButton,
-    Menu,
-    MenuItem,
-    MenuList,
-    ListItemIcon,
-    ListItemText,
-    Badge,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    DialogContentText,
-    TextField,
-    TablePagination,
-    Collapse,
-  } from "@mui/material";
-  import {
-    Add,
-    Download,
-    FilterList,
-    Delete,
-    Search,
-    Visibility,
-    Check,
-    Edit,
-    Draw,
-    SaveAlt,
-    Close,
-  } from "@mui/icons-material";
-  import theme from "../../context/theme";
-  import { TodoContext } from "../../context";
-  import { useState, useContext, useEffect, useRef } from "react";
-  import { ModalGenerator } from "../../pages/ModalGenerator";
-  import useAuth from "../../hooks/useAuth";
-  import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-  import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
-  import { generateExcelFromJson } from "../../services/Excel";
-  import { ModalReport } from "../../pages/ModalReport";
-  import dateFormater from "../../services/dateFormater";
-  import { ModalFirmar } from "../../pages/ModalFirmar";
-  import { ModalResidueReport } from "../../pages/ModalResidueReport";
-  import validateReport from "../../services/validateReport";
-  import getReportInfo from "../../services/getReportInfo";
-  import generateReportPDF from "../../services/generateReportPDF";
-  import generateQR from "../../services/generateQR";
-  import DeleteReportsModal from "../modals/DeleteReportsModal";
-  import ReportsFiltersModal from "../modals/ReportsFiltersModal";
-  import generateDonorReportPDF from "../../services/generateDonorReportPDF";
-  import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-  import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-  import DonorRecollectionInfo from "./DonorRecollectionInfo";
-  import ReportInfo from "./ReportInfo";
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Checkbox,
+  TableSortLabel,
+  IconButton,
+  Menu,
+  MenuItem,
+  MenuList,
+  ListItemIcon,
+  ListItemText,
+  Badge,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  TextField,
+  TablePagination,
+  Collapse,
+  ClickAwayListener,
+} from "@mui/material";
+import {
+  Add,
+  Download,
+  FilterList,
+  Delete,
+  Search,
+  Visibility,
+  Check,
+  Edit,
+  Draw,
+  SaveAlt,
+  Close,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+} from "@mui/icons-material";
+import theme from "../../context/theme";
+import { TodoContext } from "../../context";
+import useAuth from "../../hooks/useAuth";
+import { ModalGenerator } from "../../pages/ModalGenerator";
+import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
+import { generateExcelFromJson } from "../../services/Excel";
+import { ModalReport } from "../../pages/ModalReport";
+import dateFormater from "../../services/dateFormater";
+import { ModalFirmar } from "../../pages/ModalFirmar";
+import { ModalResidueReport } from "../../pages/ModalResidueReport";
+import validateReport from "../../services/validateReport";
+import getReportInfo from "../../services/getReportInfo";
+import generateReportPDF from "../../services/generateReportPDF";
+import generateQR from "../../services/generateQR";
+import DeleteReportsModal from "../modals/DeleteReportsModal";
+import ReportsFiltersModal from "../modals/ReportsFiltersModal";
+import generateDonorReportPDF from "../../services/generateDonorReportPDF";
+import DonorRecollectionInfo from "./DonorRecollectionInfo";
+import ReportInfo from "./ReportInfo";
+import axios from "axios";
+
 
 
 
@@ -118,77 +120,77 @@ import {
     const open = Boolean(anchorEl);
 
 
-    const handleDataImported = async (data) => {
-        console.log("Datos importados:", data);
-        console.log(data[0].Tipo);
+    // const handleDataImported = async (data) => {
+    //     console.log("Datos importados:", data);
+    //     console.log(data[0].Tipo);
     
-        let url = "http://127.0.0.1:8000/Rennueva"; // URL base
+    //     let url = "http://127.0.0.1:8000/Rennueva"; // URL base
     
-        if (data[0].Tipo === "Generador") {
-          console.log("Es un archivo de usuarios");
-          // Suponiendo que tienes una URL para crear usuarios
-          url += "/create-generator/";
-        } else if (data[0].Tipo === "Centro de Reciclaje") {
-          console.log("Es un archivo de reciclaje");
-          url += "/creat-recycling-center/";
-        } else if (data[0].Tipo === "Centro de Recoleccion") {
-          console.log("Es un archivo de recolección");
-          url += "/creat-collection-center/";
-        } else if (data[0].Tipo === "Responsiva") {
-          console.log("Es un archivo de responsiva");
-          url += "/import-report/";
-        }
-        else {
-          console.log("Tipo desconocido");
-          return; // Salir si el tipo no es reconocido
-        }
+    //     if (data[0].Tipo === "Generador") {
+    //       console.log("Es un archivo de usuarios");
+    //       // Suponiendo que tienes una URL para crear usuarios
+    //       url += "/create-generator/";
+    //     } else if (data[0].Tipo === "Centro de Reciclaje") {
+    //       console.log("Es un archivo de reciclaje");
+    //       url += "/creat-recycling-center/";
+    //     } else if (data[0].Tipo === "Centro de Recoleccion") {
+    //       console.log("Es un archivo de recolección");
+    //       url += "/creat-collection-center/";
+    //     } else if (data[0].Tipo === "Responsiva") {
+    //       console.log("Es un archivo de responsiva");
+    //       url += "/import-report/";
+    //     }
+    //     else {
+    //       console.log("Tipo desconocido");
+    //       return; // Salir si el tipo no es reconocido
+    //     }
     
-        // Realizar la consulta
-        try {
-          console.log("####################################");
-          console.log("Enviando datos:", JSON.stringify(data));
+    //     // Realizar la consulta
+    //     try {
+    //       console.log("####################################");
+    //       console.log("Enviando datos:", JSON.stringify(data));
     
-          const response = axios
-            .post(`${url}`, data)
-            .then(response => {
-              const data = response.data;
-              console.log("Respuesta del servidor:", data);
-              if (data.error) {
-                setTextOpenModalText("Error al crear Generador(es) con el archivo Excel, se lograron crear: " + data.usuarios_creados + " Generadores error en la creacion por: " + data.error);
-                setOpenModalText(true);
-              }
-              if (data.message === "Responsivas creadas") {
-                setTextOpenModalText("Responsivas creadas correctamente con el archivo Excel, se crearon: " + data.responsivas_creadas + " Responsivas");
-                setOpenModalText(true);
-              }
-              if (data.error_responsiva) {
-                setTextOpenModalText("Error al crear Responsivas con el archivo Excel, se lograron crear: " + data.responsivas_creadas + " Responsivas error en la creacion por: " + data.error_responsiva);
-                setOpenModalText(true);
-              }
-              if (data.message === "Generador creado") {
-                setTextOpenModalText("Generador(es) creado(s) correctamente con el archivo Excel, se crearon: " + data.usuarios_creados + " Generadores");
-                setOpenModalText(true);
-              }
-              if (data.message === "error") {
-                setTextOpenModalText("Error al crear Generador(es) con el archivo Excel, se lograron crear: " + data.usuarios_creados + " Generadores error en la creacion por: " + data.error);
-                setOpenModalText(true);
-              }
-    
-    
+    //       const response = axios
+    //         .post(`${url}`, data)
+    //         .then(response => {
+    //           const data = response.data;
+    //           console.log("Respuesta del servidor:", data);
+    //           if (data.error) {
+    //             setTextOpenModalText("Error al crear Generador(es) con el archivo Excel, se lograron crear: " + data.usuarios_creados + " Generadores error en la creacion por: " + data.error);
+    //             setOpenModalText(true);
+    //           }
+    //           if (data.message === "Responsivas creadas") {
+    //             setTextOpenModalText("Responsivas creadas correctamente con el archivo Excel, se crearon: " + data.responsivas_creadas + " Responsivas");
+    //             setOpenModalText(true);
+    //           }
+    //           if (data.error_responsiva) {
+    //             setTextOpenModalText("Error al crear Responsivas con el archivo Excel, se lograron crear: " + data.responsivas_creadas + " Responsivas error en la creacion por: " + data.error_responsiva);
+    //             setOpenModalText(true);
+    //           }
+    //           if (data.message === "Generador creado") {
+    //             setTextOpenModalText("Generador(es) creado(s) correctamente con el archivo Excel, se crearon: " + data.usuarios_creados + " Generadores");
+    //             setOpenModalText(true);
+    //           }
+    //           if (data.message === "error") {
+    //             setTextOpenModalText("Error al crear Generador(es) con el archivo Excel, se lograron crear: " + data.usuarios_creados + " Generadores error en la creacion por: " + data.error);
+    //             setOpenModalText(true);
+    //           }
     
     
     
     
-            })
-            .catch(error => {
-              console.error(error);
-            })
     
-          console.log("Respuesta del servidor:", response.data);
-        } catch (error) {
-          console.error("Error al realizar la consulta:", error);
-        }
-      };
+    
+    //         })
+    //         .catch(error => {
+    //           console.error(error);
+    //         })
+    
+    //       console.log("Respuesta del servidor:", response.data);
+    //     } catch (error) {
+    //       console.error("Error al realizar la consulta:", error);
+    //     }
+    //   };
   
     const handleClose = () => {
       setAnchorEl(null);
@@ -704,7 +706,7 @@ import {
       <Box sx={{ width: "100%", mb: "3rem" }}>
         <Paper 
         sx={{ 
-          height: '50vh', 
+          height: '80vh', 
           overflow: 'auto', 
           padding: 2 
         }}
@@ -718,7 +720,7 @@ import {
             filtersApplied={filtersApplied}
             setVisibleData={setVisibleData}
           />
-          <TableContainer sx = {{ maxHeight: '34vh' }}>
+          <TableContainer sx = {{ maxHeight: '68vh' }}>
             <Table stickyHeader>
               <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                 <TableRow>
