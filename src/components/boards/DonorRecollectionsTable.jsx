@@ -236,7 +236,7 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
                     e.stopPropagation()
                     setOpenModalDeleteGenerator(true)
                     setUsersToDelete(selected)
-                    
+
                 }}>Borrar</Button>
             </Box>
             <ExportOptionsMenu selectedData={selected} filteredData={filteredData} allData={allData} anchorEl={exportOptionsAchorEl} setAnchorEl={setExportOptionsAnchorEl} />
@@ -371,7 +371,7 @@ export default function DonorRecollectionsTable({ data }) {
             const peso = [...new Set(data.map((req) => req.peso))];
             const peso_estimado = [...new Set(data.map((req) => req.peso_estimado))];
             const status = [...new Set(data.map((req) => req.status))];
-            
+
 
 
             setDataForFilters({
@@ -526,11 +526,14 @@ export default function DonorRecollectionsTable({ data }) {
                                                     <Chip label={statusText(request.status)} color={statusColor(request.status)} />
                                                 </TableCell>
                                                 <TableCell>
-                                                    <IconButton onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        setRecollectionToEdit(request)
-                                                        setOpenEditModal(true)
-                                                    }}>
+                                                    <IconButton
+
+                                                        disabled={request.status === "cancelado"}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            setRecollectionToEdit(request)
+                                                            setOpenEditModal(true)
+                                                        }}>
                                                         <Edit />
                                                     </IconButton>
                                                 </TableCell>
@@ -566,7 +569,7 @@ export default function DonorRecollectionsTable({ data }) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            <DonorRecolecctionsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} objects={data} setFiltersApplied={setFiltersApplied}/>
+            <DonorRecolecctionsFiltersModal isOpen={openFiltersModal} setOpen={setOpenFiltersModal} data={dataForFilters} setFilteredData={setFilteredData} objects={data} setFiltersApplied={setFiltersApplied} />
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openEditModal && <EditRecolectionModal
                 open={openEditModal}
@@ -575,7 +578,7 @@ export default function DonorRecollectionsTable({ data }) {
                 setMessage={setTextOpenModalText}
                 setOpenMessageModal={setOpenModalText}
                 update={updateDonorInfo}
-                setUpdate={setUpdateDonorInfo} 
+                setUpdate={setUpdateDonorInfo}
             />}
             <DeleteDonorRecollectionsModal recollections={recollectionsToDelete} />
             {openModalText && (

@@ -51,7 +51,8 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
         if (selectedDonor === null) return
         const data = {
             username: selectedDonor,
-            creator_user: dataUser.user
+            creator_user: dataUser.user,
+            report_for: 'Donor'
         }
 
         try {
