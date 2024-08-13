@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import { Close } from "@mui/icons-material";
+import { is } from "date-fns/locale";
 
 const style = {
   position: "absolute",
@@ -59,6 +60,8 @@ export default function EditRecolectionModal({
   const [otroTexto, setOtroTexto] = useState("");
   const [loading, setLoading] = useState(false)
   const [openConfirmation, setOpenConfirmation] = useState(false)
+
+  
 
   useEffect(() => {
     console.log(userData);
@@ -105,6 +108,8 @@ export default function EditRecolectionModal({
         setStatus(recolection.status);
         break;
     }
+
+    setValue(recolection.comment_cancelation);
   }, [recolection, open]);
 
   const handleSubmit = (e) => {
@@ -230,13 +235,13 @@ export default function EditRecolectionModal({
                   setStatus(e.target.value);
                 }}
               >
-                {userData?.groups[0] !== "Conductor" && <MenuItem value="solicitado">Solicitada</MenuItem>}
-                {userData?.groups[0] !== "Conductor" && <MenuItem value="pendienteRecoleccion">
+                {/*userData?.groups[0] !== "Conductor" &&  <MenuItem value="solicitado">Solicitada</MenuItem>*/}
+                {userData?.groups[0] !== "Conductor" && (status == "solicitado" || status == "pendienteRecoleccion")? <MenuItem value="pendienteRecoleccion">
                   Recolección pendiente
-                </MenuItem>}
-                <MenuItem value="recolectado">Recolectada</MenuItem>
-                <MenuItem value="entregado">Entregado</MenuItem>
-                <MenuItem value="cancelado">Cancelado</MenuItem>
+                </MenuItem>: null}
+                {status === "solicitado" || status === "pendienteRecoleccion" || status === "recolectado"? <MenuItem value="recolectado">Recolectada</MenuItem>: null}
+                {status === "solicitado" || status === "pendienteRecoleccion"  || status === "entregado"?<MenuItem value="entregado">Entregado</MenuItem>:null}
+                {status === "solicitado" || status === "pendienteRecoleccion" || status === "cancelado" ? <MenuItem value="cancelado">Cancelado</MenuItem>: null}
               </Select>
             </FormControl>
             {status === "cancelado" && (

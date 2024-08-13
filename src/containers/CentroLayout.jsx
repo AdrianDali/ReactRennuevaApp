@@ -36,10 +36,10 @@ import '@fontsource/poppins/800.css';
 import '@fontsource/poppins/900.css';
 import { useNavigate } from 'react-router-dom';
 import deleteCookie from '../helpers/deleteCookie';
+import { TodoContext } from '../context';
 
 
 
-const settings = ['Profile', 'Account', 'Logout'];
 const user = {
     name: "Usuario Ejemplo",
     email: "usuario@example.com",
@@ -193,9 +193,10 @@ const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
 
 export default function CentroLayout({ children, List }) {
     const [anchorElUser, setAnchorElUser] = useState(null);
-    const [open, setOpen] = useState(false);
     const [desktop, setDesktop] = useState(window.innerWidth > 899);
     const navigate = useNavigate();
+    const {openSideBar, setOpenSideBar} = React.useContext(TodoContext)
+
 
     const dataUser = useAuth();
     //console.log(dataUser);
@@ -249,11 +250,11 @@ export default function CentroLayout({ children, List }) {
                                     aria-controls="menu-appbar"
                                     aria-haspopup="true"
                                     onClick={() => {
-                                        open ? setOpen(false) : setOpen(true);
+                                        setOpenSideBar(prev=>!prev)
                                     }}
                                     color="primary"
                                 >
-                                    {open ? <ArrowBackIcon /> : <MenuIcon />}
+                                    {openSideBar ? <ArrowBackIcon /> : <MenuIcon />}
                                 </IconButton>
                             </Box>
                             <Box sx={{ height: '50px', marginX: { xs: 'auto', md: '0' } }}>
@@ -291,10 +292,10 @@ export default function CentroLayout({ children, List }) {
                 </AppBar>
                 <Box sx={{ display: 'flex', width: '100vw' }}>
                     {desktop
-                        ? <DesktopMenu open={open} setOpen={setOpen} dataUser={dataUser}>
+                        ? <DesktopMenu open={openSideBar} setOpen={setOpenSideBar} dataUser={dataUser}>
                             {List}
                         </DesktopMenu>
-                        : <MobileMenu open={open} setOpen={setOpen} >
+                        : <MobileMenu open={openSideBar} setOpen={setOpenSideBar}>
                             {List}
                         </MobileMenu>
                     }
