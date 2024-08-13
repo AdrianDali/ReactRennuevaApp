@@ -267,6 +267,7 @@ export default function DonorRecollectionsTable({ data }) {
     const [recollectionsToDelete, setRecollectionsToDelete] = useState([]);
     const [recollectionToEdit, setRecollectionToEdit] = useState(null);
     const [filtersApplied, setFiltersApplied] = useState(false);
+    console.log(data)
     const [visibleData, setVisibleData] = useState(data);
     const dataUser = useAuth();
     const [page, setPage] = useState(0);
