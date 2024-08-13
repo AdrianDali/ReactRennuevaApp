@@ -53,8 +53,6 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
             username: selectedDonor,
             creator_user: dataUser.user,
             report_for : "Donor"
-            creator_user: dataUser.user,
-            report_for: 'Donor'
         }
 
         try {

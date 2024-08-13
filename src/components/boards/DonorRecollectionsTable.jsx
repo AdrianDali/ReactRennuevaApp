@@ -527,8 +527,6 @@ export default function DonorRecollectionsTable({ data }) {
                                                 </TableCell>
                                                 <TableCell>
                                                     <IconButton
-
-                                                        disabled={request.status === "cancelado"}
                                                         onClick={(e) => {
                                                             e.stopPropagation()
                                                             setRecollectionToEdit(request)

@@ -108,6 +108,8 @@ export default function EditRecolectionModal({
         setStatus(recolection.status);
         break;
     }
+
+    setValue(recolection.comment_cancelation);
   }, [recolection, open]);
 
   const handleSubmit = (e) => {
