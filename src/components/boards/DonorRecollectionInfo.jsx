@@ -85,14 +85,11 @@ export default function DonorRecollectionInfo({ request }) {
                             <Typography variant="body1" display="inline" gutterBottom>{request.conductor_asignado}</Typography>
                         </Box>
                     }
-                    {
-                        request.fecha_estimada_recoleccion &&
                         <Box>
                             <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>fecha de recolección estimada: </Typography>
-                            <Typography variant="body1" display="inline" gutterBottom>{request.fecha_estimada_recoleccion}</Typography>
+                            <Typography variant="body1" display="inline" gutterBottom>{request.fecha_estimada_recoleccion !== "2000-01-01"?request.fecha_estimada_recoleccion:"Sin asignar"}</Typography>
                         </Box>
-                    }
-                    
+
                 </Box>
             </Box>
         </Box>
