@@ -1,11 +1,14 @@
-import ReportsTable from "../components/boards/ReportsTable";
-import { Container } from "@mui/material";
-import { TodoContext } from "../context";
+import ResiduesReportsTable from "../../components/boards/ResiduesReportsTable";
+import { Container} from "@mui/material";
+import { TodoContext } from "../../context";
 import { useState, useContext, useEffect } from "react";
+import useAuth from "../../hooks/useAuth";
 import axios from "axios";
-export function MenuReport() {
+
+export default function ResiduesMenu() {
   const [reports, setReports] = useState([]);
   const { updateReportInfo, setUpdateReportInfo } = useContext(TodoContext);
+  const dataUser = useAuth();
 
   useEffect(() => {
     axios
@@ -19,8 +22,11 @@ export function MenuReport() {
   }, [updateReportInfo]);
 
   useEffect(() => {
+    if (!dataUser) return;
     axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-reports/`)
+      .post(`${process.env.REACT_APP_API_URL}/get-all-donor-reports-user-container/`, {
+        creator_user: dataUser.user
+      })
       .then((response) => {
         console.log(response.data);
         setReports(response.data);
@@ -28,7 +34,7 @@ export function MenuReport() {
       .catch((error) => {
         console.error(error);
       });
-  }, [updateReportInfo]);
+  }, [updateReportInfo, dataUser]);
 
   return (
     <Container
@@ -43,7 +49,7 @@ export function MenuReport() {
       
       
       {/* <FinishReportsTable data={reportsFinish} /> */}
-      <ReportsTable data={reports} />
+      <ResiduesReportsTable data={reports} />
      
     </Container>
   );
