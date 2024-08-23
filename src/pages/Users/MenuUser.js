@@ -34,20 +34,29 @@ function MenuUser() {
   } = useContext(TodoContext);
   
   const dataUser = useAuth();
-  console.log("dataUser", dataUser)
+  console.log("dataUser", dataUser);
   const [donorRequests, setDonorRequests] = useState([]);
-
+  const [centers, setCenters] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`)
-      .then(response => {
-        console.log(response.data.users);
-        setDonorRequests(response.data.users);
-      })
-      .catch(error => {
-        //console.error(error);
-      });
+    const fetchData = async () => {
+      try {
+        // Fetch users with group
+        const usersResponse = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`);
+        console.log("Users:", usersResponse.data.users);
+        setDonorRequests(usersResponse.data.users);
+
+        // Fetch centers
+        const centersResponse = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-centers/`);
+        console.log("###################### CENTROS DE RECOLECCION ##################################");
+        console.log(centersResponse.data);
+        setCenters(centersResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -62,7 +71,7 @@ function MenuUser() {
             height: "100%",
           }}
         >
-          <UserInfoTable data={donorRequests} />
+          <UserInfoTable data={donorRequests} centers={centers} />
         </Container>
       ) : (
         <Box

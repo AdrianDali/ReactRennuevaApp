@@ -14,6 +14,9 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
     const [users, setUsers] = useState([])
     const [companies, setCompanies] = useState([""])
     const [user, setUser] = useState(userToEdit);
+    console.log("###################### USER TO EDIT ##################################")
+    console.log(userToEdit)
+    
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [first_name, setFirstName] = useState("");

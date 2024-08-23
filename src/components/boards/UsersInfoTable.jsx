@@ -55,6 +55,9 @@ import EditRecolectionModal from "./EditRecolectionModal";
 import DeleteDonorRecollectionsModal from "../modals/DeleteDonorRecollectionsModal";
 import DonorRecolecctionsFiltersModal from "../modals/DonorRecollectionsFiltersModal";
 import { ModalUser } from "../../pages/Users/ModalUser";
+import UsersFiltersModal from "../modals/UsersFiltersModal";
+import DeleteUserModal from "../modals/DeleteUserModal";
+import { set } from "date-fns";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditGenerator, setOpenModalDeleteGenerator } =
@@ -370,7 +373,7 @@ function Toolbar({
   );
 }
 
-export default function UserInfoTable({ data }) {
+export default function UserInfoTable({ data ,centers }) {
   const [filteredData, setFilteredData] = useState(data);
   const [recollectionsToDelete, setRecollectionsToDelete] = useState([]);
   const [recollectionToEdit, setRecollectionToEdit] = useState(null);
@@ -411,6 +414,7 @@ export default function UserInfoTable({ data }) {
     address_city: [],
     address_locality: [],
   });
+  const [userToEdit, setUserToEdit] = useState(null);
 
   const handleShowCompleteInfo = (id) => {
     if (showCompleteInfo === id) {
@@ -477,31 +481,35 @@ export default function UserInfoTable({ data }) {
       const conductor_asignado = [
         ...new Set(data.map((req) => req.conductor_asignado)),
       ];
-      const codigo_postal = [...new Set(data.map((req) => req.codigo_postal))];
-      const fecha = [...new Set(data.map((req) => req.fecha))];
-      const ciudad = [...new Set(data.map((req) => req.ciudad))];
-      const estado = [...new Set(data.map((req) => req.estado))];
-      const fecha_estimada_recoleccion = [
-        ...new Set(data.map((req) => req.fecha_estimada_recoleccion)),
-      ];
-      const hora_preferencte_recoleccion = [
-        ...new Set(data.map((req) => req.fecha_preferente_recoleccion)),
-      ];
-      const peso = [...new Set(data.map((req) => req.peso))];
-      const peso_estimado = [...new Set(data.map((req) => req.peso_estimado))];
-      const status = [...new Set(data.map((req) => req.status))];
+      const address_postal_code = [...new Set(data.map((req) => req.address_postal_code))];
+      //const fecha = [...new Set(data.map((req) => req.fecha))];
+      const address_city = [...new Set(data.map((req) => req.address_city))];
+      const address_state = [...new Set(data.map((req) => req.address_state))];
+      const address_locality = [...new Set(data.map((req) => req.address_locality))];
+      const address_street = [...new Set(data.map((req) => req.address_street))];
+      const groups = [...new Set(data.map((req) => req.groups[0]))];
+    //   const fecha_estimada_recoleccion = [
+    //     ...new Set(data.map((req) => req.fecha_estimada_recoleccion)),
+    //   ];
+    //   const hora_preferencte_recoleccion = [
+    //     ...new Set(data.map((req) => req.fecha_preferente_recoleccion)),
+    //   ];
+    //   const peso = [...new Set(data.map((req) => req.peso))];
+    //   const peso_estimado = [...new Set(data.map((req) => req.peso_estimado))];
+    //   const status = [...new Set(data.map((req) => req.status))];
 
       setDataForFilters({
         conductor_asignado,
-        codigo_postal,
-        fecha,
-        ciudad,
-        estado,
-        fecha_estimada_recoleccion,
-        hora_preferencte_recoleccion,
-        peso,
-        peso_estimado,
-        status,
+        address_postal_code,
+        //fecha,
+        address_city,
+        address_state,
+        address_locality,
+        address_street,
+        groups,
+        // peso,
+        // peso_estimado,
+        // status,
       });
     }
   }, [data]);
@@ -522,7 +530,7 @@ export default function UserInfoTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{ maxHeight: "100vh" }}>>
+        <TableContainer sx={{ maxHeight: "100vh" }}>
           <Table>
             <TableHead sx={{ bgcolor: theme.palette.background.default }}>
               <TableRow>
@@ -669,7 +677,8 @@ export default function UserInfoTable({ data }) {
                             onClick={(e) => {
                               e.stopPropagation();
                               setRecollectionToEdit(request);
-                              setOpenEditModal(true);
+                              setUserToEdit(request);
+                              setOpenModalEdit(true);
                             }}
                           >
                             <Edit />
@@ -681,7 +690,7 @@ export default function UserInfoTable({ data }) {
                             onClick={(e) => {
                               e.stopPropagation();
                               setRecollectionsToDelete([request]);
-                              setOpenModalDeleteGenerator(true);
+                              setOpenModalDelete(true);
                             }}
                           >
                             <Delete />
@@ -723,7 +732,7 @@ export default function UserInfoTable({ data }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <DonorRecolecctionsFiltersModal
+      <UsersFiltersModal
         isOpen={openFiltersModal}
         setOpen={setOpenFiltersModal}
         data={dataForFilters}
@@ -735,22 +744,27 @@ export default function UserInfoTable({ data }) {
         anchorEl={rowContextMenuAnchorEl}
         setAnchorEl={setRowContextMenuAnchorEl}
       />
-      {openModalCreate && <ModalUser mode={"CREAR"} creatorUser={dataUser.user} />}
+      {openModalCreate && <ModalUser mode={"CREAR"} creatorUser={dataUser.user} centers={centers}/>}
 
       
-      {openEditModal && (
+      {openModalEdit && (
         <ModalUser
-          open={openEditModal}
-          setOpen={setOpenEditModal}
-          recolection={recollectionToEdit}
-          setMessage={setTextOpenModalText}
-          setOpenMessageModal={setOpenModalText}
-          update={updateDonorInfo}
-          setUpdate={setUpdateDonorInfo}
           mode={"EDITAR"}
+          creatorUser={dataUser.user}
+          userToEdit={userToEdit}
+          centers={centers}
         />
       )}
-      <DeleteDonorRecollectionsModal recollections={recollectionsToDelete} />
+      {openModalDelete && (
+        <ModalUser  
+          mode={"BORRAR"}
+          creatorUser={dataUser.user}
+          usersToEdit={userToEdit}  
+          centers={centers}
+      
+        />
+      )}
+
       {openModalText && (
         <Dialog
           open={openModalText}

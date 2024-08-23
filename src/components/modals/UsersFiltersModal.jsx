@@ -8,6 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
+import { add } from 'date-fns';
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 
@@ -21,7 +22,8 @@ const MenuProps = {
 };
 
 function MultipleSelect({ data, label, name, setFilters, filters }) {
-
+    console.log('data en multiple select', data)
+    console.log('filters en multiple select', data.groups)
     const handleChange = (event) => {
         setFilters(prev => ({ ...prev, [name]: event.target.value }))
     };
@@ -156,8 +158,15 @@ function DateRangeFilter({ name, setFilters, label, filters }) {
 }
 
 
-export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, setFilteredData, objects, setFiltersApplied }) {
+export default function UsersFiltersModal({ isOpen, setOpen, data, setFilteredData, objects, setFiltersApplied }) {
+    console.log(objects)
     console.log('data en modal', data)
+    console.log('objects en modal', data.groups)
+    console.log('objects en modal', data.address_postal_code)
+    // objects.groups = objects.groups[0]
+
+    console.log('objects en modal', objects)
+    console.log ('objects en modal', objects.groups)
     const [filters, setFilters] = useState({
         conductor_asignado: [],
         codigo_postal: [],
@@ -165,9 +174,20 @@ export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, 
         ciudad: [],
         estado: [],
         fecha_estimada_recoleccion: {},
+        localidad: [],
         peso: [],
         peso_estimado: [],
-        status: []
+        status: [],
+        calle: [],
+        // grupos: [],
+        address_postal_code: [],
+        address_city: [],
+        address_state: [],
+        address_locality: [],
+        address_street: [],
+        groups: []
+
+
     });
     const closeModal = () => {
         setOpen(false);
@@ -218,9 +238,18 @@ export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, 
             ciudad: [],
             estado: [],
             fecha_estimada_recoleccion: {},
+            localidad: [],
             peso: [],
+            calle : [],
+            // grupos: [],
             peso_estimado: [],
-            status: []
+            status: [],
+            address_postal_code: [],
+            address_city: [],
+            address_state: [],
+            address_locality: [],
+            address_street: [],
+            groups: []
         })
         setFilteredData(objects);
         setFiltersApplied(false);
@@ -249,15 +278,15 @@ export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, 
                 </IconButton>
                 <Title>Filtros</Title>
                 <Box display='flex' flexDirection='column' gap={2} sx={{ padding: 2 }} >
-                    <DateRangeFilter name='fecha' setFilters={setFilters} label='Fecha de solicitud' filters={filters} />
-                    <DateRangeFilter name='fecha_estimada_recoleccion' setFilters={setFilters} label='Fecha estimada de recolección' filters={filters} />
-                    <MultipleSelect data={data.status} label="Esatdo de recolección" name='status' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.codigo_postal} label="Código postal" name='codigo_postal' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.ciudad} label="Ciudad" name='ciudad' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.estado} label="Esatdo" name='estado' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.peso} label="Peso" name='peso' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.peso_estimado} label="Peso estimado" name='peso_estimado' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.conductor_asignado} label="Conductor asignado" name='conductor_asignado' setFilters={setFilters} filters={filters} />
+                    {/* <DateRangeFilter name='fecha' setFilters={setFilters} label='Fecha de solicitud' filters={filters} />
+                    <DateRangeFilter name='fecha_estimada_recoleccion' setFilters={setFilters} label='Fecha estimada de recolección' filters={filters} /> */}
+                    {/* <MultipleSelect data={data.status} label="Esatdo de recolección" name='status' setFilters={setFilters} filters={filters} /> */}
+                    <MultipleSelect data={data.address_postal_code} label="Código postal" name='address_postal_code' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.address_city} label="Ciudad" name='address_city' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.address_state} label="Estado" name='address_state' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.address_locality} label="Localidad" name='address_locality' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.address_street} label="Calle" name='address_street' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.groups} label="Grupos" name='groups' setFilters={setFilters} filters={filters} />
                     <Button variant='contained' fullWidth onClick={applyFilters}>Aplicar</Button>
                     <Button variant='outlined' color='secondary' onClick={clearFilters} fullWidth>Limpiar filtros</Button>
                 </Box>
