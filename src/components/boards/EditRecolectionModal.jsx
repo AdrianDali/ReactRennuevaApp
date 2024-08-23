@@ -26,8 +26,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import { Close } from "@mui/icons-material";
-import { is } from "date-fns/locale";
-
+import cancelationReassonText from "../../helpers/cancelationReassonText";
 const style = {
   position: "absolute",
   top: "50%",
@@ -60,6 +59,8 @@ export default function EditRecolectionModal({
   const [otroTexto, setOtroTexto] = useState("");
   const [loading, setLoading] = useState(false)
   const [openConfirmation, setOpenConfirmation] = useState(false)
+
+
 
   
 
@@ -109,7 +110,12 @@ export default function EditRecolectionModal({
         break;
     }
 
-    setValue(recolection.comment_cancelation);
+    if(cancelationReassonText(recolection.comment_cancelation) === "Consulte comentarios de cancelación"){
+      setValue("otro");
+      setOtroTexto(recolection.comment_cancelation);
+    }else{
+      setValue(recolection.comment_cancelation);
+    }
   }, [recolection, open]);
 
   const handleSubmit = (e) => {
