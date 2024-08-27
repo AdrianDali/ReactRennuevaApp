@@ -83,7 +83,7 @@ useEffect(() => {
   console.log(filtered)
   setFilteredCenters(filtered);
 }, [centers, center]);
-  const { setUpdateUserInfo, setTextOpenModalText, setOpenModalText, openModalCreate, setOpenModalCreate, openModalEdit, openModalDelete, setOpenModalEdit, setOpenModalDelete } = useContext(TodoContext);
+  const { setUpdateUserInfo, setTextOpenModalText, setOpenModalText, openModalCreate, setOpenModalCreate, openModalEdit, openModalDelete, setOpenModalEdit, setOpenModalDelete , updateUserInfo } = useContext(TodoContext);
   const closeModal = () => {
     if (openModalCreate) {
       setOpenModalCreate(false);
@@ -188,7 +188,9 @@ useEffect(() => {
         razon_social: e.target.razon_social.value,
         antiguoUser: old_user,
         user_permissions: permiso,
-        creator_user: creatorUser
+        creator_user: creatorUser,
+        associated_center : center.CenterName
+
 
       };
 
@@ -376,11 +378,26 @@ useEffect(() => {
   }
 
   const handleInputChange = (e, setState, mode) => {
+
     const currentInputValue = e.target.value;
     console.log(currentInputValue)
     if (mode !== "BORRAR") {
       setState(currentInputValue);
     }
+    if (mode === "EDITAR") {
+
+
+
+      console.log("###################### EDITAR ##################################")
+      console.log(currentInputValue)
+      console.log("###################### EDITAR ##################################")
+      setState(currentInputValue);
+      setCenterEdit(currentInputValue.CenterName)
+      setCenter(currentInputValue)
+      
+
+    }
+
   };
 
   const handlePhoneChange = (event) => {

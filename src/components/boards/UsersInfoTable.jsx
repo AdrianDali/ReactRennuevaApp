@@ -58,6 +58,7 @@ import { ModalUser } from "../../pages/Users/ModalUser";
 import UsersFiltersModal from "../modals/UsersFiltersModal";
 import DeleteUserModal from "../modals/DeleteUserModal";
 import { set } from "date-fns";
+import UserInfoSubTable from "./UserInfoSubTable";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditGenerator, setOpenModalDeleteGenerator } =
@@ -400,6 +401,8 @@ export default function UserInfoTable({ data ,centers }) {
     openModalCreate,
     openModalEdit,
     openModalDelete,
+    updateUserInfo,
+    setUpdateUserInfo,
     
 } = useContext(TodoContext);
   const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
@@ -712,7 +715,7 @@ export default function UserInfoTable({ data ,centers }) {
                             timeout="auto"
                             unmountOnExit
                           >
-                            <DonorRecollectionInfo request={request} />
+                            <UserInfoSubTable request={request} />
                           </Collapse>
                         </TableCell>
                       </TableRow>

@@ -21,6 +21,7 @@ import { Typography } from "@mui/material";
 import useAuth from "../../hooks/useAuth.js";
 import axios from "axios";
 import UserInfoTable from "../../components/boards/UsersInfoTable.jsx";
+import { set } from "date-fns";
 
 function MenuUser() {
 
@@ -31,6 +32,8 @@ function MenuUser() {
     openModalDelete,
     openModalText,
     setOpenModalText,
+    updateUserInfo,
+    setUpdateUserInfo,
   } = useContext(TodoContext);
   
   const dataUser = useAuth();
@@ -51,13 +54,14 @@ function MenuUser() {
         console.log("###################### CENTROS DE RECOLECCION ##################################");
         console.log(centersResponse.data);
         setCenters(centersResponse.data);
+        setUpdateUserInfo(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [updateUserInfo]);
 
   return (
     <>
