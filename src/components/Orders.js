@@ -22,7 +22,8 @@ const DonorTable = () => {
         axios
             .get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`)
             .then(response => {
-                setClientes(response.data);
+                console.log("Donors:", response.data);
+                setClientes(response.data.users);
                 setUpdateDonorInfo(false);
             })
             .catch(error => {
@@ -64,7 +65,9 @@ const DonorTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {clientes
+              {console.log("Clientes", clientes)}
+              {clientes &&
+              clientes
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((cliente, index) => (
                   <TableRow key={index}>
