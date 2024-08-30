@@ -36,34 +36,23 @@ import {
     Visibility,
     Check,
     Edit,
-    Draw,
-    SaveAlt,
     Close,
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect, useRef } from "react";
-import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
 import { ModalReport } from "../../pages/ModalReport";
-import dateFormater from "../../services/dateFormater";
 import { ModalFirmar } from "../../pages/ModalFirmar";
 import { ModalResidueReport } from "../../pages/ModalResidueReport";
-import validateReport from "../../services/validateReport";
-import getReportInfo from "../../services/getReportInfo";
-import generateReportPDF from "../../services/generateReportPDF";
-import generateQR from "../../services/generateQR";
 import DeleteReportsModal from "../modals/DeleteReportsModal";
 import ReportsFiltersModal from "../modals/ReportsFiltersModal";
-import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import DonorRecollectionInfo from "./DonorRecollectionInfo";
-import ReportInfo from "./ReportInfo";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
+import ShortenedReportInfo from "./ShortenedReportInfo";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -346,13 +335,11 @@ export default function ResiduesReportsTable({ data }) {
 
     const dataUser = useAuth();
 
-    console.log(data);
+   //console.log(data);
     const {
         setTextOpenModalText,
         openModalCreateReport,
         openModalEditReport,
-        setOpenModalDeleteReport,
-        setOpenModalEditReport,
         openModalText,
         textOpenModalText,
         setOpenModalText,
@@ -360,15 +347,12 @@ export default function ResiduesReportsTable({ data }) {
         setOpenModalEditFirma,
         setUpdateReportInfo,
         openModalFinishReport,
-        setOpenModalFinishReport,
     } = useContext(TodoContext);
-    //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
     const [generalCheckboxStatus, setGeneralCheckboxStatus] =
         useState("unchecked");
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
-    const [expanded, setExpanded] = useState(false);
     const [expandedRow, setExpandedRow] = useState(null);
 
     const handleExpandClick = (id) => {
@@ -413,50 +397,6 @@ export default function ResiduesReportsTable({ data }) {
         } else {
             setGeneralCheckboxStatus("checked");
         }
-    };
-
-    const handleSavePDF = async (report) => {
-        const validate = await validateReport(report.id_report);
-        if (validate == true) {
-            const data = await getReportInfo(report.id_report);
-
-            let key_centro = "";
-            if (data[0].key_centro_reciclaje != null) {
-                key_centro = data[0].key_centro_reciclaje;
-            }
-            if (data[0].key_centro_recoleccion != null) {
-                key_centro = data[0].key_centro_recoleccion;
-            }
-
-            const folio_busqueda =
-                data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
-
-            const qrImage = await generateQR(
-                "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-            );
-            if (report.grupo_usuario === "Donador") {
-                generateDonorReportPDF(report, data, qrImage);
-            } else {
-                generateReportPDF(report, data, qrImage);
-            }
-        } else {
-            setOpenModalText(true);
-            setTextOpenModalText(
-                "No se puede generar el reporte, aun no se han firmado todos los campos"
-            );
-        }
-    };
-
-    const onEditGeneratorSign = (id) => {
-        setReportToEdit(id);
-        setSignType("Generador");
-        setOpenModalEditFirma(true);
-    };
-
-    const onEditReceiverSign = (id) => {
-        setReportToEdit(id);
-        setSignType("Receptor");
-        setOpenModalEditFirma(true);
     };
 
     const handleEditResidues = (report) => {
@@ -605,17 +545,6 @@ export default function ResiduesReportsTable({ data }) {
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
-                                    <Checkbox
-                                        checked={generalCheckboxStatus === "checked" ? true : false}
-                                        onClick={handleGenaeralCheckboxClick}
-                                        indeterminate={
-                                            generalCheckboxStatus === "indeterminate" ? true : false
-                                        }
-                                        onChange={handleGeneralCheckboxChange}
-                                    />
-                                </TableCell>
-
-                                <TableCell>
                                     <TableSortLabel direction="asc">
                                         <Typography variant="subtitle2">ID</Typography>
                                     </TableSortLabel>
@@ -628,6 +557,16 @@ export default function ResiduesReportsTable({ data }) {
                                 <TableCell>
                                     <TableSortLabel direction="asc">
                                         <Typography variant="subtitle2">Apellidos</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel direction="asc">
+                                        <Typography variant="subtitle2">Correo electrónico</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel direction="asc">
+                                        <Typography variant="subtitle2">Teléfono</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -681,22 +620,11 @@ export default function ResiduesReportsTable({ data }) {
                                                         )}
                                                     </Button>
                                                 </TableCell>
-                                                <TableCell>
-                                                    <Checkbox
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            toggleSelected(report.id_report);
-                                                        }}
-                                                        checked={isRowSelected(report.id_report)}
-                                                        inputProps={{
-                                                            "aria-labelledby": report.id_report,
-                                                        }}
-                                                    />
-                                                </TableCell>
-
                                                 <TableCell>{report.id_report}</TableCell>
                                                 <TableCell>{report.nombre_real_usuario}</TableCell>
                                                 <TableCell>{report.apellido_usuario}</TableCell>
+                                                <TableCell>{report.email_usuario}</TableCell>
+                                                <TableCell>{report.telefono_usuario}</TableCell>
                                                 <TableCell>
                                                     <Button
                                                         startIcon={<Add />}
@@ -724,7 +652,7 @@ export default function ResiduesReportsTable({ data }) {
                                                         timeout="auto"
                                                         unmountOnExit
                                                     >
-                                                        <ReportInfo request={report} />
+                                                        <ShortenedReportInfo request={report} />
                                                     </Collapse>
                                                 </TableCell>
                                             </TableRow>

@@ -1,7 +1,7 @@
 import ListTemplate, {ListTemplateItem} from "../ListSideBar/ListTemplate";
 import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
 
-import { AccountBoxRounded, DirectionsRunRounded, HomeWorkRounded, RecyclingRounded } from "@mui/icons-material";
+import { DirectionsRunRounded, RecyclingRounded} from "@mui/icons-material";
 
 const collectRequestItem = new ListTemplateItem({
     tag: "Recolección",
@@ -11,14 +11,18 @@ const collectRequestItem = new ListTemplateItem({
             tag: "Reporte Donadores",
             icon: <AssignmentReturnedIcon />,
             redirection: "/centro/home",
-        }),
+        })
     
     ]
 })
 
 export default function CentroList() {
     return (
-        <ListTemplate items={[ collectRequestItem]} />
+        <ListTemplate items={[ collectRequestItem, new ListTemplateItem({
+            tag: "Residuos",
+            icon: <RecyclingRounded />,
+            redirection: "/centro/residuos",
+        }),]} />
     )
 }
 
