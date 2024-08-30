@@ -374,7 +374,8 @@ function Toolbar({
   );
 }
 
-export default function UserInfoTable({ data ,centers }) {
+export default function UserInfoTable({ data ,centers ,recyclingCenters, collectionCenters}) {
+  console.log(recyclingCenters);
   const [filteredData, setFilteredData] = useState(data);
   const [recollectionsToDelete, setRecollectionsToDelete] = useState([]);
   const [recollectionToEdit, setRecollectionToEdit] = useState(null);
@@ -747,15 +748,22 @@ export default function UserInfoTable({ data ,centers }) {
         anchorEl={rowContextMenuAnchorEl}
         setAnchorEl={setRowContextMenuAnchorEl}
       />
-      {openModalCreate && <ModalUser mode={"CREAR"} creatorUser={dataUser.user} centers={centers}/>}
-
-      
+      {openModalCreate && 
+        <ModalUser mode={"CREAR"} 
+          creatorUser={dataUser.user} 
+          centers={centers} 
+          recyclingCenters={recyclingCenters} 
+          collectionCenters={collectionCenters} 
+          />
+      }
       {openModalEdit && (
         <ModalUser
           mode={"EDITAR"}
           creatorUser={dataUser.user}
           userToEdit={userToEdit}
           centers={centers}
+          recyclingCenters={recyclingCenters}
+          collectionCenters={collectionCenters}
         />
       )}
       {openModalDelete && (
@@ -764,7 +772,8 @@ export default function UserInfoTable({ data ,centers }) {
           creatorUser={dataUser.user}
           usersToEdit={userToEdit}  
           centers={centers}
-      
+          recyclingCenters={recyclingCenters}
+          collectionCenters={collectionCenters}      
         />
       )}
 
