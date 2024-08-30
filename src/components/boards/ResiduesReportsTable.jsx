@@ -161,7 +161,6 @@ function ExportOptionsMenu({
 function Toolbar({
     selected,
     setOpenFiltersModal,
-    setObjectsToDelete,
     filtersApplied,
     filteredData,
     allData,
@@ -269,8 +268,8 @@ function SearchField({ filteredData, setVisibleData }) {
                         report.email_usuario.toLowerCase().includes(search) ||
                         report.telefono_usuario.toLowerCase().includes(search) ||
                         report.calle_usuario.toLowerCase().includes(search) ||
-                        report.colonia_usuario.toLowerCase().includes(search) ||
-                        report.grupo_usuario.toLowerCase().includes(search)
+                        report.colonia_usuario.toLowerCase().includes(search)
+                        //report.grupo_usuario.toLowerCase().includes(search)
                     );
                 });
                 setVisibleData(newData);
@@ -298,7 +297,6 @@ function SearchField({ filteredData, setVisibleData }) {
                     variant="standard"
                     size="small"
                     sx={{
-                        mt: 1,
                         width: showSearch ? "25rem" : 0,
                         transition: "all 300ms ease-in",
                     }}
@@ -329,7 +327,6 @@ export default function ResiduesReportsTable({ data }) {
     const [reportToEdit, setReportToEdit] = useState({});
     const [filtersApplied, setFiltersApplied] = useState(false);
     const [visibleData, setVisibleData] = useState(data);
-    const [signType, setSignType] = useState("Generador");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -337,21 +334,17 @@ export default function ResiduesReportsTable({ data }) {
 
    //console.log(data);
     const {
-        setTextOpenModalText,
         openModalCreateReport,
         openModalEditReport,
         openModalText,
         textOpenModalText,
         setOpenModalText,
         setOpenModalEditResidueReport,
-        setOpenModalEditFirma,
         setUpdateReportInfo,
         openModalFinishReport,
     } = useContext(TodoContext);
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
-    const [generalCheckboxStatus, setGeneralCheckboxStatus] =
-        useState("unchecked");
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
     const [expandedRow, setExpandedRow] = useState(null);
 
@@ -390,49 +383,11 @@ export default function ResiduesReportsTable({ data }) {
         setPage(0);
     };
 
-    const handleGenaeralCheckboxClick = (e) => {
-        e.stopPropagation();
-        if (generalCheckboxStatus === "checked") {
-            setGeneralCheckboxStatus("unchecked");
-        } else {
-            setGeneralCheckboxStatus("checked");
-        }
-    };
-
     const handleEditResidues = (report) => {
         setReportToEdit(report);
         setOpenModalEditResidueReport(true);
     };
 
-    const handleGeneralCheckboxChange = (e) => {
-        if (e.target.checked) {
-            setSelected(data.map((report) => report.id_report));
-        } else if (e.target.indeterminate) {
-            setSelected(selected);
-        } else {
-            setSelected([]);
-        }
-    };
-
-    const isRowSelected = (id) => selected.indexOf(id) !== -1;
-
-    const toggleSelected = (id) => {
-        if (isRowSelected(id)) {
-            setSelected(selected.filter((selectedId) => selectedId !== id));
-        } else {
-            setSelected([...selected, id]);
-        }
-    };
-
-    useEffect(() => {
-        if (selected.length === data.length && data.length !== 0) {
-            setGeneralCheckboxStatus("checked");
-        } else if (selected.length === 0) {
-            setGeneralCheckboxStatus("unchecked");
-        } else {
-            setGeneralCheckboxStatus("indeterminate");
-        }
-    }, [selected]);
 
     useEffect(() => {
         setSelected([]);
@@ -535,7 +490,7 @@ export default function ResiduesReportsTable({ data }) {
                     filtersApplied={filtersApplied}
                     setVisibleData={setVisibleData}
                 />
-                <TableContainer sx={{ maxHeight: "100vh" }}>
+                <TableContainer sx={{ minHeight: "calc(100vh - 350px)" }}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                             <TableRow>
@@ -596,15 +551,8 @@ export default function ResiduesReportsTable({ data }) {
                                                 hover
                                                 role="checkbox"
                                                 key={report.id_report}
-                                                selected={isRowSelected(report.id_report)}
                                                 sx={{ cursor: "pointer" }}
-                                                aria-checked={
-                                                    isRowSelected(report.id_report) ? true : false
-                                                }
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    toggleSelected(report.id_report);
-                                                }}
+
                                             >
                                                 <TableCell>
                                                     <Button
@@ -673,7 +621,6 @@ export default function ResiduesReportsTable({ data }) {
                 />
             </Paper>
 
-            <ModalFirmar type={signType} id={reportToEdit} />
             <ModalResidueReport report={reportToEdit} />
             {/* <ModalFinishReport report={reportToEdit} /> */}
             <DeleteReportsModal reports={reportsToDelete} />
