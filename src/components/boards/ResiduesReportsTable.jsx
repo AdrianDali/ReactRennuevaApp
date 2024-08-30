@@ -37,6 +37,7 @@ import {
     Check,
     Edit,
     Close,
+    MoreVert
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
@@ -45,14 +46,14 @@ import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
 import { generateExcelFromJson } from "../../services/Excel";
 import { ModalReport } from "../../pages/ModalReport";
-import { ModalFirmar } from "../../pages/ModalFirmar";
 import { ModalResidueReport } from "../../pages/ModalResidueReport";
 import DeleteReportsModal from "../modals/DeleteReportsModal";
-import ReportsFiltersModal from "../modals/ReportsFiltersModal";
+import ShortenedReportsFiltersModal from "../modals/ShortenedReportsFiltersModal";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import ShortenedReportInfo from "./ShortenedReportInfo";
+import SearchingModal from "../modals/SearchingModal";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -95,69 +96,6 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
     );
 }
 
-function ExportOptionsMenu({
-    anchorEl,
-    setAnchorEl,
-    allData,
-    filteredData,
-    selectedData,
-}) {
-    const open = Boolean(anchorEl);
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleExportAll = () => {
-        //console.log(allData)
-        generateExcelFromJson(allData, "Reportes");
-        handleClose();
-    };
-
-    const handleExportVisible = () => {
-        //console.log(filteredData)
-        generateExcelFromJson(filteredData, "Reportes");
-        handleClose();
-    };
-
-    const handleExportSelected = () => {
-        //console.log(selectedData)
-        const dataToExport = allData.filter((report) =>
-            selectedData.includes(report.id_report)
-        );
-        //console.log(dataToExport)
-        generateExcelFromJson(dataToExport, "Reportes");
-        handleClose();
-    };
-
-    return (
-        <Menu anchorEl={anchorEl} open={open}>
-            <ClickAwayListener onClickAway={handleClose}>
-                <MenuList>
-                    <MenuItem onClick={handleExportAll}>
-                        <ListItemIcon>
-                            <Download />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar todos" />
-                    </MenuItem>
-                    <MenuItem onClick={handleExportVisible}>
-                        <ListItemIcon>
-                            <Visibility />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar visibles" />
-                    </MenuItem>
-                    <MenuItem onClick={handleExportSelected}>
-                        <ListItemIcon>
-                            <Check />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar selección" />
-                    </MenuItem>
-                </MenuList>
-            </ClickAwayListener>
-        </Menu>
-    );
-}
-
 function Toolbar({
     selected,
     setOpenFiltersModal,
@@ -167,35 +105,6 @@ function Toolbar({
     setVisibleData,
 }) {
 
-    const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
-    if (selected.length > 0)
-        return (
-            <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-                py={2}
-                bgcolor={theme.palette.primary.light}
-            >
-                <Typography
-                    variant="h4"
-                    component="div"
-                    color="secondary"
-                    sx={{ p: 2 }}
-                >
-                    {`${selected.length} ${selected.length === 1 ? "seleccionado" : "seleccionados"
-                        }`}
-                </Typography>
-                <ExportOptionsMenu
-                    selectedData={selected}
-                    filteredData={filteredData}
-                    allData={allData}
-                    anchorEl={exportOptionsAchorEl}
-                    setAnchorEl={setExportOptionsAnchorEl}
-                />
-            </Box>
-        );
 
     return (
         <Box
@@ -205,10 +114,10 @@ function Toolbar({
             alignItems="center"
             py={2}
         >
-            <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
+            <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexShrink: 2 }}>
                 Responsivas en proceso
             </Typography>
-            <Box>
+            <Box sx={{ flexGrow: 1, flexShrink: 0, display: "flex", flexDirection: "row", justifyContent: "end" }}>
                 <SearchField
                     filteredData={filteredData}
                     setVisibleData={setVisibleData}
@@ -231,16 +140,109 @@ function Toolbar({
                         Filtrar
                     </Button>
                 </Badge>
-                <ExportOptionsMenu
-                    selectedData={selected}
-                    filteredData={filteredData}
-                    allData={allData}
-                    anchorEl={exportOptionsAchorEl}
-                    setAnchorEl={setExportOptionsAnchorEl}
-                />
             </Box>
         </Box>
     );
+}
+
+function MobileToolbar({
+    selected,
+    setOpenFiltersModal,
+    filtersApplied,
+    filteredData,
+    allData,
+    setVisibleData,
+}) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openSearchModal, setOpenSearchModal] = useState(false)
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleFilter = (e) => {
+        setOpenFiltersModal(true);
+        handleClose();
+    }
+
+    const handleSearch = (e) => {
+        setOpenSearchModal(true);
+        handleClose();
+    }
+
+    return (
+        <>
+            <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+                py={2}
+            >
+                <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexShrink: 2 }}>
+                    Responsivas en proceso
+                </Typography>
+                <Box sx={{ flexGrow: 1, flexShrink: 0, display: "flex", flexDirection: "row", justifyContent: "end" }}>
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={open ? 'long-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                    >
+                        <MoreVert />
+                    </IconButton>
+                    <Menu
+                        id="long-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        slotProps={{
+                            paper: {
+                                style: {
+                                    maxHeight: 48 * 4.5,
+                                    width: '15ch',
+                                },
+                            },
+                        }}
+                    >
+                        <MenuList>
+                            <Badge
+                                color="error"
+                                overlap="circular"
+                                badgeContent=" "
+                                variant="dot"
+                                invisible={!filtersApplied}
+                            >
+                                <MenuItem onClick={handleFilter} color="info">
+                                    <ListItemIcon >
+                                        <FilterList />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Filtrar" />
+                                </MenuItem>
+                            </Badge>
+                            <MenuItem onClick={handleSearch}>
+                                <ListItemIcon>
+                                    <Search />
+                                </ListItemIcon>
+                                <ListItemText primary="Buscar" />
+                            </MenuItem>
+                        </MenuList>
+
+                    </Menu>
+                </Box>
+            </Box>
+            <SearchingModal isOpen={openSearchModal} setOpen={setOpenSearchModal} filteredData={filteredData} setVisibleData={setVisibleData} />
+        </>
+    )
+
 }
 
 function SearchField({ filteredData, setVisibleData }) {
@@ -297,8 +299,9 @@ function SearchField({ filteredData, setVisibleData }) {
                     variant="standard"
                     size="small"
                     sx={{
-                        width: showSearch ? "25rem" : 0,
+                        width: showSearch ? "15rem" : 0,
                         transition: "all 300ms ease-in",
+                        maxWidth: "100%",
                     }}
                     placeholder="Nombre, Apellido, Correo electrónico, RFC, Teléfono"
                     onKeyUp={handleSearch}
@@ -332,7 +335,7 @@ export default function ResiduesReportsTable({ data }) {
 
     const dataUser = useAuth();
 
-   //console.log(data);
+    //console.log(data);
     const {
         openModalCreateReport,
         openModalEditReport,
@@ -347,7 +350,23 @@ export default function ResiduesReportsTable({ data }) {
     const [selected, setSelected] = useState([]);
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
     const [expandedRow, setExpandedRow] = useState(null);
+    const [desktop, setDesktop] = useState(window.innerWidth > 899);
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 899) {
+                setDesktop(true);
+            } else {
+                setDesktop(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
     const handleExpandClick = (id) => {
         setExpandedRow((prev) => (prev === id ? null : id));
     };
@@ -481,15 +500,27 @@ export default function ResiduesReportsTable({ data }) {
                     padding: 2,
                 }}
             >
-                <Toolbar
-                    selected={selected}
-                    allData={data}
-                    filteredData={filteredData}
-                    setOpenFiltersModal={setOpenFiltersModal}
-                    setObjectsToDelete={setReportsToDelete}
-                    filtersApplied={filtersApplied}
-                    setVisibleData={setVisibleData}
-                />
+                {desktop ? (
+                    <Toolbar
+                        selected={selected}
+                        allData={data}
+                        filteredData={filteredData}
+                        setOpenFiltersModal={setOpenFiltersModal}
+                        setObjectsToDelete={setReportsToDelete}
+                        filtersApplied={filtersApplied}
+                        setVisibleData={setVisibleData}
+                    />
+                ) : (
+                    <MobileToolbar
+                        selected={selected}
+                        allData={data}
+                        filteredData={filteredData}
+                        setOpenFiltersModal={setOpenFiltersModal}
+                        setObjectsToDelete={setReportsToDelete}
+                        filtersApplied={filtersApplied}
+                        setVisibleData={setVisibleData}
+                    />
+                )}
                 <TableContainer sx={{ minHeight: "calc(100vh - 350px)" }}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
@@ -624,7 +655,7 @@ export default function ResiduesReportsTable({ data }) {
             <ModalResidueReport report={reportToEdit} />
             {/* <ModalFinishReport report={reportToEdit} /> */}
             <DeleteReportsModal reports={reportsToDelete} />
-            <ReportsFiltersModal
+            <ShortenedReportsFiltersModal
                 isOpen={openFiltersModal}
                 setOpen={setOpenFiltersModal}
                 data={dataForFilters}

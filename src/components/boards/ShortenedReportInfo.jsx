@@ -75,20 +75,6 @@ export default function ShortenedReportInfo({ request }) {
               {request.rfc_usuario}
             </Typography>
           </Box>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              color="secondary"
-              display="inline"
-              fontWeight={500}
-              gutterBottom
-            >
-              Grupo:{" "}
-            </Typography>
-            <Typography variant="body1" display="inline" gutterBottom>
-              {request.grupo_usuario}
-            </Typography>
-          </Box>
         </Box>
       </Box>
     </Box>

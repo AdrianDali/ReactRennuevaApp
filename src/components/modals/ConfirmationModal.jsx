@@ -31,7 +31,7 @@ export default function ConfirmationModal({ children, isOpen, setOpen, title, se
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '100%',
+                width: '80%',
                 maxWidth: 600,
                 bgcolor: 'background.paper',
                 boxShadow: 24,

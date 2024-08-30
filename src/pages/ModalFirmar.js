@@ -29,7 +29,7 @@ function ModalFirmar({ id, type }) {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: { xs: '90%', md: 600 },  // Ajuste de tamaño para dispositivos móviles y de escritorio
+                width: { xs: '80%', md: 600 },  // Ajuste de tamaño para dispositivos móviles y de escritorio
                 bgcolor: 'background.paper',
                 boxShadow: 24,
                 p: 4,

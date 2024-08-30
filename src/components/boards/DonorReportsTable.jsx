@@ -14,9 +14,16 @@ import {
     Badge,
     TextField,
     TablePagination,
-    Collapse
+    Collapse,
+    Menu,
+    MenuList,
+    MenuItem,
+    ListItemIcon,
+    ListItemText
+
 } from "@mui/material";
-import { Add, FilterList, Delete, Search, Draw, SaveAlt, Close, KeyboardArrowDown } from "@mui/icons-material";
+import { Add, FilterList, Delete, Search, Draw, SaveAlt, Close, KeyboardArrowDown, MoreVert } from "@mui/icons-material";
+import SearchingModal from "../modals/SearchingModal";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect, useRef } from "react";
@@ -50,10 +57,10 @@ function Toolbar({ selected, setOpenFiltersModal, filtersApplied, filteredData, 
 
     return (
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" py={2}>
-            <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
+            <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexGrow: 0, flexShrink: 1 }}>
                 Reportes de donadores
             </Typography>
-            <Box>
+            <Box sx={{flexShrink: 0, flexGrow: 1, display: "flex", flexDirection: "row", justifyContent: "end"}}>
                 <SearchField filteredData={filteredData} setVisibleData={setVisibleData} />
                 <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
                     <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
@@ -62,6 +69,115 @@ function Toolbar({ selected, setOpenFiltersModal, filtersApplied, filteredData, 
             </Box>
             <CreateDonorReportModal isOpen={openModalCreateReport} setOpen={setOpenModalCreateReport} />
         </Box>
+    )
+
+}
+
+function MobileToolbar({
+    selected,
+    setOpenFiltersModal,
+    filtersApplied,
+    filteredData,
+    allData,
+    setVisibleData,
+}) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openSearchModal, setOpenSearchModal] = useState(false)
+    const [openModalCreateReport, setOpenModalCreateReport] = useState(false);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleFilter = (e) => {
+        setOpenFiltersModal(true);
+        handleClose();
+    }
+
+    const handleSearch = (e) => {
+        setOpenSearchModal(true);
+        handleClose();
+    }
+
+    return (
+        <>
+            <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+                py={2}
+            >
+                <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexShrink: 2 }}>
+                    Responsivas en proceso
+                </Typography>
+                <Box sx={{ flexGrow: 1, flexShrink: 0, display: "flex", flexDirection: "row", justifyContent: "end" }}>
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={open ? 'long-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                    >
+                        <MoreVert />
+                    </IconButton>
+                    <Menu
+                        id="long-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        slotProps={{
+                            paper: {
+                                style: {
+                                    maxHeight: 48 * 4.5,
+                                    width: '15ch',
+                                },
+                            },
+                        }}
+                    >
+                        <MenuList>
+                            <MenuItem onClick={handleFilter} color="info">
+                                <ListItemIcon >
+                                    <Add />
+                                </ListItemIcon>
+                                <ListItemText primary="Nuevo" />
+                            </MenuItem>
+                            <Badge
+                                color="error"
+                                overlap="circular"
+                                badgeContent=" "
+                                variant="dot"
+                                invisible={!filtersApplied}
+                            >
+
+                                <MenuItem onClick={handleFilter} color="info">
+                                    <ListItemIcon >
+                                        <FilterList />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Filtrar" />
+                                </MenuItem>
+                            </Badge>
+                            <MenuItem onClick={handleSearch}>
+                                <ListItemIcon>
+                                    <Search />
+                                </ListItemIcon>
+                                <ListItemText primary="Buscar" />
+                            </MenuItem>
+                        </MenuList>
+
+                    </Menu>
+                </Box>
+            </Box>
+            <SearchingModal isOpen={openSearchModal} setOpen={setOpenSearchModal} filteredData={filteredData} setVisibleData={setVisibleData} />
+            <CreateDonorReportModal isOpen={openModalCreateReport} setOpen={setOpenModalCreateReport} />
+        </>
     )
 
 }
@@ -112,7 +228,7 @@ function SearchField({ filteredData, setVisibleData }) {
                     label="Búscar"
                     variant="standard"
                     size="small"
-                    sx={{ mt: 1, width: showSearch ? "25rem" : 0, transition: 'all 300ms ease-in' }}
+                    sx={{ mt: 1, width: showSearch ? "15rem" : 0, transition: 'all 300ms ease-in' }}
                     placeholder="Nombre, Apellido, Correo electrónico, Teléfono"
                     onKeyUp={handleSearch}
                 />
@@ -155,9 +271,27 @@ export default function DonorReportsTable({ data }) {
     const [selected, setSelected] = useState([]);
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
     const [dataForFilters, setDataForFilters] = useState({
-            donador_signature: [],
-            recollection_signature: [] 
-        })
+        donador_signature: [],
+        recollection_signature: []
+    })
+
+    const [desktop, setDesktop] = useState(window.innerWidth > 940);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 940) {
+                setDesktop(true);
+            } else {
+                setDesktop(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -286,7 +420,7 @@ export default function DonorReportsTable({ data }) {
             const firma_responsiva_generador = [...new Set(data.map((report) => report.firma_responsiva_generador))];
             const firma_responsiva_receptor = [...new Set(data.map((report) => report.firma_responsiva_receptor))];
 
-            
+
             setDataForFilters({
                 firma_responsiva_generador,
                 firma_responsiva_receptor
@@ -298,8 +432,28 @@ export default function DonorReportsTable({ data }) {
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
             <Paper>
-                <Toolbar selected={selected} allData={data} filteredData={filteredData} setOpenFiltersModal={setOpenFiltersModal} setObjectsToDelete={setReportsToDelete} filtersApplied={filtersApplied} setVisibleData={setVisibleData} />
-                <TableContainer>
+                {desktop ? (
+                    <Toolbar
+                        selected={selected}
+                        allData={data}
+                        filteredData={filteredData}
+                        setOpenFiltersModal={setOpenFiltersModal}
+                        setObjectsToDelete={setReportsToDelete}
+                        filtersApplied={filtersApplied}
+                        setVisibleData={setVisibleData}
+                    />
+                ) : (
+                    <MobileToolbar
+                        selected={selected}
+                        allData={data}
+                        filteredData={filteredData}
+                        setOpenFiltersModal={setOpenFiltersModal}
+                        setObjectsToDelete={setReportsToDelete}
+                        filtersApplied={filtersApplied}
+                        setVisibleData={setVisibleData}
+                    />
+                )}
+                <TableContainer sx={{ minHeight: "calc(100vh - 350px)" }}>
                     <Table>
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                             <TableRow>
@@ -359,17 +513,18 @@ export default function DonorReportsTable({ data }) {
                                             <TableRow
                                                 hover
                                                 key={report.id_report}
-                                                sx={{ cursor: 'pointer',
+                                                sx={{
+                                                    cursor: 'pointer',
                                                     bgcolor: showCompleteInfo === report.id_report && "primary.light",
                                                     transition: "all 0.3s"
-                                                 }}
-                                                onClick={(e)=>{
+                                                }}
+                                                onClick={(e) => {
                                                     e.stopPropagation()
                                                     handleShowCompleteInfo(report.id_report)
-                                                
+
                                                 }}
                                             >
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
                                                     <IconButton color="secondary" onClick={(e) => {
                                                         e.stopPropagation()
                                                         handleShowCompleteInfo(report.id_report)
@@ -380,19 +535,19 @@ export default function DonorReportsTable({ data }) {
                                                         }} />
                                                     </IconButton>
                                                 </TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>{report.id_report}</TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>{report.nombre_usuario}</TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>{new Date(report.fecha_inicio_reporte).toLocaleDateString("es-MX", {
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>{report.id_report}</TableCell>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>{report.nombre_usuario}</TableCell>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>{new Date(report.fecha_inicio_reporte).toLocaleDateString("es-MX", {
                                                     year: "numeric",
                                                     month: "short",
                                                     day: "numeric"
                                                 })}</TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
                                                     <Button
                                                         startIcon={<Draw />}
                                                         variant="contained"
                                                         size="small"
-                                                        color={report.firma_responsiva_generador? "success" : "warning"}
+                                                        color={report.firma_responsiva_generador ? "success" : "warning"}
                                                         onClick={(e) => {
                                                             e.stopPropagation()
                                                             onEditDonorSign(report.id_report)
@@ -402,7 +557,7 @@ export default function DonorReportsTable({ data }) {
                                                     </Button>
                                                 </TableCell>
 
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
                                                     <Button
                                                         startIcon={<Draw />}
                                                         variant="contained"
@@ -416,7 +571,7 @@ export default function DonorReportsTable({ data }) {
                                                         Firmar
                                                     </Button>
                                                 </TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
                                                     <Button
                                                         startIcon={<SaveAlt />}
                                                         variant="contained"
@@ -431,7 +586,7 @@ export default function DonorReportsTable({ data }) {
                                                         Generar Talon
                                                     </Button>
                                                 </TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
                                                     <Button
                                                         startIcon={<SaveAlt />}
                                                         variant="contained"
@@ -445,7 +600,7 @@ export default function DonorReportsTable({ data }) {
                                                         Generar Responsiva
                                                     </Button>
                                                 </TableCell>
-                                                <TableCell sx={{borderBottomWidth: showCompleteInfo === report.id_report? 0:1}}>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
                                                     <IconButton color="error" onClick={(e) => {
                                                         e.stopPropagation()
                                                         setReportsToDelete([report.id_report])
@@ -456,7 +611,7 @@ export default function DonorReportsTable({ data }) {
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow >
-                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottomWidth: showCompleteInfo === report.id_report? 1:0}} colSpan={12}>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottomWidth: showCompleteInfo === report.id_report ? 1 : 0 }} colSpan={12}>
                                                     <Collapse in={showCompleteInfo === report.id_report} timeout="auto" unmountOnExit>
                                                         <DonorSubtable report={report} />
                                                     </Collapse>
