@@ -114,6 +114,8 @@ function App() {
     { path: '/driver/assigned-orders', element: <CentroLayout List={<DriverList/>}><MenuAssignedOrders/></CentroLayout> },
     //menu para grupo de contenedor
     {path:'/centro/home', element: <CentroLayout List={<CentroList/>}><ContainerMenu/></CentroLayout> },
+    {path : '/centro/residuos', element: <CentroLayout List={<CentroList/>}><ResiduesMenu/> </CentroLayout>},
+
     
 
     // menus para resetear contraseña
@@ -121,7 +123,6 @@ function App() {
     {path : '/reset-password/:uidb64/:token/', element: <MenuResetPass/>},
 
     {path : '/exports', element: <CentroLayout List={<RegisterList/>}><ExportsMenu/> </CentroLayout>},
-    {path : '/residuos', element: <CentroLayout List={<RegisterList/>}><ResiduesMenu/> </CentroLayout>}
   ]);
 
   return (

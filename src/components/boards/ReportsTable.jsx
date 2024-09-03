@@ -317,6 +317,7 @@ function SearchField({ filteredData, setVisibleData }) {
   }, [showSearch]);
 
   const handleSearch = (e) => {
+    
     if (e.key === "Enter") {
       const search = searchValue.trim().toLowerCase();
       if (search === "") {

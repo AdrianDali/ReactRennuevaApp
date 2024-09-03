@@ -36,34 +36,24 @@ import {
     Visibility,
     Check,
     Edit,
-    Draw,
-    SaveAlt,
     Close,
+    MoreVert
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect, useRef } from "react";
-import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
 import { ModalReport } from "../../pages/ModalReport";
-import dateFormater from "../../services/dateFormater";
-import { ModalFirmar } from "../../pages/ModalFirmar";
 import { ModalResidueReport } from "../../pages/ModalResidueReport";
-import validateReport from "../../services/validateReport";
-import getReportInfo from "../../services/getReportInfo";
-import generateReportPDF from "../../services/generateReportPDF";
-import generateQR from "../../services/generateQR";
 import DeleteReportsModal from "../modals/DeleteReportsModal";
-import ReportsFiltersModal from "../modals/ReportsFiltersModal";
-import generateDonorReportPDF from "../../services/generateDonorReportPDF";
+import ShortenedReportsFiltersModal from "../modals/ShortenedReportsFiltersModal";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import DonorRecollectionInfo from "./DonorRecollectionInfo";
-import ReportInfo from "./ReportInfo";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
+import ShortenedReportInfo from "./ShortenedReportInfo";
+import SearchingModal from "../modals/SearchingModal";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -106,108 +96,15 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
     );
 }
 
-function ExportOptionsMenu({
-    anchorEl,
-    setAnchorEl,
-    allData,
-    filteredData,
-    selectedData,
-}) {
-    const open = Boolean(anchorEl);
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleExportAll = () => {
-        //console.log(allData)
-        generateExcelFromJson(allData, "Reportes");
-        handleClose();
-    };
-
-    const handleExportVisible = () => {
-        //console.log(filteredData)
-        generateExcelFromJson(filteredData, "Reportes");
-        handleClose();
-    };
-
-    const handleExportSelected = () => {
-        //console.log(selectedData)
-        const dataToExport = allData.filter((report) =>
-            selectedData.includes(report.id_report)
-        );
-        //console.log(dataToExport)
-        generateExcelFromJson(dataToExport, "Reportes");
-        handleClose();
-    };
-
-    return (
-        <Menu anchorEl={anchorEl} open={open}>
-            <ClickAwayListener onClickAway={handleClose}>
-                <MenuList>
-                    <MenuItem onClick={handleExportAll}>
-                        <ListItemIcon>
-                            <Download />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar todos" />
-                    </MenuItem>
-                    <MenuItem onClick={handleExportVisible}>
-                        <ListItemIcon>
-                            <Visibility />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar visibles" />
-                    </MenuItem>
-                    <MenuItem onClick={handleExportSelected}>
-                        <ListItemIcon>
-                            <Check />
-                        </ListItemIcon>
-                        <ListItemText primary="Exportar selección" />
-                    </MenuItem>
-                </MenuList>
-            </ClickAwayListener>
-        </Menu>
-    );
-}
-
 function Toolbar({
     selected,
     setOpenFiltersModal,
-    setObjectsToDelete,
     filtersApplied,
     filteredData,
     allData,
     setVisibleData,
 }) {
 
-    const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
-    if (selected.length > 0)
-        return (
-            <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-                py={2}
-                bgcolor={theme.palette.primary.light}
-            >
-                <Typography
-                    variant="h4"
-                    component="div"
-                    color="secondary"
-                    sx={{ p: 2 }}
-                >
-                    {`${selected.length} ${selected.length === 1 ? "seleccionado" : "seleccionados"
-                        }`}
-                </Typography>
-                <ExportOptionsMenu
-                    selectedData={selected}
-                    filteredData={filteredData}
-                    allData={allData}
-                    anchorEl={exportOptionsAchorEl}
-                    setAnchorEl={setExportOptionsAnchorEl}
-                />
-            </Box>
-        );
 
     return (
         <Box
@@ -217,10 +114,10 @@ function Toolbar({
             alignItems="center"
             py={2}
         >
-            <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
+            <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexShrink: 2 }}>
                 Responsivas en proceso
             </Typography>
-            <Box>
+            <Box sx={{ flexGrow: 1, flexShrink: 0, display: "flex", flexDirection: "row", justifyContent: "end" }}>
                 <SearchField
                     filteredData={filteredData}
                     setVisibleData={setVisibleData}
@@ -243,16 +140,109 @@ function Toolbar({
                         Filtrar
                     </Button>
                 </Badge>
-                <ExportOptionsMenu
-                    selectedData={selected}
-                    filteredData={filteredData}
-                    allData={allData}
-                    anchorEl={exportOptionsAchorEl}
-                    setAnchorEl={setExportOptionsAnchorEl}
-                />
             </Box>
         </Box>
     );
+}
+
+function MobileToolbar({
+    selected,
+    setOpenFiltersModal,
+    filtersApplied,
+    filteredData,
+    allData,
+    setVisibleData,
+}) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openSearchModal, setOpenSearchModal] = useState(false)
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleFilter = (e) => {
+        setOpenFiltersModal(true);
+        handleClose();
+    }
+
+    const handleSearch = (e) => {
+        setOpenSearchModal(true);
+        handleClose();
+    }
+
+    return (
+        <>
+            <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+                py={2}
+            >
+                <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexShrink: 2 }}>
+                    Responsivas en proceso
+                </Typography>
+                <Box sx={{ flexGrow: 1, flexShrink: 0, display: "flex", flexDirection: "row", justifyContent: "end" }}>
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={open ? 'long-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                    >
+                        <MoreVert />
+                    </IconButton>
+                    <Menu
+                        id="long-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        slotProps={{
+                            paper: {
+                                style: {
+                                    maxHeight: 48 * 4.5,
+                                    width: '15ch',
+                                },
+                            },
+                        }}
+                    >
+                        <MenuList>
+                            <Badge
+                                color="error"
+                                overlap="circular"
+                                badgeContent=" "
+                                variant="dot"
+                                invisible={!filtersApplied}
+                            >
+                                <MenuItem onClick={handleFilter} color="info">
+                                    <ListItemIcon >
+                                        <FilterList />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Filtrar" />
+                                </MenuItem>
+                            </Badge>
+                            <MenuItem onClick={handleSearch}>
+                                <ListItemIcon>
+                                    <Search />
+                                </ListItemIcon>
+                                <ListItemText primary="Buscar" />
+                            </MenuItem>
+                        </MenuList>
+
+                    </Menu>
+                </Box>
+            </Box>
+            <SearchingModal isOpen={openSearchModal} setOpen={setOpenSearchModal} filteredData={filteredData} setVisibleData={setVisibleData} />
+        </>
+    )
+
 }
 
 function SearchField({ filteredData, setVisibleData }) {
@@ -280,8 +270,8 @@ function SearchField({ filteredData, setVisibleData }) {
                         report.email_usuario.toLowerCase().includes(search) ||
                         report.telefono_usuario.toLowerCase().includes(search) ||
                         report.calle_usuario.toLowerCase().includes(search) ||
-                        report.colonia_usuario.toLowerCase().includes(search) ||
-                        report.grupo_usuario.toLowerCase().includes(search)
+                        report.colonia_usuario.toLowerCase().includes(search)
+                        //report.grupo_usuario.toLowerCase().includes(search)
                     );
                 });
                 setVisibleData(newData);
@@ -309,9 +299,9 @@ function SearchField({ filteredData, setVisibleData }) {
                     variant="standard"
                     size="small"
                     sx={{
-                        mt: 1,
-                        width: showSearch ? "25rem" : 0,
+                        width: showSearch ? "15rem" : 0,
                         transition: "all 300ms ease-in",
+                        maxWidth: "100%",
                     }}
                     placeholder="Nombre, Apellido, Correo electrónico, RFC, Teléfono"
                     onKeyUp={handleSearch}
@@ -340,37 +330,43 @@ export default function ResiduesReportsTable({ data }) {
     const [reportToEdit, setReportToEdit] = useState({});
     const [filtersApplied, setFiltersApplied] = useState(false);
     const [visibleData, setVisibleData] = useState(data);
-    const [signType, setSignType] = useState("Generador");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const dataUser = useAuth();
 
-    console.log(data);
+    //console.log(data);
     const {
-        setTextOpenModalText,
         openModalCreateReport,
         openModalEditReport,
-        setOpenModalDeleteReport,
-        setOpenModalEditReport,
         openModalText,
         textOpenModalText,
         setOpenModalText,
         setOpenModalEditResidueReport,
-        setOpenModalEditFirma,
         setUpdateReportInfo,
         openModalFinishReport,
-        setOpenModalFinishReport,
     } = useContext(TodoContext);
-    //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
-    const [generalCheckboxStatus, setGeneralCheckboxStatus] =
-        useState("unchecked");
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
-    const [expanded, setExpanded] = useState(false);
     const [expandedRow, setExpandedRow] = useState(null);
+    const [desktop, setDesktop] = useState(window.innerWidth > 899);
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 899) {
+                setDesktop(true);
+            } else {
+                setDesktop(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
     const handleExpandClick = (id) => {
         setExpandedRow((prev) => (prev === id ? null : id));
     };
@@ -406,93 +402,11 @@ export default function ResiduesReportsTable({ data }) {
         setPage(0);
     };
 
-    const handleGenaeralCheckboxClick = (e) => {
-        e.stopPropagation();
-        if (generalCheckboxStatus === "checked") {
-            setGeneralCheckboxStatus("unchecked");
-        } else {
-            setGeneralCheckboxStatus("checked");
-        }
-    };
-
-    const handleSavePDF = async (report) => {
-        const validate = await validateReport(report.id_report);
-        if (validate == true) {
-            const data = await getReportInfo(report.id_report);
-
-            let key_centro = "";
-            if (data[0].key_centro_reciclaje != null) {
-                key_centro = data[0].key_centro_reciclaje;
-            }
-            if (data[0].key_centro_recoleccion != null) {
-                key_centro = data[0].key_centro_recoleccion;
-            }
-
-            const folio_busqueda =
-                data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
-
-            const qrImage = await generateQR(
-                "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-            );
-            if (report.grupo_usuario === "Donador") {
-                generateDonorReportPDF(report, data, qrImage);
-            } else {
-                generateReportPDF(report, data, qrImage);
-            }
-        } else {
-            setOpenModalText(true);
-            setTextOpenModalText(
-                "No se puede generar el reporte, aun no se han firmado todos los campos"
-            );
-        }
-    };
-
-    const onEditGeneratorSign = (id) => {
-        setReportToEdit(id);
-        setSignType("Generador");
-        setOpenModalEditFirma(true);
-    };
-
-    const onEditReceiverSign = (id) => {
-        setReportToEdit(id);
-        setSignType("Receptor");
-        setOpenModalEditFirma(true);
-    };
-
     const handleEditResidues = (report) => {
         setReportToEdit(report);
         setOpenModalEditResidueReport(true);
     };
 
-    const handleGeneralCheckboxChange = (e) => {
-        if (e.target.checked) {
-            setSelected(data.map((report) => report.id_report));
-        } else if (e.target.indeterminate) {
-            setSelected(selected);
-        } else {
-            setSelected([]);
-        }
-    };
-
-    const isRowSelected = (id) => selected.indexOf(id) !== -1;
-
-    const toggleSelected = (id) => {
-        if (isRowSelected(id)) {
-            setSelected(selected.filter((selectedId) => selectedId !== id));
-        } else {
-            setSelected([...selected, id]);
-        }
-    };
-
-    useEffect(() => {
-        if (selected.length === data.length && data.length !== 0) {
-            setGeneralCheckboxStatus("checked");
-        } else if (selected.length === 0) {
-            setGeneralCheckboxStatus("unchecked");
-        } else {
-            setGeneralCheckboxStatus("indeterminate");
-        }
-    }, [selected]);
 
     useEffect(() => {
         setSelected([]);
@@ -586,16 +500,28 @@ export default function ResiduesReportsTable({ data }) {
                     padding: 2,
                 }}
             >
-                <Toolbar
-                    selected={selected}
-                    allData={data}
-                    filteredData={filteredData}
-                    setOpenFiltersModal={setOpenFiltersModal}
-                    setObjectsToDelete={setReportsToDelete}
-                    filtersApplied={filtersApplied}
-                    setVisibleData={setVisibleData}
-                />
-                <TableContainer sx={{ maxHeight: "100vh" }}>
+                {desktop ? (
+                    <Toolbar
+                        selected={selected}
+                        allData={data}
+                        filteredData={filteredData}
+                        setOpenFiltersModal={setOpenFiltersModal}
+                        setObjectsToDelete={setReportsToDelete}
+                        filtersApplied={filtersApplied}
+                        setVisibleData={setVisibleData}
+                    />
+                ) : (
+                    <MobileToolbar
+                        selected={selected}
+                        allData={data}
+                        filteredData={filteredData}
+                        setOpenFiltersModal={setOpenFiltersModal}
+                        setObjectsToDelete={setReportsToDelete}
+                        filtersApplied={filtersApplied}
+                        setVisibleData={setVisibleData}
+                    />
+                )}
+                <TableContainer sx={{ minHeight: "calc(100vh - 350px)" }}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                             <TableRow>
@@ -604,17 +530,6 @@ export default function ResiduesReportsTable({ data }) {
                                         <Typography variant="subtitle2"> </Typography>
                                     </TableSortLabel>
                                 </TableCell>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={generalCheckboxStatus === "checked" ? true : false}
-                                        onClick={handleGenaeralCheckboxClick}
-                                        indeterminate={
-                                            generalCheckboxStatus === "indeterminate" ? true : false
-                                        }
-                                        onChange={handleGeneralCheckboxChange}
-                                    />
-                                </TableCell>
-
                                 <TableCell>
                                     <TableSortLabel direction="asc">
                                         <Typography variant="subtitle2">ID</Typography>
@@ -628,6 +543,16 @@ export default function ResiduesReportsTable({ data }) {
                                 <TableCell>
                                     <TableSortLabel direction="asc">
                                         <Typography variant="subtitle2">Apellidos</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel direction="asc">
+                                        <Typography variant="subtitle2">Correo electrónico</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel direction="asc">
+                                        <Typography variant="subtitle2">Teléfono</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -657,15 +582,8 @@ export default function ResiduesReportsTable({ data }) {
                                                 hover
                                                 role="checkbox"
                                                 key={report.id_report}
-                                                selected={isRowSelected(report.id_report)}
                                                 sx={{ cursor: "pointer" }}
-                                                aria-checked={
-                                                    isRowSelected(report.id_report) ? true : false
-                                                }
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    toggleSelected(report.id_report);
-                                                }}
+
                                             >
                                                 <TableCell>
                                                     <Button
@@ -681,22 +599,11 @@ export default function ResiduesReportsTable({ data }) {
                                                         )}
                                                     </Button>
                                                 </TableCell>
-                                                <TableCell>
-                                                    <Checkbox
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            toggleSelected(report.id_report);
-                                                        }}
-                                                        checked={isRowSelected(report.id_report)}
-                                                        inputProps={{
-                                                            "aria-labelledby": report.id_report,
-                                                        }}
-                                                    />
-                                                </TableCell>
-
                                                 <TableCell>{report.id_report}</TableCell>
                                                 <TableCell>{report.nombre_real_usuario}</TableCell>
                                                 <TableCell>{report.apellido_usuario}</TableCell>
+                                                <TableCell>{report.email_usuario}</TableCell>
+                                                <TableCell>{report.telefono_usuario}</TableCell>
                                                 <TableCell>
                                                     <Button
                                                         startIcon={<Add />}
@@ -724,7 +631,7 @@ export default function ResiduesReportsTable({ data }) {
                                                         timeout="auto"
                                                         unmountOnExit
                                                     >
-                                                        <ReportInfo request={report} />
+                                                        <ShortenedReportInfo request={report} />
                                                     </Collapse>
                                                 </TableCell>
                                             </TableRow>
@@ -745,11 +652,10 @@ export default function ResiduesReportsTable({ data }) {
                 />
             </Paper>
 
-            <ModalFirmar type={signType} id={reportToEdit} />
             <ModalResidueReport report={reportToEdit} />
             {/* <ModalFinishReport report={reportToEdit} /> */}
             <DeleteReportsModal reports={reportsToDelete} />
-            <ReportsFiltersModal
+            <ShortenedReportsFiltersModal
                 isOpen={openFiltersModal}
                 setOpen={setOpenFiltersModal}
                 data={dataForFilters}
