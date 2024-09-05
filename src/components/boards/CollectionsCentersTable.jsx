@@ -531,11 +531,11 @@ export default function CollectionsCentersTable({ data }) {
                                                 <TableCell>{`${center.total_m3} m`}<sup>3</sup></TableCell>
                                                 <TableCell align="center" width={140}>
                                                     <CustomProgressBar value={(center.total_kg * 100) / center.max_kg} />
-                                                    <Typography variant="subtitle2">{`${(center.total_kg * 100) / center.max_kg} %`}</Typography>
+                                                    <Typography variant="subtitle2">{`${Math.round((center.total_kg * 100) / center.max_kg)} %`}</Typography>
                                                 </TableCell>
                                                 <TableCell align="center" width={140}>
                                                     <CustomProgressBar value={(center.total_m3 * 100) / center.max_m3} />
-                                                    <Typography variant="subtitle2">{`${(center.total_m3 * 100) / center.max_m3} %`}</Typography>
+                                                    <Typography variant="subtitle2">{`${Math.round((center.total_m3 * 100) / center.max_m3)} %`}</Typography>
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
