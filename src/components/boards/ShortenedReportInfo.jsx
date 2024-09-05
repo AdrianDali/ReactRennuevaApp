@@ -1,9 +1,6 @@
-import { Box, Typography, Divider } from "@mui/material";
-import { format } from "date-fns";
+import { Box, Typography} from "@mui/material";
 
 export default function ShortenedReportInfo({ request }) {
-  console.log("ReportInfo");
-  console.log(request);
   return (
     <Box
       display="flex"
