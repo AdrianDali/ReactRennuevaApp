@@ -36,7 +36,6 @@ export default function CollectionCenterMenu() {
             }}
         >
             <CollectionsCentersTable data={collectionCenters} />
-            <CollectionCentersOccupation centers={collectionCenters} />
 
         </Container>
     );

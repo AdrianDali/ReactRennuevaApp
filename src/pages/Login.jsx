@@ -134,6 +134,9 @@ export default function SignInSide() {
       } else if (dataUser.groups[0] === "Centro") {
         console.log("Centro");
         navigate("/centro/home");
+      }else if (dataUser.groups[0] === "Reciclaje") {
+        console.log("Reciclaje");
+        navigate("/centrosAcopio");
       }
 
     } catch (error) {

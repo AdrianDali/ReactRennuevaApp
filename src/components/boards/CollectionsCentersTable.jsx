@@ -54,6 +54,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import ShortenedReportInfo from "./ShortenedReportInfo";
 import SearchingModal from "../modals/SearchingModal";
+import CustomProgressBar from "../customProgressBar";
+import CentersOcuppationFiltersModal from "../modals/CentersOccupationFiltersModal";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -115,7 +117,7 @@ function Toolbar({
             py={2}
         >
             <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexShrink: 2 }}>
-                Responsivas en proceso
+                Uso de centros de acopio
             </Typography>
             <Box sx={{ flexGrow: 1, flexShrink: 0, display: "flex", flexDirection: "row", justifyContent: "end" }}>
                 <SearchField
@@ -262,16 +264,9 @@ function SearchField({ filteredData, setVisibleData }) {
             if (search === "") {
                 setVisibleData(filteredData);
             } else {
-                const newData = filteredData.filter((report) => {
+                const newData = filteredData.filter((center) => {
                     return (
-                        report.nombre_real_usuario.toLowerCase().includes(search) ||
-                        report.apellido_usuario.toLowerCase().includes(search) ||
-                        report.rfc_usuario.toLowerCase().includes(search) ||
-                        report.email_usuario.toLowerCase().includes(search) ||
-                        report.telefono_usuario.toLowerCase().includes(search) ||
-                        report.calle_usuario.toLowerCase().includes(search) ||
-                        report.colonia_usuario.toLowerCase().includes(search)
-                        //report.grupo_usuario.toLowerCase().includes(search)
+                        center.collection_center_name.toLowerCase().includes(search)
                     );
                 });
                 setVisibleData(newData);
@@ -303,7 +298,7 @@ function SearchField({ filteredData, setVisibleData }) {
                         transition: "all 300ms ease-in",
                         maxWidth: "100%",
                     }}
-                    placeholder="Nombre, Apellido, Correo electrónico, RFC, Teléfono"
+                    placeholder="Nombre del centro"
                     onKeyUp={handleSearch}
                 />
             </ClickAwayListener>
@@ -351,6 +346,7 @@ export default function CollectionsCentersTable({ data }) {
     const [openFiltersModal, setOpenFiltersModal] = useState(false);
     const [expandedRow, setExpandedRow] = useState(null);
     const [desktop, setDesktop] = useState(window.innerWidth > 899);
+    const uniqueFolios = []
 
     useEffect(() => {
         const handleResize = () => {
@@ -372,25 +368,10 @@ export default function CollectionsCentersTable({ data }) {
     };
 
     const [dataForFilters, setDataForFilters] = useState({
-        colonia_usuario: [],
-        ciudad_usuario: [],
-        estado_usuario: [],
-        cp_usuario: [],
-        fecha_inicio_reporte: [],
-        centro_recoleccion: [],
-        centro_reciclaje: [],
-        compania_usuario: [],
-        firma_responsiva_generador: [],
-        firma_responsiva_receptor: [],
-        residuos_agregados: [],
-        transportista: [],
-        calle_reporte: [],
-        colonia_reporte: [],
-        ciudad_reporte: [],
-        estado_reporte: [],
-        cp_reporte: [],
-        status_reporte: [],
-        grupo_usuario: [],
+        max_kg: [],
+        max_m3: [],
+        total_kg: [],
+        total_m3: [],
     });
 
     const handleChangePage = (event, newPage) => {
@@ -402,91 +383,34 @@ export default function CollectionsCentersTable({ data }) {
         setPage(0);
     };
 
-    const handleEditResidues = (report) => {
-        setReportToEdit(report);
-        setOpenModalEditResidueReport(true);
-    };
-
 
     useEffect(() => {
         setSelected([]);
         setFilteredData(data);
         setVisibleData(data);
         if (data.length > 0) {
-            const colonia_usuario = [
-                ...new Set(data.map((report) => report.colonia_usuario)),
-            ];
-            const ciudad_usuario = [
-                ...new Set(data.map((report) => report.ciudad_usuario)),
-            ];
-            const estado_usuario = [
-                ...new Set(data.map((report) => report.estado_usuario)),
-            ];
-            const cp_usuario = [...new Set(data.map((report) => report.cp_usuario))];
-            const fecha_inicio_reporte = [
-                ...new Set(data.map((report) => new Date(report.fecha_inicio_reporte))),
-            ];
-            const centro_recoleccion = [
-                ...new Set(data.map((report) => report.centro_recoleccion)),
-            ];
-            const centro_reciclaje = [
-                ...new Set(data.map((report) => report.centro_reciclaje)),
-            ];
-            const compania_usuario = [
-                ...new Set(data.map((report) => report.compania_usuario)),
-            ];
-            const firma_responsiva_generador = [
-                ...new Set(data.map((report) => report.firma_responsiva_generador)),
-            ];
-            const firma_responsiva_receptor = [
-                ...new Set(data.map((report) => report.firma_responsiva_receptor)),
-            ];
-            const residuos_agregados = [
-                ...new Set(data.map((report) => report.residuos_agregados)),
-            ];
-            const transportista = [
-                ...new Set(data.map((report) => report.transportista)),
-            ];
-            const calle_reporte = [
-                ...new Set(data.map((report) => report.calle_reporte)),
-            ];
-            const colonia_reporte = [
-                ...new Set(data.map((report) => report.colonia_reporte)),
-            ];
-            const ciudad_reporte = [
-                ...new Set(data.map((report) => report.ciudad_reporte)),
-            ];
-            const estado_reporte = [
-                ...new Set(data.map((report) => report.estado_reporte)),
-            ];
-            const cp_reporte = [...new Set(data.map((report) => report.cp_reporte))];
-            const status_reporte = [
-                ...new Set(data.map((report) => report.status_reporte)),
-            ];
-            const grupo_usuario = [
-                ...new Set(data.map((report) => report.grupo_usuario)),
+            const max_kg = [
+                ...new Set(data.map((center) => center.max_kg)),
             ];
 
+            const max_m3 = [
+                ...new Set(data.map((center) => center.max_kg)),
+            ];
+
+            const total_kg = [
+                ...new Set(data.map((center) => center.max_kg)),
+            ];
+
+            const total_m3 = [
+                ...new Set(data.map((center) => center.max_kg)),
+            ];
+
+
             setDataForFilters({
-                colonia_usuario,
-                ciudad_usuario,
-                estado_usuario,
-                cp_usuario,
-                fecha_inicio_reporte,
-                centro_recoleccion,
-                centro_reciclaje,
-                compania_usuario,
-                firma_responsiva_generador,
-                firma_responsiva_receptor,
-                residuos_agregados,
-                transportista,
-                calle_reporte,
-                colonia_reporte,
-                ciudad_reporte,
-                estado_reporte,
-                cp_reporte,
-                status_reporte,
-                grupo_usuario,
+                max_kg,
+                max_m3,
+                total_kg,
+                total_m3,
             });
         }
     }, [data]);
@@ -525,7 +449,7 @@ export default function CollectionsCentersTable({ data }) {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                             <TableRow>
-                            <TableCell>
+                                <TableCell>
                                     <TableSortLabel direction="asc">
                                         <Typography variant="subtitle2"></Typography>
                                     </TableSortLabel>
@@ -593,7 +517,7 @@ export default function CollectionsCentersTable({ data }) {
                                                             handleExpandClick(center.collection_center_name);
                                                         }}
                                                     >
-                                                        {expandedRow === center.collection_center_name? (
+                                                        {expandedRow === center.collection_center_name ? (
                                                             <KeyboardArrowUpIcon />
                                                         ) : (
                                                             <KeyboardArrowDownIcon />
@@ -603,29 +527,49 @@ export default function CollectionsCentersTable({ data }) {
                                                 <TableCell>{center.collection_center_name}</TableCell>
                                                 <TableCell>{`${center.max_kg} Kg`}</TableCell>
                                                 <TableCell>{`${center.total_kg} Kg`}</TableCell>
-                                                <TableCell>{`${center.max_m3 } m`}<sup>3</sup></TableCell>
-                                                <TableCell>{`${center.total_m3 } m`}<sup>3</sup></TableCell>
-                                                <TableCell>{`${(center.total_kg * 100)/center.max_kg} %`}</TableCell>
-                                                <TableCell>{`${(center.total_m3 * 100)/center.max_kg} %`}</TableCell>
+                                                <TableCell>{`${center.max_m3} m`}<sup>3</sup></TableCell>
+                                                <TableCell>{`${center.total_m3} m`}<sup>3</sup></TableCell>
+                                                <TableCell align="center" width={140}>
+                                                    <CustomProgressBar value={(center.total_kg * 100) / center.max_kg} />
+                                                    <Typography variant="subtitle2">{`${(center.total_kg * 100) / center.max_kg} %`}</Typography>
+                                                </TableCell>
+                                                <TableCell align="center" width={140}>
+                                                    <CustomProgressBar value={(center.total_m3 * 100) / center.max_m3} />
+                                                    <Typography variant="subtitle2">{`${(center.total_m3 * 100) / center.max_m3} %`}</Typography>
+                                                </TableCell>
                                             </TableRow>
-                                            {
-                                                /*
                                             <TableRow>
                                                 <TableCell
-                                                    style={{ paddingBottom: 0, paddingTop: 0 }}
+                                                    style={{ paddingBottom: 0, paddingTop: 0, border: "none" }}
                                                     colSpan={18}
                                                 >
                                                     <Collapse
-                                                        in={expandedRow === report.id_report}
+                                                        in={expandedRow === center.collection_center_name}
                                                         timeout="auto"
                                                         unmountOnExit
                                                     >
-                                                        <ShortenedReportInfo request={report} />
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <Typography variant="h5" gutterBottom component="div">
+                                                                Folios
+                                                            </Typography>
+                                                            <ul>
+                                                                {   
+                                                                    center.details.map((detail, index) => {
+                                                                        if(!uniqueFolios.includes(detail.ReportFolio)){
+                                                                            uniqueFolios.push(detail.ReportFolio)
+                                                                            return (
+                                                                                <Typography variant="body1" gutterBottom component="div">
+                                                                                    {index + 1}. {detail.ReportFolio ? detail.ReportFolio : "Sin folio"}
+                                                                                </Typography>
+                                                                            )
+                                                                        }
+                                                                    })
+                                                                }
+                                                            </ul>
+                                                        </Box>
                                                     </Collapse>
                                                 </TableCell>
                                             </TableRow>
-                                            */
-                                            }   
                                         </>
                                     ))
                             )}
@@ -646,7 +590,7 @@ export default function CollectionsCentersTable({ data }) {
             <ModalResidueReport report={reportToEdit} />
             {/* <ModalFinishReport report={reportToEdit} /> */}
             <DeleteReportsModal reports={reportsToDelete} />
-            <ShortenedReportsFiltersModal
+            <CentersOcuppationFiltersModal
                 isOpen={openFiltersModal}
                 setOpen={setOpenFiltersModal}
                 data={dataForFilters}
@@ -659,37 +603,43 @@ export default function CollectionsCentersTable({ data }) {
                 setAnchorEl={setRowContextMenuAnchorEl}
             />
             {openModalFinishReport && <ModalFinishReport report={reportToEdit} />}
-            {openModalCreateReport && (
-                <ModalReport mode={"CREAR"} creatorUser={dataUser.user} />
-            )}
-            {openModalEditReport && (
-                <ModalReport
-                    mode={"EDITAR"}
-                    report={reportToEdit}
-                    creatorUser={dataUser.user}
-                />
-            )}
-            {openModalText && (
-                <Dialog
-                    open={openModalText}
-                    onClose={() => {
-                        setOpenModalText(false);
-                        setUpdateReportInfo((prev) => !prev);
-                    }}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            {textOpenModalText}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
-                    </DialogActions>
-                </Dialog>
-            )}
-        </Box>
+            {
+                openModalCreateReport && (
+                    <ModalReport mode={"CREAR"} creatorUser={dataUser.user} />
+                )
+            }
+            {
+                openModalEditReport && (
+                    <ModalReport
+                        mode={"EDITAR"}
+                        report={reportToEdit}
+                        creatorUser={dataUser.user}
+                    />
+                )
+            }
+            {
+                openModalText && (
+                    <Dialog
+                        open={openModalText}
+                        onClose={() => {
+                            setOpenModalText(false);
+                            setUpdateReportInfo((prev) => !prev);
+                        }}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{textOpenModalText}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                {textOpenModalText}
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
+                        </DialogActions>
+                    </Dialog>
+                )
+            }
+        </Box >
     );
 }

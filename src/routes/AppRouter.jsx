@@ -38,6 +38,7 @@ import ContainerMenu from '../pages/Menus/ContainerMenu.jsx';
 import CentroList from '../containers/ListSideBarCentro/CentroList.jsx';
 import  ResiduesMenu  from '../pages/Menus/ResiduesMenu.jsx'
 import CollectionCenterMenu from '../pages/Menus/CollectionCenterMenu.jsx';
+import ReciclajeList from '../containers/ListSideBarReciclaje.jsx';
 
 function App() {
 
@@ -116,7 +117,7 @@ function App() {
     //menu para grupo de contenedor
     {path:'/centro/home', element: <CentroLayout List={<CentroList/>}><ContainerMenu/></CentroLayout> },
     {path : '/centro/residuos', element: <CentroLayout List={<CentroList/>}><ResiduesMenu/> </CentroLayout>},
-    {path : '/centrosAcopio', element: <CentroLayout List={<AdminList/>}><CollectionCenterMenu/> </CentroLayout>},
+    {path : '/centrosAcopio', element: <CentroLayout List={<ReciclajeList/>}><CollectionCenterMenu/> </CentroLayout>},
 
 
     
