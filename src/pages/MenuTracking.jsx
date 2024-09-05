@@ -29,6 +29,7 @@ function MenuTracking() {
             setDidSearch(true);
         }
         try {
+            console.log(folio)
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/get-pdf-report/`, { ReportFolio: folio });
             const data = response.data;
             console.log("Respuesta del servidor:");

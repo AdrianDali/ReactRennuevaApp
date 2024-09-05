@@ -846,6 +846,8 @@ useEffect(() => {
           <Button type="submit" variant="contained" fullWidth>{mode}</Button>
         </form> ) : (
           mode === "BORRAR" ? (
+            console.log("###################### DELETE USER ##################################"),
+            console.log(users),
             <DeleteUserModal users={users} />
             
           ) : (

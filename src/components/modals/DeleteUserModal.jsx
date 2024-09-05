@@ -79,7 +79,7 @@ export default function DeleteUserModal({ users }) {
             <ConfirmationModal isOpen={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator} title={title} severity='error' loading={loading} onConfirm={async () => {
                 await handleDeleteGenerators();
             }}>
-                {body}
+
             </ConfirmationModal>
 
             <NotificationModal 

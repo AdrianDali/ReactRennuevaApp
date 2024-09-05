@@ -131,7 +131,7 @@ export default function SignInSide() {
       } else if (dataUser.groups[0] === "Conductor") {
         console.log("Conductor");
         navigate("/driver/assigned-orders");
-      } else if (dataUser.groups[0] === "Centro") {
+      } else if (dataUser.groups[0] === "Acopio") {
         console.log("Centro");
         navigate("/centro/home");
       }
