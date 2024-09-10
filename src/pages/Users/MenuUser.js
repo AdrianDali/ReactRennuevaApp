@@ -40,20 +40,27 @@ function MenuUser() {
   console.log("dataUser", dataUser);
   const [donorRequests, setDonorRequests] = useState([]);
   const [centers, setCenters] = useState([]);
+  const [recyclingCenters, setRecyclingCenters] = useState([]);
+  const [collectionCenters, setCollectionCenters] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch users with group
         const usersResponse = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`);
-        console.log("Users:", usersResponse.data.users);
         setDonorRequests(usersResponse.data.users);
-
         // Fetch centers
         const centersResponse = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-centers/`);
-        console.log("###################### CENTROS DE RECOLECCION ##################################");
-        console.log(centersResponse.data);
         setCenters(centersResponse.data);
+
+        const recyclingCenters = await axios.get(`${process.env.REACT_APP_API_URL}/new-get-all-recycling-center/`);
+        console.log("recyclingCenters", recyclingCenters.data);
+        setRecyclingCenters(recyclingCenters.data); 
+        
+        const collectionCenters = await axios.get(`${process.env.REACT_APP_API_URL}/new-get-all-collection-center/`);  
+        console.log("collectionCenters", collectionCenters.data); 
+        setCollectionCenters(collectionCenters.data);
+        
         setUpdateUserInfo(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -75,7 +82,7 @@ function MenuUser() {
             height: "100%",
           }}
         >
-          <UserInfoTable data={donorRequests} centers={centers} />
+          <UserInfoTable data={donorRequests} centers={centers} recyclingCenters={recyclingCenters} collectionCenters={collectionCenters} />  
         </Container>
       ) : (
         <Box
@@ -94,101 +101,3 @@ function MenuUser() {
 }
 
 export { MenuUser };
-
-    
-
-
-//   return (
-//     <>
-//       <CssBaseline />
-//       {dataUser && dataUser.groups[0] === "Administrador" ? (
-      
-//       <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
-//       <Grid container spacing={3}>
-//             <Grid item xs={12}>
-//               <Paper
-//                 sx={{
-//                   p: 3,
-//                   display: "flex",
-//                   flexDirection: "column",
-//                   alignItems: "center",
-//                   justifyContent: "center",
-//                 }}
-//               >
-//                 <Title>Usuarios</Title>
-//                 <CUDButtons model="User" />
-//                 <Title>Usuarios Creados</Title>
-//                 <UserTable />
-//               </Paper>
-//             </Grid>
-//             <Grid item xs={12}>
-//               <Paper
-//                 sx={{
-//                   p: 4,
-//                   display: "flex",
-//                   flexDirection: "column",
-//                   height: 580,
-//                 }}
-//               >
-//                 <BarsChart />
-//               </Paper>
-//             </Grid>
-//           </Grid>
-        
-
-//         {openModalCreate && (
-//           <ModalUser mode={"CREAR"} creatorUser={dataUser.user}>
-//             La funcionalidad de agregar TODO
-//           </ModalUser>
-//         )}
-//         {openModalEdit && (
-//           <ModalUser mode={"EDITAR"}  creatorUser={dataUser.user} >
-//             La funcionalidad de editar TODO
-//           </ModalUser>
-//         )}
-//         {openModalDelete && (
-//           <ModalUser mode={"BORRAR"}  creatorUser={dataUser.user} >
-//             La funcionalidad de borrar TODO
-//           </ModalUser>
-//         )}
-
-//         {openModalText && (
-//           <Dialog
-//             open={openModalText}
-//             onClose={() => setOpenModalText(false)}
-//             aria-labelledby="alert-dialog-title"
-//             aria-describedby="alert-dialog-description"
-//           >
-//             <DialogTitle id="alert-dialog-title">
-//               {textOpenModalText}
-//             </DialogTitle>
-//             <DialogContent>
-//               <DialogContentText id="alert-dialog-description">
-//                 {textOpenModalText}
-//               </DialogContentText>
-//             </DialogContent>
-//             <DialogActions>
-//               <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
-//             </DialogActions>
-//           </Dialog>
-//         )}
-//       </Container>
-//       ) : (
-//         <Box
-//           sx={{
-//             display: "flex",
-//             justifyContent: "center",
-//             alignItems: "center",
-//             height: "100vh",
-//             margin: "auto",
-            
-//           }}
-//         >
-//           <Typography variant="h5">No Access</Typography>
-//         </Box>
-//       )}
-//     </>
-//   );
-// }
-
-// export { MenuUser };

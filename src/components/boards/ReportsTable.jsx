@@ -910,6 +910,7 @@ export default function ReportsTable({ data }) {
                                 e.stopPropagation();
                                 setOpenModalFinishReport(true);
                                 setReportToEdit(report);
+                                await handleSavePDF(report)
                               } else {
                                 setOpenModalText(true);
                                 setTextOpenModalText(

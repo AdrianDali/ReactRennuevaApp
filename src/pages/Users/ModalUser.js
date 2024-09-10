@@ -9,17 +9,24 @@ import Title from '../../components/Title';
 import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import DeleteUserModal from '../../components/modals/DeleteUserModal.jsx';
 
 
 
 
-function ModalUser({ mode , creatorUser, userToEdit = null, centers = [] }) {
+function ModalUser({ mode , creatorUser, userToEdit = null, centers = [], recyclingCenters = null, collectionCenters = null }) {
   console.log("###################### USER TO EDIT ##################################")
   console.log(userToEdit)
   console.log("###################### CREATOR USER ##################################")
   console.log(creatorUser)
   console.log("###################### CENTERS ##################################")
   console.log(centers)
+  console.log("###################### RECYCLING CENTERS ##################################")
+  console.log(recyclingCenters)
+  console.log("###################### COLLECTION CENTERS ##################################")
+  console.log(collectionCenters)
+  //console.log("###################### USER TO EDIT ##################################")
+  
   //groups, users, companies se obtienen de una petición a la API
   const [groups, setGroups] = useState([""])
   const [users, setUsers] = useState([""])
@@ -42,6 +49,24 @@ function ModalUser({ mode , creatorUser, userToEdit = null, centers = [] }) {
   const [address_num_int, setAddressNumInt] = useState(userToEdit ? userToEdit.address_num_int : "");
   const [old_user, setOldUser] = useState(userToEdit ? userToEdit.user : "");
   const [razon_social, setRazonSocial] = useState(userToEdit ? userToEdit.razon_social : "");
+
+  //logica para centros de reciclaje y centrons de acopio
+  const [reciclingCenter, setReciclingCenter] = useState(() => {
+    if (userToEdit) {
+      const { recycling_center } = userToEdit;
+      return recycling_center;
+    }
+    return '';
+  });
+
+  const [collectionCenter, setCollectionCenter] = useState(() => {
+    if (userToEdit) {
+      const { collection_center } = userToEdit;
+      return collection_center;
+    }
+    return '';
+  });
+  
   const [center, setCenter] = useState(() => {
     if (userToEdit) {
       const { recycling_center, collection_center } = userToEdit;
@@ -93,8 +118,7 @@ useEffect(() => {
     }
     if (openModalDelete) {
       setOpenModalDelete(false);
-    }
-  };
+    }};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -354,7 +378,6 @@ useEffect(() => {
 
   }, [center, centers]);
 
-
   const handleSelectChange = (event) => {
     const selectedOption = event.target.value; // Obtener la opción seleccionada
     console.log(selectedOption)
@@ -386,13 +409,14 @@ useEffect(() => {
     }
     if (mode === "EDITAR") {
 
-
-
+   
+        setCenterEdit(currentInputValue.CenterName)
+      
       console.log("###################### EDITAR ##################################")
       console.log(currentInputValue)
       console.log("###################### EDITAR ##################################")
       setState(currentInputValue);
-      setCenterEdit(currentInputValue.CenterName)
+      
       setCenter(currentInputValue)
       
 
@@ -433,7 +457,8 @@ useEffect(() => {
 
       }}>
         <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
-        <form onSubmit={handleSubmit} >
+        {mode === "CREAR"  || mode === "EDITAR" ? (
+          <form onSubmit={handleSubmit} >
           <Box mb={2}>
             <Title> Usuario</Title>
           </Box>
@@ -566,18 +591,43 @@ useEffect(() => {
               </Select>
             </FormControl>
             {
-              group === "Centro"
+              group === "Acopio" 
               && (
                 <FormControl fullWidth margin='dense'>
-                  <InputLabel id="centro-select-label">Centro de recolección</InputLabel>
+                  <InputLabel id="centro-select-label">Centro de Acopio</InputLabel>
                   <Select
                     labelId="centro-select-label"
                     id="centro-select"
                     required
-                    value={centers.find((cen) => cen.CenterName === center)}  
+                    value={collectionCenters.find((cen) => cen.CenterName === center)}  
                     onChange={(e) => { handleInputChange(e, setCenter, mode) }}
                   >
-                    {centers.map((option, index) => (
+                    {collectionCenters.map((option, index) => (
+                      console.log("###################### OPTION ##################################"),
+                      console.log(option),
+                      console.log(index),
+                      <MenuItem key={index} value={option}>{option.CenterName}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+
+              )
+
+            }
+            {
+              group === "Reciclaje"  
+              && (
+                <FormControl fullWidth margin='dense'>
+                  <InputLabel id="centro-select-label">Centro de Reciclaje</InputLabel>
+                  <Select
+                    labelId="centro-select-label"
+                    id="centro-select"
+                    required
+                    value={recyclingCenters.find((cen) => cen.CenterName === center)}  
+                    onChange={(e) => { handleInputChange(e, setCenter, mode) }}
+                  >
+                    {recyclingCenters.map((option, index) => (
                       console.log("###################### OPTION ##################################"),
                       console.log(option),
                       console.log(index),
@@ -624,7 +674,7 @@ useEffect(() => {
               onChange={(e) => handleInputChange(e, setState, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && state.length > 50}
@@ -644,7 +694,7 @@ useEffect(() => {
               onChange={(e) => handleInputChange(e, setCity, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50, // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && city.length > 50}
@@ -664,7 +714,7 @@ useEffect(() => {
               onChange={(e) => handleInputChange(e, setLocality, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && locality.length > 50}
@@ -683,7 +733,7 @@ useEffect(() => {
               onChange={(e) => handleInputChange(e, setStreet, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && street.length > 50}
@@ -706,7 +756,7 @@ useEffect(() => {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 5
               }}
               margin="dense"
@@ -729,7 +779,7 @@ useEffect(() => {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 5
               }}
               margin="dense"
@@ -755,7 +805,7 @@ useEffect(() => {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 5
               }}
               margin="dense"
@@ -779,7 +829,7 @@ useEffect(() => {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 100
               }}
               margin="dense"
@@ -794,7 +844,17 @@ useEffect(() => {
           </Box>
 
           <Button type="submit" variant="contained" fullWidth>{mode}</Button>
-        </form>
+        </form> ) : (
+          mode === "BORRAR" ? (
+            console.log("###################### DELETE USER ##################################"),
+            console.log(users),
+            <DeleteUserModal users={users} />
+            
+          ) : (
+           null
+          )
+        )}
+          
       </Box>
 
 

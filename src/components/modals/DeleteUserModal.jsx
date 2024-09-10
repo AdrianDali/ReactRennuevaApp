@@ -30,7 +30,7 @@ export default function DeleteUserModal({ users }) {
         setLoading(true);
         if (userData === null) return;
         const creator = userData.user;
-        const usersToDelete = users.map(generator => ({ email: generator, 'creator_user': creator }));
+        const usersToDelete = users.users.map(generator => ({ email: generator, 'creator_user': creator }));
         const promises = deleteUsers(usersToDelete);
         await promises.then(async (response) => {
             setResult(response);
@@ -44,7 +44,7 @@ export default function DeleteUserModal({ users }) {
 
     const body = (
         <Box px={1} pt={1}>
-            <Typography variant='body1'>Se eliminarán los siguientes generadores:</Typography>
+            <Typography variant='body1'>Se eliminarán los siguientes generadorssssses:</Typography>
             <List sx={{ p: 0, pt: 1, pl: 1 }} >
                 {users.map(generator => <ListItem sx={{ p: 0 }} key={generator}>
                     <Typography variant='body1'>{generator}</Typography>
@@ -79,7 +79,7 @@ export default function DeleteUserModal({ users }) {
             <ConfirmationModal isOpen={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator} title={title} severity='error' loading={loading} onConfirm={async () => {
                 await handleDeleteGenerators();
             }}>
-                {body}
+
             </ConfirmationModal>
 
             <NotificationModal 
