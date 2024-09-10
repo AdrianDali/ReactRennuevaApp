@@ -37,7 +37,8 @@ import {
     Check,
     Edit,
     Close,
-    MoreVert
+    MoreVert,
+    AssignmentInd
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
@@ -56,6 +57,7 @@ import ShortenedReportInfo from "./ShortenedReportInfo";
 import SearchingModal from "../modals/SearchingModal";
 import CustomProgressBar from "../customProgressBar";
 import CentersOcuppationFiltersModal from "../modals/CentersOccupationFiltersModal";
+import AssignModal from "../modals/AssignModal";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -105,7 +107,9 @@ function Toolbar({
     filteredData,
     allData,
     setVisibleData,
+    folios
 }) {
+    const [openAssignModal, setOpenAssignModal] = useState(false);
 
 
     return (
@@ -142,7 +146,18 @@ function Toolbar({
                         Filtrar
                     </Button>
                 </Badge>
+                <Button
+                    variant="contained"
+                    size="large"
+                    color="primary"
+                    startIcon={<AssignmentInd />}
+                    sx={{ m: 0, mx: 2 }}
+                    onClick={() => setOpenAssignModal(true)}
+                >
+                    Asignar
+                </Button>
             </Box>
+            <AssignModal setOpen={setOpenAssignModal} isOpen={openAssignModal} folios={folios}/>
         </Box>
     );
 }
@@ -426,6 +441,7 @@ export default function CollectionsCentersTable({ data }) {
             >
                 {desktop ? (
                     <Toolbar
+                        folios={uniqueFolios}
                         selected={selected}
                         allData={data}
                         filteredData={filteredData}
@@ -553,9 +569,9 @@ export default function CollectionsCentersTable({ data }) {
                                                                 Folios
                                                             </Typography>
                                                             <ul>
-                                                                {   
+                                                                {
                                                                     center.details.map((detail, index) => {
-                                                                        if(!uniqueFolios.includes(detail.ReportFolio)){
+                                                                        if (!uniqueFolios.includes(detail.ReportFolio)) {
                                                                             uniqueFolios.push(detail.ReportFolio)
                                                                             return (
                                                                                 <Typography variant="body1" gutterBottom component="div">

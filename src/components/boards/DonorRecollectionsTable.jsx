@@ -451,12 +451,16 @@ export default function DonorRecollectionsTable({ data }) {
                                         <Typography variant="subtitle2">Estado</Typography>
                                     </TableSortLabel>
                                 </TableCell>
-                                <TableCell>
-                                    <Typography variant="subtitle2">Editar</Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="subtitle2">Borrar</Typography>
-                                </TableCell>
+                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica") &&
+                                    <>
+                                        <TableCell>
+                                            <Typography variant="subtitle2">Editar</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="subtitle2">Borrar</Typography>
+                                        </TableCell>
+                                    </>
+                                }
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -526,25 +530,30 @@ export default function DonorRecollectionsTable({ data }) {
                                                 <TableCell>
                                                     <Chip label={statusText(request.status)} color={statusColor(request.status)} />
                                                 </TableCell>
-                                                <TableCell>
-                                                    <IconButton
-                                                        onClick={(e) => {
-                                                            e.stopPropagation()
-                                                            setRecollectionToEdit(request)
-                                                            setOpenEditModal(true)
-                                                        }}>
-                                                        <Edit />
-                                                    </IconButton>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <IconButton color="error" onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        setRecollectionsToDelete([request])
-                                                        setOpenModalDeleteGenerator(true)
-                                                    }}>
-                                                        <Delete />
-                                                    </IconButton>
-                                                </TableCell>
+                                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica") &&
+                                                    <>
+                                                        <TableCell>
+                                                            <IconButton
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation()
+                                                                    setRecollectionToEdit(request)
+                                                                    setOpenEditModal(true)
+                                                                }}>
+                                                                <Edit />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <IconButton color="error" onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                setRecollectionsToDelete([request])
+                                                                setOpenModalDeleteGenerator(true)
+                                                            }}>
+                                                                <Delete />
+                                                            </IconButton>
+                                                        </TableCell>
+
+                                                    </>
+                                                }
                                             </TableRow>
                                             <TableRow >
                                                 <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottomWidth: showCompleteInfo === request.id ? 1 : 0 }} colSpan={10}>

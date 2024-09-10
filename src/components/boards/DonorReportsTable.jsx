@@ -490,9 +490,6 @@ export default function DonorReportsTable({ data }) {
                                     <Typography variant="subtitle2">Talon</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="subtitle2">Responsiva</Typography>
-                                </TableCell>
-                                <TableCell>
                                     <Typography variant="subtitle2">Borrar</Typography>
                                 </TableCell>
                             </TableRow>
@@ -584,20 +581,6 @@ export default function DonorReportsTable({ data }) {
                                                         }}
                                                     >
                                                         Generar Talon
-                                                    </Button>
-                                                </TableCell>
-                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
-                                                    <Button
-                                                        startIcon={<SaveAlt />}
-                                                        variant="contained"
-                                                        size="small"
-                                                        color={report.firma_responsiva_generador && report.firma_responsiva_receptor ? "success" : "warning"}
-                                                        onClick={async (e) => {
-                                                            e.stopPropagation();
-                                                            await handleSavePDF(report)
-                                                        }}
-                                                    >
-                                                        Generar Responsiva
                                                     </Button>
                                                 </TableCell>
                                                 <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
