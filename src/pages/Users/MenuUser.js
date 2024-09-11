@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useEffect , useState} from "react";
 import "../../styles/user/MenuUser.css";
 import { TodoContext } from "../../context/index.js";
 import { ModalUser } from "./ModalUser.js";
 import UserTable from "../../components/Table";
 import CUDButtons from "../../containers/CUDButtons";
 import BarsChart from "../../components/BarsChart";
-import {createTheme, ThemeProvider } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import CssBaseline from "@mui/material/CssBaseline";
-import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Title from "../../components/Title";
 import Dialog from "@mui/material/Dialog";
@@ -19,18 +17,14 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import getCookieValue from "../../services/GetCookie.js";
-import GetUser from "../../services/ApiGetUser.js"
 import { Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
-import { CommentsDisabledOutlined } from "@mui/icons-material";
-import theme from '../../context/theme';
+import axios from "axios";
+import UserInfoTable from "../../components/boards/UsersInfoTable.jsx";
+import { set } from "date-fns";
 
 function MenuUser() {
 
-  const defaultTheme = createTheme();
-  const navigate = useNavigate();
   const {
     textOpenModalText,
     openModalCreate,
@@ -38,88 +32,58 @@ function MenuUser() {
     openModalDelete,
     openModalText,
     setOpenModalText,
+    updateUserInfo,
+    setUpdateUserInfo,
   } = useContext(TodoContext);
   
   const dataUser = useAuth();
-  console.log("dataUser", dataUser)
-  
+  console.log("dataUser", dataUser);
+  const [donorRequests, setDonorRequests] = useState([]);
+  const [centers, setCenters] = useState([]);
+  const [recyclingCenters, setRecyclingCenters] = useState([]);
+  const [collectionCenters, setCollectionCenters] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch users with group
+        const usersResponse = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`);
+        setDonorRequests(usersResponse.data.users);
+        // Fetch centers
+        const centersResponse = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-centers/`);
+        setCenters(centersResponse.data);
+
+        const recyclingCenters = await axios.get(`${process.env.REACT_APP_API_URL}/new-get-all-recycling-center/`);
+        console.log("recyclingCenters", recyclingCenters.data);
+        setRecyclingCenters(recyclingCenters.data); 
+        
+        const collectionCenters = await axios.get(`${process.env.REACT_APP_API_URL}/new-get-all-collection-center/`);  
+        console.log("collectionCenters", collectionCenters.data); 
+        setCollectionCenters(collectionCenters.data);
+        
+        setUpdateUserInfo(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [updateUserInfo]);
 
   return (
     <>
-      <CssBaseline />
-      {dataUser && dataUser.groups[0] === "Administrador" ? (
-      
-      <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
-      <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper
-                sx={{
-                  p: 3,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Title>Usuarios</Title>
-                <CUDButtons model="User" />
-                <Title>Usuarios Creados</Title>
-                <UserTable />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper
-                sx={{
-                  p: 4,
-                  display: "flex",
-                  flexDirection: "column",
-                  height: 580,
-                }}
-              >
-                <BarsChart />
-              </Paper>
-            </Grid>
-          </Grid>
-        
-
-        {openModalCreate && (
-          <ModalUser mode={"CREAR"} creatorUser={dataUser.user}>
-            La funcionalidad de agregar TODO
-          </ModalUser>
-        )}
-        {openModalEdit && (
-          <ModalUser mode={"EDITAR"}  creatorUser={dataUser.user} >
-            La funcionalidad de editar TODO
-          </ModalUser>
-        )}
-        {openModalDelete && (
-          <ModalUser mode={"BORRAR"}  creatorUser={dataUser.user} >
-            La funcionalidad de borrar TODO
-          </ModalUser>
-        )}
-
-        {openModalText && (
-          <Dialog
-            open={openModalText}
-            onClose={() => setOpenModalText(false)}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {textOpenModalText}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                {textOpenModalText}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
-            </DialogActions>
-          </Dialog>
-        )}
-      </Container>
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") ? (
+        <Container
+          maxWidth={false}
+          sx={{
+            flexGrow: 1,
+            overflow: "auto",
+            py: 3,
+            height: "100%",
+          }}
+        >
+          <UserInfoTable data={donorRequests} centers={centers} recyclingCenters={recyclingCenters} collectionCenters={collectionCenters} />  
+        </Container>
       ) : (
         <Box
           sx={{
@@ -127,11 +91,9 @@ function MenuUser() {
             justifyContent: "center",
             alignItems: "center",
             height: "100vh",
-            margin: "auto",
-            
           }}
         >
-          <Typography variant="h5">No Access</Typography>
+          <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
     </>

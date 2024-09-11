@@ -1,16 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { TodoContext } from "../context/index.js";
-import { ModalUser } from "./Users/ModalUser";
-import GeneratorTable from "../components/GeneratorTable";
-import BarsChartVehicle from "../components/BarsChartVehicle";
 import {
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   Paper,
   Container,
-  Toolbar,
   CssBaseline,
 } from "@mui/material";
 import Title from "../components/Title";
@@ -24,52 +18,44 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import CarrierTable from "../components/CarrierTable.jsx";
 import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
-import getCookieValue from "../services/GetCookie.js";
-import GetUser from "../services/ApiGetUser.js";
-import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth.js";
+import CarriersTable from "../components/boards/CarriersTable.jsx";
+import axios from "axios";
 
 function MenuCarrier() {
   const {
     openModalCreateCarrier,
-    setOpenModalCreateCarrier,
-    setOpenModalEditCarrier,
     openModalEditCarrier,
-    setOpenModalDeleteCarrier,
     openModalDeleteCarrier,
     openModalText,
     setOpenModalText,
     textOpenModalText,
+    updateCarrierInfo,
   } = useContext(TodoContext);
-
+  const [carriers, setCarriers] = useState([]);
   const dataUsers = useAuth();
 
-  // ... otros handlers y useEffect ...
+  useEffect(() => {
+    axios
+        .get(`${process.env.REACT_APP_API_URL}/get-all-carrier/`)
+        .then(response => {
+          console.log(response.data);
+            setCarriers(response.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}, [updateCarrierInfo]);
 
- 
+  // ... otros handlers y useEffect ...
 
   return (
     <>
       <CssBaseline />
-      {dataUsers && (dataUsers.groups[0] === "Administrador"  || dataUsers.groups[0] === "Calidad" ) ? (
+      {dataUsers && (dataUsers.groups[0] === "Administrador"  || dataUsers.groups[0] === "Calidad" || dataUsers.groups[0] === "Registro" ) ? (
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
+          <CarriersTable data={carriers}/>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper
-                sx={{
-                  p: 3,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Title>Transportista</Title>
-                <CUDButtons model="Carrier" />
-                <Title>Transportistas Creados</Title>
-                <CarrierTable />
-              </Paper>
-            </Grid>
             <Grid item xs={12}>
               <Paper
                 sx={{
@@ -83,42 +69,6 @@ function MenuCarrier() {
               </Paper>
             </Grid>
           </Grid>
-
-          {openModalCreateCarrier && (
-            <ModalCarrier mode={"CREAR"} creatorUser={dataUsers.user}> 
-              La funcionalidad de agregar TODO
-            </ModalCarrier>
-          )}
-          {openModalEditCarrier && (
-            <ModalCarrier mode={"EDITAR"} creatorUser={dataUsers.user}>
-              La funcionalidad de editar TODO
-            </ModalCarrier>
-          )}
-          {openModalDeleteCarrier && (
-            <ModalCarrier mode={"BORRAR"} creatorUser={dataUsers.user}>
-              La funcionalidad de borrar TODO
-            </ModalCarrier>
-          )}
-          {openModalText && (
-            <Dialog
-              open={openModalText}
-              onClose={() => setOpenModalText(false)}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                {textOpenModalText}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  {textOpenModalText}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setOpenModalText(false)}>Aceptar</Button>
-              </DialogActions>
-            </Dialog>
-          )}
         </Container>
       ) : (
         <Box

@@ -70,7 +70,8 @@ function TodoProvider({ children }) {
   const [openModalDeleteCompany, setOpenModalDeleteCompany] = React.useState(false);
   const [updateCompanyInfo, setUpdateCompanyInfo] = React.useState(false);
   const [openModalDeleteOrderRecollection , setOpenModalDeleteOrderRecollection] = React.useState(false);
-
+  const [updateDonorReports, setUpdateDonorReports] = React.useState(false);
+  const [openModalFinishReport , setOpenModalFinishReport] = React.useState(false);
   const [userGroups, setUserGroups] = React.useState(null);
 
 
@@ -140,7 +141,10 @@ function TodoProvider({ children }) {
       openModalDeleteCompany, setOpenModalDeleteCompany,
       openModalDeleteOrderRecollection , setOpenModalDeleteOrderRecollection,
       updateCompanyInfo, setUpdateCompanyInfo,
-      userGroups, setUserGroups
+      userGroups, setUserGroups,
+      updateDonorReports, setUpdateDonorReports, 
+      openModalFinishReport , setOpenModalFinishReport
+
     }} >
       {children}
     </TodoContext.Provider>

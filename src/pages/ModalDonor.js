@@ -15,13 +15,13 @@ import {
   InputLabel,
 } from "@mui/material";
 import Title from "../components/Title";
+import { set } from "date-fns";
 
-function ModalDonor({ children, mode, creatorUser }) {
-  const [datos, setDatos] = useState([]);
+export default function ModalDonor({ children, mode, creatorUser, userToEdit = null }) {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [companies, setCompanies] = useState([""]);
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(userToEdit);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [first_name, setFirstName] = useState("");
@@ -41,19 +41,20 @@ function ModalDonor({ children, mode, creatorUser }) {
   const [old_user, setOldUser] = useState("");
   const [razonSocial, setRazonSocial] = useState("");
   const [birthday, setBirthday] = useState("");
-  const [gender , setGender] = useState("Otro")
+  const [gender, setGender] = useState("Otro")
   const [id, setId] = useState("");
-  const [genders, setGenders] = useState([{ 
+  const [genders, setGenders] = useState([{
     "gender": "Masculino",
-  }, 
-    { "gender": "Femenino",
-    },
-    { "gender": "Otro",}
-        ]);
+  },
+  {
+    "gender": "Femenino",
+  },
+  { "gender": "Otro", }
+  ]);
   const [address_reference, setReference] = useState("");
   const [phoneExtension, setPhoneExtension] = useState("");
   const [creator, setCreator] = useState(creatorUser);
-  
+
 
 
 
@@ -80,6 +81,8 @@ function ModalDonor({ children, mode, creatorUser }) {
       setOpenModalDeleteDonor(false);
     }
   };
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -110,14 +113,14 @@ function ModalDonor({ children, mode, creatorUser }) {
         address_lat: 0,
         address_lng: 0,
         razon_social: e.target.razon_social.value,
-        gender:  gender ,
+        gender: gender,
         birthdate: birthday,
         phone_extention: phoneExtension,
         user_permission: "Escritura",
         creator_user: creator,
 
 
-        
+
       };
 
       axios
@@ -127,7 +130,7 @@ function ModalDonor({ children, mode, creatorUser }) {
           console.log(data);
           setOpenModalText(true);
           setTextOpenModalText("Donador creado correctamente");
-          setUpdateDonorInfo(true);
+          setUpdateDonorInfo(prev=>!prev);
           e.target.reset();
 
           closeModal();
@@ -135,7 +138,7 @@ function ModalDonor({ children, mode, creatorUser }) {
         .catch(error => {
           console.error("############################");
           setOpenModalText(true);
-    
+
           // Check if error response and data exist
           if (error.response && error.response.data) {
             const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
@@ -143,7 +146,7 @@ function ModalDonor({ children, mode, creatorUser }) {
           } else {
             setTextOpenModalText("Algo salio mal. Intenta de nuevo");
           }
-    
+
           console.error(error.response);
         })
     }
@@ -179,10 +182,9 @@ function ModalDonor({ children, mode, creatorUser }) {
         id: id,
         creator_user: creator,
         user_permission: "Escritura",
-        
+
       };
-      console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
-      console.log(editarDato);
+
 
       axios
         .post(`${process.env.REACT_APP_API_URL}/update-donor/`, editarDato)
@@ -191,7 +193,7 @@ function ModalDonor({ children, mode, creatorUser }) {
           console.log(data);
           setOpenModalText(true);
           setTextOpenModalText("Donador editado correctamente");
-          setUpdateDonorInfo(true);
+          setUpdateDonorInfo(prev=>!prev);
           e.target.reset();
           closeModal();
           // Limpiar los campos del formulario
@@ -199,7 +201,7 @@ function ModalDonor({ children, mode, creatorUser }) {
         .catch(error => {
           console.error("############################");
           setOpenModalText(true);
-    
+
           // Check if error response and data exist
           if (error.response && error.response.data) {
             const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
@@ -207,42 +209,7 @@ function ModalDonor({ children, mode, creatorUser }) {
           } else {
             setTextOpenModalText("Algo salio mal. Intenta de nuevo");
           }
-    
-          console.error(error.response);
-        })
-    }
-    if (mode === "BORRAR") {
-      const antiguo_user = document.getElementById("user-select");
-      var user_ant = antiguo_user ? antiguo_user.value : null;
 
-      const deleteDato = {
-        email: user,
-        creator_user: creator,
-      };
-
-      axios
-        .put(`${process.env.REACT_APP_API_URL}/delete-django-user/`, deleteDato)
-        .then((response) => {
-          const data = response.data;
-          console.log(data);
-          setOpenModalText(true);
-          setTextOpenModalText("Donador borrado correctamente");
-          setUpdateDonorInfo(true);
-          e.target.reset();
-          closeModal();
-        })
-        .catch(error => {
-          console.error("############################");
-          setOpenModalText(true);
-    
-          // Check if error response and data exist
-          if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
-          } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
-          }
-    
           console.error(error.response);
         })
     }
@@ -250,6 +217,37 @@ function ModalDonor({ children, mode, creatorUser }) {
     // Limpiar los campos del formulario
     e.target.reset();
   };
+
+
+  useEffect(() => {
+    if (userToEdit === null) return
+    if (users.length === 0) return
+    const datoEncontrado = users.find((users) => users.user === userToEdit.user);
+    console.log(datoEncontrado)
+    setUser(datoEncontrado.user);
+    setPassword(datoEncontrado.password);
+    setEmail(datoEncontrado.email);
+    setFirstName(datoEncontrado.first_name);
+    setLastName(datoEncontrado.last_name);
+    setGroup(datoEncontrado.group);
+    setRfc(datoEncontrado.rfc);
+    setCompany(datoEncontrado.company);
+    setPhone(datoEncontrado.phone);
+    setState(datoEncontrado.address_state);
+    setCity(datoEncontrado.address_city);
+    setLocality(datoEncontrado.address_locality);
+    setStreet(datoEncontrado.address_street);
+    setPostalCode(datoEncontrado.address_postal_code);
+    setAddressNumInt(datoEncontrado.address_num_int);
+    setAddressNumExt(datoEncontrado.address_num_ext);
+    setOldUser(datoEncontrado.user);
+    setRazonSocial(datoEncontrado.razon_social);
+    setPhoneExtension(datoEncontrado.phone_extention);
+    setReference(datoEncontrado.address_reference);
+    setId(datoEncontrado.id_rennueva);
+    setGender(datoEncontrado.gender)
+    setBirthday(datoEncontrado.birthdate)
+  }, [userToEdit, users]);
 
   useEffect(() => {
     // Basado en el modo, decidir si el campo de la contraseña debe ser visible
@@ -294,37 +292,6 @@ function ModalDonor({ children, mode, creatorUser }) {
       })
       .catch((err) => console.log(err));
   }, []);
-
-  const handleSelectChange = (event) => {
-    const selectedOption = event.target.value; // Obtener la opción seleccionada
-    console.log(selectedOption);
-    // Buscar el dato seleccionado en el arreglo de datos
-    const datoEncontrado = users.find((users) => users.user === selectedOption);
-    console.log(datoEncontrado);
-    setUser(datoEncontrado.user);
-    setPassword(datoEncontrado.password);
-    setEmail(datoEncontrado.email);
-    setFirstName(datoEncontrado.first_name);
-    setLastName(datoEncontrado.last_name);
-    setGroup(datoEncontrado.group);
-    setRfc(datoEncontrado.rfc);
-    setCompany(datoEncontrado.company);
-    setPhone(datoEncontrado.phone);
-    setPhoneExtension(datoEncontrado.phone_extention);
-    setState(datoEncontrado.address_state);
-    setCity(datoEncontrado.address_city);
-    setLocality(datoEncontrado.address_locality);
-    setStreet(datoEncontrado.address_street);
-    setPostalCode(datoEncontrado.address_postal_code);
-    setAddressNumInt(datoEncontrado.address_num_int);
-    setOldUser(selectedOption);
-    setRazonSocial(datoEncontrado.razon_social);
-    setId(datoEncontrado.id_django);
-    setBirthday(datoEncontrado.birthdate);
-    setGender(datoEncontrado.gender );
-    setReference(datoEncontrado.address_reference);
-    setAddressNumExt(datoEncontrado.address_num_ext);
-  };
 
   const handleInputChange = (e, setState, mode) => {
     const currentInputValue = e.target.value;
@@ -373,28 +340,7 @@ function ModalDonor({ children, mode, creatorUser }) {
         </Button>
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
-            <Title> Usuario</Title>
-            {mode === "EDITAR" || mode === "BORRAR" ? (
-              <FormControl fullWidth>
-                <InputLabel id="user-select-label">Usuario</InputLabel>
-                <Select
-                  labelId="user-select-label"
-                  id="user-select"
-                  onChange={(e) => {
-                    handleSelectChange(e, setUser);
-                  }}
-                  required
-                  //value={user}
-                  w
-                >
-                  {users.map((name, index) => (
-                    <MenuItem key={index} value={name.user}>
-                      {name.user}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ) : null}
+            <Title>Donador</Title>
           </Box>
           <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 500 }}>
             <TextField
@@ -433,7 +379,7 @@ function ModalDonor({ children, mode, creatorUser }) {
                   : ""
               }
             />
-            
+
 
             <TextField
               label="Razon Social"
@@ -444,7 +390,7 @@ function ModalDonor({ children, mode, creatorUser }) {
               onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
               margin="dense"
             />
-            
+
             <TextField
               label="Fecha de Nacimiento"
               name="date"
@@ -459,19 +405,19 @@ function ModalDonor({ children, mode, creatorUser }) {
               }}
             />
             <FormControl fullWidth mt={2} mb={2}>
-            <Select
-              labelId="gender-select-label"
-              id="gender-select"
-              required
-              value={gender}
-              onChange={(e) => handleInputChange(e, setGender, mode)}
-            >
-              {genders.map((name, index) => (
-                <MenuItem key={index} value={name.gender}>
-                  {name.gender}
-                </MenuItem>
-              ))}
-            </Select>
+              <Select
+                labelId="gender-select-label"
+                id="gender-select"
+                required
+                value={gender}
+                onChange={(e) => handleInputChange(e, setGender, mode)}
+              >
+                {genders.map((name, index) => (
+                  <MenuItem key={index} value={name.gender}>
+                    {name.gender}
+                  </MenuItem>
+                ))}
+              </Select>
 
             </FormControl>
             <TextField
@@ -624,4 +570,4 @@ function ModalDonor({ children, mode, creatorUser }) {
   );
 }
 
-export { ModalDonor };
+

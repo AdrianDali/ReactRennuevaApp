@@ -83,10 +83,11 @@ export default function SignInSide() {
       } else {
         console.log("Login failed:", message);
       }
-
+      console.log("data", data);
+      
       // Almacenar el token en el estado (y posiblemente en un almacenamiento persistente como localStorage)
-      document.cookie = `refresh=${data.refresh}; SameSite=Lax; Secure`;
       document.cookie = `user=${username}; SameSite=Lax; Secure`;
+      document.cookie = `refresh=${data.refresh}; SameSite=Lax; Secure`;
       document.cookie = `access=${data.access}; SameSite=Lax; Secure`;
 
       setError(null);
@@ -121,6 +122,21 @@ export default function SignInSide() {
       } else if (dataUser.groups[0] === "Calidad") {
         console.log("Calidad");
         navigate("/quality/donor-recollection");
+      } else if (dataUser.groups[0] === "Produccion") {
+        console.log("Produccion");
+        navigate("/production/donor-recollection");
+      } else if (dataUser.groups[0] === "Registro") {
+        console.log("Register");
+        navigate("/register/donor-recollection");
+      } else if (dataUser.groups[0] === "Conductor") {
+        console.log("Conductor");
+        navigate("/driver/assigned-orders");
+      } else if (dataUser.groups[0] === "Acopio") {
+        console.log("Centro");
+        navigate("/centro/home");
+      }else if (dataUser.groups[0] === "Reciclaje") {
+        console.log("Reciclaje");
+        navigate("/centrosAcopio");
       }
 
     } catch (error) {

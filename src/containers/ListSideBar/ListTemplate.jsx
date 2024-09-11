@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Collapse, Divider } from '@mui/material';
 import { useNavigate } from "react-router-dom";
+import { TodoContext } from '../../context';
+import theme from '../../context/theme';
 
 /**
  * @class ListTemplateItem
@@ -157,17 +159,22 @@ export class ListTemplateItem {
 
 const SimpleItemTemplate = ({ tag, icon, redirection }) => {
     const navigate = useNavigate();
+    const {openSideBar, setOpenSideBar} = useContext(TodoContext)
+    const route = window.location.pathname
 
     return (
         <>
-            <ListItem disableGutters disablePadding sx={{ display: 'block' }}>
+            <ListItem disableGutters disablePadding sx={{ display: 'block', bgcolor: route === redirection? theme.palette.primary.light: theme.palette.background.paper}}>
                 <ListItemButton 
                      sx={{
                         minHeight: 48,
                         justifyContent: 'initial',
                         px: 2.5,
                       }}
-                    onClick={() => navigate(redirection)}>
+                    onClick={() => {
+                        setOpenSideBar(false)
+                        navigate(redirection)
+                    }}>
                     <ListItemIcon>{icon}</ListItemIcon>
                     <ListItemText primary={tag} />
                 </ListItemButton>
@@ -179,10 +186,31 @@ const SimpleItemTemplate = ({ tag, icon, redirection }) => {
 
 const NestedItemTemplate = ({ tag, icon, subElements }) => {
     const [open, setOpen] = useState(false);
+    const {openSideBar, setOpenSideBar} = useContext(TodoContext)
+    const route = window.location.pathname
+    const [selected, setSelected] = useState(false)
+    
+    useEffect(()=>{
+        if(!openSideBar){
+            setOpen(false)
+        }
+    }, [openSideBar])
+
+    useEffect(()=>{
+        for(let element of subElements){
+            if(element.redirection === route){
+                setSelected(true)
+                return
+            }
+            setSelected(false)
+        }
+    }, [route, subElements])
 
     return (
         <>  
-            <ListItem disableGutters disablePadding sx={{ display: 'block' }} >
+            <ListItem disableGutters disablePadding sx={{ display: 'block', bgcolor: selected? theme.palette.primary.light: theme.palette.background.paper }} onClick={
+                ()=>setOpenSideBar(true)
+            }>
                 <ListItemButton 
                     onClick={() => setOpen(!open)}
                     sx={{

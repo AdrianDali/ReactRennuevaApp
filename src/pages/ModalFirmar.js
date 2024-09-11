@@ -1,77 +1,50 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import ReactDOM from 'react-dom';
-import '../styles/user/CreateUser.css';
 import { TodoContext } from '../context/index.js';
-import axios from 'axios';
-import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
-import Title from '../components/Title';
-import Grid from '@mui/material/Grid';
+import { Modal, Box, IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import SignatureComponent from "../components/FirmaDocument";
 
-function ModalFirmar({ children, mode,id , type}) {
-    const { openModalCreateFirma, setOpenModalCreateFirma, openModalEditFirma, setOpenModalEditFirma, openModalDeleteFirma, setOpenModalDeleteFirma,
-        openModalCreateFirmaReceptor, setUpdateReportInfo,setOpenModalCreateFirmaReceptor, openModalEditFirmaReceptor, setOpenModalEditFirmaReceptor, openModalDeleteFirmaReceptor, setOpenModalDeleteFirmaReceptor,
-     } = useContext(TodoContext);
-    console.log("ID DE QUIERN SE FIRMA",id)
+function ModalFirmar({ id, type }) {
+    const { 
+        openModalEditFirma, 
+        setOpenModalEditFirma, 
+        setUpdateReportInfo,
+        setUpdateDonorReports
+    } = useContext(TodoContext);
 
     const closeModal = () => {
-        if (type == "Generador"){
-        if (openModalCreateFirma) {
-            setOpenModalCreateFirma(false);
+        if (type === "Receptor" || type === "Generador") {
+            setUpdateReportInfo(prev => !prev);
+        } else if (type === "Donador" || type === "Recolector") {
+            setUpdateDonorReports(prev => !prev);
         }
-        if (openModalEditFirma) {
-            setOpenModalEditFirma(false);
-        }
-        if (openModalDeleteFirma) {
-            setOpenModalDeleteFirma(false);
-        }
-    }
-        
-        if (type == "Receptor"){
-        if (openModalCreateFirmaReceptor) {
-            setOpenModalCreateFirmaReceptor(false);
-        }
-        if (openModalEditFirmaReceptor) {
-            setOpenModalEditFirmaReceptor(false);
-        }
-        if (openModalDeleteFirmaReceptor) {
-            setOpenModalDeleteFirmaReceptor(false);
-        }
-        }
-        setUpdateReportInfo(true);
-
-        
-
-
+        setOpenModalEditFirma(false);
     };
 
     return ReactDOM.createPortal(
-        <Modal open={true} onClose={closeModal}>
-
-            <Box className="ModalContent" sx={{
+        <Modal open={openModalEditFirma} onClose={closeModal}>
+            <Box sx={{
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: 600,
+                width: { xs: '80%', md: 600 },  // Ajuste de tamaño para dispositivos móviles y de escritorio
                 bgcolor: 'background.paper',
                 boxShadow: 24,
                 p: 4,
                 borderRadius: 2,
-
             }}>
-                <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
-                <Box>
-                    <SignatureComponent id= {id} type= {type}/>
+                <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 8, top: 8 }}>
+                    <Close />
+                </IconButton>
+                <Box mt={2}>
+                    <SignatureComponent id={id} type={type} />
                 </Box>
             </Box>
-
-        </Modal>
-
-        , document.getElementById('modal')
-
-    )
-
+        </Modal>,
+        document.getElementById('modal')
+    );
 }
 
 export { ModalFirmar };

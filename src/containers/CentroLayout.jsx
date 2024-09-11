@@ -34,10 +34,12 @@ import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import '@fontsource/poppins/800.css';
 import '@fontsource/poppins/900.css';
+import { useNavigate } from 'react-router-dom';
+import deleteCookie from '../helpers/deleteCookie';
+import { TodoContext } from '../context';
 
 
 
-const settings = ['Profile', 'Account', 'Logout'];
 const user = {
     name: "Usuario Ejemplo",
     email: "usuario@example.com",
@@ -163,9 +165,6 @@ const MobileMenu = ({ children, open, setOpen }) => {
 
 
 const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
-    const theme = useTheme();
-    console.log(dataUser);
-
 
     return (
         <StyledDrawer variant="permanent" open={open}>
@@ -180,10 +179,11 @@ const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
                 height: '100%',
                 overflowY: 'scroll',
                 pb: '1rem',
+                overflowX: 'hidden',
             }}>
                 {children}
             </Box>
-            
+
         </StyledDrawer>)
 }
 
@@ -193,11 +193,13 @@ const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
 
 export default function CentroLayout({ children, List }) {
     const [anchorElUser, setAnchorElUser] = useState(null);
-    const [open, setOpen] = useState(false);
     const [desktop, setDesktop] = useState(window.innerWidth > 899);
+    const navigate = useNavigate();
+    const {openSideBar, setOpenSideBar} = React.useContext(TodoContext)
+
 
     const dataUser = useAuth();
-    console.log(dataUser);
+    //console.log(dataUser);
 
 
     const handleOpenUserMenu = (event) => {
@@ -208,27 +210,15 @@ export default function CentroLayout({ children, List }) {
         setAnchorElUser(null);
     };
 
+    const handleSignOut = () => {
+        handleCloseUserMenu();
+        //deleteCookie('token');
+        deleteCookie('refresh');
+        deleteCookie('access');
+        deleteCookie('user');
+        navigate('/');
+    }
 
-    // useEffect(() => {
-    //     window.addEventListener('resize', () => {
-    //         if (window.innerWidth > 899) {
-    //             setDesktop(true);
-    //         } else {
-    //             setDesktop(false);
-    //         }
-    //     });
-
-    //     return () => {
-    //         window.removeEventListener('resize', () => {
-    //             if (window.innerWidth > 899) {
-    //                 setDesktop(true);
-    //             } else {
-    //                 setDesktop(false);
-    //             }
-    //         });
-    //     }
-
-    // }, []);
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth > 899) {
@@ -248,7 +238,7 @@ export default function CentroLayout({ children, List }) {
 
     return (
         <ThemeProvider theme={theme}>
-            <Box sx={{ bgcolor: (theme) => theme.palette.grey[100] }}>
+            <Box sx={{ bgcolor: (theme) => theme.palette.grey[100], minHeight: '100vh' }}>
                 <AppBar position="sticky" sx={{ display: 'flex', flexDirection: 'row', padding: 0, backgroundColor: 'white', borderRadius: { xs: '0 25px 25px 25px', md: '25px' }, width: { xs: '100%', md: 'calc(100% - 16px)' }, left: { xs: 0, md: '8px' }, top: { xs: '0', md: '5px' }, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Container maxWidth="xl" >
                         <Toolbar disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
@@ -260,11 +250,11 @@ export default function CentroLayout({ children, List }) {
                                     aria-controls="menu-appbar"
                                     aria-haspopup="true"
                                     onClick={() => {
-                                        open ? setOpen(false) : setOpen(true);
+                                        setOpenSideBar(prev=>!prev)
                                     }}
                                     color="primary"
                                 >
-                                    {open ? <ArrowBackIcon /> : <MenuIcon />}
+                                    {openSideBar ? <ArrowBackIcon /> : <MenuIcon />}
                                 </IconButton>
                             </Box>
                             <Box sx={{ height: '50px', marginX: { xs: 'auto', md: '0' } }}>
@@ -292,11 +282,9 @@ export default function CentroLayout({ children, List }) {
                                     open={Boolean(anchorElUser)}
                                     onClose={handleCloseUserMenu}
                                 >
-                                    {settings.map((setting) => (
-                                        <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                            <Typography textAlign="center">{setting}</Typography>
-                                        </MenuItem>
-                                    ))}
+                                    <MenuItem onClick={handleSignOut}>
+                                        <Typography textAlign="center">Cerrar sesión</Typography>
+                                    </MenuItem>
                                 </Menu>
                             </Box>
                         </Toolbar>
@@ -304,16 +292,15 @@ export default function CentroLayout({ children, List }) {
                 </AppBar>
                 <Box sx={{ display: 'flex', width: '100vw' }}>
                     {desktop
-                        ? <DesktopMenu open={open} setOpen={setOpen} dataUser={dataUser}>
+                        ? <DesktopMenu open={openSideBar} setOpen={setOpenSideBar} dataUser={dataUser}>
                             {List}
                         </DesktopMenu>
-                        : <MobileMenu open={open} setOpen={setOpen} >
+                        : <MobileMenu open={openSideBar} setOpen={setOpenSideBar}>
                             {List}
                         </MobileMenu>
                     }
 
                     {children}
-
 
                 </Box>
             </Box>

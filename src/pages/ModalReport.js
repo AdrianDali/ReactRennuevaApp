@@ -13,25 +13,24 @@ import {
   FormControl,
   InputLabel,
   Grid,
+  IconButton
 } from "@mui/material";
+import { Close } from "@mui/icons-material";
 import Title from "../components/Title";
 import Switch from "@mui/material/Switch";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
-function ModalReport({ children, mode, report }) {
-  const [datos, setDatos] = useState([]);
+function ModalReport({ mode, report, creatorUser }) {
   const [carriers, setCarriers] = useState([]);
   const [recyclingCollectionCenters, setRecyclingCollectionCenters] = useState(
     []
   );
   const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
-  const [group, setGroup] = useState("");
   const [company, setCompany] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
@@ -39,13 +38,11 @@ function ModalReport({ children, mode, report }) {
   const [street, setStreet] = useState("");
   const [postal_code, setPostalCode] = useState("");
   const [rfc, setRfc] = useState("");
-  const [phone, setPhone] = useState("");
   const [recyclingCollection, setRecyclingCollection] = useState("");
   const [nameGenerator, setNameGenerator] = useState([]);
   const [isSameLocation, setIsSameLocation] = useState(false);
   const [haveTransport, setHaveTransport] = useState(true);
   const [carrier, setCarrier] = useState("");
-  const [userToEdit, setUserToEdit] = useState("");
   const [transportAvailable, setTransportAvailable] = useState(true);
   const [state_2, setState_2] = useState("");
   const [city_2, setCity_2] = useState("");
@@ -53,20 +50,17 @@ function ModalReport({ children, mode, report }) {
   const [street_2, setStreet_2] = useState("");
   const [postal_code_2, setPostalCode_2] = useState("");
 
-  const [state_3, setState_3] = useState("");
-  const [city_3, setCity_3] = useState("");
-  const [locality_3, setLocality_3] = useState("");
-  const [street_3, setStreet_3] = useState("");
-  const [postal_code_3, setPostalCode_3] = useState("");
 
   const [completeName, setCompleteName] = useState("");
   const [addrees_different, setAddressDifferent] = useState(true);
   const [isFirstRun, setIsFirstRun] = useState(true);
 
+  const [creator, setCreator] = useState(creatorUser);
+
+
   const {
     setOpenModalText,
     setTextOpenModalText,
-    updateReportInfo,
     setUpdateReportInfo,
     openModalCreateReport,
     setOpenModalCreateReport,
@@ -126,9 +120,9 @@ function ModalReport({ children, mode, report }) {
       console.log("CREAR");
       setIsSameLocation(true);
 
-      
-      
-      
+
+
+
       //setAddressDifferent(true);
     }
     if (mode === "EDITAR") {
@@ -178,7 +172,7 @@ function ModalReport({ children, mode, report }) {
       setLocality_2(report.colonia_usuario);
       setStreet_2(report.calle_usuario);
       setPostalCode_2(report.cp_usuario);
-      
+
 
       setCompleteName(
         report.nombre_real_usuario + " " + report.apellido_usuario
@@ -192,7 +186,7 @@ function ModalReport({ children, mode, report }) {
         setRecyclingCollection(report.centro_recoleccion);
       }
     }
-    
+
   }, []);
 
   useEffect(() => {
@@ -203,7 +197,7 @@ function ModalReport({ children, mode, report }) {
       setLocality("");
       setStreet("");
       setPostalCode("");
-    } 
+    }
 
     if (isSameLocation === false) {
 
@@ -212,7 +206,7 @@ function ModalReport({ children, mode, report }) {
         if (isFirstRun) {
           console.log("Primer run");
           setIsFirstRun(false);
-          
+
 
         } else {
 
@@ -224,7 +218,7 @@ function ModalReport({ children, mode, report }) {
           setPostalCode("");
         }
       }
-      
+
     } else {
       setState(state_2);
       setCity(city_2);
@@ -238,8 +232,7 @@ function ModalReport({ children, mode, report }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-users-responsiva/`)
       .then((response) => {
-        const data = response.data;
-        setDatos(data); // Asumiendo que 'data' es un array.
+        const data = response.data;// Asumiendo que 'data' es un array.
 
         var nameGenerator = data.map(function (item) {
           var name = item.first_name + " " + item.last_name;
@@ -315,7 +308,7 @@ function ModalReport({ children, mode, report }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     if (mode === "EDITAR") {
       console.log("###############EDITAR USUARIOS##################");
       console.log({
@@ -328,7 +321,7 @@ function ModalReport({ children, mode, report }) {
         recyclingCollection: recyclingCollection,
         carrier: carrier,
         reportId: report.id_report,
-      });  
+      });
       axios
         .post(`${process.env.REACT_APP_API_URL}/edit-report/`, {
           username: user,
@@ -343,7 +336,7 @@ function ModalReport({ children, mode, report }) {
         })
         .then((response) => {
           console.log(response);
-          setUpdateReportInfo(true);
+          setUpdateReportInfo(prev => !prev);
           setOpenModalText(true);
           setTextOpenModalText("Reporte actualizado correctamente");
           closeModal();
@@ -365,6 +358,7 @@ function ModalReport({ children, mode, report }) {
         postalCode: postal_code,
         recyclingCollection: recyclingCollection,
         carrier: carrier,
+        creator_user: creator,
       });
 
       axios
@@ -372,15 +366,18 @@ function ModalReport({ children, mode, report }) {
           username: user,
           street: street,
           locality: locality,
+          creator_user: creator,
           city: city,
           state: state,
           postalCode: postal_code,
           recyclingCollection: recyclingCollection,
           carrier: carrier,
+          report_for: "Generador"
+
         })
         .then((response) => {
           console.log(response);
-          setUpdateReportInfo(true);
+          setUpdateReportInfo(prev => !prev);
           setOpenModalText(true);
           setTextOpenModalText("Reporte creado correctamente");
           closeModal();
@@ -392,13 +389,6 @@ function ModalReport({ children, mode, report }) {
     }
   };
 
-  const handleInputChange = (e, setState, mode) => {
-    const currentInputValue = e.target.value;
-
-    if (mode !== "BORRAR") {
-      setState(currentInputValue);
-    }
-  };
 
   const handleCarrierChange = (event) => {
     setCarrier(event.target.value);
@@ -421,27 +411,24 @@ function ModalReport({ children, mode, report }) {
     console.log("Dato encontrado");
     console.log(datoEncontrado);
     setUser(datoEncontrado.user);
-    setPassword(datoEncontrado.password);
+
     setEmail(datoEncontrado.email);
     console.log(datoEncontrado.first_name);
     setFirstName(datoEncontrado.first_name);
     setLastName(datoEncontrado.last_name);
-    setGroup(datoEncontrado.group);
     setRfc(datoEncontrado.rfc);
     setCompany(datoEncontrado.company);
-    setPhone(datoEncontrado.phone);
     setState(datoEncontrado.address_state);
     setCity(datoEncontrado.address_city);
     setLocality(datoEncontrado.address_locality);
     setStreet(datoEncontrado.address_street);
     setPostalCode(datoEncontrado.address_postal_code);
-    setUserToEdit(datoEncontrado.user);
     if (mode === "CREAR") {
-    setStreet_2(datoEncontrado.address_street);
-    setLocality_2(datoEncontrado.address_locality);
-    setCity_2(datoEncontrado.address_city);
-    setState_2(datoEncontrado.address_state);
-    setPostalCode_2(datoEncontrado.address_postal_code);
+      setStreet_2(datoEncontrado.address_street);
+      setLocality_2(datoEncontrado.address_locality);
+      setCity_2(datoEncontrado.address_city);
+      setState_2(datoEncontrado.address_state);
+      setPostalCode_2(datoEncontrado.address_postal_code);
     }
 
     setCompleteName(selectedOption);
@@ -452,7 +439,7 @@ function ModalReport({ children, mode, report }) {
     if (
       (datoEncontrado.group === "Transportista" ||
         datoEncontrado.group === "Receptor",
-      datoEncontrado.group === "Donador")
+        datoEncontrado.group === "Donador")
     ) {
       setTransportAvailable(false);
     }
@@ -475,154 +462,152 @@ function ModalReport({ children, mode, report }) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 1100,
+          maxHeight: "80lvh",
+          overflowY: "auto",
+          maxWidth: "80vw",
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
         }}
       >
-        <Button
+        <IconButton
           onClick={closeModal}
           sx={{ position: "absolute", right: 2, top: 2 }}
         >
-          &times;
-        </Button>
+          <Close />
+        </IconButton>
         <form onSubmit={handleSubmit}>
-          <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 600 }}>
-            <Box mb={2}>
-              <Title>Crear Responsiva</Title>
-              <FormControl fullWidth mt={2} mb={2}>
-                <InputLabel id="rol-select-label">Generador</InputLabel>
-                <Select
-                  labelId="rol-select-label"
-                  id="rol-select"
-                  required
-                  value={completeName}
-                  onChange={(e) => handleSelectChange(e, setCompleteName)}
-                >
-                  {nameGenerator.map((name, index) => (
-                    <MenuItem key={index} value={name.name}>
-                      {name.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 500 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Nombre"
-                    name="nombre"
-                    required
-                    fullWidth
-                    value={first_name}
-                    // onChange={(e) => handleInputChange(e, setFirstName, mode)}
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Apellido"
-                    name="apellido"
-                    required
-                    fullWidth
-                    value={last_name}
-                    // onChange={(e) => handleInputChange(e, setLastName, mode)}
-                    margin="dense"
-                  />
-                </Grid>
+          <Title>Crear Responsiva</Title>
+          <FormControl fullWidth>
+            <InputLabel id="rol-select-label">Generador</InputLabel>
+            <Select
+              labelId="rol-select-label"
+              id="rol-select"
+              required
+              value={completeName}
+              onChange={(e) => handleSelectChange(e, setCompleteName)}
+            >
+              {nameGenerator.map((name, index) => (
+                <MenuItem key={index} value={name.name}>
+                  {name.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Grid container spacing={2} mt={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Nombre"
+                name="nombre"
+                required
+                fullWidth
+                value={first_name}
+                // onChange={(e) => handleInputChange(e, setFirstName, mode)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Apellido"
+                name="apellido"
+                required
+                fullWidth
+                value={last_name}
+                // onChange={(e) => handleInputChange(e, setLastName, mode)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                label="RFC"
+                name="rfc"
+                required
+                fullWidth
+                value={rfc}
+                // onChange={(e) => handleInputChange(e, setRfc, mode)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                label="Nombre de Usuario"
+                name="user"
+                required
+                fullWidth
+                value={user}
+                // onChange={(e) => handleInputChange(e, setUser, mode)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                label="Email"
+                name="email"
+                type="email"
+                required
+                fullWidth
+                value={email}
+                // onChange={(e) => handleInputChange(e, setEmail, mode)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Compañia"
+                name="company"
+                required
+                fullWidth
+                value={company}
+                margin="dense"
+              />
+            </Grid>
+            {transportAvailable && (
+              <Grid item xs={12} sm={12}>
                 <Grid item xs={12} sm={12}>
-                  <TextField
-                    label="RFC"
-                    name="rfc"
-                    required
-                    fullWidth
-                    value={rfc}
-                    // onChange={(e) => handleInputChange(e, setRfc, mode)}
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                  <TextField
-                    label="Nombre de Usuario"
-                    name="user"
-                    required
-                    fullWidth
-                    value={user}
-                    // onChange={(e) => handleInputChange(e, setUser, mode)}
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                  <TextField
-                    label="Email"
-                    name="email"
-                    type="email"
-                    required
-                    fullWidth
-                    value={email}
-                    // onChange={(e) => handleInputChange(e, setEmail, mode)}
-                    margin="dense"
-                  />
+                  <Title>Cuenta con transportista ?</Title>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Compañia"
-                    name="company"
-                    required
-                    fullWidth
-                    value={company}
-                    margin="dense"
-                  />
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Typography>No</Typography>
+                    <AntSwitch
+                      onChange={handleSwitchChangeCarrier}
+                      checked={haveTransport}
+                      inputProps={{ "aria-label": "ant design" }}
+
+                    />
+                    <Typography>Si</Typography>
+                  </Stack>
                 </Grid>
-                {transportAvailable && (
+                {haveTransport && (
                   <Grid item xs={12} sm={12}>
-                    <Grid item xs={12} sm={12}>
-                      <Title>Cuenta con transportista ?</Title>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Typography>No</Typography>
-                        <AntSwitch
-                          onChange={handleSwitchChangeCarrier}
-                          checked={haveTransport}
-                          inputProps={{ "aria-label": "ant design" }}
-                          
-                        />
-                        <Typography>Si</Typography>
-                      </Stack>
-                    </Grid>
-                    {haveTransport && (
-                      <Grid item xs={12} sm={12}>
-                        <Title>Seleccionar Transportista</Title>
-                        <FormControl fullWidth mt={2} mb={2}>
-                          <InputLabel id="rol-select-label">
-                            Transportista
-                          </InputLabel>
-                          <Select
-                            labelId="rol-select-label"
-                            id="rol-select"
-                            required
-                            onChange={(e) => handleCarrierChange(e, setUser)}
-                            value={
-                              mode === "EDITAR" ? carrier : carrier
-                            }
-                          >
-                            {carriers.map((name, index) => (
-                              <MenuItem key={index} value={name.company_name}>
-                                {name.company_name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    )}
+                    <Title>Seleccionar Transportista</Title>
+                    <FormControl fullWidth mt={2} mb={2}>
+                      <InputLabel id="rol-select-label">
+                        Transportista
+                      </InputLabel>
+                      <Select
+                        labelId="rol-select-label"
+                        id="rol-select"
+                        required
+                        onChange={(e) => handleCarrierChange(e, setUser)}
+                        value={
+                          mode === "EDITAR" ? carrier : carrier
+                        }
+                      >
+                        {carriers.map((name, index) => (
+                          <MenuItem key={index} value={name.company_name}>
+                            {name.company_name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
                 )}
+              </Grid>
+            )}
 
-                {/* <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
                                 <TextField
                                     label="Celular"
                                     name="phone"
@@ -634,108 +619,106 @@ function ModalReport({ children, mode, report }) {
                                     margin="dense"
                                 />
                             </Grid> */}
-                <Grid item xs={12} sm={12}>
-                  <Title>Ubicacion</Title>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Grid item xs={12} sm={12}>
-                    <Title>Misma ubicacion de RFC: </Title>
-                  </Grid>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Typography>No</Typography>
-                    <AntSwitch
-                      onChange={handleSwitchChange}
-                      checked={isSameLocation}
-                      inputProps={{ "aria-label": "ant design" }}
-                      value={addrees_different}
-                    />
-                    <Typography>Si</Typography>
-                  </Stack>
-                </Grid>
-                <Grid item xs={12} sm={6}></Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Estado"
-                    name="state"
-                    required
-                    fullWidth
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Ciudad"
-                    name="city"
-                    required
-                    fullWidth
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Colonia"
-                    name="locality"
-                    required
-                    fullWidth
-                    value={locality}
-                    onChange={(e) => setLocality(e.target.value)}
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Calle y Numero"
-                    name="calle"
-                    required
-                    fullWidth
-                    value={street}
-                    onChange={(e) => setStreet(e.target.value)}
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Codigo postal"
-                    name="postal_code"
-                    required
-                    fullWidth
-                    value={postal_code}
-                    onChange={(e) => setPostalCode(e.target.value)}
-                    margin="dense"
-                  />
-                </Grid>
-
-                <Grid item xs={12} sm={12}>
-                  <Box mb={2}>
-                    <Title>Seleccionar Centro de Reciclaje o Recolección</Title>
-                    <FormControl fullWidth mt={2} mb={2}>
-                      <InputLabel id="rol-select-label">Centro</InputLabel>
-                      <Select
-                        labelId="rol-select-label"
-                        id="rol-select"
-                        required
-                        onChange={(e) => handleCenterChange(e, setUser)}
-                        value={recyclingCollection}
-                      >
-                        {recyclingCollectionCenters.map((name, index) => (
-                          <MenuItem
-                            key={index}
-                            value={name.RecyclingCenterName}
-                          >
-                            {name.RecyclingCenterName}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Grid>
+            <Grid item xs={12} sm={12}>
+              <Title>Ubicacion</Title>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12}>
+                <Title>Misma ubicacion de RFC: </Title>
               </Grid>
-            </Box>
-          </Box>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography>No</Typography>
+                <AntSwitch
+                  onChange={handleSwitchChange}
+                  checked={isSameLocation}
+                  inputProps={{ "aria-label": "ant design" }}
+                  value={addrees_different}
+                />
+                <Typography>Si</Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6}></Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Estado"
+                name="state"
+                required
+                fullWidth
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Ciudad"
+                name="city"
+                required
+                fullWidth
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Colonia"
+                name="locality"
+                required
+                fullWidth
+                value={locality}
+                onChange={(e) => setLocality(e.target.value)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Calle y Numero"
+                name="calle"
+                required
+                fullWidth
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Codigo postal"
+                name="postal_code"
+                required
+                fullWidth
+                value={postal_code}
+                onChange={(e) => setPostalCode(e.target.value)}
+                margin="dense"
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={12}>
+              <Box mb={2}>
+                <Title>Seleccionar Centro de Reciclaje o Recolección</Title>
+                <FormControl fullWidth mt={2} mb={2}>
+                  <InputLabel id="rol-select-label">Centro</InputLabel>
+                  <Select
+                    labelId="rol-select-label"
+                    id="rol-select"
+                    required
+                    onChange={(e) => handleCenterChange(e, setUser)}
+                    value={recyclingCollection}
+                  >
+                    {recyclingCollectionCenters.map((name, index) => (
+                      <MenuItem
+                        key={index}
+                        value={name.RecyclingCenterName}
+                      >
+                        {name.RecyclingCenterName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
+          </Grid>
           <Grid
             item
             xs={12}

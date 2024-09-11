@@ -9,49 +9,106 @@ import Title from '../../components/Title';
 import { IconButton, InputAdornment } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { Group } from '@mui/icons-material';
+import DeleteUserModal from '../../components/modals/DeleteUserModal.jsx';
 
 
 
 
-function ModalUser({ children, mode , creatorUser}) {
-  const [datos, setDatos] = useState([""]);
+function ModalUser({ mode , creatorUser, userToEdit = null, centers = [], recyclingCenters = null, collectionCenters = null }) {
+  console.log("###################### USER TO EDIT ##################################")
+  console.log(userToEdit)
+  console.log("###################### CREATOR USER ##################################")
+  console.log(creatorUser)
+  console.log("###################### CENTERS ##################################")
+  console.log(centers)
+  console.log("###################### RECYCLING CENTERS ##################################")
+  console.log(recyclingCenters)
+  console.log("###################### COLLECTION CENTERS ##################################")
+  console.log(collectionCenters)
+  //console.log("###################### USER TO EDIT ##################################")
+  
+  //groups, users, companies se obtienen de una petición a la API
   const [groups, setGroups] = useState([""])
   const [users, setUsers] = useState([""])
   const [companies, setCompanies] = useState([""])
-  const [user, setUser] = useState("");
+  //--------------------------------------------------------------
+  const [user, setUser] = useState(userToEdit ? userToEdit.user : "");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [group, setGroup] = useState("");
-  const [company, setCompany] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [locality, setLocality] = useState("");
-  const [street, setStreet] = useState("");
-  const [postal_code, setPostalCode] = useState("");
-  const [rfc, setRfc] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address_num_int, setAddressNumInt] = useState("");
-  const [old_user, setOldUser] = useState("")
-  const [razon_social, setRazonSocial] = useState("")
-  const [center, setCenter] = useState("")
-  const [centers, setCenters] = useState([])
+  const [email, setEmail] = useState(userToEdit ? userToEdit.email : "");
+  const [first_name, setFirstName] = useState(userToEdit ? userToEdit.first_name : "");
+  const [last_name, setLastName] = useState(userToEdit ? userToEdit.last_name : "");
+  const [group, setGroup] = useState(userToEdit ? userToEdit.groups[0] : "");
+  const [company, setCompany] = useState(userToEdit ? userToEdit.company : "");
+  const [state, setState] = useState(userToEdit ? userToEdit.address_state : "");
+  const [city, setCity] = useState(userToEdit ? userToEdit.address_city : "");
+  const [locality, setLocality] = useState(userToEdit ? userToEdit.address_locality : "");
+  const [street, setStreet] = useState(userToEdit ? userToEdit.address_street : "");
+  const [postal_code, setPostalCode] = useState(userToEdit ? userToEdit.address_postal_code : "");
+  const [rfc, setRfc] = useState(userToEdit ? userToEdit.rfc : "");
+  const [phone, setPhone] = useState(userToEdit ? userToEdit.phone : "");
+  const [address_num_int, setAddressNumInt] = useState(userToEdit ? userToEdit.address_num_int : "");
+  const [old_user, setOldUser] = useState(userToEdit ? userToEdit.user : "");
+  const [razon_social, setRazonSocial] = useState(userToEdit ? userToEdit.razon_social : "");
+
+  //logica para centros de reciclaje y centrons de acopio
+  const [reciclingCenter, setReciclingCenter] = useState(() => {
+    if (userToEdit) {
+      const { recycling_center } = userToEdit;
+      return recycling_center;
+    }
+    return '';
+  });
+
+  const [collectionCenter, setCollectionCenter] = useState(() => {
+    if (userToEdit) {
+      const { collection_center } = userToEdit;
+      return collection_center;
+    }
+    return '';
+  });
+  
+  const [center, setCenter] = useState(() => {
+    if (userToEdit) {
+      const { recycling_center, collection_center } = userToEdit;
+      console.log("###################### CENTER ##################################")
+      console.log(recycling_center !== 'NO APLICA' ? recycling_center : collection_center !== 'NO APLICA' ? collection_center : '');
+      
+      return recycling_center !== 'NO APLICA' ? recycling_center : collection_center !== 'NO APLICA' ? collection_center : '';
+    }
+    return '';
+  });
+
+  const [centerEdit, setCenterEdit] = useState(() => {
+    if (userToEdit) {
+      const { recycling_center, collection_center } = userToEdit;
+      console.log("###################### CENTER ##################################")
+      console.log(recycling_center !== 'NO APLICA' ? recycling_center : collection_center !== 'NO APLICA' ? collection_center : '');
+      
+      return recycling_center !== 'NO APLICA' ? recycling_center : collection_center !== 'NO APLICA' ? collection_center : '';
+    }
+    return '';
+  });
+  
+  // const [centers, setCenters] = useState([]);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [address_num_ext, setAddressNumExt] = useState("");
-  const [address_reference, setAddressReference] = useState("");
+  const [address_num_ext, setAddressNumExt] = useState(userToEdit ? userToEdit.address_num_ext : "");
+  const [address_reference, setAddressReference] = useState(userToEdit ? userToEdit.address_reference : "");
   const [permisos , setPermisos] = useState([{"name": "Lectura"}, {"name" : "Escritura"}])
   const [permiso, setPermiso] = useState("Lectura")
   const [creator , setCreator] = useState(creatorUser)
-
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+  const [filteredCenters, setFilteredCenters] = useState([]);
 
-
-
-  const { setUpdateUserInfo, openModalText, setTextOpenModalText, setOpenModalText, openModalCreate, setOpenModalCreate, openModalEdit, openModalDelete, setOpenModalEdit, setOpenModalDelete } = useContext(TodoContext);
+useEffect(() => {
+  // Filtrar la lista de centros por el CenterName
+  const filtered = centers.filter(c => c.CenterName === center);
+  console.log("###################### FILTERED ##################################")
+  console.log(filtered)
+  setFilteredCenters(filtered);
+}, [centers, center]);
+  const { setUpdateUserInfo, setTextOpenModalText, setOpenModalText, openModalCreate, setOpenModalCreate, openModalEdit, openModalDelete, setOpenModalEdit, setOpenModalDelete , updateUserInfo } = useContext(TodoContext);
   const closeModal = () => {
     if (openModalCreate) {
       setOpenModalCreate(false);
@@ -61,37 +118,10 @@ function ModalUser({ children, mode , creatorUser}) {
     }
     if (openModalDelete) {
       setOpenModalDelete(false);
-    }
-  };
-
-  const handleGroupChange = (event) => {
-    const value = event.target.value;
-    if (value === "Centro") {
-      axios.get(`${process.env.REACT_APP_API_URL}/get-all-collection-center/`)
-        .then(response => {
-          console.log(response.data)
-          setCenters(response.data);
-        })
-        .catch(error => {
-          console.error("######### ERROR AL TRAER CENTROS DE RECOLECCION#########");
-          console.error(error);
-        });
-    } else {
-      setCenter("")
-      setCenters([])
-    }
-
-  }
-
+    }};
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log("###################### SUBMIT ##################################")
-    console.log(creatorUser)
-    
-
-
     if (mode === "CREAR") {
       var rfcValue = e.target.rfc.value
       if (!rfcValue) {
@@ -119,7 +149,8 @@ function ModalUser({ children, mode , creatorUser}) {
         address_lng: 0,
         razon_social: e.target.razon_social.value,
         user_permissions: permiso,
-        creator_user: creator
+        creator_user: creator,
+        associated_center : center.CenterName
       };
 
 
@@ -181,7 +212,9 @@ function ModalUser({ children, mode , creatorUser}) {
         razon_social: e.target.razon_social.value,
         antiguoUser: old_user,
         user_permissions: permiso,
-        creator_user: creatorUser
+        creator_user: creatorUser,
+        associated_center : center.CenterName
+
 
       };
 
@@ -267,7 +300,6 @@ function ModalUser({ children, mode , creatorUser}) {
       setIsPasswordVisible(false); // Esto cubre 'editar' y 'borrar'
     }
 
-
     // Definir las peticiones pero no ejecutarlas todavía
     const fetchGroups = axios.get(`${process.env.REACT_APP_API_URL}/get-all-groups/`);
     const fetchUsers = axios.get(`${process.env.REACT_APP_API_URL}/get-all-users-with-group/`);
@@ -282,16 +314,11 @@ function ModalUser({ children, mode , creatorUser}) {
         console.log(responses[0].data)
         const usersData = responses[1].data;
         const companiesData = responses[2].data;
-
-
         setGroups(groupsData);
         setUsers(usersData);
         console.log("###################### USER FETCHED ##################################")
         console.log(usersData)
-
         setCompanies(companiesData);
-
-
         console.log("###################### DATA FETCHED ##################################");
       })
       .catch((errors) => {
@@ -302,71 +329,99 @@ function ModalUser({ children, mode , creatorUser}) {
 
   useEffect(() => {
     if (center === "") {
-      setState("")
-      setCity("")
-      setLocality("")
-      setStreet("")
-      setAddressNumInt("")
-      setPostalCode("")
-      setAddressNumExt("")
-      setAddressReference("")
+      console.log("###################### USER TO EDIT ##################################")
+      setState(userToEdit ? userToEdit.address_state : "")
+      setCity(userToEdit ? userToEdit.address_city : "")
+      setLocality(userToEdit ? userToEdit.address_locality : "")
+      setStreet(userToEdit ? userToEdit.address_street : "")
+      setAddressNumInt(userToEdit ? userToEdit.address_num_int : "")
+      setPostalCode(userToEdit ? userToEdit.address_postal_code : "")
+      setAddressNumExt(userToEdit ? userToEdit.address_num_ext : "")
+      setAddressReference(userToEdit ? userToEdit.address_reference : "")
     } else {
-      setState(center.AddressState)
-      setCity(center.AddressCity)
-      setLocality(center.AddressLocality)
-      setStreet(center.AddressStreet)
-      setAddressNumInt(center.AddressNumInt)
-      setAddressNumExt(center.AddressNumExt)
-      setAddressReference(center.AddressReference)
-      setPostalCode(center.AddressPostalCode)
+      console.log ("###################### CENTER ##################################")
+      console.log(center)
+      console.log("###################### CENTERS ##################################")
+      console.log(centers)
+
+      if (mode === "EDITAR" || mode === "BORRAR") {
+        const centerData = centers.find((cen) => cen.CenterName === centerEdit);
+        console.log("###################### CENTER FETCHED ##################################")
+        console.log(centerData)
+        console.log("###################### CENTER FETCHED ##################################")
+      console.log(centerData)
+      setState(centerData ? centerData.AddressState : "")
+      setCity(centerData ? centerData.AddressCity : "")
+      setLocality(centerData ? centerData.AddressLocality : "")
+      setStreet(centerData ? centerData.AddressStreet : "")
+      setAddressNumInt(centerData ? centerData.AddressNumInt : "")
+      setPostalCode(centerData ? centerData.AddressPostalCode : "")
+      setAddressNumExt(centerData ? centerData.AddressNumExt : "")
+      setAddressReference(centerData ? centerData.AddressReference : "")
+      }else {
+      const centerData = centers.find((cen) => cen.CenterName === center.CenterName);
+      console.log("###################### CENTER FETCHED ##################################")
+      console.log(centerData)
+      setState(centerData ? centerData.AddressState : "")
+      setCity(centerData ? centerData.AddressCity : "")
+      setLocality(centerData ? centerData.AddressLocality : "")
+      setStreet(centerData ? centerData.AddressStreet : "")
+      setAddressNumInt(centerData ? centerData.AddressNumInt : "")
+      setPostalCode(centerData ? centerData.AddressPostalCode : "")
+      setAddressNumExt(centerData ? centerData.AddressNumExt : "")
+      setAddressReference(centerData ? centerData.AddressReference : "")
+      }
+      
     }
-    //console.log("###################### CENTER FETCHED ##################################")
-    //console.log(center)
+    console.log("###################### CENTER FETCHED ##################################")
+    console.log(center)
 
-  }, [center])
-
+  }, [center, centers]);
 
   const handleSelectChange = (event) => {
     const selectedOption = event.target.value; // Obtener la opción seleccionada
     console.log(selectedOption)
-    // Buscar el dato seleccionado en el arreglo de datos
-    const datoEncontrado = users.find((users) => users.user === selectedOption);
-    console.log("DATO3333333333333333333333333333")
-    console.log(datoEncontrado.razon_social)
-    setUser(datoEncontrado.user);
-    setPassword(datoEncontrado.password);
-    setEmail(datoEncontrado.email);
-    setFirstName(datoEncontrado.first_name);
-    setLastName(datoEncontrado.last_name);
-    setGroup(datoEncontrado.groups[0]);
-    setRfc(datoEncontrado.rfc);
-    setCompany("Rennueva");
-    setPhone(datoEncontrado.phone);
-    setState(datoEncontrado.address_state);
-    setCity(datoEncontrado.address_city);
-    setLocality(datoEncontrado.address_locality);
-    setStreet(datoEncontrado.address_street);
-    setPostalCode(datoEncontrado.address_postal_code);
-    setAddressNumInt(datoEncontrado.address_num_int);
-    setAddressNumExt(datoEncontrado.address_num_ext);
-    setAddressReference(datoEncontrado.address_reference);
-    setOldUser(selectedOption);
-    setRazonSocial(datoEncontrado.razon_social)
-    console.log("PERMISOS")
-    console.log(datoEncontrado.user_permissions)
-    setPermiso(datoEncontrado.user_permissions)
+    console.log("###################### SELECTED OPTION ##################################")
+    console.log(selectedOption.AddressStreet)
+    
+    setState("SDSADASD")
+    setCity(selectedOption.AddressCity)
+    setLocality(selectedOption.AddressLocality)
+    setStreet(selectedOption.AddressStreet)
+    setPostalCode(selectedOption.AddressPostalCode)
+    setAddressNumInt(selectedOption.AddressNumInt)
+    setAddressNumExt(selectedOption.AddressNumExt)
+    setAddressReference(selectedOption.AddressReference)
+    setCenter(selectedOption.CenterName)
+    console.log("###################### CENTER ##################################")
+    console.log(center)
+    console.log("###################### CENTER ##################################")
 
-
-
+ 
   }
 
   const handleInputChange = (e, setState, mode) => {
+
     const currentInputValue = e.target.value;
-
+    console.log(currentInputValue)
     if (mode !== "BORRAR") {
-
       setState(currentInputValue);
     }
+    if (mode === "EDITAR") {
+
+   
+        setCenterEdit(currentInputValue.CenterName)
+      
+      console.log("###################### EDITAR ##################################")
+      console.log(currentInputValue)
+      console.log("###################### EDITAR ##################################")
+      setState(currentInputValue);
+      
+      setCenter(currentInputValue)
+      
+
+    }
+
   };
 
   const handlePhoneChange = (event) => {
@@ -402,30 +457,10 @@ function ModalUser({ children, mode , creatorUser}) {
 
       }}>
         <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
-        <form onSubmit={handleSubmit} >
+        {mode === "CREAR"  || mode === "EDITAR" ? (
+          <form onSubmit={handleSubmit} >
           <Box mb={2}>
             <Title> Usuario</Title>
-            {mode === "EDITAR" || mode === "BORRAR" ? (
-              <FormControl fullWidth>
-                <InputLabel id="user-select-label">Usuario</InputLabel>
-                <Select
-                  labelId="user-select-label"
-                  id="user-select"
-                  onChange={(e) => {
-
-                    handleSelectChange(e, setUser)
-
-
-                  }}
-                  required
-                //value={user}
-                >
-                  {users.map((name, index) => (
-                    <MenuItem key={index} value={name.user}>{name.user}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ) : null}
           </Box>
           <Box mt={2} mb={2} sx={{ overflowY: 'auto', maxHeight: 500 }}>
             <TextField
@@ -503,7 +538,7 @@ function ModalUser({ children, mode , creatorUser}) {
                 value={permiso}
                 onChange={(e) => {
                   handleInputChange(e, setPermiso, mode)
-                  // handleGroupChange(e)
+                  //handleGroupChange(e)
                 }}
               >
                 {permisos.map((name, index) => (
@@ -547,7 +582,7 @@ function ModalUser({ children, mode , creatorUser}) {
                 value={group}
                 onChange={(e) => {
                   handleInputChange(e, setGroup, mode)
-                  handleGroupChange(e)
+                  //handleGroupChange(e)
                 }}
               >
                 {groups.map((name, index) => (
@@ -556,19 +591,47 @@ function ModalUser({ children, mode , creatorUser}) {
               </Select>
             </FormControl>
             {
-              group === "Centro"
+              group === "Acopio" 
               && (
                 <FormControl fullWidth margin='dense'>
-                  <InputLabel id="centro-select-label">Centro de recolección</InputLabel>
+                  <InputLabel id="centro-select-label">Centro de Acopio</InputLabel>
                   <Select
                     labelId="centro-select-label"
                     id="centro-select"
                     required
-                    value={center}
-                    onChange={(e) => handleInputChange(e, setCenter, mode)}
+                    value={collectionCenters.find((cen) => cen.CenterName === center)}  
+                    onChange={(e) => { handleInputChange(e, setCenter, mode) }}
                   >
-                    {centers.map((option, index) => (
-                      <MenuItem key={index} value={option}>{option.CollectionCenterName}</MenuItem>
+                    {collectionCenters.map((option, index) => (
+                      console.log("###################### OPTION ##################################"),
+                      console.log(option),
+                      console.log(index),
+                      <MenuItem key={index} value={option}>{option.CenterName}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+
+              )
+
+            }
+            {
+              group === "Reciclaje"  
+              && (
+                <FormControl fullWidth margin='dense'>
+                  <InputLabel id="centro-select-label">Centro de Reciclaje</InputLabel>
+                  <Select
+                    labelId="centro-select-label"
+                    id="centro-select"
+                    required
+                    value={recyclingCenters.find((cen) => cen.CenterName === center)}  
+                    onChange={(e) => { handleInputChange(e, setCenter, mode) }}
+                  >
+                    {recyclingCenters.map((option, index) => (
+                      console.log("###################### OPTION ##################################"),
+                      console.log(option),
+                      console.log(index),
+                      <MenuItem key={index} value={option}>{option.CenterName}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -611,7 +674,7 @@ function ModalUser({ children, mode , creatorUser}) {
               onChange={(e) => handleInputChange(e, setState, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && state.length > 50}
@@ -631,7 +694,7 @@ function ModalUser({ children, mode , creatorUser}) {
               onChange={(e) => handleInputChange(e, setCity, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50, // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && city.length > 50}
@@ -651,7 +714,7 @@ function ModalUser({ children, mode , creatorUser}) {
               onChange={(e) => handleInputChange(e, setLocality, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && locality.length > 50}
@@ -670,7 +733,7 @@ function ModalUser({ children, mode , creatorUser}) {
               onChange={(e) => handleInputChange(e, setStreet, mode)}
               margin="dense"
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
               }}
               error={state.length < 3 && street.length > 50}
@@ -693,7 +756,7 @@ function ModalUser({ children, mode , creatorUser}) {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 5
               }}
               margin="dense"
@@ -716,7 +779,7 @@ function ModalUser({ children, mode , creatorUser}) {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 5
               }}
               margin="dense"
@@ -742,7 +805,7 @@ function ModalUser({ children, mode , creatorUser}) {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 5
               }}
               margin="dense"
@@ -766,7 +829,7 @@ function ModalUser({ children, mode , creatorUser}) {
                 }
               }}
               inputProps={{
-                readOnly: group === "Centro",
+                readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
                 maxLength: 100
               }}
               margin="dense"
@@ -781,7 +844,17 @@ function ModalUser({ children, mode , creatorUser}) {
           </Box>
 
           <Button type="submit" variant="contained" fullWidth>{mode}</Button>
-        </form>
+        </form> ) : (
+          mode === "BORRAR" ? (
+            console.log("###################### DELETE USER ##################################"),
+            console.log(users),
+            <DeleteUserModal users={users} />
+            
+          ) : (
+           null
+          )
+        )}
+          
       </Box>
 
 

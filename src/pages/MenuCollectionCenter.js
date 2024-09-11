@@ -30,13 +30,9 @@ import { Typography } from "@mui/material";
 function MenuCollectionCenter() {
   const { 
     openModalCreateCollectionCenter, 
-    setOpenModalCreateCollectionCenter, 
-    setOpenModalEditCollectionCenter,
     openModalEditCollectionCenter, 
-    setOpenModalDeleteCollectionCenter, 
-    openModalDeleteCollectionCenter , openModalText, setOpenModalText ,textOpenModalText,setTextOpenModalText
+    openModalDeleteCollectionCenter , openModalText, setOpenModalText ,textOpenModalText
   } = useContext(TodoContext);
-
   const dataUser = useAuth();
 
   // ... otros handlers y useEffect ...
@@ -45,7 +41,7 @@ function MenuCollectionCenter() {
   return (
     <>
       <CssBaseline />
-      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" ) ? (
+      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
       
       <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
             <Grid container spacing={3}>
@@ -59,9 +55,9 @@ function MenuCollectionCenter() {
                     justifyContent: 'center'
                   }}
                 >
-                  <Title>Centros de Recoleccion</Title>
+                  <Title>Centros de Acopio</Title>
                   <CUDButtons model="CollectionCenter" />
-                  <Title>Centros Creados</Title>
+                  <Title>Centros de acopio creados</Title>
                   <CollectionCenterTable />
                 </Paper>
               </Grid>
