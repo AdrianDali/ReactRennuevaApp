@@ -110,6 +110,8 @@ function Toolbar({
     folios
 }) {
     const [openAssignModal, setOpenAssignModal] = useState(false);
+    const userData = useAuth();
+    console.log("info usuario: ", userData);
 
 
     return (
@@ -157,7 +159,7 @@ function Toolbar({
                     Asignar
                 </Button>
             </Box>
-            <AssignModal setOpen={setOpenAssignModal} isOpen={openAssignModal} folios={folios}/>
+            <AssignModal setOpen={setOpenAssignModal} isOpen={openAssignModal} center={userData?.recycling_center}/>
         </Box>
     );
 }
