@@ -451,7 +451,7 @@ export default function DonorRecollectionsTable({ data }) {
                                         <Typography variant="subtitle2">Estado</Typography>
                                     </TableSortLabel>
                                 </TableCell>
-                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica") &&
+                                {dataUser && !(dataUser.groups[0] === "Comunicacion") &&
                                     <>
                                         <TableCell>
                                             <Typography variant="subtitle2">Editar</Typography>
@@ -530,7 +530,7 @@ export default function DonorRecollectionsTable({ data }) {
                                                 <TableCell>
                                                     <Chip label={statusText(request.status)} color={statusColor(request.status)} />
                                                 </TableCell>
-                                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica") &&
+                                                {dataUser && !(dataUser.groups[0] === "Comunicacion" ) &&
                                                     <>
                                                         <TableCell>
                                                             <IconButton
