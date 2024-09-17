@@ -27,15 +27,15 @@ const RecyclingCenterTable = ({ datos }) => {
         <thead>
           <tr>
             <th className='etiquetaTabla'>Nombre</th>
-            <th className='etiquetaTabla'>Razon Social</th>
+            <th className='etiquetaTabla'>Razón Social</th>
             <th className='etiquetaTabla'>RFC</th>
             <th className='etiquetaTabla'>Calle</th>
             <th className='etiquetaTabla'>Celular</th>
             <th className='etiquetaTabla'>Email</th>
-            <th className='etiquetaTabla'>Direccion</th>
+            <th className='etiquetaTabla'>Dirección</th>
             <th className='etiquetaTabla'>Ciudad</th>
             <th className='etiquetaTabla'>Estado</th>
-            <th className='etiquetaTabla'>Codigo Postal</th>
+            <th className='etiquetaTabla'>Código Postal</th>
 
 
           </tr>

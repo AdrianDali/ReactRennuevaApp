@@ -244,7 +244,7 @@ export default function MiniDrawer() {
         <Divider />
 
         <List>
-          {['Residuos', 'Generadores',"Compañias", 'Donadores', "Orden Recoleccion"].map((text, index) => (
+          {['Residuos', 'Generadores',"Compañías", 'Donadores', "Orden de Recolección"].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => handleClickResidueGeneratorDonor(index)}
@@ -274,7 +274,7 @@ export default function MiniDrawer() {
         </List>
         <Divider />
         <List>
-          {['Centros Reciclaje', 'Centros Recoleccion', "Conductor", "Vehiculo","Transportista"].map((text, index) => (
+          {['Centros Reciclaje', 'Centros de Recolección', "Conductor", "Vehículo","Transportista"].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => handleClickCCDriverCarrier(index)}

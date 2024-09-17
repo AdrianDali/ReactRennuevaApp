@@ -251,10 +251,10 @@ export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, 
                 <Box display='flex' flexDirection='column' gap={2} sx={{ padding: 2 }} >
                     <DateRangeFilter name='fecha' setFilters={setFilters} label='Fecha de solicitud' filters={filters} />
                     <DateRangeFilter name='fecha_estimada_recoleccion' setFilters={setFilters} label='Fecha estimada de recolección' filters={filters} />
-                    <MultipleSelect data={data.status} label="Esatdo de recolección" name='status' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.status} label="Estado de recolección" name='status' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.codigo_postal} label="Código postal" name='codigo_postal' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.ciudad} label="Ciudad" name='ciudad' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.estado} label="Esatdo" name='estado' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.estado} label="Estado" name='estado' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.peso} label="Peso" name='peso' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.peso_estimado} label="Peso estimado" name='peso_estimado' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.conductor_asignado} label="Conductor asignado" name='conductor_asignado' setFilters={setFilters} filters={filters} />

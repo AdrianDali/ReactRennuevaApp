@@ -210,7 +210,7 @@ function SearchField({ filteredData, setVisibleData }) {
           onChange={(e) => setSearchValue(e.target.value)}
           id="search-field"
           inputRef={searchInputRef}
-          label="Búscar"
+          label="Buscar"
           variant="standard"
           size="small"
           sx={{
@@ -598,7 +598,7 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                       color="textSecondary"
                       align="center"
                     >
-                      No se encontraron solicitudes de reolección
+                      No se encontraron solicitudes de recolección
                     </Typography>
                   </TableCell>
                 </TableRow>

@@ -50,7 +50,7 @@ export default function DeleteReportsModal({ reports}) {
     const notificationBody = (
         <Box px={1} pt={1}>
             <Typography variant='body1'>
-                {success ? "Los reportes se eliminaron correctamente." : "Ocurrió un error al realizar la operación. No se pudo eliminar los siguinetes reportes:"}
+                {success ? "Los reportes se eliminaron correctamente." : "Ocurrió un error al realizar la operación. No se pudo eliminar los siguientes reportes:"}
             </Typography>
             <List sx={{ p: 0, pt: 1, pl: 1 }} >
                 {result.map(res => {

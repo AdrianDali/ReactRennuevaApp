@@ -31,7 +31,7 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
         axios
             .get(`${process.env.REACT_APP_API_URL}/get-all-donor-email/`)
             .then((response) => {
-                console.log("Donor recolection data");
+                //console.log("Donor recolection data");
                 console.log(response.data);
                 setCorreoCliente(response.data);
             })
@@ -104,7 +104,7 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
                         disablePortal
                         id="autocomplete-donor"
                         options={correoCliente}
-                        noOptionsText="No se encontrarón coincidencias"
+                        noOptionsText="No se encontraron coincidencias"
                         sx={{ width: "100%" }} // Usa el ancho completo del Grid item
                         getOptionLabel={(option) => option.email}
                         renderInput={(params) => (

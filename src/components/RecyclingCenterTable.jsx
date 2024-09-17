@@ -49,16 +49,16 @@ const RecyclingCenterTable = () => {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Nombre del Centro de Reciclaje</TableCell>
-                <TableCell>Razon Social</TableCell>
+                <TableCell>Razón Social</TableCell>
                 <TableCell>RFC</TableCell>
-                <TableCell>Telefono</TableCell>
+                <TableCell>Teléfono</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Calle</TableCell>
-                <TableCell>Num Interio</TableCell>
+                <TableCell>Num Interior</TableCell>
                 <TableCell>Dirección</TableCell>
                 <TableCell>Ciudad</TableCell>
                 <TableCell>Estado</TableCell>
-                <TableCell>Codigo Postal</TableCell>
+                <TableCell>Código Postal</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

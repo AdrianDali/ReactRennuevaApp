@@ -240,7 +240,7 @@ const rows = [
             <Box bgcolor={"#f5f5f5"} sx={{ margin: 1, width : "100%" }}>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                Datos de la recoleccion
+                Datos de la recolección
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
@@ -273,14 +273,14 @@ const rows = [
                 <TableHead>
                   <TableRow>
                     <TableCell>Nombre</TableCell>
-                    <TableCell>Telefono</TableCell>
+                    <TableCell>Teléfono</TableCell>
                     <TableCell>Estado</TableCell>
                     <TableCell>Ciudad</TableCell>
                     <TableCell>Colonia</TableCell>
                     <TableCell>Calle</TableCell>
                     <TableCell>Num. Ext</TableCell>
                     <TableCell>Num. Int</TableCell>
-                    <TableCell>Codigo Postal</TableCell>
+                    <TableCell>Código Postal</TableCell>
 
 
                   </TableRow>
@@ -384,7 +384,7 @@ const DonorRecolectionTable = () => {
 
   const datoss = [
     { title: 'Solicitado' },
-    { title: 'Pendiente Recoleccion' },
+    { title: 'Pendiente Recolección' },
     { title: 'Cancelada' },
 
   ];
@@ -449,7 +449,7 @@ const DonorRecolectionTable = () => {
                   status = "solicitado";
                   console.log(status);
                 }
-                if (value.title === "Pendiente Recoleccion") {
+                if (value.title === "Pendiente Recolección") {
                   status = "pendienteRecoleccion";
                   console.log(status);
                 }
@@ -514,7 +514,7 @@ const DonorRecolectionTable = () => {
                 <TableCell>Id</TableCell>
                 <TableCell>Donador</TableCell>
                 <TableCell>Fecha Solicitud</TableCell>
-                <TableCell>Direccion</TableCell>
+                <TableCell>Dirección</TableCell>
                 <TableCell>Peso Estimado</TableCell> 
                 <TableCell>Editar</TableCell>
                 <TableCell>Eliminar</TableCell>

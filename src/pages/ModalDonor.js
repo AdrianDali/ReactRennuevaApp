@@ -141,10 +141,10 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
 
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
 
           console.error(error.response);
@@ -204,10 +204,10 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
 
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
 
           console.error(error.response);
@@ -382,7 +382,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
 
 
             <TextField
-              label="Razon Social"
+              label="Razón Social"
               name="razon_social"
               required
               fullWidth
@@ -468,7 +468,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
               />
             </FormControl>
             <FormControl fullWidth mt={2} mb={2}>
-              <Title>Compañia</Title>
+              <Title>Compañía</Title>
               <Select
                 labelId="company-select-label"
                 id="company-select"
@@ -482,7 +482,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
                   </MenuItem>
                 ))}
               </Select>
-              <Title>Ubicacion</Title>
+              <Title>Ubicación</Title>
               <TextField
                 label="Estado"
                 name="state"
@@ -548,7 +548,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
               />
 
               <TextField
-                label="Codigo postal"
+                label="Código postal"
                 name="postal_code"
                 required
                 fullWidth

@@ -84,10 +84,10 @@ export default function CarriersFiltersModal({ isOpen, setOpen, data, setFiltere
         if(keys.every(key => filters[key].length === 0)) return (setFiltersApplied(false), setFilteredData(users));
         keys.forEach(key => {
             if (filters[key].length > 0) {
-                console.log('Filtrando por', key)
-                console.log('Filtros para', key,': ', filters[key])
+                //console.log('Filtrando por', key)
+                //console.log('Filtros para', key,': ', filters[key])
                 newData = newData.filter(user => filters[key].includes(user[key]));
-                console.log('data despues del filtro', newData)
+                //console.log('data despues del filtro', newData)
             }else{
                 console.log('No hay filtros para', key)
             }

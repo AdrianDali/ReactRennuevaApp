@@ -53,12 +53,12 @@ const UserTable = ({ datos }) => {
                 <TableCell>Nombre Usuario</TableCell>
                 <TableCell>RFC</TableCell>
                 <TableCell>Grupos</TableCell>
-                <TableCell>Compañia</TableCell>
-                <TableCell>Direccion Estado</TableCell>
-                <TableCell>Direccion Ciudad</TableCell>
+                <TableCell>Compañía</TableCell>
+                <TableCell>Dirección Estado</TableCell>
+                <TableCell>Dirección Ciudad</TableCell>
                 <TableCell>Dirección Colonia</TableCell>
                 <TableCell>Dirección Calle</TableCell>
-                <TableCell>Dirección Codigo Postal</TableCell>
+                <TableCell>Dirección Código Postal</TableCell>
                 
               </TableRow>
             </TableHead>

@@ -202,7 +202,7 @@ function MobileToolbar({
                 py={2}
             >
                 <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexShrink: 2 }}>
-                    Responsivas en proceso
+                    Ocupación de centros de acopio
                 </Typography>
                 <Box sx={{ flexGrow: 1, flexShrink: 0, display: "flex", flexDirection: "row", justifyContent: "end" }}>
                     <IconButton
@@ -307,7 +307,7 @@ function SearchField({ filteredData, setVisibleData }) {
                     onChange={(e) => setSearchValue(e.target.value)}
                     id="search-field"
                     inputRef={searchInputRef}
-                    label="Búscar"
+                    label="Buscar"
                     variant="standard"
                     size="small"
                     sx={{

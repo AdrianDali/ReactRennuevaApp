@@ -106,10 +106,10 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);
@@ -165,10 +165,10 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);
@@ -202,10 +202,10 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);
@@ -363,7 +363,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                             }
                         />
                         <TextField
-                            label="Razon social"
+                            label="Razón social"
                             name="razon_social"
                             required
                             fullWidth
@@ -376,7 +376,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                             error={razonSocial.length > 0 &&  razonSocial.length > 50}
                             helperText={
                                 razonSocial.length > 0 &&  razonSocial.length > 50
-                                    ? "La Razon Social debe tener entre 5 y 50 caracteres"
+                                    ? "La Razón Social debe tener entre 5 y 50 caracteres"
                                     : ""
                             }
 
@@ -441,7 +441,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                         </FormControl>
                         <FormControl fullWidth mt={2} mb={2}>
 
-                            <Title>Ubicacion</Title>
+                            <Title>Ubicación</Title>
                             <TextField
                                 label="Estado"
                                 name="state"
@@ -543,7 +543,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
 
 
                             <TextField
-                                label="Codigo postal"
+                                label="Código postal"
                                 name="postal_code"
                                 required
                                 fullWidth

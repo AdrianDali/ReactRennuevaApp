@@ -59,9 +59,9 @@ function MenuCompany() {
                     justifyContent: 'center'
                   }}
                 >
-                  <Title>Compañias</Title>
+                  <Title>Compañías</Title>
                   <CUDButtons model="Company" />
-                  <Title>Compañias Creadas</Title>
+                  <Title>Compañías Creadas</Title>
                   <CompanyTable />
                 </Paper>
               </Grid>

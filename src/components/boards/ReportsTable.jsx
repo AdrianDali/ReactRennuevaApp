@@ -356,7 +356,7 @@ function SearchField({ filteredData, setVisibleData }) {
           onChange={(e) => setSearchValue(e.target.value)}
           id="search-field"
           inputRef={searchInputRef}
-          label="Búscar"
+          label="Buscar"
           variant="standard"
           size="small"
           sx={{
@@ -701,7 +701,7 @@ export default function ReportsTable({ data }) {
                 <TableCell>
                   <TableSortLabel direction="asc">
                     <Typography variant="subtitle2">
-                      Direccion Completa
+                      Dirección Completa
                     </Typography>
                   </TableSortLabel>
                 </TableCell>

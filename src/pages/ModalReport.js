@@ -178,8 +178,7 @@ function ModalReport({ mode, report, creatorUser }) {
         report.nombre_real_usuario + " " + report.apellido_usuario
       );
       if (report.centro_reciclaje != null) {
-        console.log("paseo por aqui");
-        console.log(report.centro_reciclaje);
+        
         setRecyclingCollection(report.centro_reciclaje);
       }
       if (report.centro_recoleccion != null) {
@@ -554,7 +553,7 @@ function ModalReport({ mode, report, creatorUser }) {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Compañia"
+                label="Compañía"
                 name="company"
                 required
                 fullWidth
@@ -620,7 +619,7 @@ function ModalReport({ mode, report, creatorUser }) {
                                 />
                             </Grid> */}
             <Grid item xs={12} sm={12}>
-              <Title>Ubicacion</Title>
+              <Title>Ubicación</Title>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Grid item xs={12} sm={12}>
@@ -684,7 +683,7 @@ function ModalReport({ mode, report, creatorUser }) {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Codigo postal"
+                label="Código postal"
                 name="postal_code"
                 required
                 fullWidth

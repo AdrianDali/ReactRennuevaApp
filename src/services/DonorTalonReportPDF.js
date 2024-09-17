@@ -29,7 +29,7 @@ export default function generateDonorTalonPDF(report, data, qrImage) {
     if (data[0].key_centro_recoleccion != null) {
         key_centro = data[0].key_centro_recoleccion;
         centro = data[0].centro_recoleccion;
-        titulo_centro = "Recoleccion";
+        titulo_centro = "Recolección";
     }
 
     const doc = new jsPDF();

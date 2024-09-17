@@ -14,8 +14,8 @@ import {
   TextField,
   FormLabel,
   Typography,
-  Radio, 
-  RadioGroup 
+  Radio,
+  RadioGroup
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -27,6 +27,7 @@ import useAuth from "../../hooks/useAuth";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import { Close } from "@mui/icons-material";
 import cancelationReassonText from "../../helpers/cancelationReassonText";
+import { set } from "date-fns";
 const style = {
   position: "absolute",
   top: "50%",
@@ -60,12 +61,8 @@ export default function EditRecolectionModal({
   const [loading, setLoading] = useState(false)
   const [openConfirmation, setOpenConfirmation] = useState(false)
 
-
-
-  
-
   useEffect(() => {
-    console.log(userData);
+    //console.log(userData);
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
       .then((response) => {
@@ -77,6 +74,7 @@ export default function EditRecolectionModal({
       });
 
   }, []);
+
 
 
   useEffect(() => {
@@ -110,10 +108,10 @@ export default function EditRecolectionModal({
         break;
     }
 
-    if(cancelationReassonText(recolection.comment_cancelation) === "Consulte comentarios de cancelación"){
+    if (cancelationReassonText(recolection.comment_cancelation) === "Consulte comentarios de cancelación") {
       setValue("otro");
       setOtroTexto(recolection.comment_cancelation);
-    }else{
+    } else {
       setValue(recolection.comment_cancelation);
     }
   }, [recolection, open]);
@@ -241,13 +239,12 @@ export default function EditRecolectionModal({
                   setStatus(e.target.value);
                 }}
               >
-                {/*userData?.groups[0] !== "Conductor" &&  <MenuItem value="solicitado">Solicitada</MenuItem>*/}
-                {userData?.groups[0] !== "Conductor" && (status == "solicitado" || status == "pendienteRecoleccion")? <MenuItem value="pendienteRecoleccion">
+                {recolection?.status == "solicitado" || recolection?.status == "pendienteRecoleccion"? <MenuItem value="pendienteRecoleccion">
                   Recolección pendiente
-                </MenuItem>: null}
-                {status === "solicitado" || status === "pendienteRecoleccion" || status === "recolectado"? <MenuItem value="recolectado">Recolectada</MenuItem>: null}
-                {status === "solicitado" || status === "pendienteRecoleccion"  || status === "entregado"?<MenuItem value="entregado">Entregado</MenuItem>:null}
-                {status === "solicitado" || status === "pendienteRecoleccion" || status === "cancelado" ? <MenuItem value="cancelado">Cancelado</MenuItem>: null}
+                </MenuItem> : null}
+                {recolection?.status === "solicitado" || recolection?.status === "pendienteRecoleccion" || recolection?.status === "recolectado" ? <MenuItem value="recolectado">Recolectada</MenuItem> : null}
+                {recolection?.status === "solicitado" || recolection?.status === "pendienteRecoleccion" || recolection?.status === "entregado" ? <MenuItem value="entregado">Entregado</MenuItem> : null}
+                {recolection?.status === "solicitado" || recolection?.status === "pendienteRecoleccion" || recolection?.status === "cancelado" ? <MenuItem value="cancelado">Cancelado</MenuItem> : null}
               </Select>
             </FormControl>
             {status === "cancelado" && (
@@ -300,7 +297,7 @@ export default function EditRecolectionModal({
               </FormControl>
             )}
 
-            {status === "pendienteRecoleccion" && (
+            {status === "pendienteRecoleccion" && userData?.groups[0] !== "Conductor" && (
               <>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
@@ -382,7 +379,7 @@ export default function EditRecolectionModal({
                   if (userData?.groups[0] === "Conductor") {
                     console.log("No tienes permisos para cancelar la recolección")
                     setOpenConfirmation(true)
-                    setOpen(false)
+                    //setOpen(false)
                   } else {
                     setLoading(true)
                     const data = {
@@ -480,7 +477,7 @@ export default function EditRecolectionModal({
       >
         <Typography variant="body1">¿Está seguro de cancelar esta solicitud de recolección?. Esta acción no se puede deshacer.</Typography>
       </ConfirmationModal>
-      
+
     </>,
     document.getElementById("modal")
   );
