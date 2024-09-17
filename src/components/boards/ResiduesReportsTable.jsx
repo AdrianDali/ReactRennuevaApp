@@ -295,7 +295,7 @@ function SearchField({ filteredData, setVisibleData }) {
                     onChange={(e) => setSearchValue(e.target.value)}
                     id="search-field"
                     inputRef={searchInputRef}
-                    label="Búscar"
+                    label="Buscar"
                     variant="standard"
                     size="small"
                     sx={{

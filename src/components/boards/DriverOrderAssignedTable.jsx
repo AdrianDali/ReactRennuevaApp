@@ -28,9 +28,10 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { ModalFirmar } from "../../pages/ModalFirmar";
 import { statusText, statusColor } from "../../helpers/statusModifiers";
+import { ModalResidueReport } from "../../pages/ModalResidueReport";
+import { ModalResidueRecollection } from "../../pages/ModalResidueRecollection";
 
-function Row(props) {
-    const { row } = props;
+function Row({row, setReportToEdit, signType, setSignType}) {
     const [open, setOpen] = React.useState(false);
     const [openEditModal, setOpenEditModal] = React.useState(false);
     const [recolectionToEdit, setRecolectionToEdit] = React.useState(null);
@@ -39,16 +40,18 @@ function Row(props) {
         setUpdateDonorInfo,
         setOpenModalText,
         setTextOpenModalText,
-        setOpenModalEditFirma
+        setOpenModalEditFirma,
+        setOpenModalEditResidueReport
     } = useContext(TodoContext);
-    const [reportToEdit, setReportToEdit] = useState();
-    const [signType, setSignType] = useState("Recoleccion");
 
 
+    const handleEditResidues = (report) => {
+        setReportToEdit(report);
+        setOpenModalEditResidueReport(true);
+      };
 
     const onEditDonorSign = (id) => {
         setReportToEdit(id);
-
         setSignType("Donador");
         setOpenModalEditFirma(true);
     }
@@ -78,23 +81,6 @@ function Row(props) {
                 <TableCell>{row.fecha}</TableCell>
                 <TableCell>{row.direccion_completa}</TableCell>
                 <TableCell>{row.peso_estimado}</TableCell>
-
-                <TableCell>
-                    <Button
-                        startIcon={<Add />}
-                        variant="contained"
-                        size="small"
-                        color="primary"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            onEditDonorSign(row.id)
-
-
-                        }}
-                    >
-                        Firmar
-                    </Button>
-                </TableCell>
                 <TableCell>
                     <Button
                         startIcon={<Add />}
@@ -105,7 +91,6 @@ function Row(props) {
                             e.stopPropagation()
                             onEditReceiverSign(row.id)
 
-
                         }}
                     >
                         Firmar
@@ -120,26 +105,37 @@ function Row(props) {
                         onClick={(e) => {
                             e.stopPropagation()
                             onEditDonorSign(row.id)
-
                         }}
                     >
-                        Agregar
+                        Firmar
+                    </Button>
+                </TableCell>
+                <TableCell>
+                    <Button
+                        startIcon={<Add />}
+                        variant="contained"
+                        size="small"
+                        color="primary"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditResidues(row);
+                        }}
+                    >
+                        Generar
                     </Button>
                 </TableCell>
 
 
                 <TableCell>
-                    <Button
-                        color={
-                            row.status === "solicitado" ? "primary" : "error"
-                        }
-                        onClick={() => {
-                            setRecolectionToEdit(row);
-                            setOpenEditModal(true);
-                        }}
-                    >
+                    <IconButton
+                        color="primary"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            setRecolectionToEdit(row)
+                            setOpenEditModal(true)
+                        }}>
                         <Edit />
-                    </Button>
+                    </IconButton>
                 </TableCell>
                 <TableCell>
                     <Chip label={statusText(row.status)} color={statusColor(row.status)} />
@@ -151,14 +147,13 @@ function Row(props) {
                         <Box bgcolor={"#f5f5f5"} sx={{ margin: 1, width: "100%" }}>
                             <Box sx={{ margin: 1 }}>
                                 <Typography variant="h6" gutterBottom component="div">
-                                    Datos de la recoleccion
+                                    Datos de la recolección
                                 </Typography>
                                 <Table size="small" aria-label="purchases">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Horario preferente </TableCell>
+                                            <TableCell>Horario preferente</TableCell>
                                             <TableCell>Peso estimado</TableCell>
-
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -182,14 +177,14 @@ function Row(props) {
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Nombre</TableCell>
-                                            <TableCell>Telefono</TableCell>
+                                            <TableCell>Teléfono</TableCell>
                                             <TableCell>Estado</TableCell>
                                             <TableCell>Ciudad</TableCell>
                                             <TableCell>Colonia</TableCell>
                                             <TableCell>Calle</TableCell>
                                             <TableCell>Num. Ext</TableCell>
                                             <TableCell>Num. Int</TableCell>
-                                            <TableCell>Codigo Postal</TableCell>
+                                            <TableCell>Código Postal</TableCell>
 
 
                                         </TableRow>
@@ -200,7 +195,6 @@ function Row(props) {
                                                 {row.nombre}
                                             </TableCell>
                                             <TableCell>{row.telefono}</TableCell>
-
                                             <TableCell>{row.estado}</TableCell>
                                             <TableCell>{row.ciudad}</TableCell>
                                             <TableCell>{row.localidad}</TableCell>
@@ -216,7 +210,7 @@ function Row(props) {
                     </Collapse>
                 </TableCell>
             </TableRow>
-            <EditRecolectionModal
+            {openEditModal && <EditRecolectionModal
                 open={openEditModal}
                 setOpen={setOpenEditModal}
                 recolection={recolectionToEdit}
@@ -224,8 +218,8 @@ function Row(props) {
                 setOpenMessageModal={setOpenModalText}
                 update={updateDonorInfo}
                 setUpdate={setUpdateDonorInfo}
-            />
-            <ModalFirmar type={signType} id={reportToEdit} />
+            />}
+
         </React.Fragment>
     );
 }
@@ -239,14 +233,13 @@ const DriverOrderAssignedTable = ({ data }) => {
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    const refreshToken = getCookie('refresh');
+
     const username = getCookie('user');
-    const accessToken = getCookie('access');
+
     const [clientes, setClientes] = useState([]);
     const [correoCliente, setCorreoCliente] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [open, setOpen] = useState(false);
     const {
         updateDonorInfo,
         setUpdateDonorInfo,
@@ -257,8 +250,8 @@ const DriverOrderAssignedTable = ({ data }) => {
     const [recolectionToEdit, setRecolectionToEdit] = useState(null);
     const [filterClient, setFilterClient] = useState(null);
     const [auxClientes, setAuxClientes] = useState(null);
-    const [openConfirmation, setOpenConfirmation] = useState(false);
-
+    const [reportToEdit, setReportToEdit] = useState({});
+    const [signType, setSignType] = useState("Recoleccion");
 
     useEffect(() => {
         axios
@@ -267,8 +260,6 @@ const DriverOrderAssignedTable = ({ data }) => {
                 status: "pendienteRecoleccion"
             })
             .then((response) => {
-                console.log("Donor recolection data");
-                console.log(response.data);
                 setClientes(response.data);
                 setAuxClientes(response.data);
                 const cli = response.data.map((cliente) => { return { email: cliente.donador } });
@@ -293,7 +284,7 @@ const DriverOrderAssignedTable = ({ data }) => {
 
     const datoss = [
         { title: 'Solicitado' },
-        { title: 'Pendiente Recoleccion' },
+        { title: 'Pendiente Recolección' },
         { title: 'Cancelada' },
 
     ];
@@ -348,13 +339,12 @@ const DriverOrderAssignedTable = ({ data }) => {
                                 <TableCell>Id</TableCell>
                                 <TableCell>Donador</TableCell>
                                 <TableCell>Fecha Solicitud</TableCell>
-                                <TableCell>Direccion</TableCell>
+                                <TableCell>Dirección</TableCell>
                                 <TableCell>Peso Estimado</TableCell>
                                 <TableCell>Firma Conductor</TableCell>
                                 <TableCell>Firma Donador</TableCell>
-                                <TableCell>Imprimir Talon</TableCell>
+                                <TableCell>Generar Talón</TableCell>
                                 <TableCell>Editar</TableCell>
-
                                 <TableCell>Status</TableCell>
                             </TableRow>
                         </TableHead>
@@ -362,10 +352,7 @@ const DriverOrderAssignedTable = ({ data }) => {
                             {clientes
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((orden, index) => (
-
-
-                                    <Row key={index} row={orden} />
-
+                                    <Row key={index} row={orden} setReportToEdit={setReportToEdit} signType={signType} setSignType={setSignType} />
                                 ))}
                         </TableBody>
                     </Table>
@@ -389,6 +376,8 @@ const DriverOrderAssignedTable = ({ data }) => {
                 update={updateDonorInfo}
                 setUpdate={setUpdateDonorInfo}
             />
+            <ModalResidueRecollection report={reportToEdit} />
+            <ModalFirmar type={signType} id={reportToEdit} />
         </>
     );
 };

@@ -79,7 +79,7 @@ function ModalVehicle({ mode, creatorUser }) {
           const data = response.data;
           console.log(data)
           setOpenModalText(true);
-          setTextOpenModalText("Vehiculo creado correctamente")
+          setTextOpenModalText("Vehículo creado correctamente")
           setUpdateVehicleInfo(true)
           closeModal()
           // setOpenModalText(true);
@@ -93,10 +93,10 @@ function ModalVehicle({ mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -109,7 +109,7 @@ function ModalVehicle({ mode, creatorUser }) {
           const data = response.data;
           console.log(data)
           setOpenModalText(true);
-          setTextOpenModalText("Vehiculo editado correctamente")
+          setTextOpenModalText("Vehículo editado correctamente")
           setUpdateVehicleInfo(true)
           e.target.reset();
           closeModal()
@@ -121,10 +121,10 @@ function ModalVehicle({ mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -137,7 +137,7 @@ function ModalVehicle({ mode, creatorUser }) {
           const data = response.data;
           console.log(data)
           setOpenModalText(true);
-          setTextOpenModalText("Vehiculo borrado correctamente")
+          setTextOpenModalText("Vehículo borrado correctamente")
           setUpdateVehicleInfo(true)
           e.target.reset();
           e.target.reset();
@@ -150,10 +150,10 @@ function ModalVehicle({ mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -252,10 +252,10 @@ function ModalVehicle({ mode, creatorUser }) {
         <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
         <form onSubmit={handleSubmit} >
           <Box mb={2}>
-            <Title> Vehiculos</Title>
+            <Title> Vehículos</Title>
             {mode === "EDITAR" || mode === "BORRAR" ? (
               <FormControl fullWidth>
-                <InputLabel id="vehicle-select-label">Vehiculo</InputLabel>
+                <InputLabel id="vehicle-select-label">Vehículo</InputLabel>
                 <Select
                   labelId="vehicle-select-label"
                   id="vehicle-select"
@@ -274,7 +274,7 @@ function ModalVehicle({ mode, creatorUser }) {
             <FormControl fullWidth mt={2} mb={2}>
 
               <TextField
-                label="Modelo del Vehiculo"
+                label="Modelo del Vehículo"
                 name="nombre"
                 required
                 fullWidth
@@ -283,7 +283,7 @@ function ModalVehicle({ mode, creatorUser }) {
                 margin="dense"
               />
               <TextField
-                label="Placas del Vehiculo"
+                label="Placas del Vehículo"
                 name="placas"
                 required
                 fullWidth
@@ -292,7 +292,7 @@ function ModalVehicle({ mode, creatorUser }) {
                 margin="dense"
               />
               <TextField
-                label="Permiso del Vehiculo"
+                label="Permiso del Vehículo"
                 name="permiso"
                 required
                 fullWidth
@@ -301,7 +301,7 @@ function ModalVehicle({ mode, creatorUser }) {
                 margin="dense"
               />
               <TextField
-                label="Capacidad del Vehiculo"
+                label="Capacidad del Vehículo"
                 name="capacidad"
                 required
                 fullWidth

@@ -78,7 +78,6 @@ function TodoProvider({ children }) {
 
   return (
     <TodoContext.Provider value={{
-      
       openModalCreate, setOpenModalCreate, openModalEdit,
       setOpenModalEdit, openModalDelete,
       setOpenModalDelete, theme, setTheme, themeStyle,

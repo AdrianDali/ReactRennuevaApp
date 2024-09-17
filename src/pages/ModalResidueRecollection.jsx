@@ -7,9 +7,9 @@ import axios from 'axios';
 import { TodoContext } from '../context/index.js';
 import { Close } from '@mui/icons-material';
 
-function ModalResidueReport({ report }) {
+function ModalResidueRecollection({ report }) {
     const [residues, setResidues] = useState([]);
-    const [entries, setEntries] = useState([{ user: report.nombre_usuario, report: report.id_report, residue: '', peso: '', volumen: '' }]);
+    const [entries, setEntries] = useState([{ user: report.donador, report: report.id, residue: '', peso: '', volumen: '' }]);
     const [botonAdd, setBotonAdd] = useState(false);
     const { openModalEditResidueReport, setOpenModalEditResidueReport, setUpdateReportInfo } = useContext(TodoContext);
 
@@ -19,7 +19,7 @@ function ModalResidueReport({ report }) {
     };
 
     useEffect(() => {
-        const getResidues = { reportId: report.id_report? report.id_report : report.id };
+        const getResidues = { reportId: report.id };
 
         axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
             .then(response => {
@@ -29,7 +29,7 @@ function ModalResidueReport({ report }) {
                 console.error('Hubo un problema al obtener los residuos:', error);
             });
 
-        axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, getResidues)
+        axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-recollection/`, getResidues)
             .then(response => {
                 const data = response.data;
                 setEntries(data);
@@ -49,7 +49,7 @@ function ModalResidueReport({ report }) {
     };
 
     const handleAddFields = () => {
-        setEntries([...entries, { user: report.nombre_usuario, report: report.id_report, residue: '', peso: '', volumen: '' }]);
+        setEntries([...entries, { user: report.donador, report: report.id, residue: '', peso: '', volumen: '' }]);
     };
 
     const handleAddFirstFields = () => {
@@ -65,7 +65,7 @@ function ModalResidueReport({ report }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post(`${process.env.REACT_APP_API_URL}/create-report-residue-user/`, entries)
+        axios.post(`${process.env.REACT_APP_API_URL}/create-recollection-residue-donor/`, entries)
             .then(response => {
                 e.target.reset();
                 closeModal();
@@ -145,4 +145,4 @@ function ModalResidueReport({ report }) {
     );
 }
 
-export { ModalResidueReport };
+export { ModalResidueRecollection };

@@ -85,7 +85,7 @@ function ModalCompany({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Compañia creada correctamente");
+          setTextOpenModalText("Compañía creada correctamente");
           setUpdateCompanyInfo(true);
           e.target.reset();
 
@@ -97,10 +97,10 @@ function ModalCompany({ children, mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -118,8 +118,8 @@ function ModalCompany({ children, mode, creatorUser }) {
             CompanyNewName: companyName,
             creator_user: creator
       };
-      console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
-      console.log(editarDato);
+      //console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
+      //console.log(editarDato);
 
       axios
         .put(`${process.env.REACT_APP_API_URL}/update-companie/`, editarDato)
@@ -127,7 +127,7 @@ function ModalCompany({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Compañia editado correctamente");
+          setTextOpenModalText("Compañía editado correctamente");
           setUpdateCompanyInfo(true);
           e.target.reset();
           closeModal();
@@ -139,10 +139,10 @@ function ModalCompany({ children, mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -162,7 +162,7 @@ function ModalCompany({ children, mode, creatorUser }) {
           console.log("#######################    Borrado    #################")
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Compañia borrado correctamente");
+          setTextOpenModalText("Compañía borrado correctamente");
           setUpdateCompanyInfo(true);
           e.target.reset();
           closeModal();
@@ -173,10 +173,10 @@ function ModalCompany({ children, mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -294,10 +294,10 @@ function ModalCompany({ children, mode, creatorUser }) {
         </Button>
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
-            <Title> Compañia</Title>
+            <Title> Compañía</Title>
             {mode === "EDITAR" || mode === "BORRAR" ? (
               <FormControl fullWidth>
-                <InputLabel id="user-select-label">Compañia</InputLabel>
+                <InputLabel id="user-select-label">Compañía</InputLabel>
                 <Select
                   labelId="user-select-label"
                   id="user-select"

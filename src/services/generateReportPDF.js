@@ -49,7 +49,7 @@ export default function generateReportPDF(report, data, qrImage){
       key_centro = data[0].key_centro_recoleccion;
       direccion_centro = data[0].ubicacion_centro_recoleccion;
       centro = data[0].centro_recoleccion;
-      titulo_centro = "Recoleccion";
+      titulo_centro = "Recolección";
       //console.log("###############permiso")
       permiso_centro = data[0].permiso_centro_recoleccion;
     }
@@ -178,7 +178,7 @@ export default function generateReportPDF(report, data, qrImage){
       tableWidth: 190,
       body: [
         [
-          "Compañia:",
+          "Compañía:",
           data[0].transportista,
           "Transportista:",
           data[0].transportista_nombre,

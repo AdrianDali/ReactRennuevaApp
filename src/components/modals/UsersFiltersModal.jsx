@@ -280,7 +280,7 @@ export default function UsersFiltersModal({ isOpen, setOpen, data, setFilteredDa
                 <Box display='flex' flexDirection='column' gap={2} sx={{ padding: 2 }} >
                     {/* <DateRangeFilter name='fecha' setFilters={setFilters} label='Fecha de solicitud' filters={filters} />
                     <DateRangeFilter name='fecha_estimada_recoleccion' setFilters={setFilters} label='Fecha estimada de recolección' filters={filters} /> */}
-                    {/* <MultipleSelect data={data.status} label="Esatdo de recolección" name='status' setFilters={setFilters} filters={filters} /> */}
+                    {/* <MultipleSelect data={data.status} label="Estado de recolección" name='status' setFilters={setFilters} filters={filters} /> */}
                     <MultipleSelect data={data.address_postal_code} label="Código postal" name='address_postal_code' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.address_city} label="Ciudad" name='address_city' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.address_state} label="Estado" name='address_state' setFilters={setFilters} filters={filters} />

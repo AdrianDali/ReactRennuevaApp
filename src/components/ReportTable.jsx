@@ -107,7 +107,7 @@ const generatePdf = (report) => {
   });
 
   doc.setFontSize(18);
-  doc.text("Datos del Recoleccion", 14, 100);
+  doc.text("Datos del Recolección", 14, 100);
 
   // Table 2: Recolection
   doc.autoTable({

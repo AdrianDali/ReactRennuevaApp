@@ -63,7 +63,7 @@ const AdminList = () => {
 const items_residue = [{ label: "Residuo", icon: <DeleteIcon /> }];
 
 const items_recollection = [
-  { label: "Orden recoleccion", icon: <AssignmentReturnedIcon /> },
+  { label: "Orden de Recolección", icon: <AssignmentReturnedIcon /> },
 ];
 
 const items_users = [
@@ -82,10 +82,10 @@ const items_report = [
 ];
 
 const items_entities = [
-  { label: "Centro Reciclaje", icon: <DeleteIcon /> }, // Asumiendo que quieres usar el mismo icono de "Residuo"
-  { label: "Centro Recoleccion", icon: <AssignmentReturnedIcon /> },
-  { label: "Compañia", icon: <BusinessIcon /> },
-  { label: "Vehiculo", icon: <DirectionsCarIcon /> },
+  { label: "Centro de Reciclaje", icon: <DeleteIcon /> }, // Asumiendo que quieres usar el mismo icono de "Residuo"
+  { label: "Centro de Recolección", icon: <AssignmentReturnedIcon /> },
+  { label: "Compañía", icon: <BusinessIcon /> },
+  { label: "Vehículo", icon: <DirectionsCarIcon /> },
 ];
   // Método para manejar la navegación podría ser añadido aquí
   const doNavigate = (label) => {
@@ -105,7 +105,7 @@ const items_entities = [
       "Centro Reciclaje": "/recycling-center",
       "Centro Recoleccion": "/collection-center",
       Compañia: "/company",
-      Vehiculo: "/vehicle",
+      Vehículo: "/vehicle",
       Dashboard: "/dash",
     };
 
@@ -255,7 +255,7 @@ const items_entities = [
           id="panel5a-header"
         >
           <DirectionsRunRounded />
-          <Typography>{openSideBar ? "Recoleccion" : ""}</Typography>
+          <Typography>{openSideBar ? "Recolección" : ""}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <List>

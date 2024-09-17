@@ -172,10 +172,10 @@ useEffect(() => {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -239,10 +239,10 @@ useEffect(() => {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -277,10 +277,10 @@ useEffect(() => {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -500,7 +500,7 @@ useEffect(() => {
               }
             />
             <TextField
-              label="Razon social"
+              label="Razón social"
               name="razon_social"
               required
               fullWidth
@@ -513,7 +513,7 @@ useEffect(() => {
               error={razon_social.length > 0 && (razon_social.length < 0 || razon_social.length > 50)}
               helperText={
                 razon_social.length > 0 && (razon_social.length < 50 || razon_social.length > 50)
-                  ? "La Razon Social debe tener entre 0 y 50 caracteres"
+                  ? "La Razón Social debe tener entre 0 y 50 caracteres"
                   : ""
               }
 
@@ -664,7 +664,7 @@ useEffect(() => {
             />
 
 
-            <Title>Ubicacion</Title>
+            <Title>Ubicación</Title>
             <TextField
               label="Estado"
               name="state"
@@ -792,7 +792,7 @@ useEffect(() => {
             />
 
             <TextField
-              label="Codigo postal"
+              label="Código postal"
               name="postal_code"
               required
               fullWidth

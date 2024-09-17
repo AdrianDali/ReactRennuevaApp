@@ -160,7 +160,7 @@ const handlePermisoChange = (index, event) => {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro de Recoleccion creado correctamente");
+          setTextOpenModalText("Centro de Recolección creado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
@@ -171,10 +171,10 @@ const handlePermisoChange = (index, event) => {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -222,7 +222,7 @@ const handlePermisoChange = (index, event) => {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro Recoleccion editado correctamente");
+          setTextOpenModalText("Centro Recolección editado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
@@ -234,10 +234,10 @@ const handlePermisoChange = (index, event) => {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -261,7 +261,7 @@ const handlePermisoChange = (index, event) => {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro Recoleccion borrado correctamente");
+          setTextOpenModalText("Centro Recolección borrado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
@@ -272,10 +272,10 @@ const handlePermisoChange = (index, event) => {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -394,11 +394,11 @@ const handlePermisoChange = (index, event) => {
         </Button>
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
-            <Title> Centro de Recoleccion</Title>
+            <Title> Centro de Recolección</Title>
             {mode === "EDITAR" || mode === "BORRAR" ? (
               <FormControl fullWidth>
                 <InputLabel id="user-select-label">
-                  Centro Recoleccion
+                  Centro de Recolección
                 </InputLabel>
                 <Select
                   labelId="user-select-label"
@@ -421,7 +421,7 @@ const handlePermisoChange = (index, event) => {
           </Box>
           <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 500 }}>
             <TextField
-              label="Nombre Centro Recoleccion"
+              label="Nombre Centro Recolección"
               name="nombre"
               required
               fullWidth
@@ -448,7 +448,7 @@ const handlePermisoChange = (index, event) => {
               }
             />
             <TextField
-              label="Razon Social"
+              label="Razón Social"
               name="razon_social"
               required
               fullWidth
@@ -457,7 +457,7 @@ const handlePermisoChange = (index, event) => {
               margin="dense"
             />
             <TextField
-              label="Email Centrto Recoleccion"
+              label="Email Centrto Recolección"
               name="email"
               type="email"
               required
@@ -490,7 +490,7 @@ const handlePermisoChange = (index, event) => {
             />
 
             <TextField
-              label="Clave de Centro Recoleccion"
+              label="Clave de Centro Recolección"
               name="key"
               required
               fullWidth
@@ -500,7 +500,7 @@ const handlePermisoChange = (index, event) => {
             />
 
             <FormControl fullWidth mt={2} mb={2}>
-              <Title>Ubicacion</Title>
+              <Title>Ubicación</Title>
               <TextField
                 label="Estado"
                 name="state"
@@ -548,7 +548,7 @@ const handlePermisoChange = (index, event) => {
               />
 
               <TextField
-                label="Codigo postal"
+                label="Código postal"
                 name="postal_code"
                 required
                 fullWidth

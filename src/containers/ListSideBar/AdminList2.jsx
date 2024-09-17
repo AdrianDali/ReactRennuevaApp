@@ -103,12 +103,12 @@ const entitiesItem = new ListTemplateItem({
             redirection: "/collection-center",
         }),
         new ListTemplateItem({
-            tag: "Compañia",
+            tag: "Compañía",
             icon: <BusinessIcon />,
             redirection: "/company",
         }),
         new ListTemplateItem({
-            tag: "Vehiculo",
+            tag: "Vehículo",
             icon: <DirectionsCarIcon />,
             redirection: "/vehicle",
         }),

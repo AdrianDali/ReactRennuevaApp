@@ -190,7 +190,7 @@ function SearchField({ filteredData, setVisibleData }) {
                     onChange={(e) => setSearchValue(e.target.value)}
                     id="search-field"
                     inputRef={searchInputRef}
-                    label="Búscar"
+                    label="Buscar"
                     variant="standard"
                     size="small"
                     sx={{ mt: 1, width: showSearch ? "25rem" : 0, transition: 'all 300ms ease-in' }}
@@ -468,7 +468,7 @@ export default function DonorRecollectionsTable({ data }) {
                                 <TableRow>
                                     <TableCell colSpan={14}>
                                         <Typography variant="h6" color="textSecondary" align="center">
-                                            No se encontraron solicitudes de reolección
+                                            No se encontraron solicitudes de recolección
                                         </Typography>
                                     </TableCell>
                                 </TableRow>

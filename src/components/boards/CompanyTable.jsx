@@ -22,7 +22,7 @@ const CompanyTable = () => {
             .get(`${process.env.REACT_APP_API_URL}/get-all-companies/`)
             .then(response => {
                 setClientes(response.data);
-                console.log("sadlkasdasklajkfdsfjkgdsfljkasdhfladksjhfasdjklfhadskljfhasdlkfj");
+                //console.log("sadlkasdasklajkfdsfjkgdsfljkasdhfladksjhfasdjklfhadskljfhasdlkfj");
                 console.log(response.data);
                 setUpdateCompanyInfo(false);
             })

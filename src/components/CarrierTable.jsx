@@ -49,8 +49,8 @@ const RecyclingCenterTable = () => {
               <TableRow>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Telefono</TableCell>
-                <TableCell>Compañia</TableCell>
+                <TableCell>Teléfono</TableCell>
+                <TableCell>Compañía</TableCell>
                 <TableCell>RFC</TableCell>
                 <TableCell>Comentarios</TableCell>
           

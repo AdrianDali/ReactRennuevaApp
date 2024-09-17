@@ -40,7 +40,7 @@ const ResidueTable = ({ datos }) => {
           <TableHead>
             <TableRow>
               <TableCell>Nombre</TableCell>
-              <TableCell>Descripcion</TableCell>
+              <TableCell>Descripción</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

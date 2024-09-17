@@ -434,7 +434,7 @@ import axios from "axios";
             onChange={(e) => setSearchValue(e.target.value)}
             id="search-field"
             inputRef={searchInputRef}
-            label="Búscar"
+            label="Buscar"
             variant="standard"
             size="small"
             sx={{
@@ -774,7 +774,7 @@ import axios from "axios";
                   </TableCell>                
                   <TableCell>
                     <TableSortLabel direction="asc">
-                      <Typography variant="subtitle2">Direccion Completa</Typography>
+                      <Typography variant="subtitle2">Dirección Completa</Typography>
                     </TableSortLabel>
                   </TableCell>
                   <TableCell>
