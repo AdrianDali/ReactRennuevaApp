@@ -343,7 +343,7 @@ const DriverOrderAssignedTable = ({ data }) => {
                                 <TableCell>Peso Estimado</TableCell>
                                 <TableCell>Firma Conductor</TableCell>
                                 <TableCell>Firma Donador</TableCell>
-                                <TableCell>Generar Talón</TableCell>
+                                <TableCell>Agregar residuos</TableCell>
                                 <TableCell>Editar</TableCell>
                                 <TableCell>Status</TableCell>
                             </TableRow>

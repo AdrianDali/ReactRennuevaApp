@@ -44,8 +44,8 @@ const SignatureComponent = ({ id, type }) => {
       const response = await axios.post(url, data);
       return response.data;
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.log(error)
+      //throw error;
     }
   };
 
