@@ -28,7 +28,6 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { ModalFirmar } from "../../pages/ModalFirmar";
 import { statusText, statusColor } from "../../helpers/statusModifiers";
-import { ModalResidueReport } from "../../pages/ModalResidueReport";
 import { ModalResidueRecollection } from "../../pages/ModalResidueRecollection";
 
 function Row({row, setReportToEdit, signType, setSignType}) {
@@ -52,15 +51,13 @@ function Row({row, setReportToEdit, signType, setSignType}) {
 
     const onEditDonorSign = (id) => {
         setReportToEdit(id);
-        setSignType("Donador");
+        setSignType("Donor");
         setOpenModalEditFirma(true);
     }
 
     const onEditReceiverSign = (id) => {
-        //console.log("Editando firma de receptor");
-        //console.log(id);
         setReportToEdit(id);
-        setSignType("Recolector");
+        setSignType("Conductor");
         setOpenModalEditFirma(true);
     }
 
@@ -121,7 +118,7 @@ function Row({row, setReportToEdit, signType, setSignType}) {
                             handleEditResidues(row);
                         }}
                     >
-                        Generar
+                        Agregar
                     </Button>
                 </TableCell>
 
@@ -281,15 +278,6 @@ const DriverOrderAssignedTable = ({ data }) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-    const datoss = [
-        { title: 'Solicitado' },
-        { title: 'Pendiente Recolección' },
-        { title: 'Cancelada' },
-
-    ];
-
-
 
     return (
         <>
