@@ -91,7 +91,7 @@ function ModalUser({ mode , creatorUser, userToEdit = null, centers = [], recycl
   
   // const [centers, setCenters] = useState([]);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [address_num_ext, setAddressNumExt] = useState(userToEdit ? userToEdit.address_num_ext : "");
+  const [address_num_ext, setAddressNumExt] = useState(userToEdit? userToEdit.address_num_ext : "");
   const [address_reference, setAddressReference] = useState(userToEdit ? userToEdit.address_reference : "");
   const [permisos , setPermisos] = useState([{"name": "Lectura"}, {"name" : "Escritura"}])
   const [permiso, setPermiso] = useState("Lectura")
@@ -328,6 +328,8 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
+    console.log("###################### CENTER elegido ##################################")
+    console.log(center)
     if (center === "") {
       console.log("###################### USER TO EDIT ##################################")
       setState(userToEdit ? userToEdit.address_state : "")
@@ -368,7 +370,7 @@ useEffect(() => {
       setStreet(centerData ? centerData.AddressStreet : "")
       setAddressNumInt(centerData ? centerData.AddressNumInt : "")
       setPostalCode(centerData ? centerData.AddressPostalCode : "")
-      setAddressNumExt(centerData ? centerData.AddressNumExt : "")
+      setAddressNumExt(center?.AddressNumExt? center.AddressNumExt  : "")
       setAddressReference(centerData ? centerData.AddressReference : "")
       }
       
