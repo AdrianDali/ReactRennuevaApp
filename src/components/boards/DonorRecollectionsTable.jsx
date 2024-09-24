@@ -28,7 +28,7 @@ import {
     Chip,
     Collapse
 } from "@mui/material";
-import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Close, KeyboardArrowDown } from "@mui/icons-material";
+import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Close, KeyboardArrowDown, EmojiPeople, Warehouse } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect, useRef } from "react";
@@ -427,6 +427,13 @@ export default function DonorRecollectionsTable({ data }) {
                                     <TableSortLabel
                                         direction="asc"
                                     >
+                                        <Typography variant="subtitle2">Centro de recolección</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
                                         <Typography variant="subtitle2">Fecha de solicitud</Typography>
                                     </TableSortLabel>
                                 </TableCell>
@@ -523,14 +530,27 @@ export default function DonorRecollectionsTable({ data }) {
                                                     />
                                                 </TableCell>
                                                 <TableCell>{request.id}</TableCell>
-                                                <TableCell>{request.donador}</TableCell>
+                                                <TableCell>
+                                                    <Box margin={0} padding={0} sx={{
+                                                        display: "flex",
+                                                        flexDirection: "row",
+                                                        alignItems: "center",
+                                                        gap: "0.5rem"
+                                                    }}>
+                                                        <span >
+                                                            {request.recoleccion_para_centro === "No" ? <EmojiPeople color="info" /> : <Warehouse color="primary"/>}
+                                                        </span>
+                                                        <span>{request.donador}</span>
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell>{request.nombre_centro == 'NO APLICA'? 'Donador': request.nombre_centro}</TableCell>
                                                 <TableCell>{request.fecha}</TableCell>
                                                 <TableCell>{request.direccion_completa}</TableCell>
                                                 <TableCell>{request.peso_estimado}</TableCell>
                                                 <TableCell>
                                                     <Chip label={statusText(request.status)} color={statusColor(request.status)} />
                                                 </TableCell>
-                                                {dataUser && !(dataUser.groups[0] === "Comunicacion" ) &&
+                                                {dataUser && !(dataUser.groups[0] === "Comunicacion") &&
                                                     <>
                                                         <TableCell>
                                                             <IconButton
