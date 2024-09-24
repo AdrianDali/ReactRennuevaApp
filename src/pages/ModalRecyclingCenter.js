@@ -12,21 +12,23 @@ import {
   Box,
   FormControl,
   InputLabel,
+  IconButton,
 } from "@mui/material";
 import Title from "../components/Title";
+import { Close } from "@mui/icons-material";
 
-function ModalRecyclingCenter({ children, mode , creatorUser}) {
+function ModalRecyclingCenter({ children, mode, creatorUser }) {
   const [datos, setDatos] = useState([]);
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
-  const [companies, setCompanies] = useState([""]);
+  const [companies, setCompanies] = useState([]);
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [group, setGroup] = useState("");
-  const [company, setCompany] = useState("");
+  const [company, setCompany] = useState(null);
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
   const [locality, setLocality] = useState("");
@@ -41,9 +43,12 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
   const [razonSocial, setRazonSocial] = useState("");
   const [centerName, setCenterName] = useState("");
   const [idCenter, setIdCenter] = useState("");
+  const [maxKg, setMaxKg] = useState("");
   const [key, setKey] = useState("");
+  const [maxM3, setMaxM3] = useState("");
+  const [alert, setAlert] = useState("");
   const [permisos, setPermisos] = useState([]);
-  const [creator , setCreator] = useState(creatorUser)
+  const [creator, setCreator] = useState(creatorUser)
 
   const {
     setUpdateRecyclingCenterInfo,
@@ -106,22 +111,27 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
         recycling_center_email: e.target.email.value,
         address_street: e.target.street.value,
         address_num_int: e.target.address_num_int.value,
+        address_num_ext: e.target.address_num_ext.value,
         address_locality: e.target.locality.value,
         address_city: e.target.city.value,
         address_state: e.target.state.value,
         address_postal_code: e.target.postal_code.value,
         address_lat: 0,
         address_lng: 0,
+        collection_center_recollection_alert: e.target.Alert.value,
+        collection_center_kg_max: e.target.max_kg.value,
+        collection_center_m3_max: e.target.max_m3.value,
+        company: company?.company_name,
         recycling_center_key: key,
         creator_user: creator,
-        recycling_center_permiso: 
+        recycling_center_permiso:
           permisos.map((permiso) => {
             return {
               nombre: permiso
             }
 
-            })
-        
+          })
+
 
       };
       console.log("#############################")
@@ -144,7 +154,7 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
         .catch(error => {
           console.error("############################");
           setOpenModalText(true);
-    
+
           // Check if error response and data exist
           if (error.response && error.response.data) {
             const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
@@ -152,7 +162,7 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
           } else {
             setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
-    
+
           console.error(error.response);
         })
     }
@@ -173,6 +183,7 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
         recycling_center_phone: e.target.phone.value,
         recycling_center_email: e.target.email.value,
         address_street: e.target.street.value,
+        address_num_ext: e.target.address_num_ext.value,
         address_num_int: e.target.address_num_int.value,
         address_locality: e.target.locality.value,
         address_city: e.target.city.value,
@@ -180,19 +191,21 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
         address_postal_code: e.target.postal_code.value,
         address_lat: 0,
         address_lng: 0,
+        collection_center_recollection_alert: e.target.Alert.value,
+        collection_center_kg_max: e.target.max_kg.value,
+        collection_center_m3_max: e.target.max_m3.value,
         recycling_center_id: idCenter,
         recycling_center_key: key,
         creator_user: creator,
-        recycling_center_permiso: 
+        company: company?.company_name,
+        recycling_center_permiso:
           permisos.map((permiso) => {
             return {
               nombre: permiso
             }
 
-            })
+          })
       };
-      console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
-      console.log(editarDato);
 
       axios
         .post(
@@ -200,8 +213,7 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
           editarDato
         )
         .then((response) => {
-          const data = response.data;
-          console.log(data);
+          //const data = response.data;
           setOpenModalText(true);
           setTextOpenModalText("Centro Reciclaje editado correctamente");
           setUpdateRecyclingCenterInfo(true);
@@ -210,9 +222,8 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
           // Limpiar los campos del formulario
         })
         .catch(error => {
-          console.error("############################");
           setOpenModalText(true);
-    
+
           // Check if error response and data exist
           if (error.response && error.response.data) {
             const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
@@ -220,8 +231,7 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
           } else {
             setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
-    
-          console.error(error.response);
+
         })
     }
     if (mode === "BORRAR") {
@@ -250,7 +260,7 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
         .catch(error => {
           console.error("############################");
           setOpenModalText(true);
-    
+
           // Check if error response and data exist
           if (error.response && error.response.data) {
             const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
@@ -258,8 +268,7 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
           } else {
             setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
-    
-          console.error(error.response);
+
         })
     }
 
@@ -303,9 +312,6 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
         const companiesData = res[1].data;
         setUsers(usersData);
         setCompanies(companiesData);
-        console.log(
-          "######################USUARIOS##################################"
-        );
       })
       .catch((err) => console.log(err));
   }, []);
@@ -335,9 +341,22 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
     setIdCenter(datoEncontrado.RecyclingCenterId);
     setKey(datoEncontrado.RecyclingCenterKey);
     setPermisos(datoEncontrado.RecyclingCenterPermiso);
+    setMaxKg(datoEncontrado.CollectionCenterKgMax);
+    setMaxM3(datoEncontrado.CollectionCenterM3Max);
+    setAlert(datoEncontrado.CollectionCenterRecollecionAlert);
+    setCompany(companies.find(company => company.company_name === datoEncontrado.RecyclingCenterCompany));
 
     // Actualizar el estado con el dato encontrado
   };
+
+  const handleSelectChangeCompany = (event) => {
+    event.preventDefault();
+    const selectedOption = event.target.value; // Obtener la opción seleccionada
+    setCompany(selectedOption);
+    setRfc(selectedOption.rfc);
+    setRazonSocial(selectedOption.razon_social);
+  }
+
 
   const handleInputChange = (e, setState, mode) => {
     const currentInputValue = e.target.value;
@@ -349,29 +368,29 @@ function ModalRecyclingCenter({ children, mode , creatorUser}) {
 
   const agregarPermiso = () => {
     setPermisos(prevPermisos => [...prevPermisos, { id: prevPermisos.length, nombre: "" }]);
-};
+  };
 
-const quitarPermiso = permiso => {
-  console.log(permiso)
-  console.log( permisos.filter(p => p !== permiso));
-  setPermisos(permisos.filter(p => p !== permiso));
-  console.log("PERMISOS");  
-  console.log(permisos);
+  const quitarPermiso = permiso => {
+    console.log(permiso)
+    console.log(permisos.filter(p => p !== permiso));
+    setPermisos(permisos.filter(p => p !== permiso));
+    console.log("PERMISOS");
+    console.log(permisos);
 
-    
-};
 
-const handlePermisoChange = (index, event) => {
-  const nuevoValor = event.target.value;
-  // Crear una copia de la lista actual de permisos
-  const nuevosPermisos = [...permisos];
-  // Actualizar el valor en la posición específica
-  nuevosPermisos[index] = nuevoValor;
-  // Establecer la nueva lista de permisos en el estado
-  console.log("PERMISOS");
-  console.log(nuevosPermisos);
-  setPermisos(nuevosPermisos);
-}
+  };
+
+  const handlePermisoChange = (index, event) => {
+    const nuevoValor = event.target.value;
+    // Crear una copia de la lista actual de permisos
+    const nuevosPermisos = [...permisos];
+    // Actualizar el valor en la posición específica
+    nuevosPermisos[index] = nuevoValor;
+    // Establecer la nueva lista de permisos en el estado
+    console.log("PERMISOS");
+    console.log(nuevosPermisos);
+    setPermisos(nuevosPermisos);
+  }
 
 
   return ReactDOM.createPortal(
@@ -390,12 +409,13 @@ const handlePermisoChange = (index, event) => {
           borderRadius: 2,
         }}
       >
-        <Button
+        <IconButton
           onClick={closeModal}
           sx={{ position: "absolute", right: 2, top: 2 }}
         >
-          &times;
-        </Button>
+          <Close />
+        </IconButton>
+
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
             <Title> Centro de Reciclaje</Title>
@@ -410,7 +430,6 @@ const handlePermisoChange = (index, event) => {
                   }}
                   required
                   //value={user}
-                  w
                 >
                   {users.map((name, index) => (
                     <MenuItem key={index} value={name.RecyclingCenterName}>
@@ -431,32 +450,54 @@ const handlePermisoChange = (index, event) => {
               onChange={(e) => handleInputChange(e, setCenterName, mode)}
               margin="dense"
             />
+            <FormControl fullWidth>
+              <InputLabel id="RC-company-label">
+                Compañía
+              </InputLabel>
+              <Select
+                labelId="RC-company-label"
+                id="RC-company"
+                onChange={(e) => {
+                  handleSelectChangeCompany(e);
+                }}
+                required
+                label="Compañía"
+                value={company}
+              >
+                {companies.map((companyItem, index) => (
+                  <MenuItem key={`company-${index}-RC`} value={companyItem}>
+                    {companyItem.company_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField
               label="RFC"
               name="rfc"
+              type="text"
+              required
               fullWidth
               value={rfc}
-              onChange={handleRfcChange}
+              onChange={(e) => handleInputChange(e, setRfc, mode)}
               margin="dense"
-              inputProps={{
-                maxLength: 13, // Opcional: si quieres forzar la longitud máxima en el HTML
+              InputProps={{
+                readOnly: true,
               }}
-              // // Validación de error para la longitud del RFC
-              // error={rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)}
-              // helperText={
-              //     rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)
-              //         ? "El RFC debe tener entre 12 y 13 caracteres"
-              //         : ""
-              // }
             />
+
             <TextField
-              label="Razón Social"
+              label="Razón social"
               name="razon_social"
+              type="text"
               required
+              readOnly
               fullWidth
               value={razonSocial}
               onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
               margin="dense"
+              InputProps={{
+                readOnly: true,
+              }}
             />
             <TextField
               label="Email Usuario"
@@ -468,6 +509,7 @@ const handlePermisoChange = (index, event) => {
               onChange={(e) => handleInputChange(e, setEmail, mode)}
               margin="dense"
             />
+
 
             <TextField
               label="Celular"
@@ -497,6 +539,39 @@ const handlePermisoChange = (index, event) => {
               fullWidth
               value={key}
               onChange={(e) => handleInputChange(e, setKey, mode)}
+              margin="dense"
+            />
+
+            <TextField
+              label="Peso Máximo"
+              name="max_kg"
+              required
+              type="number"
+              fullWidth
+              value={maxKg}
+              onChange={(e) => handleInputChange(e, setMaxKg, mode)}
+              margin="dense"
+            />
+
+            <TextField
+              label="Volumen Máximo"
+              name="max_m3"
+              required
+              type="number"
+              fullWidth
+              value={maxM3}
+              onChange={(e) => handleInputChange(e, setMaxM3, mode)}
+              margin="dense"
+            />
+
+            <TextField
+              label="Alerta de ocupación"
+              name="Alert"
+              required
+              type="number"
+              fullWidth
+              value={alert}
+              onChange={(e) => handleInputChange(e, setAlert, mode)}
               margin="dense"
             />
 
@@ -539,6 +614,15 @@ const handlePermisoChange = (index, event) => {
                 margin="dense"
               />
               <TextField
+                label="Numero exterior"
+                name="address_num_ext"
+                required
+                fullWidth
+                value={address_num_ext}
+                onChange={(e) => handleInputChange(e, setAddressNumExt, mode)}
+                margin="dense"
+              />
+              <TextField
                 label="Numero interior"
                 name="address_num_int"
                 required
@@ -558,8 +642,6 @@ const handlePermisoChange = (index, event) => {
                 margin="dense"
               />
             </FormControl>
-
-
 
             <Box>
               {permisos.map((permiso, index) => (

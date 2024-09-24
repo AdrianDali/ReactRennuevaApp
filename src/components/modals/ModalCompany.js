@@ -12,8 +12,10 @@ import {
   Box,
   FormControl,
   InputLabel,
+  IconButton,
 } from "@mui/material";
 import Title from "../../components/Title.js";
+import { Close } from "@mui/icons-material";
 
 function ModalCompany({ children, mode, creatorUser }) {
   const [datos, setDatos] = useState([]);
@@ -22,6 +24,7 @@ function ModalCompany({ children, mode, creatorUser }) {
   const [companies, setCompanies] = useState([""]);
   const [user, setUser] = useState("");
   const [rfc, setRfc] = useState("");
+  const [razonSocial, setRazonSocial] = useState("");
   const [phone, setPhone] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [companyOldName, setCompanyOldName] = useState("");
@@ -76,6 +79,8 @@ function ModalCompany({ children, mode, creatorUser }) {
             CompanyMainWeb: companyMainWeb,
             CompanySecondWeb: companySecondWeb,
             CompanyFontName: companyFontName,
+            RazonSocial: razonSocial,
+            RFC: rfc,
             creator_user: creator
         };
 
@@ -116,7 +121,9 @@ function ModalCompany({ children, mode, creatorUser }) {
             CompanySecondWeb: companySecondWeb,
             CompanyFontName: companyFontName,
             CompanyNewName: companyName,
-            creator_user: creator
+            creator_user: creator,
+            RazonSocial: razonSocial,
+            RFC: rfc
       };
       //console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
       //console.log(editarDato);
@@ -244,6 +251,8 @@ function ModalCompany({ children, mode, creatorUser }) {
     setCompanyMainWeb(datoEncontrado.main_web);
     setCompanySecondWeb(datoEncontrado.second_web);
     setCompanyFontName(datoEncontrado.font_name);
+    setRazonSocial(datoEncontrado.razon_social);
+    setRfc(datoEncontrado.rfc);
 
   };
 
@@ -286,12 +295,12 @@ function ModalCompany({ children, mode, creatorUser }) {
           borderRadius: 2,
         }}
       >
-        <Button
+        <IconButton
           onClick={closeModal}
           sx={{ position: "absolute", right: 2, top: 2 }}
         >
-          &times;
-        </Button>
+          <Close />
+        </IconButton>
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
             <Title> Compañía</Title>
@@ -325,6 +334,26 @@ function ModalCompany({ children, mode, creatorUser }) {
               fullWidth
               value={companyName} // Asegúrate de tener un estado para esto
               onChange={(e) => handleInputChange(e, setCompanyName, mode)}
+              margin="dense"
+            />
+            <TextField
+              label="RFC"
+              name="rfc"
+              fullWidth
+              value={rfc}
+              onChange={handleRfcChange}
+              margin="dense"
+              inputProps={{
+                maxLength: 13, // Opcional: si quieres forzar la longitud máxima en el HTML
+              }}
+            />
+            <TextField
+              label="Razón Social"
+              name="razon_social"
+              required
+              fullWidth
+              value={razonSocial}
+              onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
               margin="dense"
             />
             <TextField
