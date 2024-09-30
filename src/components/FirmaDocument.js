@@ -15,7 +15,7 @@ const SignatureComponent = ({ id, type }) => {
   const save = async () => {
     let url = "";
     if (type === "Receptor") {
-      url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
+      url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
     } else if (type === "Donador") {
       url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
     } else if (type === "Recolector" || type === "Conductor") {
