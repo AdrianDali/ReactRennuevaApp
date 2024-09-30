@@ -39,6 +39,7 @@ import {
   Draw,
   SaveAlt,
   Close,
+  Watch,
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
@@ -51,7 +52,7 @@ import { generateExcelFromJson } from "../../services/Excel";
 import { ModalReport } from "../../pages/ModalReport";
 import dateFormater from "../../services/dateFormater";
 import { ModalFirmar } from "../../pages/ModalFirmar";
-import { ModalResidueReport } from "../../pages/ModalResidueReport";
+import ModalWatchResidueReport from "../../pages/ModalWatchResidueReport";
 import validateReport from "../../services/validateReport";
 import getReportInfo from "../../services/getReportInfo";
 import generateReportPDF from "../../services/generateReportPDF";
@@ -61,9 +62,10 @@ import ReportsFiltersModal from "../modals/ReportsFiltersModal";
 import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import DonorRecollectionInfo from "./DonorRecollectionInfo";
-import ReportInfo from "./ReportInfo";
+import ReportInfoRecycling from "./ReportInfoRecycling";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
+import VerificationReportModal from "../../pages/VerificationReportModal";
+import { set } from "date-fns";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -349,6 +351,7 @@ export default function ReportsTable({ data }) {
   const [signType, setSignType] = useState("Generador");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openVerificationModal, setOpenVerificationModal] = useState(false);
 
   const dataUser = useAuth();
 
@@ -357,16 +360,12 @@ export default function ReportsTable({ data }) {
     setTextOpenModalText,
     openModalCreateReport,
     openModalEditReport,
-    setOpenModalDeleteReport,
-    setOpenModalEditReport,
     openModalText,
     textOpenModalText,
     setOpenModalText,
     setOpenModalEditResidueReport,
-    setOpenModalEditFirma,
     setUpdateReportInfo,
     openModalFinishReport,
-    setOpenModalFinishReport,
   } = useContext(TodoContext);
   //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
   const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
@@ -453,22 +452,17 @@ export default function ReportsTable({ data }) {
     }
   };
 
-  const onEditGeneratorSign = (id) => {
-    setReportToEdit(id);
-    setSignType("Generador");
-    setOpenModalEditFirma(true);
-  };
-
-  const onEditReceiverSign = (id) => {
-    setReportToEdit(id);
-    setSignType("Receptor");
-    setOpenModalEditFirma(true);
-  };
+  
 
   const handleEditResidues = (report) => {
     setReportToEdit(report);
     setOpenModalEditResidueReport(true);
   };
+
+  const handleVerifyReport = (report) => {
+    setReportToEdit(report);
+    setOpenVerificationModal(true);
+  }
 
   const handleGeneralCheckboxChange = (e) => {
     if (e.target.checked) {
@@ -636,21 +630,19 @@ export default function ReportsTable({ data }) {
                     <Typography variant="subtitle2">Apellidos</Typography>
                   </TableSortLabel>
                 </TableCell>
-                {/* <TableCell>
+                <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">RFC</Typography>
+                    <Typography variant="subtitle2">Folio</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">
-                      Correo electrónico
-                    </Typography>
+                    <Typography variant="subtitle2">Peso</Typography>
                   </TableSortLabel>
-                </TableCell> */}
+                </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Teléfono</Typography>
+                    <Typography variant="subtitle2">Centro de acopio</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
@@ -660,6 +652,9 @@ export default function ReportsTable({ data }) {
                 </TableCell>
                 <TableCell>
                   <Typography variant="subtitle2">Residuos</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -731,31 +726,38 @@ export default function ReportsTable({ data }) {
                         <TableCell>{report.id_report}</TableCell>
                         <TableCell>{report.nombre_real_usuario}</TableCell>
                         <TableCell>{report.apellido_usuario}</TableCell>
-                        {/* <TableCell>{report.rfc_usuario}</TableCell>
-                        <TableCell>{report.email_usuario}</TableCell> */}
-                        <TableCell>{report.telefono_usuario}</TableCell>
-                        {/* <TableCell>{report.calle_usuario}</TableCell>
-                        <TableCell>{report.colonia_usuario}</TableCell>
-                        <TableCell>{report.cp_usuario}</TableCell>
-                        <TableCell>{report.ciudad_usuario}</TableCell>
-                        <TableCell>{report.estado_usuario}</TableCell> */}
+                        <TableCell>Folio</TableCell>
+                        <TableCell>Peso</TableCell>
+                        <TableCell>Centro de acopio</TableCell>
                         <TableCell>
                           {dateFormater(report.fecha_inicio_reporte)}
                         </TableCell>
                         <TableCell>
                           <Button
-                            startIcon={<Add />}
+                            startIcon={<Visibility />}
                             variant="contained"
                             size="small"
-                            color={
-                              report.residuos_agregados ? "success" : "warning"
-                            }
+                            color="info"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleEditResidues(report);
                             }}
                           >
-                            Agregar
+                            Ver
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            startIcon={<Check />}
+                            variant="contained"
+                            size="small"
+                            color="success"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVerifyReport(report)
+                            }}
+                          >
+                            Verificar
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -769,7 +771,7 @@ export default function ReportsTable({ data }) {
                             timeout="auto"
                             unmountOnExit
                           >
-                            <ReportInfo request={report} />
+                            <ReportInfoRecycling request={report} />
                           </Collapse>
                         </TableCell>
                       </TableRow>
@@ -791,7 +793,8 @@ export default function ReportsTable({ data }) {
       </Paper>
 
       <ModalFirmar type={signType} id={reportToEdit} />
-      <ModalResidueReport report={reportToEdit} />
+      <VerificationReportModal report={reportToEdit} open={openVerificationModal} setOpen={setOpenVerificationModal} />
+      <ModalWatchResidueReport report={reportToEdit} />
       {/* <ModalFinishReport report={reportToEdit} /> */}
       <DeleteReportsModal reports={reportsToDelete} />
       <ReportsFiltersModal
