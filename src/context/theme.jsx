@@ -7,12 +7,16 @@ const theme = createTheme({
         main: '#93c030',
         light: '#deedbe',
       },
+      myText:{
+        main: '#ffffff'
+      },
       secondary: {
         main: '#203567',
       },
       background: {
         default: '#f5f7f6',
         paper: '#ffffff',
+        warning: '#f7e0cd'
       },
       divider: 'rgba(32,53,103,0.12)',
     },
