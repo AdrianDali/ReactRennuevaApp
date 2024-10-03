@@ -30,11 +30,17 @@ const asignaciones = new ListTemplateItem({
     tag: "Reportes asignados",
     icon: <Assignment />,
     redirection: '/centros/assignments'
-})
+}, 
+)
 
+const status = new ListTemplateItem({
+    tag: "Estado de reportes asignados",
+    icon: <AssignmentReturnedIcon />,
+    redirection: '/centro/status'
+})
 
 export default function ReciclajeList() {
     return (
-        <ListTemplate items={[ usersItem, asignaciones]} />
+        <ListTemplate items={[ usersItem, asignaciones, status ]} />
     )
 }

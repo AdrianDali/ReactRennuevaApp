@@ -23,6 +23,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.7.0",
     "material-react-table": "^1.14.0",
+    "nanoid": "^5.0.7",
     "pdfjs-dist": "3.11.174",
     "prop-types": "^15.8.1",
     "qrcode": "^1.5.3",

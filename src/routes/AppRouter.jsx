@@ -40,6 +40,7 @@ import  ResiduesMenu  from '../pages/Menus/ResiduesMenu.jsx'
 import CollectionCenterMenu from '../pages/Menus/CollectionCenterMenu.jsx';
 import ReciclajeList from '../containers/ListSideBarReciclaje.jsx';
 import { ReportsAssignedRecyclingMenu } from '../pages/Menus/ReportsAssignedRecyclingMenu.jsx';
+import { MenuStatusFolio } from '../pages/Menus/MenuStatusFolios.jsx';
 
 function App() {
 
@@ -120,6 +121,7 @@ function App() {
     {path : '/centro/residuos', element: <CentroLayout List={<CentroList/>}><ResiduesMenu/> </CentroLayout>},
     {path : '/centros/assignments', element: <CentroLayout List={<ReciclajeList/>}><ReportsAssignedRecyclingMenu/></CentroLayout>},
     {path : '/centrosAcopio', element: <CentroLayout List={<ReciclajeList/>}><CollectionCenterMenu/> </CentroLayout>},
+    {path : '/centro/status', element: <CentroLayout List={<ReciclajeList/>}><MenuStatusFolio/> </CentroLayout>},
 
 
     
