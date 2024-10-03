@@ -410,7 +410,9 @@ import axios from "axios";
               report.telefono_usuario.toLowerCase().includes(search) ||
               report.calle_usuario.toLowerCase().includes(search) ||
               report.colonia_usuario.toLowerCase().includes(search) ||
-              report.grupo_usuario.toLowerCase().includes(search) 
+              report.grupo_usuario.toLowerCase().includes(search) ||
+              report.folio_reporte.toLowerCase().includes(search) ||
+              report.id_report.toString().includes(search)
             );
           });
           setVisibleData(newData);

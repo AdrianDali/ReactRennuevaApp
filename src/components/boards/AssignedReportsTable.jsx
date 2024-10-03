@@ -43,7 +43,7 @@ import {
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
-import { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
@@ -651,9 +651,6 @@ export default function ReportsTable({ data }) {
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="subtitle2">Residuos</Typography>
-                </TableCell>
-                <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
               </TableRow>
@@ -675,11 +672,11 @@ export default function ReportsTable({ data }) {
                 visibleData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((report, index) => (
-                    <>
+                    <React.Fragment key={`report-assigned-${index}`}>
                       <TableRow
                         hover
                         role="checkbox"
-                        key={report.id_report}
+                        key={`${report.id_report}-${index}`}
                         selected={isRowSelected(report.id_report)}
                         sx={{ cursor: "pointer" }}
                         aria-checked={
@@ -743,20 +740,6 @@ export default function ReportsTable({ data }) {
                               handleEditResidues(report);
                             }}
                           >
-                            Ver
-                          </Button>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            startIcon={<Check />}
-                            variant="contained"
-                            size="small"
-                            color="success"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleVerifyReport(report)
-                            }}
-                          >
                             Verificar
                           </Button>
                         </TableCell>
@@ -775,7 +758,7 @@ export default function ReportsTable({ data }) {
                           </Collapse>
                         </TableCell>
                       </TableRow>
-                    </>
+                    </React.Fragment>
                   ))
               )}
             </TableBody>
