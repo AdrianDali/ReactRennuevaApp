@@ -21,17 +21,17 @@ export default function VerificationComponent({ entry, residues, index, setVerif
 
 
     useEffect(() => {
-        setVerifiedEntry({ ...entry, new_m3: newVol, new_weight: newPeso  })
+        setVerifiedEntry({ ...entry, new_m3: newVol, new_weight: newPeso })
     }, [newVol, newPeso])
 
 
     useEffect(() => {
-        const updated = verifiedEntries.map(obj => 
-            obj.report_residue=== verifiedEntry.report_residue? verifiedEntry : obj
-          );
+
+        const updated = verifiedEntries.map(obj =>
+            obj.report_residue === verifiedEntry.report_residue ? verifiedEntry : obj
+        );
 
         setVerifiedEntries(updated)
-
     }, [verifiedEntry])
 
 
@@ -110,15 +110,13 @@ export default function VerificationComponent({ entry, residues, index, setVerif
         {
             isCorrect === false && (
                 <Box key={`verification-${index}`} display="flex" flexDirection={{ md: 'row' }} justifyContent="space-between" gap={1} alignItems="center" paddingY={2} paddingX={1} marginBottom={1} marginTop={0} bgcolor="primary.light" borderRadius={1}>
-                    <FormControl sx={{ width: "8rem", flexGrow: 1, flexShrink: 1, visibility: 'hidden' }}>
+                    <FormControl sx={{ width: "8rem", flexGrow: 1, flexShrink: 1}}>
                         <InputLabel id='residue-verification-label'>Residuo</InputLabel>
                         <Select
                             hidden
                             name="residue"
                             labelId='residue-verification-label'
                             label="Residuo"
-                            value={entry.residue}
-                            inputProps={{ hidden: true }}
                         >
                             {residues.map((residue, idx) => (
                                 <MenuItem key={`residue-${idx}`} value={residue.nombre}>{residue.nombre}</MenuItem>
