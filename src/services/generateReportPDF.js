@@ -200,7 +200,7 @@ export default function generateReportPDF(report, data, qrImage){
       "Procedencia de Residuos",
     ]);
     var distancia = 185;
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 1; i < data.length; i++) {
       bodyData.push([
         data[i].nombre_residuo,
         data[i].peso + " kg",

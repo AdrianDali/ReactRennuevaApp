@@ -42,31 +42,19 @@ const reportItem = new ListTemplateItem({
             icon: <BarChartIcon />,
             redirection: "/driver/assigned-orders",
         }),
-        ,
-    ]
-})
-
-
-
-
-
-
-const collectRequestItem = new ListTemplateItem({
-    tag: "Recolección",
-    icon: <DirectionsRunRounded />,
-    subElemnets: [
         new ListTemplateItem({
-            tag: "Orden recolección",
-            icon: <AssignmentReturnedIcon />,
-            redirection: "/register/donor-recollection",
+            tag: "Ordenes Centros de Acopio",
+            icon: <HistoryIcon />,
+            redirection: "/driver/center-orders",
         }),
-    
     ]
 })
+
+
 
 export default function DriverList() {
     return (
-        <ListTemplate items={[ reportItem]} />
+        <ListTemplate items={[ reportItem, ]} />
     )
 }
 
