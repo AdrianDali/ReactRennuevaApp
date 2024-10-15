@@ -20,6 +20,7 @@ import { Close } from "@mui/icons-material";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateField } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 export default function ModalDonor({ children, mode, creatorUser, userToEdit = null }) {
   const [groups, setGroups] = useState([]);
@@ -118,7 +119,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
         address_lng: 0,
         razon_social: e.target.razon_social.value,
         gender: gender,
-        birthdate: birthday,
+        birthdate: birthday.format("YYYY-MM-DD"),
         phone_extention: phoneExtension,
         user_permission: "Escritura",
         creator_user: creator,
@@ -181,7 +182,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
         address_lng: 0,
         razon_social: e.target.razon_social.value,
         gender: gender,
-        birthdate: birthday,
+        birthdate: birthday.format("YYYY-MM-DD"),
         phone_extention: phoneExtension,
         id: id,
         creator_user: creator,
@@ -250,7 +251,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
     setReference(datoEncontrado.address_reference);
     setId(datoEncontrado.id_rennueva);
     setGender(datoEncontrado.gender)
-    setBirthday(datoEncontrado.birthdate)
+    setBirthday(dayjs(datoEncontrado.birthdate))
   }, [userToEdit, users]);
 
   useEffect(() => {
@@ -322,7 +323,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
   };
   return ReactDOM.createPortal(
     <Modal open={true} onClose={closeModal}>
-      <LocalizationProvider dateAdapter={AdapterDayjs} >
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Box
           className="ModalContent"
           sx={{
@@ -386,8 +387,6 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
                     : ""
                 }
               />
-
-
               <TextField
                 label="Razón Social"
                 name="razon_social"
@@ -398,12 +397,15 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
                 margin="dense"
               />
               <DateField
+                format="DD/MM/YYYY"
                 required
                 label="Fecha de nacimiento"
                 margin="dense"
                 fullWidth
                 value={birthday}
-                onChange={(newValue) => setBirthday(newValue)}
+                onChange={(newValue) => {
+                  setBirthday(newValue)
+                }}
                 shouldDisableDate={(date) => {
                   const today = new Date();
                   const minDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -414,25 +416,6 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
                   !birthday
                     ? "La fecha de nacimiento es requerida"
                     : new Date().getFullYear() - new Date(birthday).getFullYear() < 18
-                    ? "El donador debe ser mayor de 18 años"
-                    : ""
-                }
-              />
-              <DateField
-                required
-                label="Fecha de nacimiento"
-                margin="dense"
-                fullWidth
-                value={birthday}
-                onChange={(newValue) => setBirthday(newValue)}
-                shouldDisableDate={(date) => {
-                  const today = new Date();
-                  const minDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-                  return date > minDate;
-                }}
-                error={birthday && new Date().getFullYear() - new Date(birthday).getFullYear() < 18}
-                helperText={
-                  birthday && new Date().getFullYear() - new Date(birthday).getFullYear() < 18
                     ? "El donador debe ser mayor de 18 años"
                     : ""
                 }

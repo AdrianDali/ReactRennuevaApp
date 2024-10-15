@@ -484,9 +484,9 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
                 inputProps={{
                   maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
                 }}
-                error={razon_social.length > 0 && (razon_social.length < 0 || razon_social.length > 50)}
+                error={razon_social?.length > 0 && (razon_social?.length < 0 || razon_social?.length > 50)}
                 helperText={
-                  razon_social.length > 0 && (razon_social.length < 50 || razon_social.length > 50)
+                  razon_social?.length > 0 && (razon_social?.length < 50 || razon_social?.length > 50)
                     ? "La Razón Social debe tener entre 0 y 50 caracteres"
                     : ""
                 }
@@ -820,14 +820,7 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
               />
             </Box>
             <Button type="submit" variant="contained" fullWidth>{mode}</Button>
-          </form>) : (
-          mode === "BORRAR" ? (
-            <DeleteUserModal users={users} />
-
-          ) : (
-            null
-          )
-        )}
+          </form>) : null}
       </Box>
     </Modal>,
 
