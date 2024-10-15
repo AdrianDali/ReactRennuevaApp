@@ -13,9 +13,13 @@ import {
   Box,
   FormControl,
   InputLabel,
+  IconButton,
 } from "@mui/material";
 import Title from "../components/Title";
-import { set } from "date-fns";
+import { Close } from "@mui/icons-material";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DateField } from "@mui/x-date-pickers";
 
 export default function ModalDonor({ children, mode, creatorUser, userToEdit = null }) {
   const [groups, setGroups] = useState([]);
@@ -130,7 +134,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
           console.log(data);
           setOpenModalText(true);
           setTextOpenModalText("Donador creado correctamente");
-          setUpdateDonorInfo(prev=>!prev);
+          setUpdateDonorInfo(prev => !prev);
           e.target.reset();
 
           closeModal();
@@ -193,7 +197,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
           console.log(data);
           setOpenModalText(true);
           setTextOpenModalText("Donador editado correctamente");
-          setUpdateDonorInfo(prev=>!prev);
+          setUpdateDonorInfo(prev => !prev);
           e.target.reset();
           closeModal();
           // Limpiar los campos del formulario
@@ -318,253 +322,285 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
   };
   return ReactDOM.createPortal(
     <Modal open={true} onClose={closeModal}>
-      <Box
-        className="ModalContent"
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
-        }}
-      >
-        <Button
-          onClick={closeModal}
-          sx={{ position: "absolute", right: 2, top: 2 }}
+      <LocalizationProvider dateAdapter={AdapterDayjs} >
+        <Box
+          className="ModalContent"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            boxSizing: "border-box",
+            maxWidth: "95%",
+          }}
         >
-          &times;
-        </Button>
-        <form onSubmit={handleSubmit}>
-          <Box mb={2}>
-            <Title>Donador</Title>
-          </Box>
-          <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 500 }}>
-            <TextField
-              label="Nombre"
-              name="nombre"
-              required
-              fullWidth
-              value={first_name}
-              onChange={(e) => handleInputChange(e, setFirstName, mode)}
-              margin="dense"
-            />
-            <TextField
-              label="Apellido"
-              name="apellido"
-              required
-              fullWidth
-              value={last_name}
-              onChange={(e) => handleInputChange(e, setLastName, mode)}
-              margin="dense"
-            />
-            <TextField
-              label="RFC"
-              name="rfc"
-              fullWidth
-              value={rfc}
-              onChange={handleRfcChange}
-              margin="dense"
-              inputProps={{
-                maxLength: 13, // Opcional: si quieres forzar la longitud máxima en el HTML
-              }}
-              // Validación de error para la longitud del RFC
-              error={rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)}
-              helperText={
-                rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)
-                  ? "El RFC debe tener entre 12 y 13 caracteres"
-                  : ""
-              }
-            />
-
-
-            <TextField
-              label="Razón Social"
-              name="razon_social"
-              required
-              fullWidth
-              value={razonSocial}
-              onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
-              margin="dense"
-            />
-
-            <TextField
-              label="Fecha de Nacimiento"
-              name="date"
-              type="date"
-              required
-              fullWidth
-              value={birthday}
-              onChange={(e) => handleInputChange(e, setBirthday, mode)}
-              margin="dense"
-              InputLabelProps={{
-                shrink: true, // Esto asegura que la etiqueta se maneje correctamente con el campo de tipo 'date'
-              }}
-            />
-            <FormControl fullWidth mt={2} mb={2}>
-              <Select
-                labelId="gender-select-label"
-                id="gender-select"
-                required
-                value={gender}
-                onChange={(e) => handleInputChange(e, setGender, mode)}
-              >
-                {genders.map((name, index) => (
-                  <MenuItem key={index} value={name.gender}>
-                    {name.gender}
-                  </MenuItem>
-                ))}
-              </Select>
-
-            </FormControl>
-            <TextField
-              label="Email Usuario"
-              name="email"
-              type="email"
-              required
-              fullWidth
-              value={email}
-              onChange={(e) => handleInputChange(e, setEmail, mode)}
-              margin="dense"
-            />
-            {isPasswordVisible && (
+          <IconButton
+            onClick={closeModal}
+            sx={{ position: "absolute", right: 2, top: 2 }}
+          >
+            <Close />
+          </IconButton>
+          <form onSubmit={handleSubmit}>
+            <Box mb={2}>
+              <Title>Donador</Title>
+            </Box>
+            <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 500 }}>
               <TextField
-                label="Password"
-                name="password"
-                type="password"
+                label="Nombre"
+                name="nombre"
                 required
                 fullWidth
-                value={password}
-                onChange={(e) => handleInputChange(e, setPassword, mode)}
+                value={first_name}
+                onChange={(e) => handleInputChange(e, setFirstName, mode)}
                 margin="dense"
               />
-            )}
-
-            <FormControl fullWidth mt={2} mb={2}>
-              <PhoneExtensionSelect value={phoneExtension} setValue={setPhoneExtension} />
               <TextField
-                label="Celular"
-                name="phone"
+                label="Apellido"
+                name="apellido"
                 required
                 fullWidth
-                value={phone}
-                onChange={handlePhoneChange}
+                value={last_name}
+                onChange={(e) => handleInputChange(e, setLastName, mode)}
+                margin="dense"
+              />
+              <TextField
+                label="RFC"
+                name="rfc"
+                fullWidth
+                value={rfc}
+                onChange={handleRfcChange}
                 margin="dense"
                 inputProps={{
-                  // Opcional: usar el tipo "tel" para mejor semántica y compatibilidad móvil
-                  type: "tel",
-                  // maxLength: 10 // Opcional: si quieres forzar la longitud máxima en el HTML
+                  maxLength: 13, // Opcional: si quieres forzar la longitud máxima en el HTML
                 }}
-                // Para mostrar un mensaje de error si la longitud es menor a 10
-                error={phone.length > 0 && phone.length < 10}
+                // Validación de error para la longitud del RFC
+                error={rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)}
                 helperText={
-                  phone.length > 0 && phone.length < 10
-                    ? "El número debe ser de 10 dígitos"
+                  rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)
+                    ? "El RFC debe tener entre 12 y 13 caracteres"
                     : ""
                 }
               />
-            </FormControl>
-            <FormControl fullWidth mt={2} mb={2}>
-              <Title>Compañía</Title>
-              <Select
-                labelId="company-select-label"
-                id="company-select"
-                required
-                value={company}
-                onChange={(e) => handleInputChange(e, setCompany, mode)}
-              >
-                {companies.map((name, index) => (
-                  <MenuItem key={index} value={name.company_name}>
-                    {name.company_name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Title>Ubicación</Title>
-              <TextField
-                label="Estado"
-                name="state"
-                required
-                fullWidth
-                value={state}
-                onChange={(e) => handleInputChange(e, setState, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Ciudad"
-                name="city"
-                required
-                fullWidth
-                value={city}
-                onChange={(e) => handleInputChange(e, setCity, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Colonia"
-                name="locality"
-                required
-                fullWidth
-                value={locality}
-                onChange={(e) => handleInputChange(e, setLocality, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Calle "
-                name="street"
-                required
-                fullWidth
-                value={street}
-                onChange={(e) => handleInputChange(e, setStreet, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Numero exterior"
-                name="address_num_ext"
-                required
-                fullWidth
-                value={address_num_ext}
-                onChange={(e) => handleInputChange(e, setAddressNumExt, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Numero interior"
-                name="address_num_int"
-                required
-                fullWidth
-                value={address_num_int}
-                onChange={(e) => handleInputChange(e, setAddressNumInt, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Referencia"
-                name="address_reference"
-                required
-                fullWidth
-                value={address_reference}
-                onChange={(e) => handleInputChange(e, setReference, mode)}
-                margin="dense"
-              />
+
 
               <TextField
-                label="Código postal"
-                name="postal_code"
+                label="Razón Social"
+                name="razon_social"
                 required
                 fullWidth
-                value={postal_code}
-                onChange={(e) => handleInputChange(e, setPostalCode, mode)}
+                value={razonSocial}
+                onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
                 margin="dense"
               />
-            </FormControl>
-          </Box>
+              <DateField
+                required
+                label="Fecha de nacimiento"
+                margin="dense"
+                fullWidth
+                value={birthday}
+                onChange={(newValue) => setBirthday(newValue)}
+                shouldDisableDate={(date) => {
+                  const today = new Date();
+                  const minDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+                  return date > minDate;
+                }}
+                error={!birthday || new Date().getFullYear() - new Date(birthday).getFullYear() < 18}
+                helperText={
+                  !birthday
+                    ? "La fecha de nacimiento es requerida"
+                    : new Date().getFullYear() - new Date(birthday).getFullYear() < 18
+                    ? "El donador debe ser mayor de 18 años"
+                    : ""
+                }
+              />
+              <DateField
+                required
+                label="Fecha de nacimiento"
+                margin="dense"
+                fullWidth
+                value={birthday}
+                onChange={(newValue) => setBirthday(newValue)}
+                shouldDisableDate={(date) => {
+                  const today = new Date();
+                  const minDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+                  return date > minDate;
+                }}
+                error={birthday && new Date().getFullYear() - new Date(birthday).getFullYear() < 18}
+                helperText={
+                  birthday && new Date().getFullYear() - new Date(birthday).getFullYear() < 18
+                    ? "El donador debe ser mayor de 18 años"
+                    : ""
+                }
+              />
+              <FormControl fullWidth margin="dense">
+                <InputLabel id="gender-select-label" >Género</InputLabel>
+                <Select
+                  labelId="gender-select-label"
+                  id="gender-select"
+                  required
+                  value={gender}
+                  label="Género"
+                  onChange={(e) => handleInputChange(e, setGender, mode)}
+                >
+                  {genders.map((name, index) => (
+                    <MenuItem key={index} value={name.gender}>
+                      {name.gender}
+                    </MenuItem>
+                  ))}
+                </Select>
 
-          <Button type="submit" variant="contained" fullWidth>
-            {mode}
-          </Button>
-        </form>
-      </Box>
-    </Modal>,
+              </FormControl>
+              <TextField
+                label="Email Usuario"
+                name="email"
+                type="email"
+                required
+                fullWidth
+                value={email}
+                onChange={(e) => handleInputChange(e, setEmail, mode)}
+                margin="dense"
+              />
+              {isPasswordVisible && (
+                <TextField
+                  label="Password"
+                  name="password"
+                  type="password"
+                  required
+                  fullWidth
+                  value={password}
+                  onChange={(e) => handleInputChange(e, setPassword, mode)}
+                  margin="dense"
+                />
+              )}
+
+              <FormControl fullWidth mt={2} mb={2}>
+                <PhoneExtensionSelect value={phoneExtension} setValue={setPhoneExtension} />
+                <TextField
+                  label="Celular"
+                  name="phone"
+                  required
+                  fullWidth
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  margin="dense"
+                  inputProps={{
+                    // Opcional: usar el tipo "tel" para mejor semántica y compatibilidad móvil
+                    type: "tel",
+                    // maxLength: 10 // Opcional: si quieres forzar la longitud máxima en el HTML
+                  }}
+                  // Para mostrar un mensaje de error si la longitud es menor a 10
+                  error={phone.length > 0 && phone.length < 10}
+                  helperText={
+                    phone.length > 0 && phone.length < 10
+                      ? "El número debe ser de 10 dígitos"
+                      : ""
+                  }
+                />
+              </FormControl>
+              <FormControl fullWidth mt={2} mb={2}>
+                <Title>Compañía</Title>
+                <Select
+                  labelId="company-select-label"
+                  id="company-select"
+                  required
+                  value={company}
+                  onChange={(e) => handleInputChange(e, setCompany, mode)}
+                >
+                  {companies.map((name, index) => (
+                    <MenuItem key={index} value={name.company_name}>
+                      {name.company_name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Title>Ubicación</Title>
+                <TextField
+                  label="Estado"
+                  name="state"
+                  required
+                  fullWidth
+                  value={state}
+                  onChange={(e) => handleInputChange(e, setState, mode)}
+                  margin="dense"
+                />
+                <TextField
+                  label="Ciudad"
+                  name="city"
+                  required
+                  fullWidth
+                  value={city}
+                  onChange={(e) => handleInputChange(e, setCity, mode)}
+                  margin="dense"
+                />
+                <TextField
+                  label="Colonia"
+                  name="locality"
+                  required
+                  fullWidth
+                  value={locality}
+                  onChange={(e) => handleInputChange(e, setLocality, mode)}
+                  margin="dense"
+                />
+                <TextField
+                  label="Calle "
+                  name="street"
+                  required
+                  fullWidth
+                  value={street}
+                  onChange={(e) => handleInputChange(e, setStreet, mode)}
+                  margin="dense"
+                />
+                <TextField
+                  label="Numero exterior"
+                  name="address_num_ext"
+                  required
+                  fullWidth
+                  value={address_num_ext}
+                  onChange={(e) => handleInputChange(e, setAddressNumExt, mode)}
+                  margin="dense"
+                />
+                <TextField
+                  label="Numero interior"
+                  name="address_num_int"
+                  required
+                  fullWidth
+                  value={address_num_int}
+                  onChange={(e) => handleInputChange(e, setAddressNumInt, mode)}
+                  margin="dense"
+                />
+                <TextField
+                  label="Referencia"
+                  name="address_reference"
+                  required
+                  fullWidth
+                  value={address_reference}
+                  onChange={(e) => handleInputChange(e, setReference, mode)}
+                  margin="dense"
+                />
+
+                <TextField
+                  label="Código postal"
+                  name="postal_code"
+                  required
+                  fullWidth
+                  value={postal_code}
+                  onChange={(e) => handleInputChange(e, setPostalCode, mode)}
+                  margin="dense"
+                />
+              </FormControl>
+            </Box>
+
+            <Button type="submit" variant="contained" fullWidth>
+              {mode}
+            </Button>
+          </form>
+        </Box>
+      </LocalizationProvider>
+    </Modal >,
 
     document.getElementById("modal")
   );

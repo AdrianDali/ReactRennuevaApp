@@ -1,37 +1,36 @@
 import { Box, Divider, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import useAuth from "../hooks/useAuth";
 
 
-export default function VerificationComponent({ entry, residues, index, setVerifiedEntries, verifiedEntries }) {
-    const userData = useAuth()
+export default function VerificationComponent({ entry, residues, index, setVerifiedEntries, verifiedEntries, checker }) {
+    
     const [verifiedEntry, setVerifiedEntry] = useState(
         {
             residue_id: entry.report_residue,
-            checker_username: "",
+            checker_username: checker,
             status: "",
         }
     )
     const [newPeso, setNewPeso] = useState("")
     const [newVol, setNewVol] = useState("")
 
-    useEffect(() => {
-        setVerifiedEntry({ ...entry, checker_username: userData?.user })
-    }, [userData])
 
 
     useEffect(() => {
-        setVerifiedEntry({ ...entry, new_m3: newVol, new_weight: newPeso })
+        setVerifiedEntry({ ...verifiedEntry, new_m3: newVol, new_weight: newPeso })
     }, [newVol, newPeso])
 
 
     useEffect(() => {
-
-        const updated = verifiedEntries.map(obj =>
-            obj.report_residue === verifiedEntry.report_residue ? verifiedEntry : obj
-        );
-
-        setVerifiedEntries(updated)
+        const index = verifiedEntries.findIndex(entry => entry?.residue_id === verifiedEntry?.residue_id);
+        if (index !== -1) {
+            const updatedEntries = [...verifiedEntries];
+            updatedEntries[index] = verifiedEntry;
+            setVerifiedEntries(updatedEntries);
+        } else {
+            setVerifiedEntries([...verifiedEntries, verifiedEntry]);
+        }
+        
     }, [verifiedEntry])
 
 

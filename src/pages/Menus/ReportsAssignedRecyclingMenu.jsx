@@ -13,7 +13,7 @@ export function ReportsAssignedRecyclingMenu() {
         axios
             .get(`${process.env.REACT_APP_API_URL}/get-all-reports-finish/`)
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
             })
             .catch((error) => {
                 console.error(error);
@@ -27,7 +27,7 @@ export function ReportsAssignedRecyclingMenu() {
                 checker_username: userData?.user
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 setReports(response.data);
             })
             .catch((error) => {
