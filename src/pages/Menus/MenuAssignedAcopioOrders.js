@@ -8,6 +8,7 @@ import useAuth from "../../hooks/useAuth";
 import ReportsTable from "../../components/boards/ReportsTable";
 import GetDriverOrderRecollection from "../../services/ApiGetDriverOrderRecollection";
 import DriverOrderAssignedTable from "../../components/boards/DriverOrderAssignedTable";
+import DriverCenterAssignedTable from "../../components/boards/DriverCenterAssignedTable";
 
 export default function MenuAssignedAcopioOrders() {
   const [clientes, setClientes] = useState([]);
@@ -32,59 +33,52 @@ export default function MenuAssignedAcopioOrders() {
 
   //const { auth } = useAuth();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Primera petición
-        const { dataUser, successUser, messageUser } = await GetDriverOrderRecollection();
-        console.log('Datos del usuario:', dataUser);
-        console.log('Éxito:', successUser);
-        console.log('Mensaje:', messageUser);
-        setDataUser(dataUser);
-        setSuccessUser(successUser);
-        setMessageUser(messageUser);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // Primera petición
+  //       const { dataUser, successUser, messageUser } = await GetDriverOrderRecollection();
+  //       setDataUser(dataUser);
+  //       setSuccessUser(successUser);
+  //       setMessageUser(messageUser);
 
-        // Verificar que dataUser tenga datos antes de continuar
-        if (dataUser && dataUser.length > 0) {
-            // Obtener el donador de las cookies
-            console.log('DataUser:', dataUser);
-          const donador = getCookie('user');
-          console.log('Donador:');
-          console.log('Donador:', donador);
+  //       // Verificar que dataUser tenga datos antes de continuar
+  //       if (dataUser && dataUser.length > 0) {
+  //         const donador = getCookie('user');
 
-          // Segunda petición
-          const response = await axios.post(
-            `${process.env.REACT_APP_API_URL}/get-all-centers-orders-assigned-to-driver/`,
-            {
-              user: donador,
-              status: 'pendienteRecoleccion',
-            }
-          );
-          console.log('Órdenes asignadas:', response.data);
-          setOrdersAssigned(response.data);
-        } else {
-          console.error('No se pudo obtener el donador del dataUser.');
-        }
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
-      }
-    };
+  //         // Segunda petición
+  //         const response = await axios.post(
+  //           `${process.env.REACT_APP_API_URL}/get-all-centers-orders-assigned-to-driver/`,
+  //           {
+  //             user: donador,
+  //             status: 'pendienteRecoleccion',
+  //           }
+  //         );
 
-    fetchData();
-  }, [updateReportInfo]);
+  //         console.log('Órdenes asignadas:', response.data);
+  //         setOrdersAssigned(response.data.ordenes); // Asegúrate de acceder a la propiedad correcta
+  //       } else {
+  //         console.error('No se pudo obtener el donador del dataUser.');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error al obtener los datos:', error);
+  //     }
+  //   };
 
-  
+  //   fetchData();
+  // }, [updateReportInfo]);
+
   return (
     <Container
       maxWidth={false}
       sx={{
         flexGrow: 1,
-        overflow: "auto",
+        overflow: 'auto',
         py: 3,
-        height: "100%",
+        height: '100%',
       }}
     >
-      <DriverOrderAssignedTable data={dataUser} />
+      <DriverCenterAssignedTable  />
     </Container>
   );
 }
