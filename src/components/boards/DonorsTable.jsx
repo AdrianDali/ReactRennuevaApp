@@ -160,10 +160,18 @@ function SearchField({ filteredData, setVisibleData }) {
                 setVisibleData(filteredData);
             } else {
                 const newData = filteredData.filter((donor) => {
-                    return donor.first_name.toLowerCase().includes(search) ||
-                        donor.last_name.toLowerCase().includes(search) ||
-                        donor.user.toLowerCase().includes(search) ||
-                        donor.rfc.toLowerCase().includes(search)
+                    return donor.first_name?.toLowerCase().includes(search) ||
+                        donor.last_name?.toLowerCase().includes(search) ||
+                        donor.user?.toLowerCase().includes(search) ||
+                        donor.rfc?.toLowerCase().includes(search) ||
+                        donor.phone?.toLowerCase().includes(search) ||
+                        donor.address_street?.toLowerCase().includes(search) ||
+                        donor.address_num_ext?.toLowerCase().includes(search) ||
+                        donor.address_num_int?.toLowerCase().includes(search) ||
+                        donor.address_locality?.toLowerCase().includes(search) ||
+                        donor.address_city?.toLowerCase().includes(search) ||
+                        donor.address_state?.toLowerCase().includes(search) ||
+                        donor.address_postal_code.toString().toLowerCase().includes(search)
                 })
                 setVisibleData(newData);
             }
@@ -422,7 +430,14 @@ export default function DonorsTable({ data }) {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        <Typography variant="subtitle2">Número</Typography>
+                                        <Typography variant="subtitle2">Número exterior</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        <Typography variant="subtitle2">Número interior</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -432,6 +447,7 @@ export default function DonorsTable({ data }) {
                                         <Typography variant="subtitle2">Colonia</Typography>
                                     </TableSortLabel>
                                 </TableCell>
+                                
                                 <TableCell>
                                     <TableSortLabel
                                         direction="asc"
@@ -517,7 +533,8 @@ export default function DonorsTable({ data }) {
                                             <TableCell>{donor.rfc}</TableCell>
                                             <TableCell>{donor.company}</TableCell>
                                             <TableCell>{donor.address_street}</TableCell>
-                                            <TableCell>{donor.address_number}</TableCell>
+                                            <TableCell>{donor.address_num_ext}</TableCell>
+                                            <TableCell>{donor.address_num_int}</TableCell>
                                             <TableCell>{donor.address_locality}</TableCell>
                                             <TableCell>{donor.address_city}</TableCell>
                                             <TableCell>{donor.address_state}</TableCell>
