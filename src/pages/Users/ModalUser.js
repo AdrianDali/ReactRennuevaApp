@@ -569,7 +569,7 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
               {
                 group === "Acopio"
                 && (
-                  <FormControl fullWidth margin='dense'>
+                  <FormControl fullWidth margin='dense' required>
                     <InputLabel id="user-centro-select-label">Centro de Acopio</InputLabel>
                     <Select
                       label="Centro de Acopio"
@@ -595,9 +595,10 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
               {
                 group === "Reciclaje"
                 && (
-                  <FormControl fullWidth margin='dense'>
+                  <FormControl fullWidth margin='dense' required>
                     <InputLabel id="centro-select-label">Centro de Reciclaje</InputLabel>
                     <Select
+                      label="Centro de Reciclaje"
                       labelId="centro-select-label"
                       id="centro-select"
                       required
