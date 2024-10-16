@@ -228,7 +228,7 @@ const NestedItemTemplate = ({ tag, icon, subElements }) => {
                 {
                     subElements.map((subElement, index) => (
                         <>
-                            <SimpleItemTemplate key={`${tag}${index}`} tag={subElement.tag} icon={subElement.icon} redirection={subElement.redirection} />
+                            <SimpleItemTemplate key={`${subElement.tag}-${index}`} tag={subElement.tag} icon={subElement.icon} redirection={subElement.redirection} />
                             <Divider />
                         </>
                     ))

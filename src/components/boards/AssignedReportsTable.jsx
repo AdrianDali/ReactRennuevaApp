@@ -345,7 +345,7 @@ function SearchField({ filteredData, setVisibleData }) {
 export default function ReportsTable({ data }) {
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
-  const [reportToEdit, setReportToEdit] = useState({});
+  const [reportToEdit, setReportToEdit] = useState(null);
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [visibleData, setVisibleData] = useState(data);
   const [signType, setSignType] = useState("Generador");
@@ -355,7 +355,7 @@ export default function ReportsTable({ data }) {
 
   const dataUser = useAuth();
 
-  console.log(data);
+  //console.log(data);
   const {
     setTextOpenModalText,
     openModalCreateReport,
@@ -776,7 +776,6 @@ export default function ReportsTable({ data }) {
       </Paper>
 
       <ModalFirmar type={signType} id={reportToEdit} />
-      <VerificationReportModal report={reportToEdit} open={openVerificationModal} setOpen={setOpenVerificationModal} />
       <ModalWatchResidueReport report={reportToEdit} />
       {/* <ModalFinishReport report={reportToEdit} /> */}
       <DeleteReportsModal reports={reportsToDelete} />

@@ -19,10 +19,12 @@ function ModalResidueReport({ report }) {
     };
 
     useEffect(() => {
-        const getResidues = { reportId: report.id_report? report.id_report : report.id };
+        const getResidues = { reportId: report.id_report ? report.id_report : report.id };
 
         axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
             .then(response => {
+                console.log("Todos los residuos");
+                console.log(response.data);
                 setResidues(response.data);
             })
             .catch(error => {
@@ -32,6 +34,8 @@ function ModalResidueReport({ report }) {
         axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, getResidues)
             .then(response => {
                 const data = response.data;
+                console.log("Todos los residuos del reporte");
+                console.log(data);
                 setEntries(data);
                 if (data.length < 1) {
                     setBotonAdd(true);

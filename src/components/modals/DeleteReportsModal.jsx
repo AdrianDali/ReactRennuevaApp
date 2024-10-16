@@ -19,7 +19,7 @@ export default function DeleteReportsModal({ reports}) {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState([]);
     const userData = useAuth();
-    console.log("reports to delete: ", reports)
+    //console.log("reports to delete: ", reports)
     const handleDeleteReports = async () => {
         setLoading(true);
         const reportsToDelete = reports.map(report => {
