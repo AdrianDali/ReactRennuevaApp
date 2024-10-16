@@ -142,7 +142,7 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, filteredData, selec
 
 }
 
-function SearchField({ filteredData, setVisibleData }) {
+function SearchField({setPage, filteredData, setVisibleData }) {
     const [showSearch, setShowSearch] = useState(false);
     const searchInputRef = useRef();
     const searchButtonRef = useRef();
@@ -158,6 +158,7 @@ function SearchField({ filteredData, setVisibleData }) {
             const search = searchValue.trim().toLowerCase();
             if (search === "") {
                 setVisibleData(filteredData);
+                setPage(0);
             } else {
                 const newData = filteredData.filter((donor) => {
                     return donor.first_name?.toLowerCase().includes(search) ||
@@ -174,6 +175,7 @@ function SearchField({ filteredData, setVisibleData }) {
                         donor.address_postal_code.toString().toLowerCase().includes(search)
                 })
                 setVisibleData(newData);
+                setPage(0);
             }
         }
     }
@@ -216,7 +218,7 @@ function SearchField({ filteredData, setVisibleData }) {
     )
 }
 
-function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersApplied, filteredData, allData, setVisibleData }) {
+function Toolbar({ setPage, selected, setOpenFiltersModal, setUsersToDelete, filtersApplied, filteredData, allData, setVisibleData }) {
     const {
         setOpenModalCreateDonor,
         setOpenModalDeleteDonor,
@@ -250,7 +252,7 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
                 Donadores
             </Typography>
             <Box>
-                <SearchField filteredData={filteredData} setVisibleData={setVisibleData} />
+                <SearchField setPage={setPage} filteredData={filteredData} setVisibleData={setVisibleData} />
                 <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
                     <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
                 </Badge>
@@ -371,7 +373,7 @@ export default function DonorsTable({ data }) {
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
             <Paper>
-                <Toolbar selected={selected} allData={data} filteredData={filteredData} setOpenFiltersModal={setOpenFiltersModal} setUsersToDelete={setDonorsToDelete} filtersApplied={filtersApplied} setVisibleData={setVisibleData} />
+                <Toolbar setPage={setPage} selected={selected} allData={data} filteredData={filteredData} setOpenFiltersModal={setOpenFiltersModal} setUsersToDelete={setDonorsToDelete} filtersApplied={filtersApplied} setVisibleData={setVisibleData} />
                 <TableContainer>
                     <Table>
                         <TableHead sx={{ bgcolor: theme.palette.background.default }}>

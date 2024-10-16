@@ -50,6 +50,7 @@ import { ModalUser } from "../../pages/Users/ModalUser";
 import UsersFiltersModal from "../modals/UsersFiltersModal";
 import DeleteUserModal from "../modals/DeleteUserModal";
 import UserInfoSubTable from "./UserInfoSubTable";
+import { set } from "date-fns";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEdit, setOpenModalDeleteGenerator } =
@@ -155,7 +156,7 @@ function ExportOptionsMenu({
   );
 }
 
-function SearchField({ filteredData, setVisibleData }) {
+function SearchField({ setPage, filteredData, setVisibleData }) {
   const [showSearch, setShowSearch] = useState(false);
   const searchInputRef = useRef();
   const searchButtonRef = useRef();
@@ -171,16 +172,23 @@ function SearchField({ filteredData, setVisibleData }) {
       const search = searchValue.trim().toLowerCase();
       if (search === "") {
         setVisibleData(filteredData);
+        setPage(0);
       } else {
         const newData = filteredData.filter((generador) => {
           return (
-            generador.first_name.toLowerCase().includes(search) ||
-            generador.phone.toLowerCase().includes(search) ||
-            generador.email.toLowerCase().includes(search) ||
-            generador.address_street.toLowerCase().includes(search)
+            generador.first_name?.toLowerCase().includes(search) ||
+            generador.phone?.toLowerCase().includes(search) ||
+            generador.email?.toLowerCase().includes(search) ||
+            generador.address_street?.toLowerCase().includes(search) ||
+            generador.rfc?.toLowerCase().includes(search)||
+            generador.address_postal_code?.toString().toLowerCase().includes(search)||
+            generador.address_state?.toLowerCase().includes(search)||
+            generador.address_city?.toLowerCase().includes(search)||
+            generador.address_locality?.toLowerCase().includes(search)
           );
         });
         setVisibleData(newData);
+        setPage(0);
       }
     }
   };
@@ -231,6 +239,7 @@ function SearchField({ filteredData, setVisibleData }) {
 }
 
 function Toolbar({
+  setPage,
   selected,
   setOpenFiltersModal,
   setUsersToDelete,
@@ -311,6 +320,7 @@ function Toolbar({
       </Typography>
       <Box>
         <SearchField
+          setPage={setPage}
           filteredData={filteredData}
           setVisibleData={setVisibleData}
         />
@@ -493,6 +503,7 @@ export default function UserInfoTable({ data, centers, recyclingCenters, collect
         padding: 2,
       }}>
         <Toolbar
+          setPage={setPage}
           selected={selected}
           allData={data}
           filteredData={filteredData}
@@ -633,9 +644,6 @@ export default function UserInfoTable({ data, centers, recyclingCenters, collect
                         <TableCell>{request.email}</TableCell>
                         <TableCell>{request.direccion_completa}</TableCell>
                         <TableCell>{request.groups[0]}</TableCell>
-                        {/* <TableCell>
-                                                    <Chip label={statusText(request.status)} color={statusColor(request.status)} />
-                                                </TableCell> */}
                         <TableCell>
                           <IconButton
                             onClick={(e) => {
