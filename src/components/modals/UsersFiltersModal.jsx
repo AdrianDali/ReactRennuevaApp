@@ -127,14 +127,15 @@ export default function UsersFiltersModal({ isOpen, setOpen, data, setFilteredDa
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '100%',
-                maxWidth: 600,
+                width: '400px',
+                maxWidth: '90%',
                 bgcolor: 'background.paper',
                 boxShadow: 24,
-                p: 4,
+                maxHeight: '90%',
+                p: 2,
                 borderRadius: 2,
-                maxHeight: '90dvh',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                boxSizing: 'border-box'
 
             }}>
                 <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>
