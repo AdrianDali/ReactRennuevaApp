@@ -227,10 +227,10 @@ const NestedItemTemplate = ({ tag, icon, subElements }) => {
             <Collapse in={open} timeout="auto" unmountOnExit sx={{pl: "16px"}}>
                 {
                     subElements.map((subElement, index) => (
-                        <>
+                        <React.Fragment key={`menu-item-${index}-${subElement.tag}`}>
                             <SimpleItemTemplate key={`${subElement.tag}-${index}`} tag={subElement.tag} icon={subElement.icon} redirection={subElement.redirection} />
                             <Divider />
-                        </>
+                        </React.Fragment>
                     ))
                 }
             </Collapse>

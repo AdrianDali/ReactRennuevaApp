@@ -49,16 +49,16 @@ function MultipleSelect({ data, label, name, setFilters, filters }) {
                 input={<OutlinedInput id={labelFormated} label={label} />}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                            <Chip color='primary' key={value} label={value} />
+                        {selected.map((value, index) => (
+                            <Chip color='primary' key={`${value}-${index}`} label={value} />
                         ))}
                     </Box>
                 )}
                 MenuProps={MenuProps}
             >
-                {data.map((id) => (
+                {data.map((id, index) => (
                     <MenuItem
-                        key={id}
+                        key={`${id}-${index}`}
                         value={id}
                         style={getStyles(id, filters[name], theme)}
                     >
@@ -98,14 +98,14 @@ function SelectForBooleans({ data, label, name, setFilters, filters, trueValueLa
                 input={<OutlinedInput id={labelFormated} label={label} />}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                            <Chip color='primary' key={(value ? trueValueLabel : falseValueLabel).replace(" ", "")} label={value ? trueValueLabel : falseValueLabel} />
+                        {selected.map((value, index) => (
+                            <Chip color='primary' key={(value ? `${trueValueLabel.replace(" ", "")}-${index}` : `${falseValueLabel.replace(" ", "")}-${index}`)} label={value ? trueValueLabel : falseValueLabel} />
                         ))}
                     </Box>
                 )}
                 MenuProps={MenuProps}
             >
-                {data.map((id) => (
+                {data.map((id, index) => (
                     <MenuItem
                         key={(id ? trueValueLabel : falseValueLabel).replace(" ", "-")}
                         value={id}
@@ -157,7 +157,6 @@ function DateRangeFilter({ name, setFilters, label, filters }) {
 
 
 export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, setFilteredData, objects, setFiltersApplied }) {
-    console.log('data en modal', data)
     const [filters, setFilters] = useState({
         conductor_asignado: [],
         codigo_postal: [],

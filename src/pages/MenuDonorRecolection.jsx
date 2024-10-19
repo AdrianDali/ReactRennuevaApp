@@ -20,7 +20,7 @@ export default function MenuDonorRecolection() {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-donors-recollection/`)
       .then(response => {
-        console.log(response.data.ordenes);
+  
         setDonorRequests(response.data.ordenes);
       })
       .catch(error => {

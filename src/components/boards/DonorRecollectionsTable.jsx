@@ -31,18 +31,17 @@ import {
 import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Close, KeyboardArrowDown, EmojiPeople, Warehouse } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
-import { useState, useContext, useEffect, useRef } from "react";
-import GeneratorsFiltersModal from "../modals/GeneratorsFiltersModal";
-import { ModalGenerator } from "../../pages/ModalGenerator";
+import React, { useState, useContext, useEffect, useRef, useMemo } from "react";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
 import { statusColor, statusText } from "../../helpers/statusModifiers";
 import DonorRecollectionInfo from "./DonorRecollectionInfo";
 import EditRecolectionModal from "./EditRecolectionModal";
 import DeleteDonorRecollectionsModal from "../modals/DeleteDonorRecollectionsModal";
 import DonorRecolecctionsFiltersModal from "../modals/DonorRecollectionsFiltersModal";
+import sortData from "../../helpers/SortData";
+
 
 
 
@@ -267,13 +266,15 @@ export default function DonorRecollectionsTable({ data }) {
     const [recollectionsToDelete, setRecollectionsToDelete] = useState([]);
     const [recollectionToEdit, setRecollectionToEdit] = useState(null);
     const [filtersApplied, setFiltersApplied] = useState(false);
-    console.log(data)
     const [visibleData, setVisibleData] = useState(data);
     const dataUser = useAuth();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [showCompleteInfo, setShowCompleteInfo] = useState(null);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [orderBy, setOrderBy] = useState("id");
+    const [order, setOrder] = useState("desc");
+    const [sortedData, setSortedData] = useState([]);
 
     const {
         setUpdateDonorInfo,
@@ -295,6 +296,7 @@ export default function DonorRecollectionsTable({ data }) {
         address_city: [],
         address_locality: [],
     });
+
 
     const handleShowCompleteInfo = (id) => {
         if (showCompleteInfo === id) {
@@ -344,6 +346,7 @@ export default function DonorRecollectionsTable({ data }) {
         }
     }
 
+    
 
     useEffect(() => {
         if (selected.length === data.length && data.length !== 0) {
@@ -390,6 +393,12 @@ export default function DonorRecollectionsTable({ data }) {
         }
     }, [data])
 
+    useEffect(() => {
+        setSortedData(sortData(visibleData, orderBy, order));
+    }, [visibleData, order, orderBy])
+
+
+
 
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
@@ -411,7 +420,12 @@ export default function DonorRecollectionsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("id")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "id" ? true : false}
                                     >
                                         <Typography variant="subtitle2">ID</Typography>
                                     </TableSortLabel>
@@ -471,7 +485,7 @@ export default function DonorRecollectionsTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.length === 0 ?
+                            {sortedData.length === 0 ?
                                 <TableRow>
                                     <TableCell colSpan={14}>
                                         <Typography variant="h6" color="textSecondary" align="center">
@@ -479,10 +493,10 @@ export default function DonorRecollectionsTable({ data }) {
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
-                                : visibleData
+                                : sortedData
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((request, index) => (
-                                        <>
+                                        <React.Fragment key={`${request.id}-${index}`}>
                                             <TableRow
                                                 hover
                                                 role="checkbox"
@@ -582,7 +596,7 @@ export default function DonorRecollectionsTable({ data }) {
                                                     </Collapse>
                                                 </TableCell>
                                             </TableRow>
-                                        </>
+                                        </React.Fragment>
                                     ))}
                         </TableBody>
                     </Table>
