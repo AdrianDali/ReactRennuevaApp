@@ -54,6 +54,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import ShortenedReportInfo from "./ShortenedReportInfo";
 import SearchingModal from "../modals/SearchingModal";
+import sortData from "../../helpers/SortData";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -332,6 +333,9 @@ export default function ResiduesReportsTable({ data }) {
     const [visibleData, setVisibleData] = useState(data);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [orderBy, setOrderBy] = useState("id_report");
+    const [order, setOrder] = useState("desc");
+    const [sortedData, setSortedData] = useState([]);
 
     const dataUser = useAuth();
 
@@ -491,6 +495,10 @@ export default function ResiduesReportsTable({ data }) {
         }
     }, [data]);
 
+    useEffect(() => {
+        setSortedData(sortData(visibleData, orderBy, order));
+    }, [visibleData, order, orderBy])
+
     return (
         <Box sx={{ width: "100%", mb: "3rem" }}>
             <Paper
@@ -531,7 +539,14 @@ export default function ResiduesReportsTable({ data }) {
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
-                                    <TableSortLabel direction="asc">
+                                    <TableSortLabel
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("id_report")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "id_report" ? true : false}
+                                    >
                                         <Typography variant="subtitle2">ID</Typography>
                                     </TableSortLabel>
                                 </TableCell>
@@ -561,7 +576,7 @@ export default function ResiduesReportsTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.length === 0 ? (
+                            {sortedData.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={18}>
                                         <Typography
@@ -574,7 +589,7 @@ export default function ResiduesReportsTable({ data }) {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                visibleData
+                                sortedData
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((report, index) => (
                                         <>
@@ -644,7 +659,7 @@ export default function ResiduesReportsTable({ data }) {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={visibleData.length}
+                    count={sortedData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

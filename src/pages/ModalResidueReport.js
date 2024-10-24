@@ -20,7 +20,6 @@ function ModalResidueReport({ report }) {
 
     useEffect(() => {
         const getResidues = { reportId: report.id_report ? report.id_report : report.id };
-
         axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
             .then(response => {
                 console.log("Todos los residuos");
@@ -31,19 +30,22 @@ function ModalResidueReport({ report }) {
                 console.error('Hubo un problema al obtener los residuos:', error);
             });
 
-        axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, getResidues)
-            .then(response => {
-                const data = response.data;
-                console.log("Todos los residuos del reporte");
-                console.log(data);
-                setEntries(data);
-                if (data.length < 1) {
-                    setBotonAdd(true);
-                }
-            })
-            .catch(error => {
-                console.error('Hubo un problema al obtener los residuos:', error);
-            });
+        if (!getResidues.reportId !== undefined && !getResidues.reportId !== null && !getResidues.reportId !== '') {
+            axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, getResidues)
+                .then(response => {
+                    const data = response.data;
+                    console.log("Todos los residuos del reporte");
+                    console.log(data);
+                    setEntries(data);
+                    if (data.length < 1) {
+                        setBotonAdd(true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Hubo un problema al obtener los residuos:', error);
+                });
+        }
+
     }, [report]);
 
     const handleInputChange = (index, event) => {

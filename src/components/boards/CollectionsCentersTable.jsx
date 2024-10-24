@@ -1,3 +1,4 @@
+import sortData from "../../helpers/SortData";
 import {
     Table,
     TableHead,
@@ -42,18 +43,13 @@ import {
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
-import { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import { generateExcelFromJson } from "../../services/Excel";
 import { ModalReport } from "../../pages/ModalReport";
-import { ModalResidueReport } from "../../pages/ModalResidueReport";
 import DeleteReportsModal from "../modals/DeleteReportsModal";
-import ShortenedReportsFiltersModal from "../modals/ShortenedReportsFiltersModal";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { ModalFinishReport } from "../../pages/ModalFinishReport";
-import ShortenedReportInfo from "./ShortenedReportInfo";
 import SearchingModal from "../modals/SearchingModal";
 import CustomProgressBar from "../customProgressBar";
 import CentersOcuppationFiltersModal from "../modals/CentersOccupationFiltersModal";
@@ -111,9 +107,6 @@ function Toolbar({
 }) {
     const [openAssignModal, setOpenAssignModal] = useState(false);
     const userData = useAuth();
-    console.log("info usuario: ", userData);
-
-
     return (
         <Box
             display="flex"
@@ -159,7 +152,7 @@ function Toolbar({
                     Asignar
                 </Button>
             </Box>
-            <AssignModal setOpen={setOpenAssignModal} isOpen={openAssignModal} center={userData?.recycling_center}/>
+            <AssignModal setOpen={setOpenAssignModal} isOpen={openAssignModal} center={userData?.recycling_center} />
         </Box>
     );
 }
@@ -339,24 +332,20 @@ function SearchField({ filteredData, setVisibleData }) {
 export default function CollectionsCentersTable({ data }) {
     const [filteredData, setFilteredData] = useState(data);
     const [reportsToDelete, setReportsToDelete] = useState([]);
-    const [reportToEdit, setReportToEdit] = useState({});
     const [filtersApplied, setFiltersApplied] = useState(false);
     const [visibleData, setVisibleData] = useState(data);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
+    const [orderBy, setOrderBy] = useState("collection_center_name");
+    const [order, setOrder] = useState("desc");
+    const [sortedData, setSortedData] = useState([]);
     const dataUser = useAuth();
-
-    //console.log(data);
     const {
         openModalCreateReport,
-        openModalEditReport,
         openModalText,
         textOpenModalText,
         setOpenModalText,
-        setOpenModalEditResidueReport,
         setUpdateReportInfo,
-        openModalFinishReport,
     } = useContext(TodoContext);
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
@@ -380,6 +369,7 @@ export default function CollectionsCentersTable({ data }) {
             window.removeEventListener('resize', handleResize);
         }
     }, []);
+
     const handleExpandClick = (id) => {
         setExpandedRow((prev) => (prev === id ? null : id));
     };
@@ -432,6 +422,12 @@ export default function CollectionsCentersTable({ data }) {
         }
     }, [data]);
 
+    useEffect(() => {
+        const sortedData = sortData(visibleData, orderBy, order);
+        setSortedData(sortedData);
+    }, [visibleData, order, orderBy])
+
+
     return (
         <Box sx={{ width: "100%", mb: "3rem" }}>
             <Paper
@@ -473,7 +469,14 @@ export default function CollectionsCentersTable({ data }) {
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
-                                    <TableSortLabel direction="asc">
+                                    <TableSortLabel
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("collection_center_name")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "collection_center_name" ? true : false}
+                                    >
                                         <Typography variant="subtitle2">Nombre</Typography>
                                     </TableSortLabel>
                                 </TableCell>
@@ -504,7 +507,7 @@ export default function CollectionsCentersTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.length === 0 ? (
+                            {sortedData.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7}>
                                         <Typography
@@ -517,10 +520,10 @@ export default function CollectionsCentersTable({ data }) {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                visibleData
+                                sortedData
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((center, index) => (
-                                        <>
+                                        <React.Fragment key={`${index}-${center.collection_center_name.replace(" ", "_")}`}>
                                             <TableRow
                                                 hover
                                                 role="checkbox"
@@ -576,7 +579,7 @@ export default function CollectionsCentersTable({ data }) {
                                                                         if (!uniqueFolios.includes(detail.ReportFolio)) {
                                                                             uniqueFolios.push(detail.ReportFolio)
                                                                             return (
-                                                                                <Typography variant="body1" gutterBottom component="div">
+                                                                                <Typography variant="body1" gutterBottom component="div" key={`folio-${detail.ReportFolio}-${index}`}>
                                                                                     {index + 1}. {detail.ReportFolio ? detail.ReportFolio : "Sin folio"}
                                                                                 </Typography>
                                                                             )
@@ -588,7 +591,7 @@ export default function CollectionsCentersTable({ data }) {
                                                     </Collapse>
                                                 </TableCell>
                                             </TableRow>
-                                        </>
+                                        </React.Fragment>
                                     ))
                             )}
                         </TableBody>
@@ -597,7 +600,7 @@ export default function CollectionsCentersTable({ data }) {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={visibleData.length}
+                    count={sortedData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -605,8 +608,6 @@ export default function CollectionsCentersTable({ data }) {
                 />
             </Paper>
 
-            <ModalResidueReport report={reportToEdit} />
-            {/* <ModalFinishReport report={reportToEdit} /> */}
             <DeleteReportsModal reports={reportsToDelete} />
             <CentersOcuppationFiltersModal
                 isOpen={openFiltersModal}
@@ -620,19 +621,9 @@ export default function CollectionsCentersTable({ data }) {
                 anchorEl={rowContextMenuAnchorEl}
                 setAnchorEl={setRowContextMenuAnchorEl}
             />
-            {openModalFinishReport && <ModalFinishReport report={reportToEdit} />}
             {
                 openModalCreateReport && (
                     <ModalReport mode={"CREAR"} creatorUser={dataUser.user} />
-                )
-            }
-            {
-                openModalEditReport && (
-                    <ModalReport
-                        mode={"EDITAR"}
-                        report={reportToEdit}
-                        creatorUser={dataUser.user}
-                    />
                 )
             }
             {

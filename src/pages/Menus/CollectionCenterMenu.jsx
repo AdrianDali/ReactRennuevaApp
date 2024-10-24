@@ -9,7 +9,7 @@ import CollectionCentersOccupation from "../../Charts/CollectionCentersOccupatio
 
 export default function CollectionCenterMenu() {
     const [collectionCenters, setCollectionsCenters] = useState([]);
-    const { updateCollectionCenterInfo, setUpdateCollectionCenterInfo} = useContext(TodoContext);
+    const { updateCollectionCenterInfo} = useContext(TodoContext);
     const dataUser = useAuth();
 
     useEffect(() => {
@@ -17,7 +17,7 @@ export default function CollectionCenterMenu() {
         axios
             .get(`${process.env.REACT_APP_API_URL}/all-collection-center-residue-summary/`)
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 setCollectionsCenters(response.data.centers);
             })
             .catch((error) => {

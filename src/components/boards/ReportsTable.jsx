@@ -43,10 +43,8 @@ import {
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect, useRef } from "react";
-import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
 import { ModalReport } from "../../pages/ModalReport";
 import dateFormater from "../../services/dateFormater";
@@ -61,9 +59,9 @@ import ReportsFiltersModal from "../modals/ReportsFiltersModal";
 import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import DonorRecollectionInfo from "./DonorRecollectionInfo";
 import ReportInfo from "./ReportInfo";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
+import sortData from "../../helpers/SortData";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -197,9 +195,8 @@ function Toolbar({
           color="secondary"
           sx={{ p: 2 }}
         >
-          {`${selected.length} ${
-            selected.length === 1 ? "seleccionado" : "seleccionados"
-          }`}
+          {`${selected.length} ${selected.length === 1 ? "seleccionado" : "seleccionados"
+            }`}
         </Typography>
         <Box>
           <Button
@@ -317,7 +314,7 @@ function SearchField({ filteredData, setVisibleData }) {
   }, [showSearch]);
 
   const handleSearch = (e) => {
-    
+
     if (e.key === "Enter") {
       const search = searchValue.trim().toLowerCase();
       if (search === "") {
@@ -394,10 +391,12 @@ export default function ReportsTable({ data }) {
   const [signType, setSignType] = useState("Generador");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [orderBy, setOrderBy] = useState("id_report");
+  const [order, setOrder] = useState("desc");
+  const [sortedData, setSortedData] = useState([]);
 
   const dataUser = useAuth();
 
-  console.log(data);
   const {
     setTextOpenModalText,
     openModalCreateReport,
@@ -628,6 +627,10 @@ export default function ReportsTable({ data }) {
     }
   }, [data]);
 
+  useEffect(() => {
+    setSortedData(sortData(visibleData, orderBy, order));
+}, [visibleData, order, orderBy])
+
   return (
     <Box sx={{ width: "100%", mb: "3rem" }}>
       <Paper
@@ -667,7 +670,14 @@ export default function ReportsTable({ data }) {
                 </TableCell>
 
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel 
+                    direction={order}
+                    onClick={() => {
+                        setOrderBy("id_report")
+                        setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "id_report" ? true : false}
+                  >
                     <Typography variant="subtitle2">ID</Typography>
                   </TableSortLabel>
                 </TableCell>
@@ -736,7 +746,7 @@ export default function ReportsTable({ data }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {visibleData.length === 0 ? (
+              {sortedData.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={18}>
                     <Typography
@@ -749,7 +759,7 @@ export default function ReportsTable({ data }) {
                   </TableCell>
                 </TableRow>
               ) : (
-                visibleData
+                sortedData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((report, index) => (
                     <>
@@ -876,8 +886,8 @@ export default function ReportsTable({ data }) {
                             size="small"
                             color={
                               report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados
+                                report.firma_responsiva_receptor &&
+                                report.residuos_agregados
                                 ? "success"
                                 : "warning"
                             }
@@ -896,8 +906,8 @@ export default function ReportsTable({ data }) {
                             size="small"
                             color={
                               report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados
+                                report.firma_responsiva_receptor &&
+                                report.residuos_agregados
                                 ? "success"
                                 : "warning"
                             }
@@ -969,7 +979,7 @@ export default function ReportsTable({ data }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={visibleData.length}
+          count={sortedData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

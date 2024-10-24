@@ -25,9 +25,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import ConfirmationModal from "../modals/ConfirmationModal";
-import { Close } from "@mui/icons-material";
+import { Close, Cookie } from "@mui/icons-material";
 import cancelationReassonText from "../../helpers/cancelationReassonText";
 import { set } from "date-fns";
+import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
+import getReportInfo from "../../services/getReportInfo";
+import generateQR from "../../services/generateQR";
 const style = {
   position: "absolute",
   top: "50%",
@@ -115,9 +118,7 @@ export default function EditRecolectionModal({
       setValue(recolection.comment_cancelation);
     }
   }, [recolection, open]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
 
     if (status === "pendienteRecoleccion") {
       if (!isDateCorrect) return;
@@ -154,28 +155,41 @@ export default function EditRecolectionModal({
           setOpenMessageModal(true);
         });
     } else if (status === "recolectado") {
+      console.log("########### Cambiando a recolectado ############")
       const data = {
         user: recolection.donador,
         id_order: recolection.id,
       };
-      console.log(data);
-      axios
-        .post(
+
+      try {
+        const changeStatusResponse = await axios.post(
           `${process.env.REACT_APP_API_URL}/change-recollection-recolectada/`,
           data
         )
-        .then((response) => {
-          console.log(response);
-          setMessage("Se ha actualizado el estado de la recolección");
-          setOpenMessageModal(true);
-          setUpdate(!update);
-          setOpen(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          setMessage("Ha ocurrido un error al actualizar la recolección");
-          setOpenMessageModal(true);
-        });
+        console.log("######### respuesta del cambio de status a recolectado #########");
+        console.log(changeStatusResponse);
+        
+        const reportInfo = await getReportInfo(changeStatusResponse.data.reportId);
+        const qrImage = await generateQR(
+          "https://rewards.rennueva.com/tracking-external/" + changeStatusResponse.data.reportFolio // Aquí deberías poner la URL correcta para el reporte
+        );
+        console.log("######### QR image #########");
+        console.log(qrImage);
+        const reportObject = { id_report: changeStatusResponse.data.reportId }
+        console.log("######### object report ##############")
+        console.log(reportObject)
+        
+        await generateDonorTalonPDF(reportObject, reportInfo, qrImage);
+
+        setMessage("Se ha actualizado el estado de la recolección");
+        setOpenMessageModal(true);
+        setUpdate(!update);
+        setOpen(false);
+      } catch (error) {
+        setMessage("Ha ocurrido un error al actualizar la recolección");
+        setOpenMessageModal(true);
+      }
+
     } else if (status === "entregado") {
       const data = {
         user: recolection.donador,
@@ -227,7 +241,10 @@ export default function EditRecolectionModal({
             <Close />
           </IconButton>
           <Title>Editar Recolección</Title>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={async (e) => {
+            e.preventDefault()
+            await handleSubmit(e)
+          }}>
             <FormControl fullWidth margin="dense">
               <InputLabel id="select-status-label">Estado</InputLabel>
               <Select
@@ -239,7 +256,7 @@ export default function EditRecolectionModal({
                   setStatus(e.target.value);
                 }}
               >
-                {recolection?.status == "solicitado" || recolection?.status == "pendienteRecoleccion"? <MenuItem value="pendienteRecoleccion">
+                {recolection?.status == "solicitado" || recolection?.status == "pendienteRecoleccion" ? <MenuItem value="pendienteRecoleccion">
                   Recolección pendiente
                 </MenuItem> : null}
                 {recolection?.status === "solicitado" || recolection?.status === "pendienteRecoleccion" || recolection?.status === "recolectado" ? <MenuItem value="recolectado">Recolectada</MenuItem> : null}

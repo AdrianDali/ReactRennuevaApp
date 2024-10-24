@@ -568,6 +568,7 @@ export default function DonorRecollectionsTable({ data }) {
                                                     <>
                                                         <TableCell>
                                                             <IconButton
+                                                                disabled={(request.status === "cancelado" || request.status === "recolectada")}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation()
                                                                     setRecollectionToEdit(request)
@@ -604,7 +605,7 @@ export default function DonorRecollectionsTable({ data }) {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={visibleData.length}
+                    count={sortedData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

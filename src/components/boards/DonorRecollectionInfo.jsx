@@ -50,8 +50,8 @@ export default function DonorRecollectionInfo({ request }) {
                             <Typography variant="body1" display="inline" gutterBottom>{request.codigo_postal}</Typography>
                         </Box>
                         <Box>
-                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Ciudad: </Typography>
-                            <Typography variant="body1" display="inline" gutterBottom>{request.ciudad}</Typography>
+                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Alcaldía/Municipio: </Typography>
+                            <Typography variant="body1" display="inline" gutterBottom>{request.alcaldia?? request.ciudad}</Typography>
                         </Box>
                         <Box>
                             <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Estado: </Typography>

@@ -292,7 +292,7 @@ export default function DonorsTable({ data }) {
         company: [],
         address_postal_code: [],
         address_state: [],
-        address_city: [],
+        address_alcaldia: [],
         address_locality: [],
     });
 
@@ -454,7 +454,7 @@ export default function DonorsTable({ data }) {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        <Typography variant="subtitle2">Ciudad</Typography>
+                                        <Typography variant="subtitle2">Alcaldía/Municipio</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -538,7 +538,7 @@ export default function DonorsTable({ data }) {
                                             <TableCell>{donor.address_num_ext}</TableCell>
                                             <TableCell>{donor.address_num_int}</TableCell>
                                             <TableCell>{donor.address_locality}</TableCell>
-                                            <TableCell>{donor.address_city}</TableCell>
+                                            <TableCell>{donor.address_alcaldia}</TableCell>
                                             <TableCell>{donor.address_state}</TableCell>
                                             <TableCell>{donor.address_postal_code}</TableCell>
                                             {dataUser && !(dataUser.groups[0] === "Logistica") &&
@@ -583,7 +583,7 @@ export default function DonorsTable({ data }) {
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalCreateDonor && <ModalDonor mode={"CREAR"} creatorUser={dataUser.user} />}
             {openModalEditDonor && <ModalDonor mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user} />}
-            <DeleteDonorModal donors={donorsToDelete} />
+            <DeleteDonorModal donors={donorsToDelete}/>
             {openModalText && (
                 <Dialog
                     open={openModalText}

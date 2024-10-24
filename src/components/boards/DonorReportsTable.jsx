@@ -38,6 +38,7 @@ import DonorReportsFiltersModal from "../modals/DonorReportsFiltersModal";
 import DeleteDonorReportsModal from "../modals/DeleteDonorReportModal";
 import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
+import sortData from "../../helpers/SortData";
 
 
 
@@ -260,8 +261,10 @@ export default function DonorReportsTable({ data }) {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [showCompleteInfo, setShowCompleteInfo] = useState(null);
+    const [orderBy, setOrderBy] = useState("id_report");
+    const [order, setOrder] = useState("desc");
+    const [sortedData, setSortedData] = useState([]);
 
-    console.log(data)
     const {
         setTextOpenModalText,
         setOpenModalDeleteReport,
@@ -345,48 +348,7 @@ export default function DonorReportsTable({ data }) {
         }
     }
 
-    const handleSavePDF = async (report) => {
-        const validate = true;
-        if (validate == true) {
-            const data = await getReportInfo(
-                report.id_report
-            );
 
-            let key_centro = "";
-            if (
-                data[0].key_centro_reciclaje !=
-                null
-            ) {
-                key_centro =
-                    data[0].key_centro_reciclaje;
-            }
-            if (
-                data[0].key_centro_recoleccion !=
-                null
-            ) {
-                key_centro =
-                    data[0].key_centro_recoleccion;
-            }
-
-            const folio_busqueda =
-                data[0].key_grupo_usuario +
-                "-" +
-                key_centro +
-                "-" +
-                report.id_report;
-
-            const qrImage = await generateQR(
-                "https://rewards.rennueva.com/tracking-external/" +
-                folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-            );
-            generateDonorReportPDF(report, data, qrImage);
-        } else {
-            setOpenModalText(true);
-            setTextOpenModalText(
-                "No se puede generar el reporte, aun no se han firmado todos los campos"
-            );
-        }
-    }
 
     const onEditDonorSign = (id) => {
         setReportToEdit(id);
@@ -428,6 +390,10 @@ export default function DonorReportsTable({ data }) {
         }
     }, [data])
 
+    useEffect(() => {
+        setSortedData(sortData(visibleData, orderBy, order));
+    }, [visibleData, order, orderBy])
+
 
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
@@ -461,7 +427,12 @@ export default function DonorReportsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("id_report")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "id_report" ? true : false}
                                     >
                                         <Typography variant="subtitle2">ID</Typography>
                                     </TableSortLabel>
@@ -495,7 +466,7 @@ export default function DonorReportsTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.length === 0 ?
+                            {sortedData.length === 0 ?
                                 <TableRow key="NoReports">
                                     <TableCell colSpan={18}>
                                         <Typography variant="h6" color="textSecondary" align="center">
@@ -503,7 +474,7 @@ export default function DonorReportsTable({ data }) {
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
-                                : visibleData
+                                : sortedData
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((report, index) => (
                                         <>
@@ -608,7 +579,7 @@ export default function DonorReportsTable({ data }) {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={visibleData.length}
+                    count={sortedData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
