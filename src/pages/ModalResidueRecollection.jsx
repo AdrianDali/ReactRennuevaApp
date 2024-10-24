@@ -7,6 +7,7 @@ import axios from 'axios';
 import { TodoContext } from '../context/index.js';
 import { Close } from '@mui/icons-material';
 
+
 function ModalResidueRecollection({ report }) {
     const [residues, setResidues] = useState([]);
     const [entries, setEntries] = useState([{ user: report.donador, report: report.id, residue: '', peso: '', volumen: '' }]);
@@ -19,27 +20,37 @@ function ModalResidueRecollection({ report }) {
     };
 
     useEffect(() => {
+        console.log("####### cambio el reporte a editar ########");
+        console.log(report);
         const getResidues = { reportId: report.id };
-
         axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
             .then(response => {
+                console.log("Todos los residuos");
+                console.log(response.data);
                 setResidues(response.data);
             })
             .catch(error => {
                 console.error('Hubo un problema al obtener los residuos:', error);
             });
 
-        axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-recollection/`, getResidues)
-            .then(response => {
-                const data = response.data;
-                setEntries(data);
-                if (data.length < 1) {
+        if (!getResidues.reportId !== undefined && !getResidues.reportId !== null && !getResidues.reportId !== '') {
+            axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-recollection/`, getResidues)
+                .then(response => {
+                    const data = response.data;
+                    console.log("Todos los residuos del reporte");
+                    console.log(data);
+                    setEntries(data);
+                    if (data.length < 1) {
+                        setBotonAdd(true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Hubo un problema al obtener los residuos:', error);
+                    setEntries([]);
                     setBotonAdd(true);
-                }
-            })
-            .catch(error => {
-                console.error('Hubo un problema al obtener los residuos:', error);
-            });
+                });
+        }
+
     }, [report]);
 
     const handleInputChange = (index, event) => {
@@ -65,6 +76,8 @@ function ModalResidueRecollection({ report }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("#####  crear reporte de residuos #####");
+        console.log(entries);
         axios.post(`${process.env.REACT_APP_API_URL}/create-recollection-residue-donor/`, entries)
             .then(response => {
                 e.target.reset();
@@ -144,5 +157,10 @@ function ModalResidueRecollection({ report }) {
         document.getElementById('modal')
     );
 }
+
+
+
+
+
 
 export { ModalResidueRecollection };
