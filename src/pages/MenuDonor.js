@@ -20,6 +20,7 @@ import Button from '@mui/material/Button';
 import DonorsTable from "../components/boards/DonorsTable.jsx";
 import BarsCharOrderRecollection from '../components/graph/BarsCharOrderRecollection';
 import useAuth from "../hooks/useAuth.js";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 export default function MenuDonor() {
   const {
@@ -33,6 +34,7 @@ export default function MenuDonor() {
   } = useContext(TodoContext);
   const [donors, setDonors] = useState([]);
   const dataUser = useAuth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -42,13 +44,15 @@ export default function MenuDonor() {
       })
       .catch(error => {
         console.error(error);
+      }).finally(() => {
+        setLoading(false);
       });
   }, [updateDonorInfo]);
 
 
   return (
     <>
-      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") ? (
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") && !loading ? (
 
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
           <DonorsTable data={donors} />
@@ -89,7 +93,7 @@ export default function MenuDonor() {
         </Container>
 
 
-      ) : (
+      ) : loading? <LoadingComponent/>: (
         <Box
           sx={{
             display: "flex",

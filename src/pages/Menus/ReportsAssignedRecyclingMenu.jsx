@@ -4,21 +4,14 @@ import { TodoContext } from "../../context";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
+import LoadingComponent from "./LoadingComponent";
 
 export function ReportsAssignedRecyclingMenu() {
     const [reports, setReports] = useState([]);
-    const { updateReportInfo, setUpdateReportInfo } = useContext(TodoContext);
+    const { updateReportInfo } = useContext(TodoContext);
     const userData = useAuth();
-    useEffect(() => {
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/get-all-reports-finish/`)
-            .then((response) => {
-                //console.log(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }, [updateReportInfo]);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         if(userData === null) return;
@@ -32,10 +25,13 @@ export function ReportsAssignedRecyclingMenu() {
             })
             .catch((error) => {
                 console.error(error);
+            }).finally(() => {
+                setLoading(false);
             });
     }, [updateReportInfo, userData]);
 
     return (
+        loading ? <LoadingComponent/> :
         <Container
             maxWidth={false}
             sx={{
@@ -47,7 +43,6 @@ export function ReportsAssignedRecyclingMenu() {
         >
 
 
-            {/* <FinishReportsTable data={reportsFinish} /> */}
             <ReportsTable data={reports} />
 
         </Container>

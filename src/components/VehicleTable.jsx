@@ -12,24 +12,9 @@ import {
 } from '@mui/material';
 import { TodoContext } from '../context/index';
 
-const VehicleTable = () => {
-  const [vehicles, setVehicles] = useState([]);
+const VehicleTable = ({vehicles}) => {
   const [page, setPage] = useState(0);
-  const { updateVehicleInfo, setUpdateVehicleInfo } = useContext(TodoContext);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-vehicle/`)
-      .then(response => {
-        setVehicles(response.data);
-        setUpdateVehicleInfo(false);
-
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, [updateVehicleInfo]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

@@ -1,16 +1,12 @@
+import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { TodoContext } from '../context/index.js';
 import { ModalCollectionCenter } from './ModalCollectionCenter';
-import RecyclingCenterTable from "../components/RecyclingCenterTable";
-import BarsChartVehicle from "../components/BarsChartVehicle";
 import {
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   Paper,
   Container,
-  Toolbar,
   CssBaseline,
 } from '@mui/material';
 import Title from '../components/Title';
@@ -24,46 +20,64 @@ import Button from '@mui/material/Button';
 import CollectionCenterTable from "../components/CollectionCenterTable.jsx";
 import useAuth from "../hooks/useAuth.js";
 import { Typography } from "@mui/material";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 
 
 function MenuCollectionCenter() {
-  const { 
-    openModalCreateCollectionCenter, 
-    openModalEditCollectionCenter, 
-    openModalDeleteCollectionCenter , openModalText, setOpenModalText ,textOpenModalText
+  const {
+    openModalCreateCollectionCenter,
+    openModalEditCollectionCenter,
+    openModalDeleteCollectionCenter, openModalText, setOpenModalText, textOpenModalText
   } = useContext(TodoContext);
   const dataUser = useAuth();
+  const [clientes, setClientes] = useState([]);
+  const { updateCollectionCenterInfo} = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
 
-  // ... otros handlers y useEffect ...
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-collection-center/`)
+      .then(response => {
+        setClientes(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(() => {
+        setLoading(false);
+      });
+  }, [updateCollectionCenterInfo]);
+
+
 
 
   return (
     <>
       <CssBaseline />
-      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
-      
-      <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Title>Centros de Acopio</Title>
-                  <CUDButtons model="CollectionCenter" />
-                  <Title>Centros de acopio creados</Title>
-                  <CollectionCenterTable />
-                </Paper>
-              </Grid>
-              
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro") && !loading ? (
+
+        <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} >
+              <Paper
+                sx={{
+                  p: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Title>Centros de Acopio</Title>
+                <CUDButtons model="CollectionCenter" />
+                <Title>Centros de acopio creados</Title>
+                <CollectionCenterTable clientes={clientes} />
+              </Paper>
             </Grid>
-          
+
+          </Grid>
+
           {openModalCreateCollectionCenter && (
             < ModalCollectionCenter mode={"CREAR"} creatorUser={dataUser.user}>
               La funcionalidad de agregar TODO
@@ -98,20 +112,20 @@ function MenuCollectionCenter() {
             </Dialog>
           )}
         </Container>
-         ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-              margin: "auto",
-              
-            }}
-          >
-            <Typography variant="h5">No Access</Typography>
-          </Box>
-        )}
+      ) : loading? <LoadingComponent/>: (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            margin: "auto",
+
+          }}
+        >
+          <Typography variant="h5">No Access</Typography>
+        </Box>
+      )}
 
     </>
   );

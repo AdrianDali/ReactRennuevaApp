@@ -2,44 +2,31 @@ import { Container, Grid, Paper, CssBaseline } from "@mui/material";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import FinishReportsTable from "../../components/boards/FinishReportsTable";
-import CUDButtons from "../../containers/CUDButtons";
 import CentroStatusReportsTable from "../../components/boards/CentroStatusReportsTable";
+import LoadingComponent from "./LoadingComponent";
 
 
 export function MenuStatusFolio() {
-  const [clientes, setClientes] = useState([]);
-  const [reports, setReports] = useState([]);
   const [collectedReports, setCollectedReports] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { updateReportInfo, setUpdateReportInfo } = useContext(TodoContext);
+  const { updateReportInfo} = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-collected-reports/`)
       .then((response) => {
-        console.log(response.data);
         setCollectedReports(response.data);
       })
       .catch((error) => {
         console.error(error);
+      }).finally(() => {
+        setLoading(false);
       });
   }, [updateReportInfo]);
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-reports/`)
-      .then((response) => {
-        console.log(response.data);
-        setReports(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [updateReportInfo]);
 
   return (
+    loading ? <LoadingComponent/> :
     <Container
       maxWidth={false}
       sx={{

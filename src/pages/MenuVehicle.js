@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useContext, useState, useEffect } from "react";
 import { TodoContext } from "../context/index.js";
 import { ModalUser } from "./Users/ModalUser";
@@ -24,6 +25,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import useAuth from "../hooks/useAuth.js";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 function MenuVehicle() {
   const {
@@ -37,13 +39,30 @@ function MenuVehicle() {
 
   const dataUser = useAuth();
 
+  const { updateVehicleInfo } = useContext(TodoContext);
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-vehicle/`)
+      .then(response => {
+        setVehicles(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(() => {
+        setLoading(false);
+      });
+  }, [updateVehicleInfo]);
+
 
 
   return (
     <>
       <CssBaseline />
       <Box sx={{ display: "flex", height: "90vh", width: "100vw" }}>
-      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
+        {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro") && !loading ? (
           <Container
             maxWidth={false}
             sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
@@ -62,7 +81,7 @@ function MenuVehicle() {
                   <Title>Vehículos</Title>
                   <CUDButtons model="Vehicle" />
                   <Title>Vehículos Creados</Title>
-                  <VehicleTable />
+                  <VehicleTable vehicles={vehicles}/>
                 </Paper>
               </Grid>
             </Grid>
@@ -105,7 +124,7 @@ function MenuVehicle() {
               </Dialog>
             )}
           </Container>
-        ) : (
+        ) : loading? <LoadingComponent/>: (
           <Box
             sx={{
               display: "flex",

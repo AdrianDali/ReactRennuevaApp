@@ -261,7 +261,6 @@ const DriverOrderAssignedTable = ({ data }) => {
                 setAuxClientes(response.data);
                 const cli = response.data.map((cliente) => { return { email: cliente.donador } });
                 setCorreoCliente(cli);
-                setUpdateDonorInfo(false);
             })
             .catch((error) => {
                 console.error(error);
