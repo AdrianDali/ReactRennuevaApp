@@ -8,7 +8,7 @@ import LoadingComponent from "./LoadingComponent";
 
 export function MenuStatusFolio() {
   const [collectedReports, setCollectedReports] = useState([]);
-  const { updateReportInfo} = useContext(TodoContext);
+  const { updateReportInfo } = useContext(TodoContext);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,19 +26,19 @@ export function MenuStatusFolio() {
 
 
   return (
-    loading ? <LoadingComponent/> :
-    <Container
-      maxWidth={false}
-      sx={{
-        flexGrow: 1,
-        overflow: "auto",
-        py: 3,
-        height: "100%",
-      }}
-    > 
-    <CentroStatusReportsTable data={collectedReports} />
-     
-     
-    </Container>
+    loading ? <LoadingComponent /> :
+      <Container
+        maxWidth={false}
+        sx={{
+          flexGrow: 1,
+          overflow: "auto",
+          py: 3,
+          height: "100%",
+        }}
+      >
+        <CentroStatusReportsTable data={collectedReports} />
+
+
+      </Container>
   );
 }

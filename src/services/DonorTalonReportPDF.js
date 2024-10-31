@@ -39,7 +39,7 @@ async function generateDonorTalonPDF(report, data, qrImage) {
             centro = data[0].centro_reciclaje;
             titulo_centro = "Reciclaje";
         }
-        if (data[0].key_centro_recoleccion != null && ata[0].key_centro_recoleccion != undefined) {
+        if (data[0].key_centro_recoleccion != null && data[0].key_centro_recoleccion != undefined) {
             key_centro = data[0].key_centro_recoleccion;
             centro = data[0].centro_recoleccion;
             titulo_centro = "Recolección";
