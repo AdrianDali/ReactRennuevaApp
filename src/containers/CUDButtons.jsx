@@ -52,7 +52,7 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
     console.log("Datos importados:", data);
     console.log(data[0].Tipo);
 
-    let url = "http://127.0.0.1:8000/Rennueva"; // URL base
+    let url = process.env.REACT_APP_API_URL; // URL base
 
     if (data[0].Tipo === "Generador") {
       console.log("Es un archivo de usuarios");
