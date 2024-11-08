@@ -8,42 +8,31 @@ import {
   CssBaseline,
 } from "@mui/material";
 import Title from "../components/Title";
-import CUDButtons from "../containers/CUDButtons";
-import { ModalCarrier } from "./ModalCarrier.js";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Button from "@mui/material/Button";
-import CarrierTable from "../components/CarrierTable.jsx";
 import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
 import useAuth from "../hooks/useAuth.js";
 import CarriersTable from "../components/boards/CarriersTable.jsx";
 import axios from "axios";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 function MenuCarrier() {
   const {
-    openModalCreateCarrier,
-    openModalEditCarrier,
-    openModalDeleteCarrier,
-    openModalText,
-    setOpenModalText,
-    textOpenModalText,
     updateCarrierInfo,
   } = useContext(TodoContext);
   const [carriers, setCarriers] = useState([]);
   const dataUsers = useAuth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
         .get(`${process.env.REACT_APP_API_URL}/get-all-carrier/`)
         .then(response => {
-          console.log(response.data);
+          //console.log(response.data);
             setCarriers(response.data);
         })
         .catch(error => {
             console.error(error);
+        }).finally(() => {
+            setLoading(false);
         });
 }, [updateCarrierInfo]);
 
@@ -52,7 +41,7 @@ function MenuCarrier() {
   return (
     <>
       <CssBaseline />
-      {dataUsers && (dataUsers.groups[0] === "Administrador"  || dataUsers.groups[0] === "Calidad" || dataUsers.groups[0] === "Registro" ) ? (
+      {dataUsers && (dataUsers.groups[0] === "Administrador"  || dataUsers.groups[0] === "Calidad" || dataUsers.groups[0] === "Registro" ) && !loading ? (
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
           <CarriersTable data={carriers}/>
           <Grid container spacing={3}>
@@ -70,7 +59,7 @@ function MenuCarrier() {
             </Grid>
           </Grid>
         </Container>
-      ) : (
+      ) : loading? <LoadingComponent/>:(
         <Box
           sx={{
             display: "flex",

@@ -3,10 +3,12 @@ import { Container} from "@mui/material";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
+import LoadingComponent from "./LoadingComponent";
 
 export default function ExportsMenu() {
   const [clientes, setClientes] = useState([]);
   const { updateGeneratorInfo} = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -16,11 +18,14 @@ export default function ExportsMenu() {
       })
       .catch(error => {
         console.error(error);
+      }).finally(() => {
+        setLoading(false);
       });
   }, [updateGeneratorInfo]);
 
   
   return (
+    loading ? <LoadingComponent/> :
     <Container
       maxWidth={false}
       sx={{

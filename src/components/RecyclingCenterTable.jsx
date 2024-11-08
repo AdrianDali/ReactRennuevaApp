@@ -12,25 +12,9 @@ import {
 } from '@mui/material';
 import { TodoContext } from '../context';
 
-const RecyclingCenterTable = () => {
-    const [clientes, setClientes] = useState([]);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const { updateRecyclingCenterInfo, setUpdateRecyclingCenterInfo } = useContext(TodoContext);
-
-    useEffect(() => {
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/get-all-recycling-center/`)
-            .then(response => {
-                setClientes(response.data);
-                console.log("sadlkasdasklajkfdsfjkgdsfljkasdhfladksjhfasdjklfhadskljfhasdlkfj");
-                console.log(response.data);
-                setUpdateRecyclingCenterInfo(false);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [updateRecyclingCenterInfo]);
+const RecyclingCenterTable = ({clientes}) => {
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
   
     const handleChangePage = (event, newPage) => {
       setPage(newPage);

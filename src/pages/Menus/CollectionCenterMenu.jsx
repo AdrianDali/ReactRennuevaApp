@@ -6,11 +6,13 @@ import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import CollectionsCentersTable from "../../components/boards/CollectionsCentersTable";
 import CollectionCentersOccupation from "../../Charts/CollectionCentersOccupation";
+import LoadingComponent from "./LoadingComponent";
 
 export default function CollectionCenterMenu() {
     const [collectionCenters, setCollectionsCenters] = useState([]);
     const { updateCollectionCenterInfo} = useContext(TodoContext);
     const dataUser = useAuth();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!dataUser) return;
@@ -22,10 +24,13 @@ export default function CollectionCenterMenu() {
             })
             .catch((error) => {
                 console.error(error);
+            }).finally(() => {
+                setLoading(false);
             });
     }, [updateCollectionCenterInfo, dataUser]);
 
     return (
+        loading ? <LoadingComponent/> :
         <Container
             maxWidth={false}
             sx={{

@@ -3,20 +3,13 @@ import { Container } from "@mui/material";
 import { TodoContext } from "../context";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
+import LoadingComponent from "./Menus/LoadingComponent";
 export function MenuReport() {
   const [reports, setReports] = useState([]);
   const { updateReportInfo, setUpdateReportInfo } = useContext(TodoContext);
+  const[loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-reports-finish/`)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [updateReportInfo]);
+  
 
   useEffect(() => {
     axios
@@ -27,10 +20,13 @@ export function MenuReport() {
       })
       .catch((error) => {
         console.error(error);
+      }).finally(() => {
+        setLoading(false);
       });
   }, [updateReportInfo]);
 
   return (
+    loading ? <LoadingComponent/> :
     <Container
       maxWidth={false}
       sx={{

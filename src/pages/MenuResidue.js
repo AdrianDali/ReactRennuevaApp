@@ -1,19 +1,15 @@
-import React, { useContext } from "react";
+import axios from "axios";
+import React, { useContext, useState, useEffect } from "react";
 import "../styles/user/MenuUser.css";
 import { TodoContext } from "../context/index.js";
-import { ModalUser } from "./Users/ModalUser";
 import ResidueTable from "../components/ResidueTable";
-import BarsChartVehicle from "../components/BarsChartVehicle";
 import CUDButtons from "../containers/CUDButtons";
 
 import {
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   Paper,
   Container,
-  Toolbar,
   CssBaseline,
 } from "@mui/material";
 import Title from "../components/Title";
@@ -26,14 +22,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import BarsCharResidue from "../components/graph/BarsCharResidue";
 import useAuth from "../hooks/useAuth.js";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 function MenuResidue() {
   const {
     openModalCreateResidue,
-    setOpenModalCreateResidue,
-    setOpenModalEditResidue,
     openModalEditResidue,
-    setOpenModalDeleteResidue,
     openModalDeleteResidue,
     textOpenModalText,
     setOpenModalText,
@@ -41,14 +35,30 @@ function MenuResidue() {
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
+  const [clientes, setClientes] = useState([]);
+  const { updateResidueInfo } = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+      .then(response => {
+        const data = response.data;
+        setClientes(data);
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(() => {
+        setLoading(false);
+      });
+  }, [updateResidueInfo]);
 
 
   return (
     <>
       <CssBaseline />
       <Box sx={{ display: "flex", height: "90vh", width: "100vw" }}>
-        {dataUser && dataUser.groups[0] === "Administrador" ? (
+        {dataUser && dataUser.groups[0] === "Administrador" && !loading ? (
           <Container
             maxWidth={false}
             sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
@@ -67,7 +77,7 @@ function MenuResidue() {
                   <Title>Residuos</Title>
                   <CUDButtons model="Residue" />
                   <Title>Tabla de Residuos</Title>
-                  <ResidueTable />
+                  <ResidueTable clientes={clientes} />
                 </Paper>
               </Grid>
               <Grid item xs={12}>
@@ -89,7 +99,7 @@ function MenuResidue() {
               </ModalResidue>
             )}
             {openModalEditResidue && (
-              <ModalResidue mode={"EDITAR"}creatorUser={dataUser.user}>
+              <ModalResidue mode={"EDITAR"} creatorUser={dataUser.user}>
                 La funcionalidad de editar TODO
               </ModalResidue>
             )}
@@ -121,7 +131,7 @@ function MenuResidue() {
               </Dialog>
             )}
           </Container>
-        ) : (
+        ) : loading? <LoadingComponent/>: (
           <Box
             sx={{
               display: "flex",

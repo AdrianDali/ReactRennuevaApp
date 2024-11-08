@@ -1,16 +1,14 @@
+import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { TodoContext } from "../context/index.js";
 import { ModalUser } from "./Users/ModalUser";
 import RecyclingCenterTable from "../components/RecyclingCenterTable";
-import BarsChartVehicle from "../components/BarsChartVehicle";
+
 import {
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   Paper,
   Container,
-  Toolbar,
   CssBaseline,
 } from "@mui/material";
 import Title from "../components/Title";
@@ -23,31 +21,44 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import useAuth from "../hooks/useAuth.js";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 function MenuRecyclingCenter() {
   const {
     openModalCreateRecyclingCenter,
-    setOpenModalCreateRecyclingCenter,
-    setOpenModalEditRecyclingCenter,
     openModalEditRecyclingCenter,
-    setOpenModalDeleteRecyclingCenter,
     openModalDeleteRecyclingCenter,
     openModalText,
     setOpenModalText,
     textOpenModalText,
-    setTextOpenModalText,
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
 
-  // ... otros handlers y useEffect ...
+  const [clientes, setClientes] = useState([]);
+  const { updateRecyclingCenterInfo } = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-recycling-center/`)
+      .then(response => {
+        setClientes(response.data);
+       
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(()=>{
+        setLoading(false);
+      });
+  }, [updateRecyclingCenterInfo]);
 
 
   return (
     <>
       <CssBaseline />
 
-      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro") && !loading? (
         <Container
           maxWidth={false}
           sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
@@ -66,7 +77,7 @@ function MenuRecyclingCenter() {
                 <Title>Centros de Reciclaje</Title>
                 <CUDButtons model="RecyclingCenter" />
                 <Title>Centros Creados</Title>
-                <RecyclingCenterTable />
+                <RecyclingCenterTable clientes={clientes} />
               </Paper>
             </Grid>
           </Grid>
@@ -107,7 +118,7 @@ function MenuRecyclingCenter() {
             </Dialog>
           )}
         </Container>
-      ) : (
+      ) :loading? <LoadingComponent/>: (
         <Box
           sx={{
             display: "flex",

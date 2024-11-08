@@ -5,25 +5,7 @@ import { TodoContext } from '../context';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 
 
-const GroupTable = ({ datos }) => {
-    const [clientes, setClientes] = useState([]);
-    const { updateGroupInfo, setUpdateGroupInfo } = useContext(TodoContext);
-
-
-    useEffect(() => {
-        // Realiza una petición GET a una URL específica
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/get-all-groups/`)
-            .then(response => {
-                const data = response.data;
-                setClientes(data);
-                setUpdateGroupInfo(false);
-
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [updateGroupInfo]);
+const GroupTable = ({clientes}) => {
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);

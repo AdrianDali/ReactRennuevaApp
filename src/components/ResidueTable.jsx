@@ -3,23 +3,8 @@ import axios from 'axios';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 import { TodoContext } from '../context/index';
 
-const ResidueTable = ({ datos }) => {
-  const [clientes, setClientes] = useState([]);
-  const {updateResidueInfo, setUpdateResidueInfo} = useContext(TodoContext);
-    
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
-      .then(response => {
-        const data = response.data;
-        setClientes(data);
-        setUpdateResidueInfo(false); 
-
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, [updateResidueInfo]);
+const ResidueTable = ({ clientes }) => {
+  
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);

@@ -7,6 +7,7 @@ import Title from "../../components/Title";
 import useAuth from "../../hooks/useAuth.js";
 import axios from "axios";
 import UserInfoTable from "../../components/boards/UsersInfoTable.jsx";
+import LoadingComponent from "../Menus/LoadingComponent.jsx";
 
 function MenuUser() {
 
@@ -21,6 +22,7 @@ function MenuUser() {
   const [centers, setCenters] = useState([]);
   const [recyclingCenters, setRecyclingCenters] = useState([]);
   const [collectionCenters, setCollectionCenters] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +45,8 @@ function MenuUser() {
         setUpdateUserInfo(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+      }finally{
+        setLoading(false);
       }
     };
 
@@ -51,7 +55,7 @@ function MenuUser() {
 
   return (
     <>
-      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") ? (
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") && !loading ? (
         <Container
           maxWidth={false}
           sx={{
@@ -63,7 +67,7 @@ function MenuUser() {
         >
           <UserInfoTable data={donorRequests} centers={centers} recyclingCenters={recyclingCenters} collectionCenters={collectionCenters} />  
         </Container>
-      ) : (
+      ) : loading? <LoadingComponent/>:(
         <Box
           sx={{
             display: "flex",
