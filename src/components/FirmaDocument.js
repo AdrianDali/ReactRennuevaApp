@@ -19,9 +19,9 @@ const SignatureComponent = ({ id, type }) => {
     } else if (type === "Donador") {
       url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
     } else if (type === "Recolector" || type === "Conductor") {
-      url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
+      url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
     } else if (type === "Generador") {
-      url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
+      url = `${process.env.REACT_APP_API_URL}/nerator-signature/`;
     }else if (type === "Donor") {
       url = `${process.env.REACT_APP_API_URL}/update-report-donor-signature/`;
     }
