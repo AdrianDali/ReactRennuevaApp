@@ -144,7 +144,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
         "N/A",
       ]);
     } else {
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 1; i < data.length; i++) {
         bodyData.push([
           data[i].nombre_residuo,
           data[i].peso + " kg",
