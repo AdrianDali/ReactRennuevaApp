@@ -13,7 +13,8 @@ import {
   FormControl,
   InputLabel,
   Grid,
-  IconButton
+  IconButton,
+  Autocomplete
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import Title from "../components/Title";
@@ -178,7 +179,7 @@ function ModalReport({ mode, report, creatorUser }) {
         report.nombre_real_usuario + " " + report.apellido_usuario
       );
       if (report.centro_reciclaje != null) {
-        
+
         setRecyclingCollection(report.centro_reciclaje);
       }
       if (report.centro_recoleccion != null) {
@@ -398,8 +399,10 @@ function ModalReport({ mode, report, creatorUser }) {
     setRecyclingCollection(event.target.value);
   };
 
-  const handleSelectChange = (event) => {
-    const selectedOption = event.target.value; // Obtener la opción seleccionada
+  const handleSelectChange = (value) => {
+    console.log("############ handleSelectChange ############");
+    console.log(value);
+    const selectedOption = value; // Obtener la opción seleccionada
     console.log(selectedOption);
     console.log("NAme Generador");
     console.log(nameGenerator);
@@ -478,9 +481,23 @@ function ModalReport({ mode, report, creatorUser }) {
         </IconButton>
         <form onSubmit={handleSubmit}>
           <Title>Crear Responsiva</Title>
+          <Autocomplete
+            disablePortal
+            id="autocomplete-generator"
+            options={nameGenerator}
+            noOptionsText="No se encontraron coincidencias"
+            sx={{ width: "100%" }} // Usa el ancho completo del Grid item
+            getOptionLabel={(option) => option.email}
+            isOptionEqualToValue={(option, value) => option.name === value.name}
+            renderInput={(params) => (
+              <TextField {...params} label="Generador" required error={completeName===""} />
+            )}
+            onChange={(event, value) => handleSelectChange(value)}
+          />
           <FormControl fullWidth>
             <InputLabel id="rol-select-label">Generador</InputLabel>
             <Select
+              label="Generador"
               labelId="rol-select-label"
               id="rol-select"
               required

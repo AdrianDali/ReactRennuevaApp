@@ -614,7 +614,7 @@ function ModalRecyclingCenter({ children, mode, creatorUser }) {
                 margin="dense"
               />
               <TextField
-                label="Numero exterior"
+                label="Número exterior"
                 name="address_num_ext"
                 required
                 fullWidth
@@ -623,9 +623,8 @@ function ModalRecyclingCenter({ children, mode, creatorUser }) {
                 margin="dense"
               />
               <TextField
-                label="Numero interior"
+                label="Número interior"
                 name="address_num_int"
-                required
                 fullWidth
                 value={address_num_int}
                 onChange={(e) => handleInputChange(e, setAddressNumInt, mode)}
