@@ -187,6 +187,7 @@ export default function ModalDonor({ children, mode, creatorUser, userToEdit = n
         id: id,
         creator_user: creator,
         user_permission: "Escritura",
+        old_user: old_user,
 
       };
 
