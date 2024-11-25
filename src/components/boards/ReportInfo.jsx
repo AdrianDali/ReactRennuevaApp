@@ -83,7 +83,7 @@ export default function ReportInfo({ request }) {
               fontWeight={500}
               gutterBottom
             >
-                Grupo:{" "}
+              Grupo:{" "}
             </Typography>
             <Typography variant="body1" display="inline" gutterBottom>
               {request.grupo_usuario}
@@ -112,14 +112,6 @@ export default function ReportInfo({ request }) {
               {request.calle_reporte}
             </Typography>
           </Box>
-          {/* <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Número exterior: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{request.num_ext_reporte}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Número interior: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{request.num_int_reporte}</Typography>
-                    </Box> */}
           <Box>
             <Typography
               variant="subtitle1"
@@ -234,9 +226,9 @@ export default function ReportInfo({ request }) {
             <Typography variant="body1" display="inline" gutterBottom>
               {request.fecha_inicio_reporte
                 ? format(
-                    new Date(request.fecha_inicio_reporte),
-                    "dd/MM/yyyy HH:mm:ss"
-                  )
+                  new Date(request.fecha_inicio_reporte),
+                  "dd/MM/yyyy HH:mm:ss"
+                )
                 : "No cuenta con fecha de inicio"}
             </Typography>
           </Box>
