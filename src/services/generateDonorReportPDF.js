@@ -251,7 +251,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
     );
 
     if (qrImage) {
-      doc.addImage(qrImage, "PNG", 12, 220, 45, 45);
+      doc.addImage(qrImage, "PNG", 12, 220, 55, 55);
     }
 
     const pdfBase64 = doc.output("datauristring");

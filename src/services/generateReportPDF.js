@@ -321,7 +321,7 @@ export default function generateReportPDF(report, data, qrImage){
     );
   
     if (qrImage) {
-      doc.addImage(qrImage, "PNG", 12, distancia + 25, 45, 45);
+      doc.addImage(qrImage, "PNG", 12, distancia + 25, 55, 55);
       // Modifica 'x', 'y', 'width' y 'height' para ubicar y dimensionar el QR como desees.
     }
   
