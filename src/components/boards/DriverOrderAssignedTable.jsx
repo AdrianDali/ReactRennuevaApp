@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { Add, Edit } from "@mui/icons-material";
+import { Add, Download, Edit } from "@mui/icons-material";
 import {
     Paper,
     Table,
@@ -29,6 +29,7 @@ import Grid from '@mui/material/Grid';
 import { ModalFirmar } from "../../pages/ModalFirmar";
 import { statusText, statusColor } from "../../helpers/statusModifiers";
 import { ModalResidueRecollection } from "../../pages/ModalResidueRecollection";
+import saveTalonPDF from "../../services/saveTalonPDF";
 
 function Row({row, setReportToEdit, signType, setSignType}) {
     const [open, setOpen] = React.useState(false);
@@ -116,6 +117,11 @@ function Row({row, setReportToEdit, signType, setSignType}) {
                         onClick={(e) => {
                             e.stopPropagation();
                             handleEditResidues(row);
+                            /*
+                            await saveTalonPDF(row, () => {
+                                console.log("No se puede generar el talón");
+                            })
+                            */
                         }}
                     >
                         Agregar
@@ -330,7 +336,7 @@ const DriverOrderAssignedTable = ({ data }) => {
                                 <TableCell>Peso Estimado</TableCell>
                                 <TableCell>Firma Conductor</TableCell>
                                 <TableCell>Firma Donador</TableCell>
-                                <TableCell>Agregar residuos</TableCell>
+                                <TableCell>Residuos</TableCell>
                                 <TableCell>Editar</TableCell>
                                 <TableCell>Status</TableCell>
                             </TableRow>

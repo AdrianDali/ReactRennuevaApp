@@ -285,6 +285,7 @@ export default function DonorRecollectionsTable({ data }) {
         textOpenModalText,
         setOpenModalText
     } = useContext(TodoContext);
+
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
     const [generalCheckboxStatus, setGeneralCheckboxStatus] = useState("unchecked");
@@ -396,9 +397,6 @@ export default function DonorRecollectionsTable({ data }) {
     useEffect(() => {
         setSortedData(sortData(visibleData, orderBy, order));
     }, [visibleData, order, orderBy])
-
-
-
 
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>

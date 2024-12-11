@@ -39,6 +39,7 @@ import DeleteDonorReportsModal from "../modals/DeleteDonorReportModal";
 import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
 import sortData from "../../helpers/SortData";
+import saveTalonPDF from "../../services/saveTalonPDF";
 
 
 
@@ -61,7 +62,7 @@ function Toolbar({ selected, setOpenFiltersModal, filtersApplied, filteredData, 
             <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexGrow: 0, flexShrink: 1 }}>
                 Reportes de donadores
             </Typography>
-            <Box sx={{flexShrink: 0, flexGrow: 1, display: "flex", flexDirection: "row", justifyContent: "end"}}>
+            <Box sx={{ flexShrink: 0, flexGrow: 1, display: "flex", flexDirection: "row", justifyContent: "end" }}>
                 <SearchField filteredData={filteredData} setVisibleData={setVisibleData} />
                 <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={!filtersApplied}>
                     <Button variant="text" size="large" color="secondary" startIcon={<FilterList />} sx={{ m: 0, mx: 2 }} onClick={() => setOpenFiltersModal(true)}>Filtrar</Button>
@@ -305,51 +306,6 @@ export default function DonorReportsTable({ data }) {
         setPage(0);
     };
 
-    const handleSaveTalonPDF = async (report) => {
-        const validate = true;
-        if (validate == true) {
-            const data = await getReportInfo(
-                report.id_report
-            );
-
-            let key_centro = "";
-            if (
-                data[0].key_centro_reciclaje !=
-                null
-            ) {
-                key_centro =
-                    data[0].key_centro_reciclaje;
-            }
-            if (
-                data[0].key_centro_recoleccion !=
-                null
-            ) {
-                key_centro =
-                    data[0].key_centro_recoleccion;
-            }
-
-            const folio_busqueda =
-                data[0].key_grupo_usuario +
-                "-" +
-                key_centro +
-                "-" +
-                report.id_report;
-
-            const qrImage = await generateQR(
-                "https://rewards.rennueva.com/tracking-external/" +
-                folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-            );
-            generateDonorTalonPDF(report, data, qrImage);
-        } else {
-            setOpenModalText(true);
-            setTextOpenModalText(
-                "No se puede generar el reporte, aun no se han firmado todos los campos"
-            );
-        }
-    }
-
-
-
     const onEditDonorSign = (id) => {
         setReportToEdit(id);
         setSignType("Donador");
@@ -458,7 +414,7 @@ export default function DonorReportsTable({ data }) {
                                     <Typography variant="subtitle2">Firma receptor</Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="subtitle2">Talon</Typography>
+                                    <Typography variant="subtitle2">Talón</Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Typography variant="subtitle2">Borrar</Typography>
@@ -548,7 +504,13 @@ export default function DonorReportsTable({ data }) {
                                                         onClick={async (e) => {
                                                             console.log(report)
                                                             e.stopPropagation();
-                                                            await handleSaveTalonPDF(report)
+                                                            await saveTalonPDF(report, () => {
+                                                                setOpenModalText(true);
+                                                                setTextOpenModalText(
+                                                                    "No se puede generar el reporte, aun no se han firmado todos los campos"
+                                                                );
+                                                            })
+                                                            //await handleSaveTalonPDF(report)
                                                         }}
                                                     >
                                                         Generar Talón
