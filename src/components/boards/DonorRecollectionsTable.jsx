@@ -430,14 +430,24 @@ export default function DonorRecollectionsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("donador")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "donador" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Correo electrónico asociado</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("nombre_centro")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "nombre_centro" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Centro de recolección</Typography>
                                     </TableSortLabel>
@@ -451,7 +461,12 @@ export default function DonorRecollectionsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("direccion_completa")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "direccion_completa" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Dirección</Typography>
                                     </TableSortLabel>
@@ -465,7 +480,12 @@ export default function DonorRecollectionsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("status")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "status" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Estado</Typography>
                                     </TableSortLabel>
