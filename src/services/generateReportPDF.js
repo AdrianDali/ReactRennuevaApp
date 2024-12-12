@@ -305,7 +305,7 @@ export default function generateReportPDF(report, data, qrImage){
     doc.line(1, startY + 13, 400, startY + 13); // Línea de nombre para el Generador
     doc.setFontSize(6);
     doc.text(
-      "Tecnologias Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtemoc, Ciudad de Mexico, Mexico ",
+      "Tecnologías Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtémoc, Ciudad de México, México ",
       14,
       distancia + 75
     );
@@ -315,13 +315,13 @@ export default function generateReportPDF(report, data, qrImage){
       distancia + 80
     );
     doc.text(
-      "Todos los datos recabados en este documento seran tratados conforme a la Ley General de Proteccion de Datos Personales",
+      "Todos los datos recabados en este documento serán tratados conforme a la Ley General de Protección de Datos Personales",
       14,
       distancia + 85
     );
   
     if (qrImage) {
-      doc.addImage(qrImage, "PNG", 12, distancia + 25, 45, 45);
+      doc.addImage(qrImage, "PNG", 12, distancia + 25, 55, 55);
       // Modifica 'x', 'y', 'width' y 'height' para ubicar y dimensionar el QR como desees.
     }
   

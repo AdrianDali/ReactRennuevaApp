@@ -68,7 +68,7 @@ function MenuTracking() {
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 5 }}>
 
             <Typography variant="h4" component="h4" color="primary" mb={6}>
-                Segumineto de reportes
+                Seguimiento de reportes
             </Typography>
             <Box maxWidth="sm" minWidth="xs" mb={4} sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: "wrap" }}>
                 <TextField

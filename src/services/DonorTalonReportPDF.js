@@ -23,13 +23,7 @@ const savePdf = async (pdfBase64, id_report) => {
 
 
 async function generateDonorTalonPDF(report, data, qrImage) {
-    console.log(" ########### Generando PDF de talon de folio ###########");
     try {
-        console.log("Generando PDF de talon de folio");
-        console.log("########### data ###########");
-        console.log(data);
-        console.log("########### report ###########");
-        console.log(report);
         let key_centro = "";
         let centro = "";
         let titulo_centro = "";
@@ -45,61 +39,80 @@ async function generateDonorTalonPDF(report, data, qrImage) {
             titulo_centro = "Recolección";
         }
 
-        const doc = new jsPDF();
+        // Establecer tamaño de página personalizado de 40mm de ancho
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: [55, 85] // Ancho: 40mm, Altura: 100mm (ajustar según sea necesario)
+        });
 
+        // Ajustar tamaños y posiciones en función del nuevo tamaño de página
         doc.setFontSize(8);
-        doc.text("Solicite, con su numero de folio, el", 70, 15, { align: "left" });
-        doc.text("desglose de los materiales y", 70, 20, { align: "left" });
-        doc.text("comprobante al siguiente correo:", 70, 25, { align: "left" });
-        doc.text("plasticos@rennueva.com", 70, 30, { align: "left" });
-
-        doc.setTextColor(255, 0, 0);
+        doc.setTextColor(0, 0, 0);
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const folio = data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
+        const folioWidth = doc.getTextWidth(folio);
+        const folioCoordinate = (pageWidth - folioWidth) / 2;
         doc.text(
-            "FOLIO: " +
+            folio,
+            folioCoordinate,
+            5, // Adjusted y-coordinate to ensure it is within the visible area
+            { maxWidth: 40 }
+        );
+
+        if (qrImage) {
+            // Hacer que el código QR quede justo bajo el texto del folio
+            doc.addImage(qrImage, "PNG", (pageWidth - 40) / 2, doc.getTextDimensions(folio).h + 5, 40, 40);
+        }
+
+        const qrText = "Escanea el código QR para consultar su reporte.";
+        const qrTextCoordinate = pageWidth / 2;
+        doc.text(qrText, qrTextCoordinate, doc.getTextDimensions(folio).h + 48, { maxWidth: 40, align: "center" });
+
+        /* doc.text(
             data[0].key_grupo_usuario +
             "-" +
             key_centro +
             "-" +
             report.id_report,
-            150,
             5,
-            { align: "right" }
-        );
+            0,
+            { maxWidth: 30 }
+        ); */
 
-        doc.setTextColor(0, 0, 0);
+        const date = new Date(data[0].fecha_inicio_reporte);
+        const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
 
         doc.text(
-            "Fecha Recepcion: " + data[0].fecha_inicio_reporte,
-            200,
-            65,
-            { align: "right" }
+            "Fecha de recepción: " + formattedDate,
+            4,
+            60,
+            { maxWidth: 40 }
+        );
+
+        doc.text(
+            "Tienes dudas o comentarios, contáctanos:",
+            4,
+            69,
+            { maxWidth: 35 }
+        );
+        doc.text(
+            "(55)8437 7300",
+            4,
+            77,
+            { maxWidth: 40 }
+        );
+
+        doc.text(
+            "info@rennueva.com",
+            4,
+            80,
+            { maxWidth: 48 }
         );
 
 
-        doc.setFontSize(6);
-        doc.text(
-            "Tecnologias Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtemoc, Ciudad de Mexico, Mexico ",
-            14,
-            50
-        );
-        doc.text(
-            "Tel. (55)8437 7300 y (55)8437 7272, info@rennueva.com",
-            14,
-            55
-        );
-        doc.text(
-            "Todos los datos recabados en este documento seran tratados conforme a la Ley General de Proteccion de Datos Personales",
-            14,
-            60
-        );
-
-        if (qrImage) {
-            doc.addImage(qrImage, "PNG", 12, 0, 45, 45);
-        }
 
         const pdfBase64 = doc.output("datauristring");
-        console.log("########## talon de folio  en base 64##########");
-        console.log(pdfBase64);
 
         await savePdf(pdfBase64, report.id_report);
 
@@ -108,7 +121,6 @@ async function generateDonorTalonPDF(report, data, qrImage) {
         console.error(error);
         throw error;
     }
-
 }
 
 export default generateDonorTalonPDF;

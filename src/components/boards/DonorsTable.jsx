@@ -37,6 +37,7 @@ import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
 import DeleteDonorModal from "../modals/DeleteDonorModal";
+import sortData from "../../helpers/SortData";
 
 
 
@@ -142,7 +143,7 @@ function ExportOptionsMenu({ anchorEl, setAnchorEl, allData, filteredData, selec
 
 }
 
-function SearchField({setPage, filteredData, setVisibleData }) {
+function SearchField({ setPage, filteredData, setVisibleData }) {
     const [showSearch, setShowSearch] = useState(false);
     const searchInputRef = useRef();
     const searchButtonRef = useRef();
@@ -275,6 +276,9 @@ export default function DonorsTable({ data }) {
     const dataUser = useAuth();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [orderBy, setOrderBy] = useState("first_name");
+    const [order, setOrder] = useState("asc");
+    const [sortedData, setSortedData] = useState([]);
     const {
         openModalCreateDonor,
         openModalEditDonor,
@@ -369,6 +373,10 @@ export default function DonorsTable({ data }) {
         }
     }, [data])
 
+    useEffect(() => {
+        setSortedData(sortData(visibleData, orderBy, order));
+    }, [visibleData, order, orderBy])
+
 
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
@@ -388,42 +396,72 @@ export default function DonorsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("first_name")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "first_name" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Nombre</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("last_name")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "last_name" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Apellido</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("user")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "user" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Correo electrónico</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("rfc")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "rfc" ? true : false}
                                     >
                                         <Typography variant="subtitle2">RFC</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("company")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "company" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Compañía</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("address_street")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "address_street" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Calle</Typography>
                                     </TableSortLabel>
@@ -444,22 +482,37 @@ export default function DonorsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("address_locality")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "address_locality" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Colonia</Typography>
                                     </TableSortLabel>
                                 </TableCell>
-                                
+
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("address_alcaldia")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "address_alcaldia" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Alcaldía/Municipio</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("address_state")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "address_state" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Estado</Typography>
                                     </TableSortLabel>
@@ -482,12 +535,11 @@ export default function DonorsTable({ data }) {
                                         </TableCell>
 
                                     </>
-
                                 }
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.length === 0 ?
+                            {sortedData.length === 0 ?
                                 <TableRow>
                                     <TableCell colSpan={14}>
                                         <Typography variant="h6" color="textSecondary" align="center">
@@ -495,7 +547,7 @@ export default function DonorsTable({ data }) {
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
-                                : visibleData
+                                : sortedData
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((donor, index) => (
                                         <TableRow
@@ -583,7 +635,7 @@ export default function DonorsTable({ data }) {
             <RowContextMenu anchorEl={rowContextMenuAnchorEl} setAnchorEl={setRowContextMenuAnchorEl} />
             {openModalCreateDonor && <ModalDonor mode={"CREAR"} creatorUser={dataUser.user} />}
             {openModalEditDonor && <ModalDonor mode={"EDITAR"} userToEdit={userToEdit} creatorUser={dataUser.user} />}
-            <DeleteDonorModal donors={donorsToDelete}/>
+            <DeleteDonorModal donors={donorsToDelete} />
             {openModalText && (
                 <Dialog
                     open={openModalText}

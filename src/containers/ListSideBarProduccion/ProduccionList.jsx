@@ -43,7 +43,7 @@ const reportItem = new ListTemplateItem({
             redirection: "/production/report",
         }),
         new ListTemplateItem({
-            tag: "Seguiemiento",
+            tag: "Seguimiento",
             icon: <TrackChangesIcon />,
             redirection: "/production/tracking",
         }),

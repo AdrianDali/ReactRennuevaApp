@@ -418,7 +418,6 @@ export default function ReportsTable({ data }) {
   const [generalCheckboxStatus, setGeneralCheckboxStatus] =
     useState("unchecked");
   const [openFiltersModal, setOpenFiltersModal] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
 
   const handleExpandClick = (id) => {
@@ -682,34 +681,43 @@ export default function ReportsTable({ data }) {
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel
+                    direction={order}
+                    onClick={() => {
+                        setOrderBy("nombre_real_usuario")
+                        setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "nombre_real_usuario" ? true : false}
+                  >
                     <Typography variant="subtitle2">Nombre</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel 
+                    direction={order}
+                    onClick={() => {
+                        setOrderBy("apellido_usuario")
+                        setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "apellido_usuario" ? true : false}
+                  >
                     <Typography variant="subtitle2">Apellidos</Typography>
                   </TableSortLabel>
                 </TableCell>
-                {/* <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">RFC</Typography>
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">
-                      Correo electrónico
-                    </Typography>
-                  </TableSortLabel>
-                </TableCell> */}
                 <TableCell>
                   <TableSortLabel direction="asc">
                     <Typography variant="subtitle2">Teléfono</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel
+                    direction={order}
+                    onClick={() => {
+                        setOrderBy("direccion_completa_usuario")
+                        setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "direccion_completa_usuario" ? true : false}
+                  >
                     <Typography variant="subtitle2">
                       Dirección Completa
                     </Typography>
