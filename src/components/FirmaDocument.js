@@ -18,12 +18,14 @@ const SignatureComponent = ({ id, type }) => {
       url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
     } else if (type === "Donador") {
       url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
-    } else if (type === "Recolector" || type === "Conductor") {
+    } else if (type === "Recolector"  ) {
       url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
-    } else if (type === "Generador") {
+    } else if ( type === "Generador") {
       url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
     }else if (type === "Donor") {
       url = `${process.env.REACT_APP_API_URL}/update-report-donor-signature/`;
+    }else if (type === "Conductor") {
+      url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
     }
 
     setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
