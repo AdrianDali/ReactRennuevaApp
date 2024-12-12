@@ -42,6 +42,7 @@ import ReciclajeList from '../containers/ListSideBarReciclaje.jsx';
 import { ReportsAssignedRecyclingMenu } from '../pages/Menus/ReportsAssignedRecyclingMenu.jsx';
 import { MenuStatusFolio } from '../pages/Menus/MenuStatusFolios.jsx';
 import MenuAssignedAcopioOrders from '../pages/Menus/MenuAssignedAcopioOrders.js';
+import { GlobalStyles } from '@mui/material';
 function App() {
 
   
@@ -138,6 +139,34 @@ function App() {
 
   return (
     <TodoProvider>
+      {/* GlobalStyles para personalizar el scroll */}
+      <GlobalStyles
+        styles={{
+          '*': {
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(0,0,0,0.3) transparent',
+          },
+          'html': {
+            // Para el scroll suave en algunos navegadores
+            scrollBehavior: 'smooth'
+          },
+          '::-webkit-scrollbar': {
+            width: '3px',
+            height: '3px',
+          },
+          '::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '::-webkit-scrollbar-thumb': {
+            background: 'rgba(0,0,0,0.3)',
+            borderRadius: '3px',
+          },
+          '::-webkit-scrollbar-thumb:hover': {
+            background: 'rgba(0,0,0,0.5)',
+          },
+          // Para Firefox
+        }}
+      />
       <RouterProvider router={router} />
     </TodoProvider>
   );
