@@ -28,7 +28,7 @@ function ModalReport({ mode, report, creatorUser }) {
   const [recyclingCollectionCenters, setRecyclingCollectionCenters] = useState(
     []
   );
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -40,7 +40,7 @@ function ModalReport({ mode, report, creatorUser }) {
   const [postal_code, setPostalCode] = useState("");
   const [rfc, setRfc] = useState("");
   const [recyclingCollection, setRecyclingCollection] = useState("");
-  const [nameGenerator, setNameGenerator] = useState([]);
+  const [generators, setGenerators] = useState([]);
   const [isSameLocation, setIsSameLocation] = useState(false);
   const [haveTransport, setHaveTransport] = useState(true);
   const [carrier, setCarrier] = useState("");
@@ -127,11 +127,7 @@ function ModalReport({ mode, report, creatorUser }) {
       //setAddressDifferent(true);
     }
     if (mode === "EDITAR") {
-      console.log("EditaEDIr");
-      console.log(report);
-      console.log(report.id_report);
-      console.log(report.compania_usuario);
-      setUser(report.email_usuario);
+      setUser({email: report.email_usuario});
       setEmail(report.email_usuario);
       setFirstName(report.nombre_real_usuario);
       setLastName(report.apellido_usuario);
@@ -139,20 +135,16 @@ function ModalReport({ mode, report, creatorUser }) {
       setCompany(report.compania_usuario);
       setCarrier(report.transportista);
       if (report.estado_reporte == report.estado_usuario) {
-        console.log("son iguales");
         setAddressDifferent(true);
         setIsSameLocation(true);
       } else {
-        console.log("son diferentes");
         setAddressDifferent(false);
         setIsSameLocation(false);
       }
       console.log(report.transportista);
       if (report.transportista != null) {
-        console.log("Tiene transportista");
         setHaveTransport(true);
       } else {
-        console.log("No tiene transportista");
         setHaveTransport(false);
       }
 
@@ -163,11 +155,6 @@ function ModalReport({ mode, report, creatorUser }) {
       setPostalCode(report.cp_reporte);
       setCompany(report.compania_usuario);
       setState_2(report.estado_usuario);
-      console.log(report.estado_usuario);
-      console.log(report.ciudad_reporte);
-      console.log(report.colonia_reporte);
-      console.log(report.calle_reporte);
-      console.log(report.cp_reporte);
 
       setCity_2(report.ciudad_usuario);
       setLocality_2(report.colonia_usuario);
@@ -191,7 +178,6 @@ function ModalReport({ mode, report, creatorUser }) {
 
   useEffect(() => {
     if (mode === "CREAR") {
-      console.log("Primer run");
       setState("");
       setCity("");
       setLocality("");
@@ -234,7 +220,7 @@ function ModalReport({ mode, report, creatorUser }) {
       .then((response) => {
         const data = response.data;// Asumiendo que 'data' es un array.
 
-        var nameGenerator = data.map(function (item) {
+        var generators = data.map(function (item) {
           var name = item.first_name + " " + item.last_name;
           return {
             rfc: item.rfc,
@@ -253,8 +239,7 @@ function ModalReport({ mode, report, creatorUser }) {
             group: item.groups[0],
           };
         });
-        setNameGenerator(nameGenerator);
-        console.log(nameGenerator);
+        setGenerators(generators);
       })
       .catch((error) => {
         console.error(error);
@@ -310,9 +295,8 @@ function ModalReport({ mode, report, creatorUser }) {
     e.preventDefault();
 
     if (mode === "EDITAR") {
-      console.log("###############EDITAR USUARIOS##################");
       console.log({
-        username: user,
+        username: email,
         street: street,
         locality: locality,
         city: city,
@@ -324,7 +308,7 @@ function ModalReport({ mode, report, creatorUser }) {
       });
       axios
         .post(`${process.env.REACT_APP_API_URL}/edit-report/`, {
-          username: user,
+          username: email,
           street: street,
           locality: locality,
           city: city,
@@ -348,22 +332,10 @@ function ModalReport({ mode, report, creatorUser }) {
 
     }
     if (mode === "CREAR") {
-      console.log("###############CREAR USUARIOS##################");
-      console.log({
-        username: user,
-        street: street,
-        locality: locality,
-        city: city,
-        state: state,
-        postalCode: postal_code,
-        recyclingCollection: recyclingCollection,
-        carrier: carrier,
-        creator_user: creator,
-      });
 
       axios
         .post(`${process.env.REACT_APP_API_URL}/create-initial-report/`, {
-          username: user,
+          username: email,
           street: street,
           locality: locality,
           creator_user: creator,
@@ -400,48 +372,34 @@ function ModalReport({ mode, report, creatorUser }) {
   };
 
   const handleSelectChange = (value) => {
-    console.log("############ handleSelectChange ############");
-    console.log(value);
-    const selectedOption = value; // Obtener la opción seleccionada
-    console.log(selectedOption);
-    console.log("NAme Generador");
-    console.log(nameGenerator);
-    // Buscar el dato seleccionado en el arreglo de datos
-    const datoEncontrado = nameGenerator.find(
-      (users) => users.name === selectedOption
-    );
-    console.log("Dato encontrado");
-    console.log(datoEncontrado);
-    setUser(datoEncontrado.user);
-
-    setEmail(datoEncontrado.email);
-    console.log(datoEncontrado.first_name);
-    setFirstName(datoEncontrado.first_name);
-    setLastName(datoEncontrado.last_name);
-    setRfc(datoEncontrado.rfc);
-    setCompany(datoEncontrado.company);
-    setState(datoEncontrado.address_state);
-    setCity(datoEncontrado.address_city);
-    setLocality(datoEncontrado.address_locality);
-    setStreet(datoEncontrado.address_street);
-    setPostalCode(datoEncontrado.address_postal_code);
+    setUser(value);
+    setEmail(value.email);
+    setFirstName(value.first_name);
+    setLastName(value.last_name);
+    setRfc(value.rfc);
+    setCompany(value.company);
+    setState(value.address_state);
+    setCity(value.address_city);
+    setLocality(value.address_locality);
+    setStreet(value.address_street);
+    setPostalCode(value.address_postal_code);
     if (mode === "CREAR") {
-      setStreet_2(datoEncontrado.address_street);
-      setLocality_2(datoEncontrado.address_locality);
-      setCity_2(datoEncontrado.address_city);
-      setState_2(datoEncontrado.address_state);
-      setPostalCode_2(datoEncontrado.address_postal_code);
+      setStreet_2(value.address_street);
+      setLocality_2(value.address_locality);
+      setCity_2(value.address_city);
+      setState_2(value.address_state);
+      setPostalCode_2(value.address_postal_code);
     }
 
-    setCompleteName(selectedOption);
+    setCompleteName(value.name);
 
-    if (datoEncontrado.group === "Generador") {
+    if (value.group === "Generador") {
       setTransportAvailable(true);
     }
     if (
-      (datoEncontrado.group === "Transportista" ||
-        datoEncontrado.group === "Receptor",
-        datoEncontrado.group === "Donador")
+      (value.group === "Transportista" ||
+        value.group === "Receptor",
+        value.group === "Donador")
     ) {
       setTransportAvailable(false);
     }
@@ -484,33 +442,17 @@ function ModalReport({ mode, report, creatorUser }) {
           <Autocomplete
             disablePortal
             id="autocomplete-generator"
-            options={nameGenerator}
+            options={generators}
             noOptionsText="No se encontraron coincidencias"
             sx={{ width: "100%" }} // Usa el ancho completo del Grid item
             getOptionLabel={(option) => option.email}
-            isOptionEqualToValue={(option, value) => option.name === value.name}
+            isOptionEqualToValue={(option, value) => option.email === value.email}
             renderInput={(params) => (
               <TextField {...params} label="Generador" required error={completeName===""} />
             )}
             onChange={(event, value) => handleSelectChange(value)}
+            value={user}
           />
-          <FormControl fullWidth>
-            <InputLabel id="rol-select-label">Generador</InputLabel>
-            <Select
-              label="Generador"
-              labelId="rol-select-label"
-              id="rol-select"
-              required
-              value={completeName}
-              onChange={(e) => handleSelectChange(e, setCompleteName)}
-            >
-              {nameGenerator.map((name, index) => (
-                <MenuItem key={index} value={name.name}>
-                  {name.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           <Grid container spacing={2} mt={1}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -542,17 +484,6 @@ function ModalReport({ mode, report, creatorUser }) {
                 fullWidth
                 value={rfc}
                 // onChange={(e) => handleInputChange(e, setRfc, mode)}
-                margin="dense"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                label="Nombre de Usuario"
-                name="user"
-                required
-                fullWidth
-                value={user}
-                // onChange={(e) => handleInputChange(e, setUser, mode)}
                 margin="dense"
               />
             </Grid>
@@ -599,12 +530,13 @@ function ModalReport({ mode, report, creatorUser }) {
                   <Grid item xs={12} sm={12}>
                     <Title>Seleccionar Transportista</Title>
                     <FormControl fullWidth mt={2} mb={2}>
-                      <InputLabel id="rol-select-label">
+                      <InputLabel id="carrier-select-label">
                         Transportista
                       </InputLabel>
                       <Select
-                        labelId="rol-select-label"
-                        id="rol-select"
+                        labelId="carrier-select-label"
+                        label="Transportista"
+                        id="carrier-select"
                         required
                         onChange={(e) => handleCarrierChange(e, setUser)}
                         value={
@@ -714,10 +646,11 @@ function ModalReport({ mode, report, creatorUser }) {
               <Box mb={2}>
                 <Title>Seleccionar Centro de Reciclaje o Recolección</Title>
                 <FormControl fullWidth mt={2} mb={2}>
-                  <InputLabel id="rol-select-label">Centro</InputLabel>
+                  <InputLabel id="center-select-label">Centro</InputLabel>
                   <Select
-                    labelId="rol-select-label"
-                    id="rol-select"
+                    label="Centro"
+                    labelId="center-select-label"
+                    id="center-select"
                     required
                     onChange={(e) => handleCenterChange(e, setUser)}
                     value={recyclingCollection}
