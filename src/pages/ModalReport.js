@@ -303,31 +303,38 @@ function ModalReport({ mode, report, creatorUser }) {
         state: state,
         postalCode: postal_code,
         recyclingCollection: recyclingCollection,
-        carrier: carrier,
+        carrier: carrier == "" ? "" : carrier,
         reportId: report.id_report,
       });
+      const requestData = {
+        username: email,
+        street: street,
+        locality: locality,
+        city: city,
+        state: state,
+        postalCode: postal_code,
+        recyclingCollection: recyclingCollection,
+        reportId: report.id_report,
+        creator_user: creator,
+      };
+      
+      // Solo agrega "carrier" si no es null o undefined
+      if (carrier) {
+        requestData.carrier = carrier;
+      }
+      
       axios
-        .post(`${process.env.REACT_APP_API_URL}/edit-report/`, {
-          username: email,
-          street: street,
-          locality: locality,
-          city: city,
-          state: state,
-          postalCode: postal_code,
-          recyclingCollection: recyclingCollection,
-          carrier: carrier,
-          reportId: report.id_report,
-        })
+        .post(`${process.env.REACT_APP_API_URL}/edit-report/`, requestData)
         .then((response) => {
           console.log(response);
-          setUpdateReportInfo(prev => !prev);
+          setUpdateReportInfo((prev) => !prev);
           setOpenModalText(true);
           setTextOpenModalText("Reporte actualizado correctamente");
           closeModal();
           e.target.reset();
         })
         .catch((error) => {
-          console.error(error);
+          console.error("Error al actualizar el reporte:", error);
         });
 
     }
