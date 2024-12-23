@@ -30,6 +30,7 @@ import { ModalFirmar } from "../../pages/ModalFirmar";
 import { statusText, statusColor } from "../../helpers/statusModifiers";
 import { ModalResidueRecollection } from "../../pages/ModalResidueRecollection";
 import saveTalonPDF from "../../services/saveTalonPDF";
+import GeneralWeighingModal from "../modals/GeneralWeighingModal";
 
 function Row({row, setReportToEdit, signType, setSignType}) {
     const [open, setOpen] = React.useState(false);
@@ -369,7 +370,7 @@ const DriverOrderAssignedTable = ({ data }) => {
                 update={updateDonorInfo}
                 setUpdate={setUpdateDonorInfo}
             />
-            <ModalResidueRecollection report={reportToEdit} />
+            <GeneralWeighingModal report={reportToEdit} />
             <ModalFirmar type={signType} id={reportToEdit} />
         </>
     );
