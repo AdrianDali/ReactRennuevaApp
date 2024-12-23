@@ -26,6 +26,7 @@ import {
   TextField,
   TablePagination,
   Collapse,
+  CircularProgress,
 } from "@mui/material";
 import {
   Add,
@@ -62,6 +63,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ReportInfo from "./ReportInfo";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import sortData from "../../helpers/SortData";
+import axios from "axios";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -110,6 +112,7 @@ function ExportOptionsMenu({
   allData,
   filteredData,
   selectedData,
+  setLoadingExport
 }) {
   const open = Boolean(anchorEl);
 
@@ -117,45 +120,138 @@ function ExportOptionsMenu({
     setAnchorEl(null);
   };
 
-  const handleExportAll = () => {
-    //console.log(allData)
-    generateExcelFromJson(allData, "Reportes");
+  const handleExportAll = async () => {
+    setLoadingExport(true);
     handleClose();
+    const newData = JSON.parse(JSON.stringify(allData));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
-  const handleExportVisible = () => {
+  const handleExportVisible = async () => {
     //console.log(filteredData)
-    generateExcelFromJson(filteredData, "Reportes");
+    setLoadingExport(true);
     handleClose();
+    const newData = JSON.parse(JSON.stringify(filteredData));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
-  const handleExportSelected = () => {
+  const handleExportSelected = async () => {
     //console.log(selectedData)
+    setLoadingExport(true);
+    handleClose();
     const dataToExport = allData.filter((report) =>
       selectedData.includes(report.id_report)
     );
-    //console.log(dataToExport)
-    generateExcelFromJson(dataToExport, "Reportes");
-    handleClose();
+
+    const newData = JSON.parse(JSON.stringify(dataToExport));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
   return (
     <Menu anchorEl={anchorEl} open={open}>
       <ClickAwayListener onClickAway={handleClose}>
         <MenuList>
-          <MenuItem onClick={handleExportAll}>
+          <MenuItem onClick={async()=> await handleExportAll()}>
             <ListItemIcon>
               <Download />
             </ListItemIcon>
             <ListItemText primary="Exportar todos" />
           </MenuItem>
-          <MenuItem onClick={handleExportVisible}>
+          <MenuItem onClick={async ()=> await handleExportVisible()}>
             <ListItemIcon>
               <Visibility />
             </ListItemIcon>
             <ListItemText primary="Exportar visibles" />
           </MenuItem>
-          <MenuItem onClick={handleExportSelected}>
+          <MenuItem onClick={async ()=> await handleExportSelected()}>
             <ListItemIcon>
               <Check />
             </ListItemIcon>
@@ -178,6 +274,7 @@ function Toolbar({
 }) {
   const { setOpenModalDeleteReport, setOpenModalCreateReport } =
     useContext(TodoContext);
+  const [loadingExport, setLoadingExport] = useState(false);
   const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
   if (selected.length > 0)
     return (
@@ -206,8 +303,9 @@ function Toolbar({
             startIcon={<Download />}
             sx={{ m: 2 }}
             onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
+            disabled={loadingExport}
           >
-            Exportar
+            {loadingExport? <CircularProgress size={20}/> :"Exportar"}
           </Button>
           <Button
             variant="contained"
@@ -275,8 +373,9 @@ function Toolbar({
           startIcon={<Download />}
           sx={{ m: 2 }}
           onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
+          disabled={loadingExport}
         >
-          Exportar
+          {loadingExport? <CircularProgress size={20}/>: "Exportar"}
         </Button>
         <Button
           variant="contained"
@@ -296,6 +395,7 @@ function Toolbar({
           allData={allData}
           anchorEl={exportOptionsAchorEl}
           setAnchorEl={setExportOptionsAnchorEl}
+          setLoadingExport={setLoadingExport}
         />
       </Box>
     </Box>
@@ -628,7 +728,7 @@ export default function ReportsTable({ data }) {
 
   useEffect(() => {
     setSortedData(sortData(visibleData, orderBy, order));
-}, [visibleData, order, orderBy])
+  }, [visibleData, order, orderBy])
 
   return (
     <Box sx={{ width: "100%", mb: "3rem" }}>
@@ -669,11 +769,11 @@ export default function ReportsTable({ data }) {
                 </TableCell>
 
                 <TableCell>
-                  <TableSortLabel 
+                  <TableSortLabel
                     direction={order}
                     onClick={() => {
-                        setOrderBy("id_report")
-                        setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("id_report")
+                      setOrder(order === "asc" ? "desc" : "asc")
                     }}
                     active={orderBy === "id_report" ? true : false}
                   >
@@ -684,8 +784,8 @@ export default function ReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                        setOrderBy("nombre_real_usuario")
-                        setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("nombre_real_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
                     }}
                     active={orderBy === "nombre_real_usuario" ? true : false}
                   >
@@ -693,11 +793,11 @@ export default function ReportsTable({ data }) {
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <TableSortLabel 
+                  <TableSortLabel
                     direction={order}
                     onClick={() => {
-                        setOrderBy("apellido_usuario")
-                        setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("apellido_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
                     }}
                     active={orderBy === "apellido_usuario" ? true : false}
                   >
@@ -713,8 +813,8 @@ export default function ReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                        setOrderBy("direccion_completa_usuario")
-                        setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("direccion_completa_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
                     }}
                     active={orderBy === "direccion_completa_usuario" ? true : false}
                   >
@@ -821,17 +921,10 @@ export default function ReportsTable({ data }) {
                         <TableCell>{report.id_report}</TableCell>
                         <TableCell>{report.nombre_real_usuario}</TableCell>
                         <TableCell>{report.apellido_usuario}</TableCell>
-                        {/* <TableCell>{report.rfc_usuario}</TableCell>
-                        <TableCell>{report.email_usuario}</TableCell> */}
                         <TableCell>{report.telefono_usuario}</TableCell>
                         <TableCell>
                           {report.direccion_completa_usuario}
                         </TableCell>
-                        {/* <TableCell>{report.calle_usuario}</TableCell>
-                        <TableCell>{report.colonia_usuario}</TableCell>
-                        <TableCell>{report.cp_usuario}</TableCell>
-                        <TableCell>{report.ciudad_usuario}</TableCell>
-                        <TableCell>{report.estado_usuario}</TableCell> */}
                         <TableCell>
                           {dateFormater(report.fecha_inicio_reporte)}
                         </TableCell>

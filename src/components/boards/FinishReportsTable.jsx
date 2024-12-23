@@ -28,6 +28,7 @@ import {
   TablePagination,
   Collapse,
   ClickAwayListener,
+  CircularProgress,
 } from "@mui/material";
 import {
   Add,
@@ -117,6 +118,7 @@ function ExportOptionsMenu({
   allData,
   filteredData,
   selectedData,
+  setLoadingExport
 }) {
   const open = Boolean(anchorEl);
 
@@ -124,45 +126,140 @@ function ExportOptionsMenu({
     setAnchorEl(null);
   };
 
-  const handleExportAll = () => {
-    //console.log(allData)
-    generateExcelFromJson(allData, "Reportes");
+  const handleExportAll = async () => {
+    setLoadingExport(true);
     handleClose();
+    const newData = JSON.parse(JSON.stringify(allData));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
-  const handleExportVisible = () => {
+  const handleExportVisible = async () => {
     //console.log(filteredData)
-    generateExcelFromJson(filteredData, "Reportes");
+    setLoadingExport(true);
     handleClose();
-  };
+    const newData = JSON.parse(JSON.stringify(filteredData));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
 
-  const handleExportSelected = () => {
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
+  }
+
+  const handleExportSelected = async () => {
+    setLoadingExport(true);
+    handleClose();
     //console.log(selectedData)
     const dataToExport = allData.filter((report) =>
       selectedData.includes(report.id_report)
     );
-    //console.log(dataToExport)
-    generateExcelFromJson(dataToExport, "Reportes");
-    handleClose();
+
+    const newData = JSON.parse(JSON.stringify(dataToExport));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
   return (
     <Menu anchorEl={anchorEl} open={open}>
       <ClickAwayListener onClickAway={handleClose}>
         <MenuList>
-          <MenuItem onClick={handleExportAll}>
+          <MenuItem onClick={async () => {
+            await handleExportAll()
+          }}>
             <ListItemIcon>
               <Download />
             </ListItemIcon>
             <ListItemText primary="Exportar todos" />
           </MenuItem>
-          <MenuItem onClick={handleExportVisible}>
+          <MenuItem onClick={async () => await handleExportVisible()}>
             <ListItemIcon>
               <Visibility />
             </ListItemIcon>
             <ListItemText primary="Exportar visibles" />
           </MenuItem>
-          <MenuItem onClick={handleExportSelected}>
+          <MenuItem onClick={async () => await handleExportSelected()}>
             <ListItemIcon>
               <Check />
             </ListItemIcon>
@@ -186,6 +283,7 @@ function Toolbar({
   const { setOpenModalDeleteReport, setOpenModalCreateReport } =
     useContext(TodoContext);
   const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
+  const [loadingExport, setLoadingExport] = useState(false);
   if (selected.length > 0)
     return (
       <Box
@@ -215,8 +313,9 @@ function Toolbar({
             startIcon={<Download />}
             sx={{ m: 2 }}
             onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
+            disabled={loadingExport}
           >
-            Exportar
+            {loadingExport ? <CircularProgress size={20} /> : "Exportar"}
           </Button>
           <Button
             variant="contained"
@@ -239,6 +338,7 @@ function Toolbar({
           allData={allData}
           anchorEl={exportOptionsAchorEl}
           setAnchorEl={setExportOptionsAnchorEl}
+          setLoadingExport={setLoadingExport}
         />
       </Box>
     );
@@ -284,8 +384,9 @@ function Toolbar({
           startIcon={<Download />}
           sx={{ m: 2 }}
           onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
+          disabled={loadingExport}
         >
-          Exportar
+          {loadingExport ? <CircularProgress size={20}/> : "Exportar"}
         </Button>
         <ExportOptionsMenu
           selectedData={selected}
@@ -293,6 +394,7 @@ function Toolbar({
           allData={allData}
           anchorEl={exportOptionsAchorEl}
           setAnchorEl={setExportOptionsAnchorEl}
+          setLoadingExport={setLoadingExport}
         />
       </Box>
     </Box>
@@ -644,12 +746,12 @@ export default function FinishReportsTable({ data }) {
 
                 <TableCell>
                   <TableSortLabel
-                     direction={order}
-                     onClick={() => {
-                         setOrderBy("id_report")
-                         setOrder(order === "asc" ? "desc" : "asc")
-                     }}
-                     active={orderBy === "id_report" ? true : false}
+                    direction={order}
+                    onClick={() => {
+                      setOrderBy("id_report")
+                      setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "id_report" ? true : false}
                   >
                     <Typography variant="subtitle2">ID</Typography>
                   </TableSortLabel>
@@ -658,8 +760,8 @@ export default function FinishReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                        setOrderBy("nombre_real_usuario")
-                        setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("nombre_real_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
                     }}
                     active={orderBy === "nombre_real_usuario" ? true : false}
                   >
@@ -670,8 +772,8 @@ export default function FinishReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                        setOrderBy("apellido_usuario")
-                        setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("apellido_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
                     }}
                     active={orderBy === "apellido_usuario" ? true : false}
                   >
@@ -687,8 +789,8 @@ export default function FinishReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                        setOrderBy("direccion_completa_usuario")
-                        setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("direccion_completa_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
                     }}
                     active={orderBy === "direccion_completa_usuario" ? true : false}
                   >
