@@ -60,7 +60,7 @@ function Toolbar({ selected, setOpenFiltersModal, filtersApplied, filteredData, 
     return (
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" py={2}>
             <Typography variant="h4" component="div" color="primary" sx={{ p: 2, flexGrow: 0, flexShrink: 1 }}>
-                Reportes de donadores
+                Reportes de donadores 
             </Typography>
             <Box sx={{ flexShrink: 0, flexGrow: 1, display: "flex", flexDirection: "row", justifyContent: "end" }}>
                 <SearchField filteredData={filteredData} setVisibleData={setVisibleData} />
@@ -466,6 +466,7 @@ export default function DonorReportsTable({ data }) {
                                                     month: "short",
                                                     day: "numeric"
                                                 })}</TableCell>
+                                                <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>{report.centro_recoleccion}</TableCell>
                                                 <TableCell sx={{ borderBottomWidth: showCompleteInfo === report.id_report ? 0 : 1 }}>
                                                     <Button
                                                         startIcon={<Draw />}

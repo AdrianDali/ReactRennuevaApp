@@ -30,14 +30,12 @@ export default function GeneralWeighingModal({ report }) {
         console.log("report", report);
 
         const data = {
-            
-            user: report.donador,
-            report: report.id,
-            peso: pesoTotal,
-            volumen: volumenTotal,
-        }
-
-        axios.post(`${process.env.REACT_APP_API_URL}/create-report-residue-general-user/`, [data])
+            recollectionId: report.id,
+            totalWeight: isNaN(parseFloat(pesoTotal)) ? 0 : parseFloat(pesoTotal),
+            totalM3: isNaN(parseFloat(volumenTotal)) ? 0 : parseFloat(volumenTotal),
+        };
+        
+        axios.post(`${process.env.REACT_APP_API_URL}/update-recollection-total-weight-m3/`, [data])
             .then(response => {
                 console.log(response.data);
                 closeModal();
