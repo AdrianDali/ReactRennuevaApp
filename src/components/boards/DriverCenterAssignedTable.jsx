@@ -253,7 +253,7 @@ const Row = (props) => {
             color="primary"
             onClick={(e) => {
               e.stopPropagation();
-              onEditReceiverSign(row.id);
+              //onEditReceiverSign(row.id);
             }}
           >
             Firmar
@@ -267,7 +267,7 @@ const Row = (props) => {
             color="primary"
             onClick={(e) => {
               e.stopPropagation();
-              onEditDonorSign(row.id);
+              //FonEditDonorSign(row.id);
             }}
           >
             Firmar
@@ -281,7 +281,7 @@ const Row = (props) => {
             color="primary"
             onClick={(e) => {
               e.stopPropagation();
-              handleEditResidues(row);
+              //handleEditResidues(row);
               /*
                             await saveTalonPDF(row, () => {
                                 console.log("No se puede generar el talón");
@@ -298,8 +298,8 @@ const Row = (props) => {
             color="primary"
             onClick={(e) => {
               e.stopPropagation();
-              setRecolectionToEdit(row);
-              setOpenEditModal(true);
+              //setRecolectionToEdit(row);
+              //setOpenEditModal(true);
             }}
           >
             <Edit />
