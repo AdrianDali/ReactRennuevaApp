@@ -164,6 +164,9 @@ export default function EditRecolectionModal({
       };
 
       try {
+
+        setLoading(true);
+
         const changeStatusResponse = await axios.post(
           `${process.env.REACT_APP_API_URL}/change-recollection-recolectada/`,
           data
@@ -218,7 +221,11 @@ export default function EditRecolectionModal({
           console.error(error);
           setMessage("Ha ocurrido un error al actualizar la recolección");
           setOpenMessageModal(true);
-        });
+        })
+        .finally(() => {
+          setLoading(false);
+        }
+        );
     }
   };
 
@@ -398,14 +405,14 @@ export default function EditRecolectionModal({
 
             {status === "pendienteRecoleccion" ? (
               <Button
-                fullWidth
-                color="success"
-                variant="contained"
-                type="submit"
-                disabled={!isDateCorrect || status === ""}
-              >
-                Guardar cambios
-              </Button>
+              fullWidth
+              color="success"
+              variant="contained"
+              type="submit"
+              disabled={status === "" || loading} // deshabilitar si no hay status o si está cargando
+            >
+              {loading ? "Cargando..." : "Guardar cambios"}
+            </Button>
             ) : status === "cancelado" ? (
               <Button
                 fullWidth
