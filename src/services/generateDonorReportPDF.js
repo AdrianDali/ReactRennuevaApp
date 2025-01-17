@@ -140,7 +140,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
 
       // Vamos reduciendo la fuente hasta que quepa
       // (o hasta un mínimo para no hacer el texto demasiado pequeño)
-      const minFontSize = 6;
+      const minFontSize = 9;
       while (textWidth > cellWidth && currentFontSize > minFontSize) {
         currentFontSize--;
         data.cell.styles.fontSize = currentFontSize;
