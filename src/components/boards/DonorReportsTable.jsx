@@ -408,6 +408,9 @@ export default function DonorReportsTable({ data }) {
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
+                                    <Typography variant="subtitle2">Centro Acopio</Typography>
+                                </TableCell>
+                                <TableCell>
                                     <Typography variant="subtitle2">Firma donador</Typography>
                                 </TableCell>
                                 <TableCell>

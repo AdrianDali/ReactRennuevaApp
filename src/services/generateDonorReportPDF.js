@@ -71,6 +71,8 @@ export default function generateDonorReportPDF(report, data, qrImage) {
       fontSize: 10,
       lineColor: [0, 0, 0],
       lineWidth: 0.5,
+      overflow: 'hidden',// 1) Trunca el texto con "..."
+      cellWidth: 'wrap',    // 2) Evita que se ajuste dinámicamente
     };
 
     doc.autoTable({
@@ -111,6 +113,41 @@ export default function generateDonorReportPDF(report, data, qrImage) {
       ],
       theme: "plain",
       styles: tableStyles,
+      columnStyles: {
+        // Ajusta estos índices según tu cuerpo
+        // Por ejemplo, index = 1: es donde tienes "report.calle_usuario"
+        // index = 5: "report.colonia_usuario"
+        // Asigna anchos fijos a esas columnas
+        1: { cellWidth: 60 },
+        5: { cellWidth: 40 },
+        // Puedes añadir más si lo consideras necesario
+      },
+      
+  didParseCell: function (data) {
+    // data.column.index === 1 corresponde (según tu body) a la segunda columna (Calle)
+    // data.column.index === 5 correspondería a la sexta columna (Colonia), etc.
+    // Ajusta según tu estructura real.
+    if ((data.column.index === 1 || data.column.index === 5) && data.cell.raw) {
+      // Texto que se está imprimiendo
+      const text = data.cell.raw.toString();
+
+      // Ancho disponible
+      const cellWidth = data.cell.width;
+
+      // Verificamos el ancho del texto con la fuente actual
+      let currentFontSize = data.cell.styles.fontSize;
+      let textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
+
+      // Vamos reduciendo la fuente hasta que quepa
+      // (o hasta un mínimo para no hacer el texto demasiado pequeño)
+      const minFontSize = 6;
+      while (textWidth > cellWidth && currentFontSize > minFontSize) {
+        currentFontSize--;
+        data.cell.styles.fontSize = currentFontSize;
+        textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
+      }
+    }
+  }
     });
 
     doc.setFontSize(16);
