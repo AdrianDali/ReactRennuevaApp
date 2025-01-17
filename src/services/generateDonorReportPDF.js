@@ -114,40 +114,34 @@ export default function generateDonorReportPDF(report, data, qrImage) {
       theme: "plain",
       styles: tableStyles,
       columnStyles: {
-        // Ajusta estos índices según tu cuerpo
-        // Por ejemplo, index = 1: es donde tienes "report.calle_usuario"
-        // index = 5: "report.colonia_usuario"
-        // Asigna anchos fijos a esas columnas
-        1: { cellWidth: 60 },
-        5: { cellWidth: 40 },
-        // Puedes añadir más si lo consideras necesario
+        // Fijar ancho de columnas con texto potencialmente largo
+        1: { cellWidth: 60 }, // Columna de "calle"
+        5: { cellWidth: 40 }, // Columna de "colonia"
+        // Ajusta si necesitas otras columnas con ancho fijo
       },
-      
-  didParseCell: function (data) {
-    // data.column.index === 1 corresponde (según tu body) a la segunda columna (Calle)
-    // data.column.index === 5 correspondería a la sexta columna (Colonia), etc.
-    // Ajusta según tu estructura real.
-    if ((data.column.index === 1 || data.column.index === 5) && data.cell.raw) {
-      // Texto que se está imprimiendo
-      const text = data.cell.raw.toString();
-
-      // Ancho disponible
-      const cellWidth = data.cell.width;
-
-      // Verificamos el ancho del texto con la fuente actual
-      let currentFontSize = data.cell.styles.fontSize;
-      let textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
-
-      // Vamos reduciendo la fuente hasta que quepa
-      // (o hasta un mínimo para no hacer el texto demasiado pequeño)
-      const minFontSize = 9;
-      while (textWidth > cellWidth && currentFontSize > minFontSize) {
-        currentFontSize--;
-        data.cell.styles.fontSize = currentFontSize;
-        textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
-      }
-    }
-  }
+      didParseCell: function (data) {
+        // Ajustar SOLO en las columnas donde el texto tiende a ser extenso (ej. index 1 y 5)
+        if ((data.column.index === 1 || data.column.index === 5) && data.cell.raw) {
+          const text = data.cell.raw.toString();
+          // Ancho disponible de la celda (definido en columnStyles)
+          const cellWidth = data.cell.width;
+          // Tamaño de fuente actual (inicia en 10, según tableStyles)
+          let currentFontSize = data.cell.styles.fontSize;
+          
+          // Calcula el ancho del texto con la fuente actual
+          // getTextWidth asume fontSize=10, así que multiplicamos por (currentFontSize / 10) para escalarlo
+          let textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
+          
+          // Reducir la fuente mientras el texto exceda el ancho de la celda
+          // y sin pasar un mínimo (por ejemplo, 6)
+          const minFontSize = 6;
+          while (textWidth > cellWidth && currentFontSize > minFontSize) {
+            currentFontSize--;
+            data.cell.styles.fontSize = currentFontSize;
+            textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
+          }
+        }
+      },
     });
 
     doc.setFontSize(16);
