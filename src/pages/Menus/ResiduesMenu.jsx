@@ -17,6 +17,12 @@ export default function ResiduesMenu() {
     console.log(dataUser);
     console.log("Se actualizó el Peso total a: ", pesoTotal);
     if (pesoTotal === 0) return;
+    let porcent = dataUser.collection_center_alert_porcent ? dataUser.collection_center_alert_porcent : 80;
+    const regla = (dataUser?.collection_center_kg_max * porcent) 
+
+    console.log("Multiplicacion Regla 3: ", regla);
+    console.log("Division: ", regla / 100 );
+
     if (pesoTotal >= dataUser?.collection_center_kg_max) {
       console.log("######### Se ha llegado al peso total #########");
       const reqBody = {

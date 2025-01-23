@@ -93,7 +93,7 @@ export default function ModalWatchResidueReport({ report }) {
                     <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 8, top: 8 }}>
                         <Close />
                     </IconButton>
-                    <Typography variant="h6" component="h2" mb={2}>Reporte de Residuos</Typography>
+                    <Typography variant="h6" component="h2" mb={2}>R</Typography>
                     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
                         {entries?.length > 0 ? entries?.map((entry, index) => (
                             entry !== null && <VerificationComponent key={`entry-${index}`} entry={entry} residues={residues} index={index} setVerifiedEntries={setVerifiedEntries} verifiedEntries={verifiedEntries} checker={userData?.user} />
