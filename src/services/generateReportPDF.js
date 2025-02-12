@@ -10,7 +10,7 @@ const savePdf = async (pdfBase64, id_report) => {
     try {
       // Usamos 'await' para esperar a que la solicitud se complete y para obtener la respuesta
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/finish-report/`,
+        `${process.env.REACT_APP_API_URL}/save-report-base64/`,
         {
           reportId: id_report,
           reportBase64: pdfBase64,

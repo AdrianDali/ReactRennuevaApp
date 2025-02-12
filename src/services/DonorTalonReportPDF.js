@@ -6,7 +6,7 @@ const savePdf = async (pdfBase64, id_report) => {
 
     try {
         const response = await axios.post(
-            `${process.env.REACT_APP_API_URL}/finish-report/`,
+            `${process.env.REACT_APP_API_URL}/save-talon-base64/`,
             {
                 reportId: id_report,
                 reportBase64: pdfBase64,
