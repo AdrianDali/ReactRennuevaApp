@@ -5,6 +5,8 @@ import GetUser from '../services/ApiGetUser.js';
 
 
 function useAuth() {
+ console.log("useAuth");
+ 
   const [dataUser, setDataUser] = useState(null);
   const navigate = useNavigate();
 

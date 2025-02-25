@@ -50,7 +50,10 @@ import DeleteDonorReportsModal from "../modals/DeleteDonorReportModal";
 import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
 import sortData from "../../helpers/SortData";
+import axios from "axios";
+import useAuth from "../../hooks/useAuth";
 import saveTalonPDF from "../../services/saveTalonPDF";
+import { da } from "date-fns/locale";
 
 function Toolbar({
   selected,
@@ -385,11 +388,24 @@ export default function DonorReportsTable({ data }) {
 
   const [desktop, setDesktop] = useState(window.innerWidth > 940);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
-
+  const [pesoTotal, setPesoTotal] = useState(0);
+// Se obtiene el usuario actual
+const dataUser = useAuth();
+console.log("Datos del usuario actual:");
+console
+.log(dataUser);
 
   const handleUpdateStatus = async () => {
     try {
       console.log("Actualizando status de los reportes:", reportToEdit);
+
+      // Se calcula el umbral de alerta según el porcentaje configurado (por defecto 80%)
+    const alertPercent = dataUser.collection_center_alert_porcent || 80;
+    const threshold = (dataUser.collection_center_kg_max * alertPercent) / 100;
+
+    console.log("Porcentaje de alerta:", alertPercent);
+    console.log("Peso máximo permitido:", dataUser.collection_center_kg_max);
+    console.log("Umbral de alerta calculado:", threshold);
 
       // Ajusta la lógica de la petición según tu API
       await fetch(`${process.env.REACT_APP_API_URL}/update-status-reports/`, {
@@ -397,10 +413,24 @@ export default function DonorReportsTable({ data }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ reportId: reportToEdit , reportStatus: "Pendiente" }),
+        body: JSON.stringify({ reportId: reportToEdit , reportStatus: "Pendiente", creator_user : dataUser.user , 
+          collection_center_kg_max : dataUser.collection_center_kg_max, collection_center_alert_porcent : dataUser.collection_center_alert_porcent , collection_center : dataUser.collection_center
+        }),
       });
       // Una vez realizado el fetch, cierra el modal
+
+      
+
+      // Se obtienen los re
+      console.log("Reporte a editar:");
+      console.log(data);
+      const reports = filteredData.filter((report) => report.id_report === reportToEdit);
+      console.log("Reportes del usuario actual:");
+      console.log(reports);
       setOpenModalConfirm(false);
+      setOpenModalText(true); 
+      setTextOpenModalText("El status del reporte ha sido actualizado correctamente");
+      
     } catch (error) {
       console.error("Error al actualizar el status:", error);
       // Manejo de errores
