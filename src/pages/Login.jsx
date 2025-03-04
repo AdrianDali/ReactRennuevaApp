@@ -48,6 +48,7 @@ function Copyright(props) {
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
+
 export default function SignInSide() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -73,7 +74,7 @@ export default function SignInSide() {
     event.preventDefault();
     setShowModal(false);
     setLoading(true);
-    //console.log("username", username);
+    console.log("username", username);
     const req = {
       username: username,
       password: password,

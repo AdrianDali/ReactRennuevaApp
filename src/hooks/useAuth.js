@@ -13,9 +13,9 @@ function useAuth() {
   useEffect(() => {
     async function fetchData(user, access, refresh) {
       const { dataUser, successUser, messageUser } = await GetUser(user, access, refresh);
-      //console.log("data", dataUser);
-      //console.log("success", successUser);
-      //console.log("message", messageUser);
+      console.log("data", dataUser);
+      console.log("success", successUser);
+      console.log("message", messageUser);
       if (successUser) {
         setDataUser(dataUser);
       } else {

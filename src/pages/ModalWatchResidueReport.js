@@ -10,6 +10,9 @@ import ConfirmationModal from '../components/modals/ConfirmationModal.jsx';
 import NotificationModal from '../components/modals/NotificationModal.jsx';
 
 export default function ModalWatchResidueReport({ report }) {
+    console.log("ModalWatchResidueReport");
+    console.log("report", report);
+
     const [residues, setResidues] = useState([]);
     const [entries, setEntries] = useState([report !== null ? { user: report.nombre_usuario, report: report.id_report, residue: '', peso: '', volumen: '' } : null]);
     const { openModalEditResidueReport, setOpenModalEditResidueReport, setUpdateReportInfo } = useContext(TodoContext);
@@ -80,32 +83,77 @@ export default function ModalWatchResidueReport({ report }) {
             });
     };
 
+    const handleConfirmClose = () => {
+        console.log("handleConfirmClose");
+        console.log("report", report.id);
+        const data = {
+            id_order: report.id,
+            
+        }
+        axios.post(`${process.env.REACT_APP_API_URL}/recollected-order-center-recollection/`, data)
+            .then(response => {
+                console.log(response.data);
+                closeModal();
+            })
+            .catch(error => {
+                console.error('Hubo un problema al cerrar el reporte:', error);
+            });
+    };
+
+
     return ReactDOM.createPortal(
         <>
-            <NotificationModal children={success? <p>La verificación se guardó correctamente.</p>:<p>Ocurrió un error al realizar la verificación.</p> } onConfirm={()=> setOpenNotification(false)} isOpen={openNotification} setOpen={setOpenNotification} severity={success? "success": "error"} title={success? "Operación exitosa":"Ocurrió un error"}/>
-            <Modal open={openModalEditResidueReport} onClose={closeModal}>
-                <Box
-                    sx={{
-                        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                        width: { xs: '95%', md: 700, boxSizing: 'border-box' }, bgcolor: 'background.paper', boxShadow: 24, py: 4, px: 4, borderRadius: 2,
-                    }}
-                >
-                    <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 8, top: 8 }}>
-                        <Close />
-                    </IconButton>
-                    <Typography variant="h6" component="h2" mb={2}>R</Typography>
-                    <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                        {entries?.length > 0 ? entries?.map((entry, index) => (
-                            entry !== null && <VerificationComponent key={`entry-${index}`} entry={entry} residues={residues} index={index} setVerifiedEntries={setVerifiedEntries} verifiedEntries={verifiedEntries} checker={userData?.user} />
-                        )) : <Typography variant="h6" color="GrayText" component="h6" mb={2}>No hay residuos en este reporte</Typography>}
-                        <Button disabled={loading} variant='contained' color='primary' fullWidth sx={{ marginY: 2 }} type="submit">
-                            {loading ? <CircularProgress /> : "Enviar"}
-                        </Button>
-                    </form>
-                </Box>
-            </Modal>
+          <NotificationModal
+            children={
+              success ? (
+                <p>La verificación se guardó correctamente.</p>
+              ) : (
+                <p>Ocurrió un error al realizar la verificación.</p>
+              )
+            }
+            onConfirm={() => setOpenNotification(false)}
+            isOpen={openNotification}
+            setOpen={setOpenNotification}
+            severity={success ? "success" : "error"}
+            title={success ? "Operación exitosa" : "Ocurrió un error"}
+          />
+          <Modal open={openModalEditResidueReport} onClose={closeModal}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: { xs: "95%", md: 700, boxSizing: "border-box" },
+                bgcolor: "background.paper",
+                boxShadow: 24,
+                py: 4,
+                px: 4,
+                borderRadius: 2,
+              }}
+            >
+              <IconButton onClick={closeModal} sx={{ position: "absolute", right: 8, top: 8 }}>
+                <Close />
+              </IconButton>
+              <Typography variant="h6" component="h2" mb={2}>
+                Cerrar Verificación y Recolección
+              </Typography>
+              <Typography variant="body1" mb={4}>
+                ¿Seguro que quieres cerrar la verificación y recolección de esta orden de recolección? Una vez hecho esto no podrás cambiar ni editar los pesos ya registrados.
+              </Typography>
+              <Box display="flex" justifyContent="flex-end" gap={2}>
+                <Button variant="outlined" color="secondary" onClick={closeModal}>
+                  Cancelar
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleConfirmClose}>
+                  Confirmar
+                </Button>
+              </Box>
+            </Box>
+          </Modal>
         </>,
-        document.getElementById('modal')
-    );
+        document.getElementById("modal")
+      );
+      
 }
 
