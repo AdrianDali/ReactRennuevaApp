@@ -36,7 +36,7 @@ export default function DonorSubtable({ report }) {
                 <Box paddingLeft={2}>
                     <Box>
                         <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Nombre del centro: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.centro_reciclaje}</Typography>
+                        <Typography variant="body1" display="inline" gutterBottom>{report.centro_recoleccion}</Typography>
                     </Box>
                     <Box>
                         <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Calle: </Typography>

@@ -57,7 +57,7 @@ const reportItem = new ListTemplateItem({
             redirection: "/register/report",
         }),
         new ListTemplateItem({
-            tag: "Seguiemiento",
+            tag: "Seguimineto",
             icon: <TrackChangesIcon />,
             redirection: "/register/tracking",
         }),
@@ -85,7 +85,7 @@ const entitiesItem = new ListTemplateItem({
             redirection: "/register/collection-center",
         }),
         new ListTemplateItem({
-            tag: "Vehiculo",
+            tag: "Vehículo",
             icon: <DirectionsCarIcon />,
             redirection: "/register/vehicle",
         }),

@@ -30,18 +30,13 @@ export default function Chart() {
             .get(`${process.env.REACT_APP_API_URL}/get-all-users-groups/`)
             .then(response => {
                 const data = response.data;
-              
-                console.log("data#hjshjahjashjas$##$#$#$##$#$#$##$");
-                console.log(data.group_data[0].group);
 
                 for (let i = 0; i < data.group_data.length; i++) {
 
                     meses.push(data.group_data[i].group);
                     beneficios.push(data.group_data[i].user_count);
                 }
-                console.log("data#$##$#$#$adsdasdsad##$#$#$##$");
-                console.log(meses);
-                console.log(beneficios);
+                
                 setBeneficio(beneficios);
                 setGrupos(meses);
 
@@ -76,10 +71,10 @@ export default function Chart() {
     };
 
     var midata = {
-        labels: ["vehiculo01", "Vehiculo02"],
+        labels: ["vehiculo01", "Vehículo02"],
         datasets: [
             {
-                label: 'Plastico reciclado',
+                label: 'Plástico reciclado',
                 data: beneficio ,
                 backgroundColor: 'rgba(0, 220, 195, 0.5)'
             }

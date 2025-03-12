@@ -5,6 +5,8 @@ import GetUser from '../services/ApiGetUser.js';
 
 
 function useAuth() {
+ console.log("useAuth");
+ 
   const [dataUser, setDataUser] = useState(null);
   const navigate = useNavigate();
 
@@ -27,7 +29,7 @@ function useAuth() {
     const accessToken = getCookieValue("access");
 
     if (!refreshToken || !accessToken) {
-      console.error("No token found");
+      //console.error("No token found");
       navigate("/login");
     } else {
       fetchData(user, accessToken, refreshToken);

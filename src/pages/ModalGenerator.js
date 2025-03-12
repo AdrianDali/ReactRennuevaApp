@@ -9,20 +9,15 @@ import { Close } from '@mui/icons-material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
-    const [groups, setGroups] = useState([])
+function ModalGenerator({ children, mode, creatorUser, userToEdit = null }) {
     const [users, setUsers] = useState([])
     const [companies, setCompanies] = useState([""])
     const [user, setUser] = useState(userToEdit);
-    console.log("###################### USER TO EDIT ##################################")
-    console.log(userToEdit)
-    
+
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [first_name, setFirstName] = useState("");
     const [last_name, setLastName] = useState("");
-    const [group, setGroup] = useState("");
-    const [company, setCompany] = useState("");
     const [state, setState] = useState("");
     const [city, setCity] = useState("");
     const [locality, setLocality] = useState("");
@@ -31,11 +26,12 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
     const [rfc, setRfc] = useState("");
     const [phone, setPhone] = useState("");
     const [address_num_int, setAddressNumInt] = useState("");
-    const [isPasswordVisible, setIsPasswordVisible] = useState(true);
+    const [address_num_ext, setAddressNumExt] = useState("");
+    const [isPasswordVisible, setIsPasswordVisible] = useState(mode === 'CREAR');
     const [old_user, setOldUser] = useState("");
     const [razonSocial, setRazonSocial] = useState("");
     const [creator, setCreator] = useState(creatorUser);
-  
+
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
@@ -62,7 +58,6 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
             rfcValue = 'XAXX010101000'; // Aquí puedes poner el RFC por defecto que desees
         }
         if (mode === "CREAR") {
-            console.log("######################")
             const nuevoDato = {
                 user: e.target.email.value,
                 password: e.target.password.value,
@@ -79,10 +74,9 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                 address_street: e.target.street.value,
                 address_postal_code: e.target.postal_code.value,
                 address_num_int: e.target.address_num_int.value,
-
+                address_num_ext: e.target.address_num_ext.value,
                 address_lat: 0,
                 address_lng: 0,
-
                 razon_social: e.target.razon_social.value,
                 user_permission: "Escritura",
                 creator_user: creator
@@ -101,19 +95,18 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
 
                 })
                 .catch(error => {
-                    console.error("############################");
                     setOpenModalText(true);
-              
+
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                        const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                        setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                        setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
-              
+
                     console.error(error.response);
-                  })
+                })
 
         }
         if (mode === "EDITAR") {
@@ -134,6 +127,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                 address_street: e.target.street.value,
                 address_postal_code: e.target.postal_code.value,
                 address_num_int: e.target.address_num_int.value,
+                address_num_ext: e.target.address_num_ext.value,
                 address_lat: 0,
                 address_lng: 0,
 
@@ -144,8 +138,6 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                 user_permission: "Escritura"
 
             };
-            console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF")
-            console.log(editarDato)
 
             axios
                 .put(`${process.env.REACT_APP_API_URL}/update-django-user/`, editarDato)
@@ -162,17 +154,17 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                 .catch(error => {
                     console.error("############################");
                     setOpenModalText(true);
-              
+
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                        const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                        setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                        setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
-              
+
                     console.error(error.response);
-                  })
+                })
 
         }
         if (mode === "BORRAR") {
@@ -191,7 +183,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                     console.log(data)
                     setOpenModalText(true);
                     setTextOpenModalText("Generador borrado correctamente")
-                    setUpdateGeneratorInfo(prev=>!prev)
+                    setUpdateGeneratorInfo(prev => !prev)
                     e.target.reset();
                     closeModal()
 
@@ -199,49 +191,24 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                 .catch(error => {
                     console.error("############################");
                     setOpenModalText(true);
-              
+
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                        const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                        setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                        setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
-              
+
                     console.error(error.response);
-                  })
+                })
         }
 
-        // Limpiar los campos del formulario
         e.target.reset();
     };
 
 
-    useEffect(() => {
-
-        // Basado en el modo, decidir si el campo de la contraseña debe ser visible
-        if (mode === 'CREAR') {
-            setIsPasswordVisible(true);
-        } else {
-            setIsPasswordVisible(false); // Esto cubre 'editar' y 'borrar'
-        }
-
-        axios
-            .get(`${process.env.REACT_APP_API_URL}/get-all-groups/`)
-            .then(response => {
-                const data = response.data;
-                setGroups(data)
-                console.log("######################GRUPOS##################################")
-
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
-    }, []);
-
-
-    useEffect(() => {
+     useEffect(() => {
         const fetchUsers = axios.post(`${process.env.REACT_APP_API_URL}/get-all-users/`, { group: "Generador" })
         const fetchCompanies = axios.get(`${process.env.REACT_APP_API_URL}/get-all-companies/`);
 
@@ -251,14 +218,13 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                 const companiesData = res[1].data;
                 setUsers(usersData);
                 setCompanies(companiesData);
-                console.log("######################USUARIOS##################################")
             })
             .catch((err) => console.log(err));
 
-    }, []);
+    }, []); 
 
     useEffect(() => {
-        if (userToEdit === null) return 
+        if (userToEdit === null) return
         if (users.length === 0) return
         const datoEncontrado = users.find((users) => users.user === userToEdit.user);
         console.log(datoEncontrado)
@@ -267,9 +233,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
         setEmail(datoEncontrado.email);
         setFirstName(datoEncontrado.first_name);
         setLastName(datoEncontrado.last_name);
-        setGroup(datoEncontrado.group);
         setRfc(datoEncontrado.rfc);
-        setCompany("Rennueva");
         setPhone(datoEncontrado.phone);
         setState(datoEncontrado.address_state);
         setCity(datoEncontrado.address_city);
@@ -277,6 +241,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
         setStreet(datoEncontrado.address_street);
         setPostalCode(datoEncontrado.address_postal_code);
         setAddressNumInt(datoEncontrado.address_num_int);
+        setAddressNumExt(datoEncontrado.address_num_ext);
         setOldUser(datoEncontrado.user);
         setRazonSocial(datoEncontrado.razon_social);
     }, [userToEdit, users]);
@@ -363,7 +328,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                             }
                         />
                         <TextField
-                            label="Razon social"
+                            label="Razón social"
                             name="razon_social"
                             required
                             fullWidth
@@ -373,10 +338,10 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                             inputProps={{
                                 maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
                             }}
-                            error={razonSocial.length > 0 &&  razonSocial.length > 50}
+                            error={razonSocial.length > 0 && razonSocial.length > 50}
                             helperText={
-                                razonSocial.length > 0 &&  razonSocial.length > 50
-                                    ? "La Razon Social debe tener entre 5 y 50 caracteres"
+                                razonSocial.length > 0 && razonSocial.length > 50
+                                    ? "La Razón Social debe tener entre 5 y 50 caracteres"
                                     : ""
                             }
 
@@ -417,10 +382,6 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                         ) : null}
 
                         <FormControl fullWidth mt={2} mb={2}>
-
-
-
-
                             <TextField
                                 label="Celular"
                                 name="phone"
@@ -441,7 +402,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                         </FormControl>
                         <FormControl fullWidth mt={2} mb={2}>
 
-                            <Title>Ubicacion</Title>
+                            <Title>Ubicación</Title>
                             <TextField
                                 label="Estado"
                                 name="state"
@@ -516,34 +477,25 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                                 }
                             />
                             <TextField
-                                label="Numero interior"
-                                name="address_num_int"
+                                label="Número exterior"
+                                name="address_num_ext"
                                 required
                                 fullWidth
-                                value={address_num_int}
-                                onChange={(e) => {
-                                    // Solo permite números
-                                    if (e.target.value === '' || /^[0-9\b]+$/.test(e.target.value)) {
-
-
-
-                                        handleInputChange(e, setAddressNumInt, mode);
-
-                                    }
-                                }}
-                                inputProps={{ maxLength: 5 }}
+                                value={address_num_ext}
+                                onChange={(e) => handleInputChange(e, setAddressNumExt, mode)}
                                 margin="dense"
-                                error={address_num_int.length > 0 && address_num_int.length > 5}
-                                helperText={
-                                    address_num_int.length > 0 && address_num_int.length > 5
-                                        ? "El numero interior debe tener entre 1 y 5 caracteres"
-                                        : ""
-                                }
+                            />
+                            <TextField
+                                label="Número interior"
+                                name="address_num_int"
+                                fullWidth
+                                value={address_num_int}
+                                onChange={(e) => handleInputChange(e, setAddressNumInt, mode)}
+                                margin="dense"
                             />
 
-
                             <TextField
-                                label="Codigo postal"
+                                label="Código postal"
                                 name="postal_code"
                                 required
                                 fullWidth
@@ -560,7 +512,7 @@ function ModalGenerator({ children, mode,creatorUser, userToEdit=null }) {
                                 error={postal_code.length > 0 && postal_code.length > 5}
                                 helperText={
                                     postal_code.length > 0 && postal_code.length > 5
-                                        ? "El numero interior debe tener entre 1 y 5 caracteres"
+                                        ? "El número interior debe tener entre 1 y 5 caracteres"
                                         : ""
                                 }
                             />

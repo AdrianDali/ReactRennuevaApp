@@ -13,7 +13,7 @@ import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import HistoryIcon from '@mui/icons-material/History';
 import BusinessIcon from '@mui/icons-material/Business';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import { AccountBoxRounded, DirectionsRunRounded, HomeWorkRounded, RecyclingRounded } from "@mui/icons-material";
+import { AccountBoxRounded, Assignment, DirectionsRunRounded, HomeWorkRounded, RecyclingRounded } from "@mui/icons-material";
 import { redirect } from "react-router-dom";
 import { Recycling } from "@mui/icons-material";
 
@@ -26,9 +26,21 @@ const usersItem = new ListTemplateItem({
     redirection: '/centrosAcopio'
 })
 
+const asignaciones = new ListTemplateItem({
+    tag: "Reportes asignados",
+    icon: <Assignment />,
+    redirection: '/centros/assignments'
+}, 
+)
+
+const status = new ListTemplateItem({
+    tag: "Estado de reportes asignados",
+    icon: <AssignmentReturnedIcon />,
+    redirection: '/centro/status'
+})
 
 export default function ReciclajeList() {
     return (
-        <ListTemplate items={[ usersItem ]} />
+        <ListTemplate items={[ usersItem, asignaciones, status ]} />
     )
 }

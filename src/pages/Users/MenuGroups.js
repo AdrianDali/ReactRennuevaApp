@@ -1,4 +1,5 @@
-import React, {  useContext } from "react";
+import axios from "axios";
+import React, {  useContext, useState, useEffect } from "react";
 import "../../styles/user/MenuUser.css";
 import { TodoContext } from "../../context/index.js";
 import { ModalGroup } from "./ModalGroup";
@@ -21,6 +22,7 @@ import {
 } from "@mui/material";
 import Title from "../../components/Title";
 import useAuth from "../../hooks/useAuth.js";
+import LoadingComponent from "../Menus/LoadingComponent.jsx";
 
 function MenuGroups() {
   const {
@@ -33,12 +35,31 @@ function MenuGroups() {
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
+  const [clientes, setClientes] = useState([]);
+  const { updateGroupInfo } = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+      // Realiza una petición GET a una URL específica
+      axios
+          .get(`${process.env.REACT_APP_API_URL}/get-all-groups/`)
+          .then(response => {
+              const data = response.data;
+              setClientes(data);
+          })
+          .catch(error => {
+              console.error(error);
+          }).finally(() => {
+              setLoading(false);
+          });
+  }, [updateGroupInfo]);
 
 
   return (
     <>
       <CssBaseline />
-      {dataUser && dataUser.groups[0] === "Administrador" ? (
+      {dataUser && dataUser.groups[0] === "Administrador" && !loading ? (
         <Container
           maxWidth={false}
           sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
@@ -61,7 +82,7 @@ function MenuGroups() {
                 <Title>Grupos</Title>
                 <CUDButtons model="Group" />
                 <Title>Grupos Creados</Title>
-                <GroupTable />
+                <GroupTable clientes={clientes}/>
               </Paper>
             </Grid>
             <Grid item xs={12}>
@@ -75,7 +96,7 @@ function MenuGroups() {
                   height: 580,
                 }}
               >
-                <BarsChartGroup />
+                <BarsChartGroup/>
               </Paper>
             </Grid>
           </Grid>
@@ -115,7 +136,7 @@ function MenuGroups() {
             </Dialog>
           )}
         </Container>
-      ) : (
+      ) : loading? <LoadingComponent/>: (
         <Box
           sx={{
             display: "flex",

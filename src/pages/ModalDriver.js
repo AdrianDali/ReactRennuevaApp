@@ -77,10 +77,10 @@ export default function ModalDriver({ mode , creatorUser, userToEdit}) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);
@@ -121,10 +121,10 @@ export default function ModalDriver({ mode , creatorUser, userToEdit}) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);

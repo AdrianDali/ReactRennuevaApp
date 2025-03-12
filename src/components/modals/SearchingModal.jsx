@@ -38,7 +38,7 @@ function SearchBar({ filteredData, setVisibleData, closeModal }) {
                 onChange={(e) => setSearchValue(e.target.value)}
                 id="search-field"
                 inputRef={searchInputRef}
-                label="Búscar"
+                label="Buscar"
                 variant="standard"
                 size="small"
                 fullWidth

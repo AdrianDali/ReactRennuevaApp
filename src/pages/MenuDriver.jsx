@@ -28,21 +28,19 @@ import BarsChartCarrier from "../components/graph/BarsCharCarrier.js";
 import DriversTable from "../components/boards/DriversTable.jsx";
 import useAuth from "../hooks/useAuth.js";
 import axios from "axios";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 function MenuDriver() {
   const {
     openModalText,
     setOpenModalText,
     textOpenModalText,
-    openModalCreateDriver,
-    openModalEditDriver,
-    openModalDeleteDriver,
     updateDriverInfo, 
-    setUpdateDriverInfo
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
   const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -52,6 +50,8 @@ function MenuDriver() {
       })
       .catch(error => {
         console.error(error);
+      }).finally(() => {
+        setLoading(false);
       });
   }, [updateDriverInfo]);
 
@@ -59,7 +59,7 @@ function MenuDriver() {
   return (
     <>
       <CssBaseline />
-      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) ? (
+      {dataUser && (dataUser.groups[0] === "Administrador"  || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro" ) && !loading ? (
         <Container
           maxWidth={false}
           sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
@@ -100,7 +100,7 @@ function MenuDriver() {
             </Dialog>
           )}
         </Container>
-      ) : (
+      ) : loading? <LoadingComponent/>: (
         <Box
           sx={{
             display: "flex",

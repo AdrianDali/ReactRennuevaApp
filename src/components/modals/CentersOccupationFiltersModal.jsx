@@ -20,8 +20,8 @@ const MenuProps = {
 
 
 function RangeFilter({ name, setFilters, label }) {
-    const [min, setMin] = useState(null)
-    const [max, setMax] = useState(null)
+    const [min, setMin] = useState("")
+    const [max, setMax] = useState("")
 
     useEffect(() => {
         setFilters(prev => ({ ...prev, [name]: { start: min, end: max } }));
@@ -55,7 +55,7 @@ function RangeFilter({ name, setFilters, label }) {
                         onChange={handleMaxChange} />
                 </Box>
                 <Button onClick={() => {
-                    setFilters(prev => ({ ...prev, [name]: { ...prev[name], start: null, end: null } }));
+                    setFilters(prev => ({ ...prev, [name]: { ...prev[name], start: "", end: "" } }));
                 }} variant='outlined' color='secondary' fullWidth>Limpiar rango</Button>
             </Box>
         </>
@@ -90,9 +90,9 @@ export default function CentersOcuppationFiltersModal({ isOpen, setOpen, data, s
                     const start = filters[key].start;
                     const end = filters[key].end;
 
-                    if (start == null && end == null) return true;
-                    if (start == null) return value <= end;
-                    if (end == null) return value >= start;
+                    if (start == "" && end == "") return true;
+                    if (start == "") return value <= end;
+                    if (end == "") return value >= start;
                     return value >= start && value <= end;
                 });
                 console.log('data despues del filtro', newData)
@@ -104,9 +104,9 @@ export default function CentersOcuppationFiltersModal({ isOpen, setOpen, data, s
                     const start = filters[key].start;
                     const end = filters[key].end;
 
-                    if (start == null && end == null) return true;
-                    if (start == null) return value <= end;
-                    if (end == null) return value >= start;
+                    if (start == "" && end == "") return true;
+                    if (start == "") return value <= end;
+                    if (end == "") return value >= start;
                     return value >= start && value <= end;
                 });
             } else if (key === 'occupied_kg') {
@@ -117,9 +117,9 @@ export default function CentersOcuppationFiltersModal({ isOpen, setOpen, data, s
                     const start = filters[key].start;
                     const end = filters[key].end;
 
-                    if (start == null && end == null) return true;
-                    if (start == null) return value <= end;
-                    if (end == null) return value >= start;
+                    if (start == "" && end == "") return true;
+                    if (start == "") return value <= end;
+                    if (end == "") return value >= start;
                     return value >= start && value <= end;
                 });
             } else if (filters[key].length > 0) {

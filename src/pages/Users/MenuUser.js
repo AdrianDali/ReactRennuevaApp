@@ -1,37 +1,17 @@
 import React, { useContext, useEffect , useState} from "react";
 import "../../styles/user/MenuUser.css";
 import { TodoContext } from "../../context/index.js";
-import { ModalUser } from "./ModalUser.js";
-import UserTable from "../../components/Table";
-import CUDButtons from "../../containers/CUDButtons";
-import BarsChart from "../../components/BarsChart";
-import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import Title from "../../components/Title";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Button from "@mui/material/Button";
-import { Typography } from "@mui/material";
 import useAuth from "../../hooks/useAuth.js";
 import axios from "axios";
 import UserInfoTable from "../../components/boards/UsersInfoTable.jsx";
-import { set } from "date-fns";
+import LoadingComponent from "../Menus/LoadingComponent.jsx";
 
 function MenuUser() {
 
   const {
-    textOpenModalText,
-    openModalCreate,
-    openModalEdit,
-    openModalDelete,
-    openModalText,
-    setOpenModalText,
     updateUserInfo,
     setUpdateUserInfo,
   } = useContext(TodoContext);
@@ -42,6 +22,7 @@ function MenuUser() {
   const [centers, setCenters] = useState([]);
   const [recyclingCenters, setRecyclingCenters] = useState([]);
   const [collectionCenters, setCollectionCenters] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,6 +45,8 @@ function MenuUser() {
         setUpdateUserInfo(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+      }finally{
+        setLoading(false);
       }
     };
 
@@ -72,7 +55,7 @@ function MenuUser() {
 
   return (
     <>
-      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") ? (
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") && !loading ? (
         <Container
           maxWidth={false}
           sx={{
@@ -84,7 +67,7 @@ function MenuUser() {
         >
           <UserInfoTable data={donorRequests} centers={centers} recyclingCenters={recyclingCenters} collectionCenters={collectionCenters} />  
         </Container>
-      ) : (
+      ) : loading? <LoadingComponent/>:(
         <Box
           sx={{
             display: "flex",

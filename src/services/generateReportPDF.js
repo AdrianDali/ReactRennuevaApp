@@ -10,7 +10,7 @@ const savePdf = async (pdfBase64, id_report) => {
     try {
       // Usamos 'await' para esperar a que la solicitud se complete y para obtener la respuesta
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/finish-report/`,
+        `${process.env.REACT_APP_API_URL}/save-report-base64/`,
         {
           reportId: id_report,
           reportBase64: pdfBase64,
@@ -49,7 +49,7 @@ export default function generateReportPDF(report, data, qrImage){
       key_centro = data[0].key_centro_recoleccion;
       direccion_centro = data[0].ubicacion_centro_recoleccion;
       centro = data[0].centro_recoleccion;
-      titulo_centro = "Recoleccion";
+      titulo_centro = "Recolección";
       //console.log("###############permiso")
       permiso_centro = data[0].permiso_centro_recoleccion;
     }
@@ -178,7 +178,7 @@ export default function generateReportPDF(report, data, qrImage){
       tableWidth: 190,
       body: [
         [
-          "Compañia:",
+          "Compañía:",
           data[0].transportista,
           "Transportista:",
           data[0].transportista_nombre,
@@ -200,7 +200,7 @@ export default function generateReportPDF(report, data, qrImage){
       "Procedencia de Residuos",
     ]);
     var distancia = 185;
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 1; i < data.length; i++) {
       bodyData.push([
         data[i].nombre_residuo,
         data[i].peso + " kg",
@@ -305,7 +305,7 @@ export default function generateReportPDF(report, data, qrImage){
     doc.line(1, startY + 13, 400, startY + 13); // Línea de nombre para el Generador
     doc.setFontSize(6);
     doc.text(
-      "Tecnologias Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtemoc, Ciudad de Mexico, Mexico ",
+      "Tecnologías Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtémoc, Ciudad de México, México ",
       14,
       distancia + 75
     );
@@ -315,13 +315,13 @@ export default function generateReportPDF(report, data, qrImage){
       distancia + 80
     );
     doc.text(
-      "Todos los datos recabados en este documento seran tratados conforme a la Ley General de Proteccion de Datos Personales",
+      "Todos los datos recabados en este documento serán tratados conforme a la Ley General de Protección de Datos Personales",
       14,
       distancia + 85
     );
   
     if (qrImage) {
-      doc.addImage(qrImage, "PNG", 12, distancia + 25, 45, 45);
+      doc.addImage(qrImage, "PNG", 12, distancia + 25, 55, 55);
       // Modifica 'x', 'y', 'width' y 'height' para ubicar y dimensionar el QR como desees.
     }
   

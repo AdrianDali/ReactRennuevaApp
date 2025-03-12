@@ -4,40 +4,30 @@ import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import FinishReportsTable from "../../components/boards/FinishReportsTable";
 import CUDButtons from "../../containers/CUDButtons";
+import LoadingComponent from "./LoadingComponent";
 
 export function MenuReportHistory() {
-  const [clientes, setClientes] = useState([]);
-  const [reports, setReports] = useState([]);
   const [reportsFinish, setReportsFinish] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const { updateReportInfo, setUpdateReportInfo } = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-reports-finish/`)
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         setReportsFinish(response.data);
       })
       .catch((error) => {
         console.error(error);
+      }).finally(() => {
+        setLoading(false);
       });
   }, [updateReportInfo]);
 
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-reports/`)
-      .then((response) => {
-        console.log(response.data);
-        setReports(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [updateReportInfo]);
 
   return (
+    loading ? <LoadingComponent/> :
     <Container
       maxWidth={false}
       sx={{

@@ -52,7 +52,7 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
     console.log("Datos importados:", data);
     console.log(data[0].Tipo);
 
-    let url = "http://127.0.0.1:8000/Rennueva"; // URL base
+    let url = process.env.REACT_APP_API_URL; // URL base
 
     if (data[0].Tipo === "Generador") {
       console.log("Es un archivo de usuarios");
@@ -122,7 +122,7 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
 
   const datoss = [
     { title: 'Solicitado' },
-    { title: 'Pendiente Recoleccion' },
+    { title: 'Pendiente Recolección' },
     { title: 'Cancelada' },
 
   ];
@@ -167,7 +167,7 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
           <OptionButton setOpenModal={setOpenModalCreateReport} text="Crear responsiva" color="success" />
         ) : null}
         {model === 'Company' ? (
-          <OptionButton setOpenModal={setOpenModalCreateCompany} text="Crear Compañia" color="success" />
+          <OptionButton setOpenModal={setOpenModalCreateCompany} text="Crear Compañía" color="success" />
         ) : null}
         {model === 'ReportHistory' ? (
           <ImportExcelButton text="Importar Generadores Excel" color="success" onImported={handleDataImported} />
@@ -206,10 +206,10 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
           <OptionButton setOpenModal={setOpenModalEditVehicle} text="Editar Vehículo" color="info" />
         ) : null}
         {model === "Company" ? (
-          <OptionButton setOpenModal={setOpenModalEditCompany} text="Editar Compañia" color="info" />
+          <OptionButton setOpenModal={setOpenModalEditCompany} text="Editar Compañía" color="info" />
         ) : null}
         {/* {model === 'ReportHistory' ? (
-        <ImportExcelButton text="Importar Centros de Recoleccion Excel" color="blue" onImported={handleDataImported} />
+        <ImportExcelButton text="Importar Centros de Recolección Excel" color="blue" onImported={handleDataImported} />
       ) : null} */}
         {model === 'ReportHistory' ? (
           <div className="create-button">  <ImportExcelButton text="Importar Responsivas Excel" color="success" onImported={handleDataImported} /> </div>
@@ -246,7 +246,7 @@ const CUDButtons = ({ handleAdd, handleDelete, handleUpdate, model }) => {
           <OptionButton setOpenModal={setOpenModalDeleteVehicle} text="Borrar Vehículo" color="error" />
         ) : null}
         {model === "Company" ? (
-          <OptionButton setOpenModal={setOpenModalDeleteCompany} text="Borrar Compañia" color="error" />
+          <OptionButton setOpenModal={setOpenModalDeleteCompany} text="Borrar Compañía" color="error" />
         ) : null}
 
         {model === "ReportHistory" ? (

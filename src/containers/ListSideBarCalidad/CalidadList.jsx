@@ -57,7 +57,7 @@ const reportItem = new ListTemplateItem({
             redirection: "/quality/report",
         }),
         new ListTemplateItem({
-            tag: "Seguiemiento",
+            tag: "Seguimineto",
             icon: <TrackChangesIcon />,
             redirection: "/quality/tracking",
         }),
@@ -85,7 +85,7 @@ const entitiesItem = new ListTemplateItem({
             redirection: "/quality/collection-center",
         }),
         new ListTemplateItem({
-            tag: "Vehiculo",
+            tag: "Vehículo",
             icon: <DirectionsCarIcon />,
             redirection: "/quality/vehicle",
         }),

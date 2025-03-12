@@ -104,10 +104,10 @@ function ModalCarrier({ children, mode, creatorUser, userToEdit }) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);
@@ -153,10 +153,10 @@ function ModalCarrier({ children, mode, creatorUser, userToEdit }) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);
@@ -190,10 +190,10 @@ function ModalCarrier({ children, mode, creatorUser, userToEdit }) {
               
                     // Check if error response and data exist
                     if (error.response && error.response.data) {
-                      const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-                      setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+                      const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+                      setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
                     } else {
-                      setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+                      setTextOpenModalText("Algo salió mal. Intenta de nuevo");
                     }
               
                     console.error(error.response);
@@ -401,7 +401,7 @@ function ModalCarrier({ children, mode, creatorUser, userToEdit }) {
                                 margin="dense"
                             />
                             <TextField
-                                label="Compañia"
+                                label="Compañía"
                                 name="company"
                                 required
                                 fullWidth
@@ -410,7 +410,7 @@ function ModalCarrier({ children, mode, creatorUser, userToEdit }) {
                                 margin="dense"
                             />
                             <TextField
-                                label="Razon Social"
+                                label="Razón Social"
                                 name="razon_social"
                                 required
                                 fullWidth

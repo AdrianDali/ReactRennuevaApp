@@ -167,7 +167,11 @@ const MobileMenu = ({ children, open, setOpen }) => {
 const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
 
     return (
-        <StyledDrawer variant="permanent" open={open}>
+        <StyledDrawer variant="permanent" open={open} sx={{
+            "& *": {
+                scrollbarWidth: 'none',
+            }
+        }}>
             <DrawerHeader>
                 <IconButton onClick={() => setOpen(!open)}>
                     {!open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -180,6 +184,7 @@ const DesktopMenu = ({ open, setOpen, children, dataUser }) => {
                 overflowY: 'scroll',
                 pb: '1rem',
                 overflowX: 'hidden',
+                scrollbarWidth: 'none',
             }}>
                 {children}
             </Box>

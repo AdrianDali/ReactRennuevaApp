@@ -15,13 +15,17 @@ const SignatureComponent = ({ id, type }) => {
   const save = async () => {
     let url = "";
     if (type === "Receptor") {
-      url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
+      url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
     } else if (type === "Donador") {
       url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
-    } else if (type === "Recolector") {
-      url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
-    } else if (type === "Generador") {
+    } else if (type === "Recolector"  ) {
+      url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
+    } else if ( type === "Generador") {
       url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
+    }else if (type === "Donor") {
+      url = `${process.env.REACT_APP_API_URL}/update-report-donor-signature/`;
+    }else if (type === "Conductor") {
+      url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
     }
 
     setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
@@ -38,13 +42,18 @@ const SignatureComponent = ({ id, type }) => {
         data = {
           reportId: id,
           reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
-        };
+        }
+      }else if (type === "Donor" || type === "Conductor") {
+        data = {
+          reportId: id,
+          recollectionFirm: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
+        }
       }
 
       const response = await axios.post(url, data);
       return response.data;
     } catch (error) {
-      console.error(error);
+      console.log(error)
       throw error;
     }
   };

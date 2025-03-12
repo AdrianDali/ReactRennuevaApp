@@ -135,7 +135,7 @@ export default function UserInfoSubTable({ request }) {
                 fontWeight={500}
                 gutterBottom
               >
-                Número exterior:{" "}
+                Número exterior:
               </Typography>
               <Typography variant="body1" display="inline" gutterBottom>
                 {request.address_num_ext}

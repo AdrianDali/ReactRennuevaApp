@@ -39,7 +39,10 @@ import CentroList from '../containers/ListSideBarCentro/CentroList.jsx';
 import  ResiduesMenu  from '../pages/Menus/ResiduesMenu.jsx'
 import CollectionCenterMenu from '../pages/Menus/CollectionCenterMenu.jsx';
 import ReciclajeList from '../containers/ListSideBarReciclaje.jsx';
-
+import { ReportsAssignedRecyclingMenu } from '../pages/Menus/ReportsAssignedRecyclingMenu.jsx';
+import { MenuStatusFolio } from '../pages/Menus/MenuStatusFolios.jsx';
+import MenuAssignedAcopioOrders from '../pages/Menus/MenuAssignedAcopioOrders.js';
+import { GlobalStyles } from '@mui/material';
 function App() {
 
   
@@ -114,10 +117,15 @@ function App() {
   
     //menus para grupo de conductores 
     { path: '/driver/assigned-orders', element: <CentroLayout List={<DriverList/>}><MenuAssignedOrders/></CentroLayout> },
+    { path: '/driver/center-orders', element: <CentroLayout List={<DriverList/>}><MenuAssignedAcopioOrders/></CentroLayout> },
+   
+  
     //menu para grupo de contenedor
     {path:'/centro/home', element: <CentroLayout List={<CentroList/>}><ContainerMenu/></CentroLayout> },
     {path : '/centro/residuos', element: <CentroLayout List={<CentroList/>}><ResiduesMenu/> </CentroLayout>},
+    {path : '/centros/assignments', element: <CentroLayout List={<ReciclajeList/>}><ReportsAssignedRecyclingMenu/></CentroLayout>},
     {path : '/centrosAcopio', element: <CentroLayout List={<ReciclajeList/>}><CollectionCenterMenu/> </CentroLayout>},
+    {path : '/centro/status', element: <CentroLayout List={<ReciclajeList/>}><MenuStatusFolio/> </CentroLayout>},
 
 
     
@@ -131,6 +139,34 @@ function App() {
 
   return (
     <TodoProvider>
+      {/* GlobalStyles para personalizar el scroll */}
+      <GlobalStyles
+        styles={{
+          '*': {
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(0,0,0,0.3) transparent',
+          },
+          'html': {
+            // Para el scroll suave en algunos navegadores
+            scrollBehavior: 'smooth'
+          },
+          '::-webkit-scrollbar': {
+            width: '3px',
+            height: '3px',
+          },
+          '::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '::-webkit-scrollbar-thumb': {
+            background: 'rgba(0,0,0,0.3)',
+            borderRadius: '3px',
+          },
+          '::-webkit-scrollbar-thumb:hover': {
+            background: 'rgba(0,0,0,0.5)',
+          },
+          // Para Firefox
+        }}
+      />
       <RouterProvider router={router} />
     </TodoProvider>
   );

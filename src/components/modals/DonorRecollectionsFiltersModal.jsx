@@ -49,16 +49,16 @@ function MultipleSelect({ data, label, name, setFilters, filters }) {
                 input={<OutlinedInput id={labelFormated} label={label} />}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                            <Chip color='primary' key={value} label={value} />
+                        {selected.map((value, index) => (
+                            <Chip color='primary' key={`${value}-${index}`} label={value} />
                         ))}
                     </Box>
                 )}
                 MenuProps={MenuProps}
             >
-                {data.map((id) => (
+                {data.map((id, index) => (
                     <MenuItem
-                        key={id}
+                        key={`${id}-${index}`}
                         value={id}
                         style={getStyles(id, filters[name], theme)}
                     >
@@ -98,14 +98,14 @@ function SelectForBooleans({ data, label, name, setFilters, filters, trueValueLa
                 input={<OutlinedInput id={labelFormated} label={label} />}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                            <Chip color='primary' key={(value ? trueValueLabel : falseValueLabel).replace(" ", "")} label={value ? trueValueLabel : falseValueLabel} />
+                        {selected.map((value, index) => (
+                            <Chip color='primary' key={(value ? `${trueValueLabel.replace(" ", "")}-${index}` : `${falseValueLabel.replace(" ", "")}-${index}`)} label={value ? trueValueLabel : falseValueLabel} />
                         ))}
                     </Box>
                 )}
                 MenuProps={MenuProps}
             >
-                {data.map((id) => (
+                {data.map((id, index) => (
                     <MenuItem
                         key={(id ? trueValueLabel : falseValueLabel).replace(" ", "-")}
                         value={id}
@@ -157,7 +157,6 @@ function DateRangeFilter({ name, setFilters, label, filters }) {
 
 
 export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, setFilteredData, objects, setFiltersApplied }) {
-    console.log('data en modal', data)
     const [filters, setFilters] = useState({
         conductor_asignado: [],
         codigo_postal: [],
@@ -251,10 +250,10 @@ export default function DonorRecolecctionsFiltersModal({ isOpen, setOpen, data, 
                 <Box display='flex' flexDirection='column' gap={2} sx={{ padding: 2 }} >
                     <DateRangeFilter name='fecha' setFilters={setFilters} label='Fecha de solicitud' filters={filters} />
                     <DateRangeFilter name='fecha_estimada_recoleccion' setFilters={setFilters} label='Fecha estimada de recolección' filters={filters} />
-                    <MultipleSelect data={data.status} label="Esatdo de recolección" name='status' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.status} label="Estado de recolección" name='status' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.codigo_postal} label="Código postal" name='codigo_postal' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.ciudad} label="Ciudad" name='ciudad' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.estado} label="Esatdo" name='estado' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.estado} label="Estado" name='estado' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.peso} label="Peso" name='peso' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.peso_estimado} label="Peso estimado" name='peso_estimado' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.conductor_asignado} label="Conductor asignado" name='conductor_asignado' setFilters={setFilters} filters={filters} />

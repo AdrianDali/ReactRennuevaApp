@@ -264,11 +264,11 @@ export default function ReportsFiltersModal({ isOpen, setOpen, data, setFiltered
                     <SelectForBooleans data={data.firma_responsiva_receptor} label="Firmado por receptor" name='firma_responsiva_receptor' setFilters={setFilters} filters={filters} falseValueLabel="Sin firmar" trueValueLabel="Firmado" />
                     <MultipleSelect data={data.centro_recoleccion} label="Centro de recolección" name='centro_recoleccion' setFilters={setFilters} filters={filters} />
                     
-                    <MultipleSelect data={data.centro_reciclaje} label="Centro de recilaje" name='centro_reciclaje' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.centro_reciclaje} label="Centro de reciclaje" name='centro_reciclaje' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.ciudad_reporte} label="Ciudad del reporte" name='ciudad_reporte' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.ciudad_usuario} label="Ciudad del generador" name='ciudad_usuario' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.compania_usuario} label="Compañía del generador" name='compania_usuario' setFilters={setFilters} filters={filters} />
-                    <MultipleSelect data={data.transportista} label="Tranposrtista" name='transportista' setFilters={setFilters} filters={filters} />
+                    <MultipleSelect data={data.transportista} label="Transportista" name='transportista' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.cp_reporte} label="Código postal del reporte" name='cp_reporte' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.cp_usuario} label="Código postal del generador" name='cp_usuario' setFilters={setFilters} filters={filters} />
                     <MultipleSelect data={data.estado_reporte} label="Estado del reporte" name='estado_reporte' setFilters={setFilters} filters={filters} />

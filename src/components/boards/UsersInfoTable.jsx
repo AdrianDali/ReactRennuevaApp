@@ -42,26 +42,18 @@ import {
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
-import { useState, useContext, useEffect, useRef } from "react";
-import GeneratorsFiltersModal from "../modals/GeneratorsFiltersModal";
-import { ModalGenerator } from "../../pages/ModalGenerator";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
-import { statusColor, statusText } from "../../helpers/statusModifiers";
-import DonorRecollectionInfo from "./DonorRecollectionInfo";
-import EditRecolectionModal from "./EditRecolectionModal";
-import DeleteDonorRecollectionsModal from "../modals/DeleteDonorRecollectionsModal";
-import DonorRecolecctionsFiltersModal from "../modals/DonorRecollectionsFiltersModal";
 import { ModalUser } from "../../pages/Users/ModalUser";
 import UsersFiltersModal from "../modals/UsersFiltersModal";
 import DeleteUserModal from "../modals/DeleteUserModal";
-import { set } from "date-fns";
 import UserInfoSubTable from "./UserInfoSubTable";
+import { set } from "date-fns";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
-  const { setOpenModalEditGenerator, setOpenModalDeleteGenerator } =
+  const { setOpenModalEdit, setOpenModalDeleteGenerator } =
     useContext(TodoContext);
   const open = Boolean(anchorEl);
 
@@ -70,7 +62,7 @@ function RowContextMenu({ anchorEl, setAnchorEl }) {
   };
 
   const handleEdit = () => {
-    setOpenModalEditGenerator(true);
+    setOpenModalEdit(true);
     handleClose();
   };
 
@@ -116,13 +108,13 @@ function ExportOptionsMenu({
 
   const handleExportAll = () => {
     //console.log(allData)
-    generateExcelFromJson(allData, "Generadores");
+    generateExcelFromJson(allData, "Usuarios");
     handleClose();
   };
 
   const handleExportVisible = () => {
     //console.log(filteredData)
-    generateExcelFromJson(filteredData, "Generadores");
+    generateExcelFromJson(filteredData, "Usuarios");
     handleClose();
   };
 
@@ -132,7 +124,7 @@ function ExportOptionsMenu({
       selectedData.includes(generador.user)
     );
     //console.log(dataToExport)
-    generateExcelFromJson(dataToExport, "Generadores");
+    generateExcelFromJson(dataToExport, "Usuarios");
     handleClose();
   };
 
@@ -164,7 +156,7 @@ function ExportOptionsMenu({
   );
 }
 
-function SearchField({ filteredData, setVisibleData }) {
+function SearchField({ setPage, filteredData, setVisibleData }) {
   const [showSearch, setShowSearch] = useState(false);
   const searchInputRef = useRef();
   const searchButtonRef = useRef();
@@ -180,16 +172,23 @@ function SearchField({ filteredData, setVisibleData }) {
       const search = searchValue.trim().toLowerCase();
       if (search === "") {
         setVisibleData(filteredData);
+        setPage(0);
       } else {
         const newData = filteredData.filter((generador) => {
           return (
-            generador.first_name.toLowerCase().includes(search) ||
-            generador.phone.toLowerCase().includes(search) ||
-            generador.email.toLowerCase().includes(search) ||
-            generador.address_street.toLowerCase().includes(search)
+            generador.first_name?.toLowerCase().includes(search) ||
+            generador.phone?.toLowerCase().includes(search) ||
+            generador.email?.toLowerCase().includes(search) ||
+            generador.address_street?.toLowerCase().includes(search) ||
+            generador.rfc?.toLowerCase().includes(search)||
+            generador.address_postal_code?.toString().toLowerCase().includes(search)||
+            generador.address_state?.toLowerCase().includes(search)||
+            generador.address_city?.toLowerCase().includes(search)||
+            generador.address_locality?.toLowerCase().includes(search)
           );
         });
         setVisibleData(newData);
+        setPage(0);
       }
     }
   };
@@ -210,7 +209,7 @@ function SearchField({ filteredData, setVisibleData }) {
           onChange={(e) => setSearchValue(e.target.value)}
           id="search-field"
           inputRef={searchInputRef}
-          label="Búscar"
+          label="Buscar"
           variant="standard"
           size="small"
           sx={{
@@ -240,6 +239,7 @@ function SearchField({ filteredData, setVisibleData }) {
 }
 
 function Toolbar({
+  setPage,
   selected,
   setOpenFiltersModal,
   setUsersToDelete,
@@ -248,7 +248,7 @@ function Toolbar({
   allData,
   setVisibleData,
 }) {
-  const { setOpenModalCreateDonor, setOpenModalDeleteGenerator,  openModalCreate, setOpenModalCreate } =
+  const { setOpenModalCreateDonor, setOpenModalDeleteGenerator, openModalCreate, setOpenModalCreate } =
     useContext(TodoContext);
   const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
 
@@ -268,9 +268,8 @@ function Toolbar({
           color="secondary"
           sx={{ p: 2 }}
         >
-          {`${selected.length} ${
-            selected.length === 1 ? "seleccionado" : "seleccionados"
-          }`}
+          {`${selected.length} ${selected.length === 1 ? "seleccionado" : "seleccionados"
+            }`}
         </Typography>
         <Box>
           <Button
@@ -291,8 +290,8 @@ function Toolbar({
             sx={{ m: 2 }}
             onClick={(e) => {
               e.stopPropagation();
-              setOpenModalDeleteGenerator(true);
               setUsersToDelete(selected);
+              setOpenModalDeleteGenerator(true);
             }}
           >
             Borrar
@@ -321,6 +320,7 @@ function Toolbar({
       </Typography>
       <Box>
         <SearchField
+          setPage={setPage}
           filteredData={filteredData}
           setVisibleData={setVisibleData}
         />
@@ -374,7 +374,7 @@ function Toolbar({
   );
 }
 
-export default function UserInfoTable({ data ,centers ,recyclingCenters, collectionCenters}) {
+export default function UserInfoTable({ data, centers, recyclingCenters, collectionCenters }) {
   console.log(recyclingCenters);
   const [filteredData, setFilteredData] = useState(data);
   const [recollectionsToDelete, setRecollectionsToDelete] = useState([]);
@@ -389,23 +389,14 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
   const [openEditModal, setOpenEditModal] = useState(false);
 
   const {
-    setUpdateDonorInfo,
-    updateDonorInfo,
-    setTextOpenModalText,
     setOpenModalDeleteGenerator,
     openModalText,
     textOpenModalText,
     setOpenModalText,
-    setOpenModalCreate,
     setOpenModalEdit,
-    setOpenModalDelete,
     openModalCreate,
     openModalEdit,
-    openModalDelete,
-    updateUserInfo,
-    setUpdateUserInfo,
-    
-} = useContext(TodoContext);
+  } = useContext(TodoContext);
   const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const [generalCheckboxStatus, setGeneralCheckboxStatus] =
@@ -486,34 +477,20 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
         ...new Set(data.map((req) => req.conductor_asignado)),
       ];
       const address_postal_code = [...new Set(data.map((req) => req.address_postal_code))];
-      //const fecha = [...new Set(data.map((req) => req.fecha))];
       const address_city = [...new Set(data.map((req) => req.address_city))];
       const address_state = [...new Set(data.map((req) => req.address_state))];
       const address_locality = [...new Set(data.map((req) => req.address_locality))];
       const address_street = [...new Set(data.map((req) => req.address_street))];
       const groups = [...new Set(data.map((req) => req.groups[0]))];
-    //   const fecha_estimada_recoleccion = [
-    //     ...new Set(data.map((req) => req.fecha_estimada_recoleccion)),
-    //   ];
-    //   const hora_preferencte_recoleccion = [
-    //     ...new Set(data.map((req) => req.fecha_preferente_recoleccion)),
-    //   ];
-    //   const peso = [...new Set(data.map((req) => req.peso))];
-    //   const peso_estimado = [...new Set(data.map((req) => req.peso_estimado))];
-    //   const status = [...new Set(data.map((req) => req.status))];
 
       setDataForFilters({
         conductor_asignado,
         address_postal_code,
-        //fecha,
         address_city,
         address_state,
         address_locality,
         address_street,
         groups,
-        // peso,
-        // peso_estimado,
-        // status,
       });
     }
   }, [data]);
@@ -521,11 +498,12 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
   return (
     <Box sx={{ width: "100%", mb: "3rem" }}>
       <Paper sx={{
-          height: "80%",
-          overflow: "auto",
-          padding: 2,
-        }}>
+        height: "80%",
+        overflow: "auto",
+        padding: 2,
+      }}>
         <Toolbar
+          setPage={setPage}
           selected={selected}
           allData={data}
           filteredData={filteredData}
@@ -574,13 +552,6 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                     <Typography variant="subtitle2">Grupo</Typography>
                   </TableSortLabel>
                 </TableCell>
-                {/* <TableCell>
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        <Typography variant="subtitle2">Estado</Typography>
-                                    </TableSortLabel>
-                                </TableCell> */}
                 <TableCell>
                   <Typography variant="subtitle2">Editar</Typography>
                 </TableCell>
@@ -598,7 +569,7 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                       color="textSecondary"
                       align="center"
                     >
-                      No se encontraron solicitudes de reolección
+                      No se encontraron solicitudes de recolección
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -606,7 +577,7 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                 visibleData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((request) => (
-                    <>
+                    <React.Fragment key={`row-user-${request.email}`}>
                       <TableRow
                         hover
                         role="checkbox"
@@ -625,8 +596,8 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                         }}
                         onContextMenu={(e) => {
                           e.preventDefault();
-                          setRecollectionToEdit(request);
-                          setRecollectionsToDelete([request.id]);
+                          setUserToEdit(request);
+                          setRecollectionsToDelete([request]);
                           setRowContextMenuAnchorEl(e.target);
                         }}
                       >
@@ -673,9 +644,6 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                         <TableCell>{request.email}</TableCell>
                         <TableCell>{request.direccion_completa}</TableCell>
                         <TableCell>{request.groups[0]}</TableCell>
-                        {/* <TableCell>
-                                                    <Chip label={statusText(request.status)} color={statusColor(request.status)} />
-                                                </TableCell> */}
                         <TableCell>
                           <IconButton
                             onClick={(e) => {
@@ -694,7 +662,7 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                             onClick={(e) => {
                               e.stopPropagation();
                               setRecollectionsToDelete([request]);
-                              setOpenModalDelete(true);
+                              setOpenModalDeleteGenerator(true);
                             }}
                           >
                             <Delete />
@@ -720,7 +688,7 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
                           </Collapse>
                         </TableCell>
                       </TableRow>
-                    </>
+                    </React.Fragment>
                   ))
               )}
             </TableBody>
@@ -748,13 +716,13 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
         anchorEl={rowContextMenuAnchorEl}
         setAnchorEl={setRowContextMenuAnchorEl}
       />
-      {openModalCreate && 
-        <ModalUser mode={"CREAR"} 
-          creatorUser={dataUser.user} 
-          centers={centers} 
-          recyclingCenters={recyclingCenters} 
-          collectionCenters={collectionCenters} 
-          />
+      {openModalCreate &&
+        <ModalUser mode={"CREAR"}
+          creatorUser={dataUser.user}
+          centers={centers}
+          recyclingCenters={recyclingCenters}
+          collectionCenters={collectionCenters}
+        />
       }
       {openModalEdit && (
         <ModalUser
@@ -766,17 +734,7 @@ export default function UserInfoTable({ data ,centers ,recyclingCenters, collect
           collectionCenters={collectionCenters}
         />
       )}
-      {openModalDelete && (
-        <ModalUser  
-          mode={"BORRAR"}
-          creatorUser={dataUser.user}
-          usersToEdit={userToEdit}  
-          centers={centers}
-          recyclingCenters={recyclingCenters}
-          collectionCenters={collectionCenters}      
-        />
-      )}
-
+      <DeleteUserModal users={recollectionsToDelete} />
       {openModalText && (
         <Dialog
           open={openModalText}

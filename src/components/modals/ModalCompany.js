@@ -12,8 +12,10 @@ import {
   Box,
   FormControl,
   InputLabel,
+  IconButton,
 } from "@mui/material";
 import Title from "../../components/Title.js";
+import { Close } from "@mui/icons-material";
 
 function ModalCompany({ children, mode, creatorUser }) {
   const [datos, setDatos] = useState([]);
@@ -22,6 +24,7 @@ function ModalCompany({ children, mode, creatorUser }) {
   const [companies, setCompanies] = useState([""]);
   const [user, setUser] = useState("");
   const [rfc, setRfc] = useState("");
+  const [razonSocial, setRazonSocial] = useState("");
   const [phone, setPhone] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [companyOldName, setCompanyOldName] = useState("");
@@ -76,6 +79,8 @@ function ModalCompany({ children, mode, creatorUser }) {
             CompanyMainWeb: companyMainWeb,
             CompanySecondWeb: companySecondWeb,
             CompanyFontName: companyFontName,
+            RazonSocial: razonSocial,
+            RFC: rfc,
             creator_user: creator
         };
 
@@ -85,7 +90,7 @@ function ModalCompany({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Compañia creada correctamente");
+          setTextOpenModalText("Compañía creada correctamente");
           setUpdateCompanyInfo(true);
           e.target.reset();
 
@@ -97,10 +102,10 @@ function ModalCompany({ children, mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -116,10 +121,12 @@ function ModalCompany({ children, mode, creatorUser }) {
             CompanySecondWeb: companySecondWeb,
             CompanyFontName: companyFontName,
             CompanyNewName: companyName,
-            creator_user: creator
+            creator_user: creator,
+            RazonSocial: razonSocial,
+            RFC: rfc
       };
-      console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
-      console.log(editarDato);
+      //console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
+      //console.log(editarDato);
 
       axios
         .put(`${process.env.REACT_APP_API_URL}/update-companie/`, editarDato)
@@ -127,7 +134,7 @@ function ModalCompany({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Compañia editado correctamente");
+          setTextOpenModalText("Compañía editado correctamente");
           setUpdateCompanyInfo(true);
           e.target.reset();
           closeModal();
@@ -139,10 +146,10 @@ function ModalCompany({ children, mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -162,7 +169,7 @@ function ModalCompany({ children, mode, creatorUser }) {
           console.log("#######################    Borrado    #################")
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Compañia borrado correctamente");
+          setTextOpenModalText("Compañía borrado correctamente");
           setUpdateCompanyInfo(true);
           e.target.reset();
           closeModal();
@@ -173,10 +180,10 @@ function ModalCompany({ children, mode, creatorUser }) {
     
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salio mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salio mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
           } else {
-            setTextOpenModalText("Algo salio mal. Intenta de nuevo");
+            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
     
           console.error(error.response);
@@ -244,6 +251,8 @@ function ModalCompany({ children, mode, creatorUser }) {
     setCompanyMainWeb(datoEncontrado.main_web);
     setCompanySecondWeb(datoEncontrado.second_web);
     setCompanyFontName(datoEncontrado.font_name);
+    setRazonSocial(datoEncontrado.razon_social);
+    setRfc(datoEncontrado.rfc);
 
   };
 
@@ -286,18 +295,18 @@ function ModalCompany({ children, mode, creatorUser }) {
           borderRadius: 2,
         }}
       >
-        <Button
+        <IconButton
           onClick={closeModal}
           sx={{ position: "absolute", right: 2, top: 2 }}
         >
-          &times;
-        </Button>
+          <Close />
+        </IconButton>
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
-            <Title> Compañia</Title>
+            <Title> Compañía</Title>
             {mode === "EDITAR" || mode === "BORRAR" ? (
               <FormControl fullWidth>
-                <InputLabel id="user-select-label">Compañia</InputLabel>
+                <InputLabel id="user-select-label">Compañía</InputLabel>
                 <Select
                   labelId="user-select-label"
                   id="user-select"
@@ -325,6 +334,26 @@ function ModalCompany({ children, mode, creatorUser }) {
               fullWidth
               value={companyName} // Asegúrate de tener un estado para esto
               onChange={(e) => handleInputChange(e, setCompanyName, mode)}
+              margin="dense"
+            />
+            <TextField
+              label="RFC"
+              name="rfc"
+              fullWidth
+              value={rfc}
+              onChange={handleRfcChange}
+              margin="dense"
+              inputProps={{
+                maxLength: 13, // Opcional: si quieres forzar la longitud máxima en el HTML
+              }}
+            />
+            <TextField
+              label="Razón Social"
+              name="razon_social"
+              required
+              fullWidth
+              value={razonSocial}
+              onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
               margin="dense"
             />
             <TextField

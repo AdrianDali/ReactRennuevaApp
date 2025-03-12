@@ -1,4 +1,4 @@
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import ConfirmationModal from './ConfirmationModal';
 import { Box, Typography, List, ListItem } from '@mui/material';
 import useAuth from '../../hooks/useAuth';
@@ -9,17 +9,12 @@ import NotificationModal from './NotificationModal';
 export default function DeleteUserModal({ users }) {
     const [opneNotification, setOpenNotification] = useState(false);
     const {
-        setUpdateDonorInfo,
+        setUpdateUserInfo,
         openModalDeleteGenerator,
         setOpenModalDeleteGenerator,
     } = useContext(TodoContext);
     const userData = useAuth();
 
-    console.log("userData", userData)
-    console.log("users", users)
-    console.log("openModalDeleteGenerator", openModalDeleteGenerator)
-    console.log("setOpenModalDeleteGenerator", setOpenModalDeleteGenerator)
-    console.log("setUpdateDonorInfo", setUpdateDonorInfo)
 
     const title = `¿Está seguro de realizar esta operación?`;
     const [success, setSuccess] = useState(false);
@@ -30,7 +25,7 @@ export default function DeleteUserModal({ users }) {
         setLoading(true);
         if (userData === null) return;
         const creator = userData.user;
-        const usersToDelete = users.users.map(generator => ({ email: generator, 'creator_user': creator }));
+        const usersToDelete = users.map(generator => ({ email: generator.email, 'creator_user': creator }));
         const promises = deleteUsers(usersToDelete);
         await promises.then(async (response) => {
             setResult(response);
@@ -44,10 +39,10 @@ export default function DeleteUserModal({ users }) {
 
     const body = (
         <Box px={1} pt={1}>
-            <Typography variant='body1'>Se eliminarán los siguientes generadorssssses:</Typography>
+            <Typography variant='body1'>Se eliminarán los siguientes usuarios:</Typography>
             <List sx={{ p: 0, pt: 1, pl: 1 }} >
-                {users.map(generator => <ListItem sx={{ p: 0 }} key={generator}>
-                    <Typography variant='body1'>{generator}</Typography>
+                {users.map(generator => <ListItem sx={{ p: 0 }} key={generator.email}>
+                    <Typography variant='body1'>{generator.email}</Typography>
                 </ListItem>)}
             </List>
         </Box>
@@ -63,7 +58,7 @@ export default function DeleteUserModal({ users }) {
                 {result.map(res => {
                     if (res.status === 'fulfilled') return null;
                     const user = JSON.parse(res.reason.config.data);
-                    const errorMessage = res.reason.response.data.errorMessage? res.reason.response.data.errorMessage : res.reason.response.statusText;
+                    const errorMessage = res.reason.response.data.errorMessage.error?? "Error desconocido";
                     return (
                         <ListItem sx={{ p: 0 }} key={user.email}>
                             <Typography variant='body1'>{`${user.email} - ${errorMessage}`}</Typography>
@@ -76,21 +71,21 @@ export default function DeleteUserModal({ users }) {
 
     return (
         <>
-            <ConfirmationModal isOpen={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator} title={title} severity='error' loading={loading} onConfirm={async () => {
+            <ConfirmationModal onCancel={()=> setOpenModalDeleteGenerator(false)} isOpen={openModalDeleteGenerator} setOpen={setOpenModalDeleteGenerator} title={title} severity='error' loading={loading} onConfirm={async () => {
                 await handleDeleteGenerators();
-            }}>
-
+            }}>          
+                {body}
             </ConfirmationModal>
 
-            <NotificationModal 
-                isOpen={opneNotification} 
+            <NotificationModal
+                isOpen={opneNotification}
                 setOpen={setOpenNotification}
-                title={success ? "Generadores eliminados con éxito" : "Ocurrió un error"} 
-                severity={success ? "success" : "error"} 
-                onAccept={()=>{
-                    setUpdateDonorInfo(prev => !prev)
-                    }}>
-                {success ? "Los generadores se eliminaron correctamente" : notificationBody}
+                title={success ? "Operación exitosa" : "Ocurrió un error"}
+                severity={success ? "success" : "error"}
+                onAccept={() => {
+                    setUpdateUserInfo(prev => !prev)
+                }}>
+                {success ? "Los usuarios se eliminaron correctamente" : notificationBody}
             </NotificationModal>
         </>
     )

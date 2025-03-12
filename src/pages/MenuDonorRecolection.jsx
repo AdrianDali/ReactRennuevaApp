@@ -1,10 +1,11 @@
 import Title from "../components/Title.js";
 import useAuth from "../hooks/useAuth.js";
 import DonorRecollectionsTable from "../components/boards/DonorRecollectionsTable.jsx";
-import { Container, Box } from "@mui/material";
+import { Container, Box, CircularProgress } from "@mui/material";
 import { TodoContext } from "../context/index.js"
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
+import LoadingComponent from "./Menus/LoadingComponent.jsx";
 
 export default function MenuDonorRecolection() {
   const {
@@ -12,6 +13,7 @@ export default function MenuDonorRecolection() {
   } = useContext(TodoContext);
 
   const [donorRequests, setDonorRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // ... otros handlers y useEffect ...
   const dataUser = useAuth();
@@ -20,8 +22,8 @@ export default function MenuDonorRecolection() {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-donors-recollection/`)
       .then(response => {
-        console.log(response.data.ordenes);
         setDonorRequests(response.data.ordenes);
+        setLoading(false);
       })
       .catch(error => {
         //console.error(error);
@@ -31,7 +33,7 @@ export default function MenuDonorRecolection() {
 
   return (
     <>
-      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") ? (
+      {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") && !loading ? (
         <Container
           maxWidth={false}
           sx={{
@@ -43,7 +45,7 @@ export default function MenuDonorRecolection() {
         >
           <DonorRecollectionsTable data={donorRequests} />
         </Container>
-      ) : (
+      ) : loading ? <LoadingComponent/>: (
         <Box
           sx={{
             display: "flex",

@@ -50,8 +50,8 @@ export default function DonorRecollectionInfo({ request }) {
                             <Typography variant="body1" display="inline" gutterBottom>{request.codigo_postal}</Typography>
                         </Box>
                         <Box>
-                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Ciudad: </Typography>
-                            <Typography variant="body1" display="inline" gutterBottom>{request.ciudad}</Typography>
+                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Alcaldía/Municipio: </Typography>
+                            <Typography variant="body1" display="inline" gutterBottom>{request.alcaldia?? request.ciudad}</Typography>
                         </Box>
                         <Box>
                             <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Estado: </Typography>
@@ -93,6 +93,11 @@ export default function DonorRecollectionInfo({ request }) {
                             <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>fecha de recolección estimada: </Typography>
                             <Typography variant="body1" display="inline" gutterBottom>{request.fecha_estimada_recoleccion !== "2000-01-01" ? request.fecha_estimada_recoleccion : "Sin asignar"}</Typography>
                         </Box>
+                        <Box>
+                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>fecha de recolección realizada: </Typography>
+                            <Typography variant="body1" display="inline" gutterBottom>{request.fecha_creacion_reporte !== "No recolectado aun" ? request.fecha_creacion_reporte : "Sin asignar"}</Typography>
+                        </Box>
+
                     </Box>
                 </Box>
             </Box>

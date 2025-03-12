@@ -6,26 +6,31 @@ import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import CollectionsCentersTable from "../../components/boards/CollectionsCentersTable";
 import CollectionCentersOccupation from "../../Charts/CollectionCentersOccupation";
+import LoadingComponent from "./LoadingComponent";
 
 export default function CollectionCenterMenu() {
     const [collectionCenters, setCollectionsCenters] = useState([]);
-    const { updateCollectionCenterInfo, setUpdateCollectionCenterInfo} = useContext(TodoContext);
+    const { updateCollectionCenterInfo} = useContext(TodoContext);
     const dataUser = useAuth();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!dataUser) return;
         axios
             .get(`${process.env.REACT_APP_API_URL}/all-collection-center-residue-summary/`)
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 setCollectionsCenters(response.data.centers);
             })
             .catch((error) => {
                 console.error(error);
+            }).finally(() => {
+                setLoading(false);
             });
     }, [updateCollectionCenterInfo, dataUser]);
 
     return (
+        loading ? <LoadingComponent/> :
         <Container
             maxWidth={false}
             sx={{

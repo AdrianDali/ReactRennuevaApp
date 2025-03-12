@@ -13,11 +13,9 @@ export default async function GetDriverOrderRecollection() {
     const refreshToken = getCookie('refresh');
     const username = getCookie('user');
     const accessToken = getCookie('access');
-
-    console.log(refreshToken); // Esto mostrará el valor de la cookie 'refresh'
-    console.log(username); // Esto mostrará el valor de la cookie 'user'
-    console.log(accessToken); // Esto mostrará el valor de la cookie 'access'
-
+    console.log("refreshToken", refreshToken);
+    console.log("accessToken", accessToken);
+    console.log("username", username);
 
     const request = {
         user : username, 

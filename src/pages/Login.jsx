@@ -25,6 +25,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import loginDonor from "../services/ApiLoginAWT";
 import GetUser from "../services/ApiGetUser";
 import { TodoContext } from "../context";
+import { CircularProgress } from "@mui/material";
 
 function Copyright(props) {
   return (
@@ -47,6 +48,7 @@ function Copyright(props) {
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
+
 export default function SignInSide() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -54,6 +56,7 @@ export default function SignInSide() {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -69,6 +72,8 @@ export default function SignInSide() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setShowModal(false);
+    setLoading(true);
     console.log("username", username);
     const req = {
       username: username,
@@ -76,14 +81,8 @@ export default function SignInSide() {
     };
 
     try {
-      const { data, success, message } = await loginDonor(req);
 
-      if (success) {
-        console.log("Login successful:", data);
-      } else {
-        console.log("Login failed:", message);
-      }
-      console.log("data", data);
+      const { data, success, message } = await loginDonor(req);
       
       // Almacenar el token en el estado (y posiblemente en un almacenamiento persistente como localStorage)
       document.cookie = `user=${username}; SameSite=Lax; Secure`;
@@ -145,6 +144,8 @@ export default function SignInSide() {
       setShowModal(true); // Mostrar el modal de error
       setUsername(""); // Limpiar campo de usuario
       setPassword(""); // Limpiar campo de contraseña
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -183,7 +184,7 @@ export default function SignInSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Iniciar Sesion
+              Iniciar Sesión
             </Typography>
             <Box
               component="form"
@@ -196,7 +197,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 id="email"
-                label="Correo Electronico"
+                label="Correo Electrónico"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -244,8 +245,11 @@ export default function SignInSide() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                disabled={loading}
               >
-                Ingresar
+                {
+                  loading ? <CircularProgress size="2rem"/>: 'Iniciar Sesión'
+                }
               </Button>
               {showModal && (
                 <div>
@@ -261,12 +265,12 @@ export default function SignInSide() {
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2" onClick={() => navigate("/reset-password-request/")}>
-                    Olvidaste tu Contrasena?
+                    Olvidaste tu Contraseña?
                   </Link>
                 </Grid>
                 {/* <Grid item>
                   <Link href="/register" variant="body2">
-                    {"Aun no tienes cuenta? Registrate"}
+                    {"Aun no tienes cuenta? Regístrate"}
                   </Link>
                 </Grid> */}
               </Grid>

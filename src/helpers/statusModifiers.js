@@ -1,14 +1,16 @@
 const statusText = (status) => {
+    status = status.toLowerCase()
+
     switch (status) {
         case 'solicitado':
             return 'Solicitada'
-        case 'pendienteRecoleccion':
+        case 'pendienterecoleccion':
             return 'Pendiente de recolección'
-        case 'recolectada':
-            return 'Recolectada'
+        case 'recolectada' || 'recolectado':
+            return 'Recolectada' 
         case 'cancelado':
             return 'Cancelada'
-        case 'entregadaCentro':
+        case 'entregadacentro':
             return 'Entregada al centro'
         default:
             return 'indefinido'
@@ -16,16 +18,18 @@ const statusText = (status) => {
 }
 
 const statusColor = (status) => {
+    status = status.toLowerCase()
+
     switch (status) {
         case 'solicitada':
             return 'info'
-        case 'pendienteRecoleccion':
+        case 'pendienterecoleccion':
             return 'warning'
-        case 'recolectada':
+        case 'recolectada' || 'recolectado':
             return 'success'
         case 'cancelado':
             return 'error'
-        case 'entregadaCentro':
+        case 'entregadacentro':
             return 'success'
         default:
             return 'info'

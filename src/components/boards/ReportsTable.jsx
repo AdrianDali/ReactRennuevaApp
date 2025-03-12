@@ -26,6 +26,7 @@ import {
   TextField,
   TablePagination,
   Collapse,
+  CircularProgress,
 } from "@mui/material";
 import {
   Add,
@@ -43,10 +44,8 @@ import {
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect, useRef } from "react";
-import { ModalGenerator } from "../../pages/ModalGenerator";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
 import { ModalReport } from "../../pages/ModalReport";
 import dateFormater from "../../services/dateFormater";
@@ -61,9 +60,10 @@ import ReportsFiltersModal from "../modals/ReportsFiltersModal";
 import generateDonorReportPDF from "../../services/generateDonorReportPDF";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import DonorRecollectionInfo from "./DonorRecollectionInfo";
 import ReportInfo from "./ReportInfo";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
+import sortData from "../../helpers/SortData";
+import axios from "axios";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -112,6 +112,7 @@ function ExportOptionsMenu({
   allData,
   filteredData,
   selectedData,
+  setLoadingExport
 }) {
   const open = Boolean(anchorEl);
 
@@ -119,45 +120,138 @@ function ExportOptionsMenu({
     setAnchorEl(null);
   };
 
-  const handleExportAll = () => {
-    //console.log(allData)
-    generateExcelFromJson(allData, "Reportes");
+  const handleExportAll = async () => {
+    setLoadingExport(true);
     handleClose();
+    const newData = JSON.parse(JSON.stringify(allData));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
-  const handleExportVisible = () => {
+  const handleExportVisible = async () => {
     //console.log(filteredData)
-    generateExcelFromJson(filteredData, "Reportes");
+    setLoadingExport(true);
     handleClose();
+    const newData = JSON.parse(JSON.stringify(filteredData));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
-  const handleExportSelected = () => {
+  const handleExportSelected = async () => {
     //console.log(selectedData)
+    setLoadingExport(true);
+    handleClose();
     const dataToExport = allData.filter((report) =>
       selectedData.includes(report.id_report)
     );
-    //console.log(dataToExport)
-    generateExcelFromJson(dataToExport, "Reportes");
-    handleClose();
+
+    const newData = JSON.parse(JSON.stringify(dataToExport));
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const residues = response.data;
+
+    for (let reportIdx in newData) {
+      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false  // Para formato 24h
+      });
+      for (let residue of residues) {
+        newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+        newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+      }
+      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const residuesPerReport = responsePerReport.data;
+      for (let residue of residuesPerReport) {
+        newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+        newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+      }
+    }
+
+    generateExcelFromJson(newData, "Reportes");
+    setLoadingExport(false);
   };
 
   return (
     <Menu anchorEl={anchorEl} open={open}>
       <ClickAwayListener onClickAway={handleClose}>
         <MenuList>
-          <MenuItem onClick={handleExportAll}>
+          <MenuItem onClick={async()=> await handleExportAll()}>
             <ListItemIcon>
               <Download />
             </ListItemIcon>
             <ListItemText primary="Exportar todos" />
           </MenuItem>
-          <MenuItem onClick={handleExportVisible}>
+          <MenuItem onClick={async ()=> await handleExportVisible()}>
             <ListItemIcon>
               <Visibility />
             </ListItemIcon>
             <ListItemText primary="Exportar visibles" />
           </MenuItem>
-          <MenuItem onClick={handleExportSelected}>
+          <MenuItem onClick={async ()=> await handleExportSelected()}>
             <ListItemIcon>
               <Check />
             </ListItemIcon>
@@ -180,6 +274,7 @@ function Toolbar({
 }) {
   const { setOpenModalDeleteReport, setOpenModalCreateReport } =
     useContext(TodoContext);
+  const [loadingExport, setLoadingExport] = useState(false);
   const [exportOptionsAchorEl, setExportOptionsAnchorEl] = useState(null);
   if (selected.length > 0)
     return (
@@ -197,9 +292,8 @@ function Toolbar({
           color="secondary"
           sx={{ p: 2 }}
         >
-          {`${selected.length} ${
-            selected.length === 1 ? "seleccionado" : "seleccionados"
-          }`}
+          {`${selected.length} ${selected.length === 1 ? "seleccionado" : "seleccionados"
+            }`}
         </Typography>
         <Box>
           <Button
@@ -209,8 +303,9 @@ function Toolbar({
             startIcon={<Download />}
             sx={{ m: 2 }}
             onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
+            disabled={loadingExport}
           >
-            Exportar
+            {loadingExport? <CircularProgress size={20}/> :"Exportar"}
           </Button>
           <Button
             variant="contained"
@@ -278,8 +373,9 @@ function Toolbar({
           startIcon={<Download />}
           sx={{ m: 2 }}
           onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
+          disabled={loadingExport}
         >
-          Exportar
+          {loadingExport? <CircularProgress size={20}/>: "Exportar"}
         </Button>
         <Button
           variant="contained"
@@ -299,6 +395,7 @@ function Toolbar({
           allData={allData}
           anchorEl={exportOptionsAchorEl}
           setAnchorEl={setExportOptionsAnchorEl}
+          setLoadingExport={setLoadingExport}
         />
       </Box>
     </Box>
@@ -317,7 +414,7 @@ function SearchField({ filteredData, setVisibleData }) {
   }, [showSearch]);
 
   const handleSearch = (e) => {
-    
+
     if (e.key === "Enter") {
       const search = searchValue.trim().toLowerCase();
       if (search === "") {
@@ -356,7 +453,7 @@ function SearchField({ filteredData, setVisibleData }) {
           onChange={(e) => setSearchValue(e.target.value)}
           id="search-field"
           inputRef={searchInputRef}
-          label="Búscar"
+          label="Buscar"
           variant="standard"
           size="small"
           sx={{
@@ -394,10 +491,12 @@ export default function ReportsTable({ data }) {
   const [signType, setSignType] = useState("Generador");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [orderBy, setOrderBy] = useState("id_report");
+  const [order, setOrder] = useState("desc");
+  const [sortedData, setSortedData] = useState([]);
 
   const dataUser = useAuth();
 
-  console.log(data);
   const {
     setTextOpenModalText,
     openModalCreateReport,
@@ -419,7 +518,6 @@ export default function ReportsTable({ data }) {
   const [generalCheckboxStatus, setGeneralCheckboxStatus] =
     useState("unchecked");
   const [openFiltersModal, setOpenFiltersModal] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
 
   const handleExpandClick = (id) => {
@@ -628,6 +726,10 @@ export default function ReportsTable({ data }) {
     }
   }, [data]);
 
+  useEffect(() => {
+    setSortedData(sortData(visibleData, orderBy, order));
+  }, [visibleData, order, orderBy])
+
   return (
     <Box sx={{ width: "100%", mb: "3rem" }}>
       <Paper
@@ -667,41 +769,57 @@ export default function ReportsTable({ data }) {
                 </TableCell>
 
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel
+                    direction={order}
+                    onClick={() => {
+                      setOrderBy("id_report")
+                      setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "id_report" ? true : false}
+                  >
                     <Typography variant="subtitle2">ID</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel
+                    direction={order}
+                    onClick={() => {
+                      setOrderBy("nombre_real_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "nombre_real_usuario" ? true : false}
+                  >
                     <Typography variant="subtitle2">Nombre</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel
+                    direction={order}
+                    onClick={() => {
+                      setOrderBy("apellido_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "apellido_usuario" ? true : false}
+                  >
                     <Typography variant="subtitle2">Apellidos</Typography>
                   </TableSortLabel>
                 </TableCell>
-                {/* <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">RFC</Typography>
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">
-                      Correo electrónico
-                    </Typography>
-                  </TableSortLabel>
-                </TableCell> */}
                 <TableCell>
                   <TableSortLabel direction="asc">
                     <Typography variant="subtitle2">Teléfono</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  <TableSortLabel direction="asc">
+                  <TableSortLabel
+                    direction={order}
+                    onClick={() => {
+                      setOrderBy("direccion_completa_usuario")
+                      setOrder(order === "asc" ? "desc" : "asc")
+                    }}
+                    active={orderBy === "direccion_completa_usuario" ? true : false}
+                  >
                     <Typography variant="subtitle2">
-                      Direccion Completa
+                      Dirección Completa
                     </Typography>
                   </TableSortLabel>
                 </TableCell>
@@ -710,33 +828,42 @@ export default function ReportsTable({ data }) {
                     <Typography variant="subtitle2">Fecha de inicio</Typography>
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Firma generador</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Residuos</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Firma receptor</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">PDF</Typography>
-                </TableCell>
+                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
+                <>
+                  <TableCell>
+                    <Typography variant="subtitle2">Firma generador</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Residuos</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Firma receptor</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">PDF</Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography variant="subtitle2">Finalizar</Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Finalizar</Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography variant="subtitle2">Editar</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Borrar</Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Editar</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Borrar</Typography>
+                  </TableCell>
+
+
+                </>
+                }
+                
+            
+
               </TableRow>
             </TableHead>
             <TableBody>
-              {visibleData.length === 0 ? (
+              {sortedData.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={18}>
                     <Typography
@@ -749,7 +876,7 @@ export default function ReportsTable({ data }) {
                   </TableCell>
                 </TableRow>
               ) : (
-                visibleData
+                sortedData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((report, index) => (
                     <>
@@ -803,21 +930,74 @@ export default function ReportsTable({ data }) {
                         <TableCell>{report.id_report}</TableCell>
                         <TableCell>{report.nombre_real_usuario}</TableCell>
                         <TableCell>{report.apellido_usuario}</TableCell>
-                        {/* <TableCell>{report.rfc_usuario}</TableCell>
-                        <TableCell>{report.email_usuario}</TableCell> */}
                         <TableCell>{report.telefono_usuario}</TableCell>
                         <TableCell>
                           {report.direccion_completa_usuario}
                         </TableCell>
-                        {/* <TableCell>{report.calle_usuario}</TableCell>
-                        <TableCell>{report.colonia_usuario}</TableCell>
-                        <TableCell>{report.cp_usuario}</TableCell>
-                        <TableCell>{report.ciudad_usuario}</TableCell>
-                        <TableCell>{report.estado_usuario}</TableCell> */}
                         <TableCell>
                           {dateFormater(report.fecha_inicio_reporte)}
                         </TableCell>
-                        <TableCell>
+                        {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
+                        <>
+                          <TableCell>
+                            {report.firma_responsiva_generador ? (
+                              <Check />
+                            ) : (
+                              <Close />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {report.residuos_agregados ? <Check /> : <Close />}
+                          </TableCell>
+                          <TableCell>
+                            {report.firma_responsiva_receptor ? <Check /> : <Close />}
+                          </TableCell>
+                          <TableCell>
+                            {report.firma_responsiva_generador &&
+                              report.firma_responsiva_receptor &&
+                              report.residuos_agregados ? (
+                              <Check />
+                            ) : (
+                              <Close />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {report.firma_responsiva_generador &&
+                              report.firma_responsiva_receptor &&
+                              report.residuos_agregados ? (
+                              <Check />
+                            ) : (
+                              <Close />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportToEdit(report);
+                                setOpenModalEditReport(true);
+                              }}
+                            >
+                              <Edit />
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportsToDelete([report.id_report]);
+                                setOpenModalDeleteReport(true);
+                              }}
+                            >
+                              <Delete />
+                            </IconButton>
+                          </TableCell>
+                        </>
+
+                
+                }
+                        {/* <TableCell>
                           <Button
                             startIcon={<Draw />}
                             variant="contained"
@@ -876,8 +1056,8 @@ export default function ReportsTable({ data }) {
                             size="small"
                             color={
                               report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados
+                                report.firma_responsiva_receptor &&
+                                report.residuos_agregados
                                 ? "success"
                                 : "warning"
                             }
@@ -896,8 +1076,8 @@ export default function ReportsTable({ data }) {
                             size="small"
                             color={
                               report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados
+                                report.firma_responsiva_receptor &&
+                                report.residuos_agregados
                                 ? "success"
                                 : "warning"
                             }
@@ -944,7 +1124,7 @@ export default function ReportsTable({ data }) {
                           >
                             <Delete />
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                       <TableRow>
                         <TableCell
@@ -969,7 +1149,7 @@ export default function ReportsTable({ data }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={visibleData.length}
+          count={sortedData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

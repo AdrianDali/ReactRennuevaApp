@@ -39,7 +39,7 @@ const DriverTable = ({ datos }) => {
             <TableRow>
               <TableCell>Nombre</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Telefono</TableCell>
+              <TableCell>Teléfono</TableCell>
                 <TableCell>Licencia</TableCell>
             </TableRow>
           </TableHead>

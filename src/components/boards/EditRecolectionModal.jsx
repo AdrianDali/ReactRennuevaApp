@@ -14,8 +14,8 @@ import {
   TextField,
   FormLabel,
   Typography,
-  Radio, 
-  RadioGroup 
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -25,8 +25,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import ConfirmationModal from "../modals/ConfirmationModal";
-import { Close } from "@mui/icons-material";
+import { Close, Cookie } from "@mui/icons-material";
 import cancelationReassonText from "../../helpers/cancelationReassonText";
+import { set } from "date-fns";
+import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
+import getReportInfo from "../../services/getReportInfo";
+import generateQR from "../../services/generateQR";
 const style = {
   position: "absolute",
   top: "50%",
@@ -47,7 +51,6 @@ export default function EditRecolectionModal({
   setOpenMessageModal,
   update,
   setUpdate,
-
 }) {
   const [isDateCorrect, setIsDateCorrect] = useState(false);
   const [status, setStatus] = useState("");
@@ -57,15 +60,11 @@ export default function EditRecolectionModal({
   const userData = useAuth();
   const [value, setValue] = useState("");
   const [otroTexto, setOtroTexto] = useState("");
-  const [loading, setLoading] = useState(false)
-  const [openConfirmation, setOpenConfirmation] = useState(false)
-
-
-
-  
+  const [loading, setLoading] = useState(false);
+  const [openConfirmation, setOpenConfirmation] = useState(false);
 
   useEffect(() => {
-    console.log(userData);
+    //console.log(userData);
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
       .then((response) => {
@@ -75,12 +74,10 @@ export default function EditRecolectionModal({
       .catch((error) => {
         console.error(error);
       });
-
   }, []);
 
-
   useEffect(() => {
-    if (recolection === null) return
+    if (recolection === null) return;
     switch (recolection?.status) {
       case null:
         setStatus("");
@@ -92,8 +89,12 @@ export default function EditRecolectionModal({
           setStatus("");
         } else {
           setStatus("pendienteRecoleccion");
-          setDate(recolection.fecha_estimada_recoleccion ? dayjs(recolection.fecha_estimada_recoleccion) : null)
-          setConductorAsignado(recolection.conductor_asignado)
+          setDate(
+            recolection.fecha_estimada_recoleccion
+              ? dayjs(recolection.fecha_estimada_recoleccion)
+              : null
+          );
+          setConductorAsignado(recolection.conductor_asignado);
         }
         break;
       case "recolectada":
@@ -110,17 +111,17 @@ export default function EditRecolectionModal({
         break;
     }
 
-    if(cancelationReassonText(recolection.comment_cancelation) === "Consulte comentarios de cancelación"){
+    if (
+      cancelationReassonText(recolection.comment_cancelation) ===
+      "Consulte comentarios de cancelación"
+    ) {
       setValue("otro");
       setOtroTexto(recolection.comment_cancelation);
-    }else{
+    } else {
       setValue(recolection.comment_cancelation);
     }
   }, [recolection, open]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (e) => {
     if (status === "pendienteRecoleccion") {
       if (!isDateCorrect) return;
       const reformattedDate = e.target.date.value
@@ -131,7 +132,7 @@ export default function EditRecolectionModal({
         user: recolection.donador,
         id_order: recolection.id,
         fecha_estimada_recoleccion: reformattedDate,
-        conductor: conductorAsignado
+        conductor: conductorAsignado,
       };
       console.log(data);
       axios
@@ -156,28 +157,48 @@ export default function EditRecolectionModal({
           setOpenMessageModal(true);
         });
     } else if (status === "recolectado") {
+      console.log("########### Cambiando a recolectado ############");
       const data = {
         user: recolection.donador,
         id_order: recolection.id,
       };
-      console.log(data);
-      axios
-        .post(
+
+      try {
+
+        setLoading(true);
+
+        const changeStatusResponse = await axios.post(
           `${process.env.REACT_APP_API_URL}/change-recollection-recolectada/`,
           data
-        )
-        .then((response) => {
-          console.log(response);
-          setMessage("Se ha actualizado el estado de la recolección");
-          setOpenMessageModal(true);
-          setUpdate(!update);
-          setOpen(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          setMessage("Ha ocurrido un error al actualizar la recolección");
-          setOpenMessageModal(true);
-        });
+        );
+        console.log(
+          "######### respuesta del cambio de status a recolectado #########"
+        );
+        console.log(changeStatusResponse);
+
+        const reportInfo = await getReportInfo(
+          changeStatusResponse.data.reportId
+        );
+        const qrImage = await generateQR(
+          "https://rewards.rennueva.com/tracking-external/" +
+            changeStatusResponse.data.reportFolio // Aquí deberías poner la URL correcta para el reporte
+        );
+        console.log("######### QR image #########");
+        console.log(qrImage);
+        const reportObject = { id_report: changeStatusResponse.data.reportId };
+        console.log("######### object report ##############");
+        console.log(reportObject);
+
+        await generateDonorTalonPDF(reportObject, reportInfo, qrImage);
+
+        setMessage("Se ha actualizado el estado de la recolección");
+        setOpenMessageModal(true);
+        setUpdate(!update);
+        setOpen(false);
+      } catch (error) {
+        setMessage("Ha ocurrido un error al actualizar la recolección");
+        setOpenMessageModal(true);
+      }
     } else if (status === "entregado") {
       const data = {
         user: recolection.donador,
@@ -200,11 +221,13 @@ export default function EditRecolectionModal({
           console.error(error);
           setMessage("Ha ocurrido un error al actualizar la recolección");
           setOpenMessageModal(true);
-        });
+        })
+        .finally(() => {
+          setLoading(false);
+        }
+        );
     }
   };
-
-
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -229,7 +252,12 @@ export default function EditRecolectionModal({
             <Close />
           </IconButton>
           <Title>Editar Recolección</Title>
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              await handleSubmit(e);
+            }}
+          >
             <FormControl fullWidth margin="dense">
               <InputLabel id="select-status-label">Estado</InputLabel>
               <Select
@@ -241,15 +269,29 @@ export default function EditRecolectionModal({
                   setStatus(e.target.value);
                 }}
               >
-                {/*userData?.groups[0] !== "Conductor" &&  <MenuItem value="solicitado">Solicitada</MenuItem>*/}
-                {userData?.groups[0] !== "Conductor" && (status == "solicitado" || status == "pendienteRecoleccion")? <MenuItem value="pendienteRecoleccion">
-                  Recolección pendiente
-                </MenuItem>: null}
-                {status === "solicitado" || status === "pendienteRecoleccion" || status === "recolectado"? <MenuItem value="recolectado">Recolectada</MenuItem>: null}
-                {status === "solicitado" || status === "pendienteRecoleccion"  || status === "entregado"?<MenuItem value="entregado">Entregado</MenuItem>:null}
-                {status === "solicitado" || status === "pendienteRecoleccion" || status === "cancelado" ? <MenuItem value="cancelado">Cancelado</MenuItem>: null}
+                {/* Mostrar las opciones según el valor actual de `status` */}
+                {status === "solicitado" ||
+                status === "pendienteRecoleccion" ? (
+                  <MenuItem value="pendienteRecoleccion">
+                    Recolección pendiente
+                  </MenuItem>
+                ) : null}
+                {status === "solicitado" ||
+                status === "pendienteRecoleccion" ||
+                status === "recolectado" ? (
+                  <MenuItem value="recolectado">Recolectada</MenuItem>
+                ) : null}
+                {status === "recolectado" ||
+                status === "pendienteRecoleccion" ? (
+                  <MenuItem value="entregado">Entregado</MenuItem>
+                ) : null}
+                {status === "solicitado" ||
+                status === "pendienteRecoleccion" ? (
+                  <MenuItem value="cancelado">Cancelado</MenuItem>
+                ) : null}
               </Select>
             </FormControl>
+
             {status === "cancelado" && (
               <FormControl component="fieldset" fullWidth margin="dense">
                 <FormLabel component="legend">Motivo de cancelación</FormLabel>
@@ -295,82 +337,82 @@ export default function EditRecolectionModal({
                       onChange={handleTextChange}
                     />
                   )}
-
                 </FormGroup>
               </FormControl>
             )}
 
-            {status === "pendienteRecoleccion" && (
-              <>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    onChange={(newDate) => {
-                      setDate(newDate);
-                    }}
-                    value={Date}
-                    disablePast
-                    format="DD/MM/YYYY"
-                    onAccept={(date) => {
-                      setIsDateCorrect(true);
-                    }}
-                    onError={(reason, value) => {
-                      if (reason === null) {
+            {status === "pendienteRecoleccion" &&
+              userData?.groups[0] !== "Conductor" && (
+                <>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      onChange={(newDate) => {
+                        setDate(newDate);
+                      }}
+                      value={Date}
+                      disablePast
+                      format="DD/MM/YYYY"
+                      onAccept={(date) => {
                         setIsDateCorrect(true);
-                      } else {
-                        setIsDateCorrect(false);
-                      }
-                    }}
-                    slotProps={{
-                      field: {
-                        margin: "normal",
-                        fullWidth: true,
-                        required: true,
-                        name: "date",
-                      },
-                      textField: {
-                        label: "Fecha de recolección",
-                        name: "date",
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
+                      }}
+                      onError={(reason, value) => {
+                        if (reason === null) {
+                          setIsDateCorrect(true);
+                        } else {
+                          setIsDateCorrect(false);
+                        }
+                      }}
+                      slotProps={{
+                        field: {
+                          margin: "normal",
+                          fullWidth: true,
+                          required: true,
+                          name: "date",
+                        },
+                        textField: {
+                          label: "Fecha de recolección",
+                          name: "date",
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
 
-                <FormControl fullWidth margin="normal">
-                  <InputLabel id="select-status-label">Conductor Asignado</InputLabel>
-                  <Select
-                    labelId="select-status-label"
-                    id="select-status"
-                    value={conductorAsignado}
-                    label="Conductor Asignado"
-                    onChange={(e) => {
-                      //console.log(e.target.value);
-                      setConductorAsignado(e.target.value);
-                    }}
-                    fullWidth
-                    required
-                  >
-                    {conductores.map((conductor) => (
-                      <MenuItem key={conductor.id} value={conductor.user}>
-                        {conductor.first_name} {conductor.last_name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </>
-            )}
-
-
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel id="select-status-label">
+                      Conductor Asignado
+                    </InputLabel>
+                    <Select
+                      labelId="select-status-label"
+                      id="select-status"
+                      value={conductorAsignado}
+                      label="Conductor Asignado"
+                      onChange={(e) => {
+                        //console.log(e.target.value);
+                        setConductorAsignado(e.target.value);
+                      }}
+                      fullWidth
+                      required
+                    >
+                      {conductores.map((conductor) => (
+                        <MenuItem key={conductor.id} value={conductor.user}>
+                          {conductor.first_name} {conductor.last_name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </>
+              )}
 
             {status === "pendienteRecoleccion" ? (
               <Button
-                fullWidth
-                color="success"
-                variant="contained"
-                type="submit"
-                disabled={!isDateCorrect || status === ""}
-              >
-                Guardar cambios
-              </Button>
+              fullWidth
+              color="success"
+              variant="contained"
+              type="submit"
+              disabled={status === "" || loading} // deshabilitar si no hay status o si está cargando
+            >
+              {loading ? "Cargando..." : "Guardar cambios"}
+            </Button>
             ) : status === "cancelado" ? (
               <Button
                 fullWidth
@@ -380,11 +422,13 @@ export default function EditRecolectionModal({
                 disabled={loading}
                 onClick={() => {
                   if (userData?.groups[0] === "Conductor") {
-                    console.log("No tienes permisos para cancelar la recolección")
-                    setOpenConfirmation(true)
-                    setOpen(false)
+                    console.log(
+                      "No tienes permisos para cancelar la recolección"
+                    );
+                    setOpenConfirmation(true);
+                    //setOpen(false)
                   } else {
-                    setLoading(true)
+                    setLoading(true);
                     const data = {
                       user: recolection.donador,
                       id_order: recolection.id,
@@ -409,14 +453,12 @@ export default function EditRecolectionModal({
                           "Ha ocurrido un error al cancelar la recolección"
                         );
                         setOpenMessageModal(true);
-                      }).finally(() => {
-                        setLoading(false)
+                      })
+                      .finally(() => {
+                        setLoading(false);
                       });
                   }
-                }
-
-                }
-
+                }}
               >
                 {!loading ? "Cancelar recolección" : "Cargando..."}
               </Button>
@@ -433,7 +475,9 @@ export default function EditRecolectionModal({
             )}
 
             {status === "cancelado" && value === "otro" && otroTexto === "" && (
-              <p style={{ color: "red" }}>Especifique el motivo de cancelación</p>
+              <p style={{ color: "red" }}>
+                Especifique el motivo de cancelación
+              </p>
             )}
           </form>
         </Box>
@@ -444,7 +488,7 @@ export default function EditRecolectionModal({
         setOpen={setOpenConfirmation}
         severity="error"
         onConfirm={async () => {
-          setLoading(true)
+          setLoading(true);
           const data = {
             user: recolection.donador,
             id_order: recolection.id,
@@ -464,23 +508,24 @@ export default function EditRecolectionModal({
             })
             .catch((error) => {
               console.error(error);
-              setMessage(
-                "Ha ocurrido un error al cancelar la recolección"
-              );
+              setMessage("Ha ocurrido un error al cancelar la recolección");
               setOpenMessageModal(true);
-            }).finally(() => {
-              setLoading(false)
-              setOpenConfirmation(false)
+            })
+            .finally(() => {
+              setLoading(false);
+              setOpenConfirmation(false);
             });
         }}
         onCancel={async () => {
-          setOpenConfirmation(false)
+          setOpenConfirmation(false);
         }}
         loading={loading}
       >
-        <Typography variant="body1">¿Está seguro de cancelar esta solicitud de recolección?. Esta acción no se puede deshacer.</Typography>
+        <Typography variant="body1">
+          ¿Está seguro de cancelar esta solicitud de recolección?. Esta acción
+          no se puede deshacer.
+        </Typography>
       </ConfirmationModal>
-      
     </>,
     document.getElementById("modal")
   );

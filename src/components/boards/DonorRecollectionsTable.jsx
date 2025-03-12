@@ -28,21 +28,20 @@ import {
     Chip,
     Collapse
 } from "@mui/material";
-import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Close, KeyboardArrowDown } from "@mui/icons-material";
+import { Add, Download, FilterList, Delete, Search, Visibility, Check, Edit, Close, KeyboardArrowDown, EmojiPeople, Warehouse } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
-import { useState, useContext, useEffect, useRef } from "react";
-import GeneratorsFiltersModal from "../modals/GeneratorsFiltersModal";
-import { ModalGenerator } from "../../pages/ModalGenerator";
+import React, { useState, useContext, useEffect, useRef, useMemo } from "react";
 import useAuth from "../../hooks/useAuth";
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import DeleteGeneratorModal from "../modals/DeleteGeneratorModal";
 import { generateExcelFromJson } from "../../services/Excel";
 import { statusColor, statusText } from "../../helpers/statusModifiers";
 import DonorRecollectionInfo from "./DonorRecollectionInfo";
 import EditRecolectionModal from "./EditRecolectionModal";
 import DeleteDonorRecollectionsModal from "../modals/DeleteDonorRecollectionsModal";
 import DonorRecolecctionsFiltersModal from "../modals/DonorRecollectionsFiltersModal";
+import sortData from "../../helpers/SortData";
+
 
 
 
@@ -190,7 +189,7 @@ function SearchField({ filteredData, setVisibleData }) {
                     onChange={(e) => setSearchValue(e.target.value)}
                     id="search-field"
                     inputRef={searchInputRef}
-                    label="Búscar"
+                    label="Buscar"
                     variant="standard"
                     size="small"
                     sx={{ mt: 1, width: showSearch ? "25rem" : 0, transition: 'all 300ms ease-in' }}
@@ -267,13 +266,15 @@ export default function DonorRecollectionsTable({ data }) {
     const [recollectionsToDelete, setRecollectionsToDelete] = useState([]);
     const [recollectionToEdit, setRecollectionToEdit] = useState(null);
     const [filtersApplied, setFiltersApplied] = useState(false);
-    console.log(data)
     const [visibleData, setVisibleData] = useState(data);
     const dataUser = useAuth();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [showCompleteInfo, setShowCompleteInfo] = useState(null);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [orderBy, setOrderBy] = useState("id");
+    const [order, setOrder] = useState("desc");
+    const [sortedData, setSortedData] = useState([]);
 
     const {
         setUpdateDonorInfo,
@@ -284,6 +285,7 @@ export default function DonorRecollectionsTable({ data }) {
         textOpenModalText,
         setOpenModalText
     } = useContext(TodoContext);
+
     const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
     const [generalCheckboxStatus, setGeneralCheckboxStatus] = useState("unchecked");
@@ -295,6 +297,7 @@ export default function DonorRecollectionsTable({ data }) {
         address_city: [],
         address_locality: [],
     });
+
 
     const handleShowCompleteInfo = (id) => {
         if (showCompleteInfo === id) {
@@ -344,6 +347,7 @@ export default function DonorRecollectionsTable({ data }) {
         }
     }
 
+    
 
     useEffect(() => {
         if (selected.length === data.length && data.length !== 0) {
@@ -390,6 +394,9 @@ export default function DonorRecollectionsTable({ data }) {
         }
     }, [data])
 
+    useEffect(() => {
+        setSortedData(sortData(visibleData, orderBy, order));
+    }, [visibleData, order, orderBy])
 
     return (
         <Box sx={{ width: '100%', mb: '3rem' }}>
@@ -411,16 +418,38 @@ export default function DonorRecollectionsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("id")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "id" ? true : false}
                                     >
                                         <Typography variant="subtitle2">ID</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("donador")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "donador" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Correo electrónico asociado</Typography>
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>
+                                    <TableSortLabel
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("nombre_centro")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "nombre_centro" ? true : false}
+                                    >
+                                        <Typography variant="subtitle2">Centro de recolección</Typography>
                                     </TableSortLabel>
                                 </TableCell>
                                 <TableCell>
@@ -432,7 +461,12 @@ export default function DonorRecollectionsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("direccion_completa")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "direccion_completa" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Dirección</Typography>
                                     </TableSortLabel>
@@ -446,12 +480,17 @@ export default function DonorRecollectionsTable({ data }) {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel
-                                        direction="asc"
+                                        direction={order}
+                                        onClick={() => {
+                                            setOrderBy("status")
+                                            setOrder(order === "asc" ? "desc" : "asc")
+                                        }}
+                                        active={orderBy === "status" ? true : false}
                                     >
                                         <Typography variant="subtitle2">Estado</Typography>
                                     </TableSortLabel>
                                 </TableCell>
-                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica") &&
+                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
                                     <>
                                         <TableCell>
                                             <Typography variant="subtitle2">Editar</Typography>
@@ -464,18 +503,18 @@ export default function DonorRecollectionsTable({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {visibleData.length === 0 ?
+                            {sortedData.length === 0 ?
                                 <TableRow>
                                     <TableCell colSpan={14}>
                                         <Typography variant="h6" color="textSecondary" align="center">
-                                            No se encontraron solicitudes de reolección
+                                            No se encontraron solicitudes de recolección
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
-                                : visibleData
+                                : sortedData
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((request, index) => (
-                                        <>
+                                        <React.Fragment key={`${request.id}-${index}`}>
                                             <TableRow
                                                 hover
                                                 role="checkbox"
@@ -523,17 +562,31 @@ export default function DonorRecollectionsTable({ data }) {
                                                     />
                                                 </TableCell>
                                                 <TableCell>{request.id}</TableCell>
-                                                <TableCell>{request.donador}</TableCell>
+                                                <TableCell>
+                                                    <Box margin={0} padding={0} sx={{
+                                                        display: "flex",
+                                                        flexDirection: "row",
+                                                        alignItems: "center",
+                                                        gap: "0.5rem"
+                                                    }}>
+                                                        <span >
+                                                            {request.recoleccion_para_centro === "No" ? <EmojiPeople color="info" /> : <Warehouse color="primary"/>}
+                                                        </span>
+                                                        <span>{request.donador}</span>
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell>{request.nombre_centro == 'NO APLICA'? 'Donador': request.nombre_centro}</TableCell>
                                                 <TableCell>{request.fecha}</TableCell>
                                                 <TableCell>{request.direccion_completa}</TableCell>
                                                 <TableCell>{request.peso_estimado}</TableCell>
                                                 <TableCell>
                                                     <Chip label={statusText(request.status)} color={statusColor(request.status)} />
                                                 </TableCell>
-                                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica") &&
+                                                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
                                                     <>
                                                         <TableCell>
                                                             <IconButton
+                                                                disabled={(request.status === "cancelado" )}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation()
                                                                     setRecollectionToEdit(request)
@@ -562,7 +615,7 @@ export default function DonorRecollectionsTable({ data }) {
                                                     </Collapse>
                                                 </TableCell>
                                             </TableRow>
-                                        </>
+                                        </React.Fragment>
                                     ))}
                         </TableBody>
                     </Table>
@@ -570,7 +623,7 @@ export default function DonorRecollectionsTable({ data }) {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={visibleData.length}
+                    count={sortedData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

@@ -1,21 +1,15 @@
+import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { TodoContext } from '../../context/index.js';
-import { ModalUser } from '../Users/ModalUser';
-import RecyclingCenterTable from "../../components/RecyclingCenterTable";
-import BarsChartVehicle from "../../components/BarsChartVehicle";
 import {
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   Paper,
   Container,
-  Toolbar,
   CssBaseline,
 } from '@mui/material';
 import Title from '../../components/Title';
 import CUDButtons from "../../containers/CUDButtons";
-//import { ModalCompany } from "../ModalCompany.js";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -24,50 +18,67 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import CompanyTable from "../../components/boards/CompanyTable.jsx";
 import useAuth from "../../hooks/useAuth.js";
-import {ModalCompany} from "../../components/modals/ModalCompany.js";
+import { ModalCompany } from "../../components/modals/ModalCompany.js";
+import LoadingComponent from "./LoadingComponent.jsx";
 
 
 
 function MenuCompany() {
-  const { 
-    openModalCreateCompany, setOpenModalCreateCompany,
-    openModalEditCompany, setOpenModalEditCompany, 
-    openModalDeleteCompany, setOpenModalDeleteCompany, 
+  const {
+    openModalCreateCompany,
+    openModalEditCompany,
+    openModalDeleteCompany,
     openModalText, setOpenModalText,
-    textOpenModalText,setTextOpenModalText
+    textOpenModalText, 
   } = useContext(TodoContext);
 
   const dataUser = useAuth();
+  const [clientes, setClientes] = useState([]);
+  const { updateCompanyInfo} = useContext(TodoContext);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-companies/`)
+      .then(response => {
+        setClientes(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(() => {
+        setLoading(false);
+      });
+  }, [updateCompanyInfo]);
 
 
 
   return (
     <>
       <CssBaseline />
-      {dataUser && dataUser.groups[0] === "Administrador" ? (
-     
-        
-     <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} >
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Title>Compañias</Title>
-                  <CUDButtons model="Company" />
-                  <Title>Compañias Creadas</Title>
-                  <CompanyTable />
-                </Paper>
-              </Grid>
-              
+      {dataUser && dataUser.groups[0] === "Administrador" && !loading? (
+
+
+        <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} >
+              <Paper
+                sx={{
+                  p: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Title>Compañías</Title>
+                <CUDButtons model="Company" />
+                <Title>Compañías Creadas</Title>
+                <CompanyTable clientes={clientes} />
+              </Paper>
             </Grid>
-          
+
+          </Grid>
+
 
           {openModalCreateCompany && (
             <ModalCompany mode={"CREAR"} creatorUser={dataUser.user}>
@@ -84,7 +95,7 @@ function MenuCompany() {
               La funcionalidad de borrar TODO
             </ ModalCompany >
           )}
-           {openModalText && (
+          {openModalText && (
             <Dialog
               open={openModalText}
               onClose={() => setOpenModalText(false)}
@@ -103,8 +114,8 @@ function MenuCompany() {
             </Dialog>
           )}
         </Container>
-      
-       ) : (
+
+      ) : loading? <LoadingComponent/>: (
         <Box
           sx={{
             display: "flex",
@@ -116,7 +127,7 @@ function MenuCompany() {
           <Title>No tienes permisos para ver esta página</Title>
         </Box>
       )}
-     
+
     </>
   );
 }

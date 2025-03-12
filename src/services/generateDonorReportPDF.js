@@ -5,7 +5,7 @@ import axios from "axios";
 const savePdf = async (pdfBase64, id_report) => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/finish-report/`,
+        `${process.env.REACT_APP_API_URL}/save-report-base64/`,
         {
           reportId: id_report,
           reportBase64: pdfBase64,
@@ -34,7 +34,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
       key_centro = data[0].key_centro_recoleccion;
       direccion_centro = data[0].ubicacion_centro_recoleccion;
       centro = data[0].centro_recoleccion;
-      titulo_centro = "Recoleccion";
+      titulo_centro = "Recolección";
       permiso_centro = data[0].permiso_centro_recoleccion;
     }
 
@@ -71,6 +71,8 @@ export default function generateDonorReportPDF(report, data, qrImage) {
       fontSize: 10,
       lineColor: [0, 0, 0],
       lineWidth: 0.5,
+      overflow: 'hidden',// 1) Trunca el texto con "..."
+      cellWidth: 'wrap',    // 2) Evita que se ajuste dinámicamente
     };
 
     doc.autoTable({
@@ -111,6 +113,35 @@ export default function generateDonorReportPDF(report, data, qrImage) {
       ],
       theme: "plain",
       styles: tableStyles,
+      columnStyles: {
+        // Fijar ancho de columnas con texto potencialmente largo
+        1: { cellWidth: 60 }, // Columna de "calle"
+        5: { cellWidth: 40 }, // Columna de "colonia"
+        // Ajusta si necesitas otras columnas con ancho fijo
+      },
+      didParseCell: function (data) {
+        // Ajustar SOLO en las columnas donde el texto tiende a ser extenso (ej. index 1 y 5)
+        if ((data.column.index === 1 || data.column.index === 5) && data.cell.raw) {
+          const text = data.cell.raw.toString();
+          // Ancho disponible de la celda (definido en columnStyles)
+          const cellWidth = data.cell.width;
+          // Tamaño de fuente actual (inicia en 10, según tableStyles)
+          let currentFontSize = data.cell.styles.fontSize;
+          
+          // Calcula el ancho del texto con la fuente actual
+          // getTextWidth asume fontSize=10, así que multiplicamos por (currentFontSize / 10) para escalarlo
+          let textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
+          
+          // Reducir la fuente mientras el texto exceda el ancho de la celda
+          // y sin pasar un mínimo (por ejemplo, 6)
+          const minFontSize = 6;
+          while (textWidth > cellWidth && currentFontSize > minFontSize) {
+            currentFontSize--;
+            data.cell.styles.fontSize = currentFontSize;
+            textWidth = doc.getTextWidth(text) * (currentFontSize / 10);
+          }
+        }
+      },
     });
 
     doc.setFontSize(16);
@@ -144,7 +175,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
         "N/A",
       ]);
     } else {
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 1; i < data.length; i++) {
         bodyData.push([
           data[i].nombre_residuo,
           data[i].peso + " kg",
@@ -251,7 +282,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
     );
 
     if (qrImage) {
-      doc.addImage(qrImage, "PNG", 12, 220, 45, 45);
+      doc.addImage(qrImage, "PNG", 12, 220, 55, 55);
     }
 
     const pdfBase64 = doc.output("datauristring");
