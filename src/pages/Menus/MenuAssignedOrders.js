@@ -10,14 +10,18 @@ import GetDriverOrderRecollection from "../../services/ApiGetDriverOrderRecollec
 import DriverOrderAssignedTable from "../../components/boards/DriverOrderAssignedTable";
 
 export default function MenuAssignedOrders() {
-  const [dataUser, setDataUser] = useState([]);
+  //const [dataUser, setDataUser] = useState([]);
+  const dataUser = useAuth();
 
+  const [userInfo, setUserInfo] = useState([]);
   
 
   useEffect(() => {
+    console.log("dataUser", dataUser);
+    
     const fetchData = async () => {
       const { dataUser } = await GetDriverOrderRecollection();
-      setDataUser(dataUser);
+      setUserInfo(dataUser);
     };
     fetchData();
   }

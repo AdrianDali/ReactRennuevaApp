@@ -828,29 +828,38 @@ export default function ReportsTable({ data }) {
                     <Typography variant="subtitle2">Fecha de inicio</Typography>
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Firma generador</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Residuos</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Firma receptor</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">PDF</Typography>
-                </TableCell>
+                {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
+                <>
+                  <TableCell>
+                    <Typography variant="subtitle2">Firma generador</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Residuos</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Firma receptor</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">PDF</Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography variant="subtitle2">Finalizar</Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Finalizar</Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography variant="subtitle2">Editar</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2">Borrar</Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Editar</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">Borrar</Typography>
+                  </TableCell>
+
+
+                </>
+                }
+                
+            
+
               </TableRow>
             </TableHead>
             <TableBody>
@@ -928,7 +937,67 @@ export default function ReportsTable({ data }) {
                         <TableCell>
                           {dateFormater(report.fecha_inicio_reporte)}
                         </TableCell>
-                        <TableCell>
+                        {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
+                        <>
+                          <TableCell>
+                            {report.firma_responsiva_generador ? (
+                              <Check />
+                            ) : (
+                              <Close />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {report.residuos_agregados ? <Check /> : <Close />}
+                          </TableCell>
+                          <TableCell>
+                            {report.firma_responsiva_receptor ? <Check /> : <Close />}
+                          </TableCell>
+                          <TableCell>
+                            {report.firma_responsiva_generador &&
+                              report.firma_responsiva_receptor &&
+                              report.residuos_agregados ? (
+                              <Check />
+                            ) : (
+                              <Close />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {report.firma_responsiva_generador &&
+                              report.firma_responsiva_receptor &&
+                              report.residuos_agregados ? (
+                              <Check />
+                            ) : (
+                              <Close />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportToEdit(report);
+                                setOpenModalEditReport(true);
+                              }}
+                            >
+                              <Edit />
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportsToDelete([report.id_report]);
+                                setOpenModalDeleteReport(true);
+                              }}
+                            >
+                              <Delete />
+                            </IconButton>
+                          </TableCell>
+                        </>
+
+                
+                }
+                        {/* <TableCell>
                           <Button
                             startIcon={<Draw />}
                             variant="contained"
@@ -1055,7 +1124,7 @@ export default function ReportsTable({ data }) {
                           >
                             <Delete />
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                       <TableRow>
                         <TableCell

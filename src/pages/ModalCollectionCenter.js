@@ -173,7 +173,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro de Recolección creado correctamente");
+          setTextOpenModalText("Centro de Acopio creado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
@@ -240,7 +240,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro Recolección editado correctamente");
+          setTextOpenModalText("Centro Acopio editado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
@@ -262,6 +262,15 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
         })
     }
     if (mode === "BORRAR") {
+
+
+        // Abrir modal de confirmación antes de borrar
+    const isConfirmed = window.confirm("¿Estás seguro de quieres borrar este Centro? Una vez borrado, no se podrá recuperar.");
+    
+    if (!isConfirmed) {
+      return; // Si el usuario cancela, se detiene la operación
+    }
+
       const antiguo_user = document.getElementById("user-select");
       var user_ant = antiguo_user ? antiguo_user.value : null;
 
@@ -279,7 +288,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro Recolección borrado correctamente");
+          setTextOpenModalText("Centro Acopio borrado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
@@ -420,11 +429,11 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
         </IconButton>
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
-            <Title> Centro de Recolección</Title>
+            <Title> Centro de Acopio</Title>
             {mode === "EDITAR" || mode === "BORRAR" ? (
               <FormControl fullWidth>
                 <InputLabel id="user-select-label">
-                  Centro de Recolección
+                  Centro de Acopio
                 </InputLabel>
                 <Select
                   labelId="user-select-label"
@@ -446,7 +455,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           </Box>
           <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 500 }}>
             <TextField
-              label="Nombre Centro Recolección"
+              label="Nombre Centro Acopio"
               name="nombre"
               required
               fullWidth
@@ -503,7 +512,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
               }}
             />
             <TextField
-              label="Email del Centro Recolección"
+              label="Email del Centro Acopio"
               name="email"
               type="email"
               required
@@ -536,7 +545,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
             />
 
             <TextField
-              label="Clave de Centro Recolección"
+              label="Clave de Centro Acopio"
               name="key"
               required
               fullWidth

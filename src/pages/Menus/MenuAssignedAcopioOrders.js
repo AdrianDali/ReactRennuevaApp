@@ -4,10 +4,13 @@ import { TodoContext } from "../../context";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 //import useAuth from "../../hooks/useAuth";
+ 
+import getCookieValue from "../../services/GetCookie"; 
+
 
 export default function MenuAssignedAcopioOrders() {
 
-  //const dataUser = useAuth();
+  
   const [reports, setReports] = useState([]);
   const { updateReportInfo, setUpdateReportInfo } = useContext(TodoContext);
   const[loading, setLoading] = useState(true);
@@ -17,16 +20,14 @@ export default function MenuAssignedAcopioOrders() {
   const [updateDonorInfo, setUpdateDonorInfo] = useState(true);
   const [orderRecollection, setOrderRecollection] = useState([]);
 
-
-  // console.log("dataUser", dataUser);
-
+  const user = getCookieValue("user");
 
     useEffect(() => {
       axios
         .post(
           `${process.env.REACT_APP_SERVER_URL}/Rennueva/get-all-centers-orders-assigned-to-driver/`,
           {
-            user: "newConductor@mailinator.com",
+            user: user,
             status: "pendienteRecoleccion",
           }
         )
