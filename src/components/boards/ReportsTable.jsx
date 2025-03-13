@@ -937,66 +937,177 @@ export default function ReportsTable({ data }) {
                         <TableCell>
                           {dateFormater(report.fecha_inicio_reporte)}
                         </TableCell>
-                        {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
-                        <>
-                          <TableCell>
-                            {report.firma_responsiva_generador ? (
-                              <Check />
-                            ) : (
-                              <Close />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {report.residuos_agregados ? <Check /> : <Close />}
-                          </TableCell>
-                          <TableCell>
-                            {report.firma_responsiva_receptor ? <Check /> : <Close />}
-                          </TableCell>
-                          <TableCell>
-                            {report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados ? (
-                              <Check />
-                            ) : (
-                              <Close />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados ? (
-                              <Check />
-                            ) : (
-                              <Close />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setReportToEdit(report);
-                                setOpenModalEditReport(true);
-                              }}
-                            >
-                              <Edit />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              color="error"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setReportsToDelete([report.id_report]);
-                                setOpenModalDeleteReport(true);
-                              }}
-                            >
-                              <Delete />
-                            </IconButton>
-                          </TableCell>
-                        </>
+                        {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") && (
+  dataUser.groups[0] !== "Donador" ? (
+    <>
+      <TableCell>
+        <Button
+          startIcon={<Draw />}
+          variant="contained"
+          size="small"
+          color={report.firma_responsiva_generador ? "success" : "warning"}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEditGeneratorSign(report.id_report);
+          }}
+        >
+          Firmar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<Add />}
+          variant="contained"
+          size="small"
+          color={report.residuos_agregados ? "success" : "warning"}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEditResidues(report);
+          }}
+        >
+          Agregar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<Draw />}
+          variant="contained"
+          size="small"
+          color={report.firma_responsiva_receptor ? "success" : "warning"}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEditReceiverSign(report.id_report);
+          }}
+        >
+          Firmar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<SaveAlt />}
+          variant="contained"
+          size="small"
+          color={
+            report.firma_responsiva_generador &&
+            report.firma_responsiva_receptor &&
+            report.residuos_agregados
+              ? "success"
+              : "warning"
+          }
+          onClick={async (e) => {
+            e.stopPropagation();
+            await handleSavePDF(report);
+          }}
+        >
+          Descargar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<SaveAlt />}
+          variant="contained"
+          size="small"
+          color={
+            report.firma_responsiva_generador &&
+            report.firma_responsiva_receptor &&
+            report.residuos_agregados
+              ? "success"
+              : "warning"
+          }
+          onClick={async (e) => {
+            if (
+              report.firma_responsiva_generador &&
+              report.firma_responsiva_receptor &&
+              report.residuos_agregados
+            ) {
+              e.stopPropagation();
+              setOpenModalFinishReport(true);
+              setReportToEdit(report);
+              await handleSavePDF(report);
+            } else {
+              setOpenModalText(true);
+              setTextOpenModalText(
+                "No se puede finalizar el reporte, aun no se han firmado todos los campos o no se han agregado los residuos"
+              );
+            }
+          }}
+        >
+          Finalizar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportToEdit(report);
+            setOpenModalEditReport(true);
+          }}
+        >
+          <Edit />
+        </IconButton>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          color="error"
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportsToDelete([report.id_report]);
+            setOpenModalDeleteReport(true);
+          }}
+        >
+          <Delete />
+        </IconButton>
+      </TableCell>
+    </>
+  ) : (
+    <>
+      <TableCell>
+        {report.firma_responsiva_generador ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.residuos_agregados ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.firma_responsiva_receptor ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.firma_responsiva_generador &&
+        report.firma_responsiva_receptor &&
+        report.residuos_agregados ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.firma_responsiva_generador &&
+        report.firma_responsiva_receptor &&
+        report.residuos_agregados ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportToEdit(report);
+            setOpenModalEditReport(true);
+          }}
+        >
+          <Edit />
+        </IconButton>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          color="error"
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportsToDelete([report.id_report]);
+            setOpenModalDeleteReport(true);
+          }}
+        >
+          <Delete />
+        </IconButton>
+      </TableCell>
+    </>
+  )
+)}
 
-                
-                }
+                    
                         {/* <TableCell>
                           <Button
                             startIcon={<Draw />}
