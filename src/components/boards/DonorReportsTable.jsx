@@ -174,7 +174,15 @@ function MobileToolbar({
     setAnchorEl(null);
   };
 
+  const handleCreate = (e) => {
+    console.log("Crear");
+    setOpenModalCreateReport(true);
+    handleClose();
+  };
+
+
   const handleFilter = (e) => {
+    console.log("Filtrar");
     setOpenFiltersModal(true);
     handleClose();
   };
@@ -238,7 +246,7 @@ function MobileToolbar({
             }}
           >
             <MenuList>
-              <MenuItem onClick={handleFilter} color="info">
+              <MenuItem onClick={handleCreate} color = "info">
                 <ListItemIcon>
                   <Add />
                 </ListItemIcon>
