@@ -422,7 +422,7 @@ console
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ reportId: reportToEdit , reportStatus: "Pendiente", creator_user : dataUser.user , 
-          collection_center_kg_max : dataUser.collection_center_kg_max, collection_center_alert_porcent : dataUser.collection_center_alert_porcent , collection_center : dataUser.collection_center
+          collection_center_kg_max : dataUser.collection_center_m3_max, collection_center_alert_porcent : dataUser.collection_center_alert_porcent , collection_center : dataUser.collection_center
         }),
       });
       // Una vez realizado el fetch, cierra el modal
@@ -784,7 +784,7 @@ console
                                 setReportToEdit(report.id_report);
                                 setOpenModalConfirm(true);
                                 setTextOpenModalText(
-                                  "Estas seguro de que quieres cambiar el status del reporte a Pendiente de recolección?, una vez cambiado no se podrá regresar ni modificar"
+                                  "Estas seguro de que quieres cerrar el registro de datos y residuos?, una vez cambiado no se podrá regresar ni modificar"
                                 );
                                 
                               } else if (
