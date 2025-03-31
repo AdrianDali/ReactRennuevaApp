@@ -420,37 +420,37 @@ export default function DriverCenterAssignedTable({ data }) {
     }
   };
 
-  const handleSavePDF = async (report) => {
-    const validate = await validateReport(report.id_report);
-    if (validate == true) {
-      const data = await getReportInfo(report.id_report);
+  // const handleSavePDF = async (report) => {
+  //   const validate = await validateReport(report.id_report);
+  //   if (validate == true) {
+  //     const data = await getReportInfo(report.id_report);
 
-      let key_centro = "";
-      if (data[0].key_centro_reciclaje != null) {
-        key_centro = data[0].key_centro_reciclaje;
-      }
-      if (data[0].key_centro_recoleccion != null) {
-        key_centro = data[0].key_centro_recoleccion;
-      }
+  //     let key_centro = "";
+  //     if (data[0].key_centro_reciclaje != null) {
+  //       key_centro = data[0].key_centro_reciclaje;
+  //     }
+  //     if (data[0].key_centro_recoleccion != null) {
+  //       key_centro = data[0].key_centro_recoleccion;
+  //     }
 
-      const folio_busqueda =
-        data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
+  //     const folio_busqueda =
+  //       data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
 
-      const qrImage = await generateQR(
-        "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-      );
-      if (report.grupo_usuario === "Donador") {
-        generateDonorReportPDF(report, data, qrImage);
-      } else {
-        generateReportPDF(report, data, qrImage);
-      }
-    } else {
-      setOpenModalText(true);
-      setTextOpenModalText(
-        "No se puede generar el reporte, aun no se han firmado todos los campos"
-      );
-    }
-  };
+  //     const qrImage = await generateQR(
+  //       "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
+  //     );
+  //     if (report.grupo_usuario === "Donador") {
+  //       generateDonorReportPDF(report, data, qrImage);
+  //     } else {
+  //       generateReportPDF(report, data, qrImage);
+  //     }
+  //   } else {
+  //     setOpenModalText(true);
+  //     setTextOpenModalText(
+  //       "No se puede generar el reporte, aun no se han firmado todos los campos"
+  //     );
+  //   }
+  // };
 
   
 
