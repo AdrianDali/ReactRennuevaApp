@@ -3,7 +3,8 @@ import GetRefreshToken from "./ApiRefreshToken";
 
 
 export default async function GetUser(username, accessToken,refreshToken) {
-
+    console.log("GetUser")
+    console.log(username)
     const request = {
         user: username,
     };

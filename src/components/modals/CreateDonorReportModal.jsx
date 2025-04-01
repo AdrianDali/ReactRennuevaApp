@@ -29,7 +29,7 @@ export default function CreateDonorReportModal({ isOpen, setOpen }) {
 
     useEffect(() => {
         axios
-            .get(`${process.env.REACT_APP_API_URL}/get-all-donor-email/`)
+            .get(`${process.env.REACT_APP_API_URL}/get-all-donor-generator-email/`)
             .then((response) => {
                 //console.log("Donor recolection data");
                 console.log(response.data);

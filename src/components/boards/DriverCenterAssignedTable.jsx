@@ -420,37 +420,37 @@ export default function DriverCenterAssignedTable({ data }) {
     }
   };
 
-  const handleSavePDF = async (report) => {
-    const validate = await validateReport(report.id_report);
-    if (validate == true) {
-      const data = await getReportInfo(report.id_report);
+  // const handleSavePDF = async (report) => {
+  //   const validate = await validateReport(report.id_report);
+  //   if (validate == true) {
+  //     const data = await getReportInfo(report.id_report);
 
-      let key_centro = "";
-      if (data[0].key_centro_reciclaje != null) {
-        key_centro = data[0].key_centro_reciclaje;
-      }
-      if (data[0].key_centro_recoleccion != null) {
-        key_centro = data[0].key_centro_recoleccion;
-      }
+  //     let key_centro = "";
+  //     if (data[0].key_centro_reciclaje != null) {
+  //       key_centro = data[0].key_centro_reciclaje;
+  //     }
+  //     if (data[0].key_centro_recoleccion != null) {
+  //       key_centro = data[0].key_centro_recoleccion;
+  //     }
 
-      const folio_busqueda =
-        data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
+  //     const folio_busqueda =
+  //       data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
 
-      const qrImage = await generateQR(
-        "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-      );
-      if (report.grupo_usuario === "Donador") {
-        generateDonorReportPDF(report, data, qrImage);
-      } else {
-        generateReportPDF(report, data, qrImage);
-      }
-    } else {
-      setOpenModalText(true);
-      setTextOpenModalText(
-        "No se puede generar el reporte, aun no se han firmado todos los campos"
-      );
-    }
-  };
+  //     const qrImage = await generateQR(
+  //       "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
+  //     );
+  //     if (report.grupo_usuario === "Donador") {
+  //       generateDonorReportPDF(report, data, qrImage);
+  //     } else {
+  //       generateReportPDF(report, data, qrImage);
+  //     }
+  //   } else {
+  //     setOpenModalText(true);
+  //     setTextOpenModalText(
+  //       "No se puede generar el reporte, aun no se han firmado todos los campos"
+  //     );
+  //   }
+  // };
 
   
 
@@ -622,17 +622,18 @@ export default function DriverCenterAssignedTable({ data }) {
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Nombre</Typography>
+                    <Typography variant="subtitle2">Nombre Solicitante</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Apellidos</Typography>
+                    <Typography variant="subtitle2">Centro de acopio</Typography>
                   </TableSortLabel>
                 </TableCell>
+                
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Folio</Typography>
+                    <Typography variant="subtitle2">Fecha</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
@@ -642,14 +643,10 @@ export default function DriverCenterAssignedTable({ data }) {
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Centro de acopio</Typography>
+                    <Typography variant="subtitle2">Conductor</Typography>
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Fecha de inicio</Typography>
-                  </TableSortLabel>
-                </TableCell>
+                
                 <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
@@ -711,24 +708,24 @@ export default function DriverCenterAssignedTable({ data }) {
                           <Checkbox
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleSelected(report.id_report);
+                              toggleSelected(report.id);
                             }}
-                            checked={isRowSelected(report.id_report)}
+                            checked={isRowSelected(report.id)}
                             inputProps={{
-                              "aria-labelledby": report.id_report,
+                              "aria-labelledby": report.id,
                             }}
                           />
                         </TableCell>
 
-                        <TableCell>{report.id_report}</TableCell>
-                        <TableCell>{report.nombre_real_usuario}</TableCell>
-                        <TableCell>{report.apellido_usuario}</TableCell>
-                        <TableCell>Folio</TableCell>
+                        <TableCell>{report.id}</TableCell>
+                        <TableCell>{report.nombre_donador}</TableCell>
+                        
+                        <TableCell>{report.nombre_centro}</TableCell>
+                        
+                        <TableCell>{report.fecha}</TableCell>
                         <TableCell>Peso</TableCell>
-                        <TableCell>Centro de acopio</TableCell>
-                        <TableCell>
-                          {dateFormater(report.fecha_inicio_reporte)}
-                        </TableCell>
+                        <TableCell>{report.conductor_asignado}</TableCell>
+                      
                         <TableCell>
                           <Button
                             startIcon={<Visibility />}

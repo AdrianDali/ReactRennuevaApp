@@ -13,6 +13,7 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import Title from "../components/Title";
 import { Close } from "@mui/icons-material";
@@ -44,10 +45,8 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
   const [alert, setAlert] = useState("");
 
   const [permisos, setPermisos] = useState([]);
-  const [creator, setCreator] = useState(creatorUser)
+  const [creator, setCreator] = useState(creatorUser);
   const [company, setCompany] = useState("");
-
-
 
   const {
     setUpdateCollectionCenterInfo,
@@ -92,17 +91,18 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
   };
 
   const agregarPermiso = () => {
-    setPermisos(prevPermisos => [...prevPermisos, { id: prevPermisos.length, nombre: "" }]);
+    setPermisos((prevPermisos) => [
+      ...prevPermisos,
+      { id: prevPermisos.length, nombre: "" },
+    ]);
   };
 
-  const quitarPermiso = permiso => {
-    console.log(permiso)
-    console.log(permisos.filter(p => p !== permiso));
-    setPermisos(permisos.filter(p => p !== permiso));
+  const quitarPermiso = (permiso) => {
+    console.log(permiso);
+    console.log(permisos.filter((p) => p !== permiso));
+    setPermisos(permisos.filter((p) => p !== permiso));
     console.log("PERMISOS");
     console.log(permisos);
-
-
   };
 
   const handlePermisoChange = (index, event) => {
@@ -113,10 +113,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
     nuevosPermisos[index] = nuevoValor;
     // Establecer la nueva lista de permisos en el estado
     setPermisos(nuevosPermisos);
-  }
-
-
-
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -129,7 +126,9 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
       if (!rfcValue) {
         rfcValue = "XAXX010101000"; // Aquí puedes poner el RFC por defecto que desees
       }
-      console.log("####dawd##################CREAR##################################");
+      console.log(
+        "####dawd##################CREAR##################################"
+      );
       console.log(permisos);
       const nuevoDato = {
         collection_center_name: e.target.nombre.value,
@@ -152,16 +151,13 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
         address_lng: 0,
         creator_user: creator,
         collection_center_key: key,
-        collection_center_permiso:
-          permisos.map((permiso) => {
-            console.log("PERMISO");
-            console.log(permiso);
-            return {
-              nombre: permiso
-            }
-
-          })
-
+        collection_center_permiso: permisos.map((permiso) => {
+          console.log("PERMISO");
+          console.log(permiso);
+          return {
+            nombre: permiso,
+          };
+        }),
       };
 
       axios
@@ -173,25 +169,29 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro de Recolección creado correctamente");
+          setTextOpenModalText("Centro de Acopio creado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("############################");
           setOpenModalText(true);
 
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage =
+              error.response.data.errorMessage ||
+              "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(
+              `Algo salió mal. Intenta de nuevo \n ${errorMessage}`
+            );
           } else {
             setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
 
           console.error(error.response);
-        })
+        });
     }
     if (mode === "EDITAR") {
       var rfcValue = e.target.rfc.value;
@@ -219,14 +219,12 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
         collection_center_kg_max: e.target.max_kg.value,
         collection_center_m3_max: e.target.max_m3.value,
         company: company?.company_name,
-        collection_center_permiso:
-          permisos.map((permiso) => {
-            return {
-              nombre: permiso
-            }
-
-          }),
-        creator_user: creator
+        collection_center_permiso: permisos.map((permiso) => {
+          return {
+            nombre: permiso,
+          };
+        }),
+        creator_user: creator,
       };
       console.log("##SDAFSDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDFSDFSDF");
       console.log(editarDato);
@@ -240,34 +238,47 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro Recolección editado correctamente");
+          setTextOpenModalText("Centro Acopio editado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
           // Limpiar los campos del formulario
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("############################");
           setOpenModalText(true);
 
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage =
+              error.response.data.errorMessage ||
+              "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(
+              `Algo salió mal. Intenta de nuevo \n ${errorMessage}`
+            );
           } else {
             setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
 
           console.error(error.response);
-        })
+        });
     }
     if (mode === "BORRAR") {
+      // Abrir modal de confirmación antes de borrar
+      const isConfirmed = window.confirm(
+        "¿Estás seguro de quieres borrar este Centro? Una vez borrado, no se podrá recuperar."
+      );
+
+      if (!isConfirmed) {
+        return; // Si el usuario cancela, se detiene la operación
+      }
+
       const antiguo_user = document.getElementById("user-select");
       var user_ant = antiguo_user ? antiguo_user.value : null;
 
       const deleteDato = {
         collection_center_id: idCenter,
-        creator_user: creator
+        creator_user: creator,
       };
 
       axios
@@ -279,25 +290,29 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           const data = response.data;
           console.log(data);
           setOpenModalText(true);
-          setTextOpenModalText("Centro Recolección borrado correctamente");
+          setTextOpenModalText("Centro Acopio borrado correctamente");
           setUpdateCollectionCenterInfo(true);
           e.target.reset();
           closeModal();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("############################");
           setOpenModalText(true);
 
           // Check if error response and data exist
           if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
+            const errorMessage =
+              error.response.data.errorMessage ||
+              "Algo salió mal. Intenta de nuevo";
+            setTextOpenModalText(
+              `Algo salió mal. Intenta de nuevo \n ${errorMessage}`
+            );
           } else {
             setTextOpenModalText("Algo salió mal. Intenta de nuevo");
           }
 
           console.error(error.response);
-        })
+        });
     }
 
     // Limpiar los campos del formulario
@@ -341,7 +356,6 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
         const companiesData = res[1].data;
         setCompanies(companiesData);
         setUsers(usersData);
-
       })
       .catch((err) => console.log(err));
   }, []);
@@ -375,7 +389,12 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
     setMaxKg(datoEncontrado.CollectionCenterKGMax);
     setMaxM3(datoEncontrado.CollectionCenterM3Max);
     setAlert(datoEncontrado.CollectionCenterRecollecionAlert);
-    setCompany(companies.find(company => company.company_name === datoEncontrado.CollectionCenterCompany));
+    setCompany(
+      companies.find(
+        (company) =>
+          company.company_name === datoEncontrado.CollectionCenterCompany
+      )
+    );
     setPermisos(datoEncontrado.CollectionCenterPermiso);
 
     // Actualizar el estado con el dato encontrado
@@ -387,7 +406,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
     setCompany(selectedOption);
     setRfc(selectedOption.rfc);
     setRazonSocial(selectedOption.razon_social);
-  }
+  };
 
   const handleInputChange = (e, setState, mode) => {
     const currentInputValue = e.target.value;
@@ -420,12 +439,10 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
         </IconButton>
         <form onSubmit={handleSubmit}>
           <Box mb={2}>
-            <Title> Centro de Recolección</Title>
+            <Title> Centro de Acopio</Title>
             {mode === "EDITAR" || mode === "BORRAR" ? (
               <FormControl fullWidth>
-                <InputLabel id="user-select-label">
-                  Centro de Recolección
-                </InputLabel>
+                <InputLabel id="user-select-label">Centro de Acopio</InputLabel>
                 <Select
                   labelId="user-select-label"
                   id="user-select"
@@ -446,7 +463,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
           </Box>
           <Box mt={2} mb={2} sx={{ overflowY: "auto", maxHeight: 500 }}>
             <TextField
-              label="Nombre Centro Recolección"
+              label="Nombre Centro Acopio"
               name="nombre"
               required
               fullWidth
@@ -455,9 +472,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
               margin="dense"
             />
             <FormControl fullWidth>
-              <InputLabel id="user-select-label">
-                Compañía
-              </InputLabel>
+              <InputLabel id="user-select-label">Compañía</InputLabel>
               <Select
                 labelId="user-select-label"
                 id="user-select"
@@ -503,7 +518,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
               }}
             />
             <TextField
-              label="Email del Centro Recolección"
+              label="Email del Centro Acopio"
               name="email"
               type="email"
               required
@@ -536,7 +551,7 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
             />
 
             <TextField
-              label="Clave de Centro Recolección"
+              label="Clave de Centro Acopio"
               name="key"
               required
               fullWidth
@@ -546,36 +561,80 @@ function ModalCollectionCenter({ children, mode, creatorUser }) {
             />
 
             <TextField
-              label="Peso Máximo"
+              label="Peso Máximo (kg)"
               name="max_kg"
               required
               type="number"
               fullWidth
               value={maxKg}
-              onChange={(e) => handleInputChange(e, setMaxKg, mode)}
+              onChange={(e) => {
+                const valor = parseInt(e.target.value, 10);
+                if (valor >= 0 && valor <= 1000) {
+                  handleInputChange(e, setMaxKg, mode);
+                }
+              }}
               margin="dense"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">kg</InputAdornment>
+                ),
+              }}
+              inputProps={{
+                min: 0,
+                max: 1000,
+                step: 1,
+              }}
             />
 
             <TextField
-              label="Volumen Máximo"
+              label="Volumen Máximo (cm³)"
               name="max_m3"
               required
               type="number"
               fullWidth
               value={maxM3}
-              onChange={(e) => handleInputChange(e, setMaxM3, mode)}
+              onChange={(e) => {
+                const valor = parseInt(e.target.value, 10);
+                if (valor >= 0 && valor <= 1000) {
+                  handleInputChange(e, setMaxM3, mode);
+                }
+              }}
               margin="dense"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">cm³</InputAdornment>
+                ),
+              }}
+              inputProps={{
+                min: 0,
+                max: 1000,
+                step: 1,
+              }}
             />
 
             <TextField
-              label="Alerta de ocupación"
+              label="Alerta de ocupación Volumen (%)"
               name="Alert"
               required
               type="number"
               fullWidth
               value={alert}
-              onChange={(e) => handleInputChange(e, setAlert, mode)}
+              onChange={(e) => {
+                // Limitamos el valor introducido al rango 0-100
+                const valor = parseInt(e.target.value, 10);
+                if (valor >= 0 && valor <= 100) {
+                  handleInputChange(e, setAlert, mode);
+                }
+              }}
               margin="dense"
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>,
+              }}
+              inputProps={{
+                min: 0,
+                max: 100,
+                step: 1,
+              }}
             />
 
             <FormControl fullWidth mt={2} mb={2}>
