@@ -194,7 +194,7 @@ function ModalResidueReport({ report }) {
                   inputProps={{
                     min: 0,
                     max: 1000,
-                    step: 1
+                    step: .1
                   }}
                 />
 
@@ -222,7 +222,7 @@ function ModalResidueReport({ report }) {
                   inputProps={{
                     min: 0,
                     max: 1000,
-                    step: 1
+                    step: .1
                   }}
                 />
 
