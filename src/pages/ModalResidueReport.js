@@ -172,59 +172,66 @@ function ModalResidueReport({ report }) {
 
                 {/* Campo de texto para el Peso con adornment y validación 0-1000 */}
                 <TextField
-                  sx={{ m: 1, flexBasis: { xs: '100%', md: '25%' } }}
-                  name="peso"
-                  label="Peso en kg"
-                  variant="outlined"
-                  type="number"
-                  value={entry.peso}
-                  onChange={(event) => {
-                    const valor = parseInt(event.target.value, 10);
-                    // Validar que esté dentro del rango
-                    if (valor >= 0 && valor <= 1000) {
-                      handleInputChange(index, event);
-                    } else if (!event.target.value) {
-                      // Permitir vaciar el campo
-                      handleInputChange(index, event);
-                    }
-                  }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-                  }}
-                  inputProps={{
-                    min: 0,
-                    max: 1000,
-                    step: .1
-                  }}
-                />
+  sx={{ m: 1, flexBasis: { xs: '100%', md: '35%' } }}
+  name="peso"
+  label="Peso en kg"
+  variant="outlined"
+  type="number"
+  value={entry.peso}
+  onChange={(event) => {
+    const valor = parseFloat(event.target.value);
+    // Validar que esté dentro del rango y con máximo 3 decimales
+    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
+
+    if (
+      (!event.target.value || regexTresDecimales.test(event.target.value)) &&
+      valor >= 0 &&
+      valor <= 1000
+    ) {
+      handleInputChange(index, event);
+    }
+  }}
+  InputProps={{
+    endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+  }}
+  inputProps={{
+    min: 0,
+    max: 1000,
+    step: 0.001
+  }}
+/>
+
 
                 {/* Campo de texto para el Volumen con adornment y validación 0-1000 */}
                 <TextField
-                  sx={{ m: 1, flexBasis: { xs: '100%', md: '25%' } }}
-                  name="volumen"
-                  label="Volumen en m³"
-                  variant="outlined"
-                  type="number"
-                  value={entry.volumen}
-                  onChange={(event) => {
-                    const valor = parseInt(event.target.value, 10);
-                    // Validar que esté dentro del rango
-                    if (valor >= 0 && valor <= 1000) {
-                      handleInputChange(index, event);
-                    } else if (!event.target.value) {
-                      // Permitir vaciar el campo
-                      handleInputChange(index, event);
-                    }
-                  }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">m³</InputAdornment>,
-                  }}
-                  inputProps={{
-                    min: 0,
-                    max: 1000,
-                    step: .1
-                  }}
-                />
+  sx={{ m: 1, flexBasis: { xs: '100%', md: '35%' } }}
+  name="volumen"
+  label="Volumen en m³"
+  variant="outlined"
+  type="number"
+  value={entry.volumen}
+  onChange={(event) => {
+    const valor = parseFloat(event.target.value);
+    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
+
+    if (
+      (!event.target.value || regexTresDecimales.test(event.target.value)) &&
+      valor >= 0 &&
+      valor <= 1000
+    ) {
+      handleInputChange(index, event);
+    }
+  }}
+  InputProps={{
+    endAdornment: <InputAdornment position="end">m³</InputAdornment>,
+  }}
+  inputProps={{
+    min: 0,
+    max: 1000,
+    step: 0.001
+  }}
+/>
+
 
                 {/* Botón para eliminar la fila */}
                 <IconButton onClick={() => handleRemoveFields(index)} sx={{ m: 1 }}>
