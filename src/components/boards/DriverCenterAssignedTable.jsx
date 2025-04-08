@@ -26,6 +26,11 @@ import {
   TextField,
   TablePagination,
   Collapse,
+  FormControl,
+  InputLabel,
+  Select,
+  InputAdornment,
+  FormHelperText,
 } from "@mui/material";
 import {
   Add,
@@ -66,6 +71,7 @@ import ReportInfoRecycling from "./ReportInfoRecycling";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import VerificationReportModal from "../../pages/VerificationReportModal";
 import { set } from "date-fns";
+import axios from "axios";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -136,7 +142,7 @@ function ExportOptionsMenu({
   const handleExportSelected = () => {
     //console.log(selectedData)
     const dataToExport = allData.filter((report) =>
-      selectedData.includes(report.id_report)
+      selectedData.includes(report.id)
     );
     //console.log(dataToExport)
     generateExcelFromJson(dataToExport, "Reportes");
@@ -203,9 +209,7 @@ function Toolbar({
             selected.length === 1 ? "seleccionado" : "seleccionados"
           }`}
         </Typography>
-        <Box>
-          
-        </Box>
+        <Box></Box>
         <ExportOptionsMenu
           selectedData={selected}
           filteredData={filteredData}
@@ -274,7 +278,6 @@ function SearchField({ filteredData, setVisibleData }) {
   }, [showSearch]);
 
   const handleSearch = (e) => {
-    
     if (e.key === "Enter") {
       const search = searchValue.trim().toLowerCase();
       if (search === "") {
@@ -343,6 +346,8 @@ function SearchField({ filteredData, setVisibleData }) {
 }
 
 export default function DriverCenterAssignedTable({ data }) {
+  console.log("DriverCenterAssignedTable");
+  console.log(data);
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
   const [reportToEdit, setReportToEdit] = useState(null);
@@ -375,6 +380,19 @@ export default function DriverCenterAssignedTable({ data }) {
   const [openFiltersModal, setOpenFiltersModal] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
+  const [openResiduoModal, setOpenResiduoModal] = useState(false);
+  const [residueReportInfo, setResidueReportInfo] = useState([]);
+  const [residuesPerOrderRecollection, setResiduesPerOrderRecollection] =
+    useState([]);
+  const [residueIndex, setResidueIndex] = useState(null);
+  const [residues, setResidues] = useState([]);
+  const [editedResidueName, setEditedResidueName] = useState("");
+  const [editedPeso, setEditedPeso] = useState("");
+  const [editedVolumen, setEditedVolumen] = useState("");
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
+  const [statusResidue, setStatusResidue] = useState("");
+  const [idOrderSelected, setIdOrderSelected] = useState(null);
 
   const handleExpandClick = (id) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -420,40 +438,6 @@ export default function DriverCenterAssignedTable({ data }) {
     }
   };
 
-  // const handleSavePDF = async (report) => {
-  //   const validate = await validateReport(report.id_report);
-  //   if (validate == true) {
-  //     const data = await getReportInfo(report.id_report);
-
-  //     let key_centro = "";
-  //     if (data[0].key_centro_reciclaje != null) {
-  //       key_centro = data[0].key_centro_reciclaje;
-  //     }
-  //     if (data[0].key_centro_recoleccion != null) {
-  //       key_centro = data[0].key_centro_recoleccion;
-  //     }
-
-  //     const folio_busqueda =
-  //       data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
-
-  //     const qrImage = await generateQR(
-  //       "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-  //     );
-  //     if (report.grupo_usuario === "Donador") {
-  //       generateDonorReportPDF(report, data, qrImage);
-  //     } else {
-  //       generateReportPDF(report, data, qrImage);
-  //     }
-  //   } else {
-  //     setOpenModalText(true);
-  //     setTextOpenModalText(
-  //       "No se puede generar el reporte, aun no se han firmado todos los campos"
-  //     );
-  //   }
-  // };
-
-  
-
   const handleEditResidues = (report) => {
     setReportToEdit(report);
     setOpenModalEditResidueReport(true);
@@ -462,11 +446,11 @@ export default function DriverCenterAssignedTable({ data }) {
   const handleVerifyReport = (report) => {
     setReportToEdit(report);
     setOpenVerificationModal(true);
-  }
+  };
 
   const handleGeneralCheckboxChange = (e) => {
     if (e.target.checked) {
-      setSelected(data.map((report) => report.id_report));
+      setSelected(data.map((report) => report.id));
     } else if (e.target.indeterminate) {
       setSelected(selected);
     } else {
@@ -577,6 +561,131 @@ export default function DriverCenterAssignedTable({ data }) {
     }
   }, [data]);
 
+  /**
+   * Maneja la apertura del modal para el residuo seleccionado.
+   * Realiza una petición POST para obtener los residuos asociados a un reporte,
+   * actualiza el estado del componente y determina el valor de 'verified'
+   * en función del status del primer elemento del arreglo de respuesta.
+   *
+   * @param {Object} report - Objeto con la información del reporte.
+   */
+  const handleOpenResiduoModal = async (report) => {
+    try {
+      // Mostrar en consola el reporte recibido
+      console.log("Reporte recibido:", report);
+
+      // Extrae el reportId del folio (asumiendo que es el último elemento separado por guiones)
+      const orderRecollectionId = report.id;
+      console.log("ID de recolección:", orderRecollectionId);
+
+      setIdOrderSelected(orderRecollectionId);
+
+      // Realiza la petición POST para obtener los residuos asociados al reporte
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/Rennueva/get-all-residues-total-per-report/`,
+        { orderRecollectionId: report.id }
+      );
+      // Muestra en consola la respuesta de la API
+      console.log("Respuesta de la API:", response.data);
+      // Verifica que la respuesta sea un arreglo y contenga al menos un elemento
+
+      setResiduesPerOrderRecollection(response.data);
+      console.log("Residuos por reporte:", response.data);
+
+      // Se utiliza directamente la respuesta para actualizar el estado,
+      // ya que setResidueReportInfo es asíncrono, evitamos depender del estado actualizado.
+      const residuesData = response.data;
+
+      console.log("Datos de residuos:", residuesData);
+
+      // Actualiza los estados correspondientes con los datos obtenidos
+      setResidueReportInfo(residuesData);
+      setStatusResidue("VERIFICADO");
+
+      // Actualiza el reporte seleccionado y abre el modal
+      //setSelectedReport(report);
+      setOpenResiduoModal(true);
+    } catch (error) {
+      // Captura y registra cualquier error que ocurra durante la ejecución
+      console.error("Error en handleOpenResiduoModal:", error);
+    }
+  };
+
+  const handleCloseResiduoModal = () => {
+    setOpenResiduoModal(false);
+    setResidueReportInfo([]);
+  };
+  const handleOpenConfirmModal = (index, residuo) => {
+    console.log("Residuo index:", index);
+    console.log("Residuo:", residuo);
+
+    setOpenConfirmModal(true);
+    setResidueIndex(index);
+    setEditedResidueName(residuo.residue_name);
+    setEditedPeso(residuo.total_kg);
+    setEditedVolumen(residuo.total_m3);
+    setStatusResidue(residuo.verification_status);
+
+
+  };
+
+  const handleConfirmCorrect = () => {
+    console.log("Residuo verificado");
+    console.log("Residuo index:", editedResidueName);
+
+    // llamado https a la API para marcar el residuo como verificado
+    axios
+      .post(
+        `${process.env.REACT_APP_SERVER_URL}/Rennueva/driver-verified-order-reports-residue/`,
+        {
+          residue_name : editedResidueName,
+          orderId: idOrderSelected,
+          status: "VERIFICADO",
+        }
+      )
+      .then((response) => {
+        console.log("Residuo verificado:", response.data);
+
+        // // Actualiza el estado del residuo verificado
+        // setResidueReportInfo((prev) => {
+        //   const newResidues = [...prev];
+        //   newResidues[selectedResiduoIndex] = {
+        //     ...newResidues[selectedResiduoIndex],
+        //     verified: true,
+        //   };
+        //   return newResidues;
+        // });
+        // setResidueReportInfo((prev) => {
+        //   const newResidues = [...prev];
+        //   newResidues[residueIndex] = {
+        //     ...newResidues[residueIndex],
+        //     verification_status: "VERIFICADO",
+        //   };
+        //   return newResidues;
+        // });
+        return response.data;
+        
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    setOpenConfirmModal(false);
+  };
+
+  const handleOpenEditModal = () => {
+    setOpenEditModal(true);
+  };
+  const handleEditSubmit = () => {
+    // Aquí puedes manejar el envío de los datos editados
+    console.log(
+      "Residuo editado:",
+      editedResidueName,
+      editedPeso,
+      editedVolumen
+    );
+    setOpenEditModal(false);
+  };
+
   return (
     <Box sx={{ width: "100%", mb: "3rem" }}>
       <Paper
@@ -622,15 +731,19 @@ export default function DriverCenterAssignedTable({ data }) {
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Nombre Solicitante</Typography>
+                    <Typography variant="subtitle2">
+                      Nombre Solicitante
+                    </Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Centro de acopio</Typography>
+                    <Typography variant="subtitle2">
+                      Centro de acopio
+                    </Typography>
                   </TableSortLabel>
                 </TableCell>
-                
+
                 <TableCell>
                   <TableSortLabel direction="asc">
                     <Typography variant="subtitle2">Fecha</Typography>
@@ -646,7 +759,12 @@ export default function DriverCenterAssignedTable({ data }) {
                     <Typography variant="subtitle2">Conductor</Typography>
                   </TableSortLabel>
                 </TableCell>
-                
+                <TableCell>
+                  <TableSortLabel direction="asc">
+                    <Typography variant="subtitle2">Residuos</Typography>
+                  </TableSortLabel>
+                </TableCell>
+
                 <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
@@ -673,20 +791,18 @@ export default function DriverCenterAssignedTable({ data }) {
                       <TableRow
                         hover
                         role="checkbox"
-                        key={`${report.id_report}-${index}`}
-                        selected={isRowSelected(report.id_report)}
+                        key={`${report.id}-${index}`}
+                        selected={isRowSelected(report.id)}
                         sx={{ cursor: "pointer" }}
-                        aria-checked={
-                          isRowSelected(report.id_report) ? true : false
-                        }
+                        aria-checked={isRowSelected(report.id) ? true : false}
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleSelected(report.id_report);
+                          toggleSelected(report.id);
                         }}
                         onContextMenu={(e) => {
                           e.preventDefault();
                           setReportToEdit(report);
-                          setReportsToDelete([report.id_report]);
+                          setReportsToDelete([report.id]);
                           setRowContextMenuAnchorEl(e.target);
                         }}
                       >
@@ -694,10 +810,10 @@ export default function DriverCenterAssignedTable({ data }) {
                           <Button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleExpandClick(report.id_report);
+                              handleExpandClick(report.id);
                             }}
                           >
-                            {expandedRow === report.id_report ? (
+                            {expandedRow === report.id ? (
                               <KeyboardArrowUpIcon />
                             ) : (
                               <KeyboardArrowDownIcon />
@@ -719,13 +835,23 @@ export default function DriverCenterAssignedTable({ data }) {
 
                         <TableCell>{report.id}</TableCell>
                         <TableCell>{report.nombre_donador}</TableCell>
-                        
+
                         <TableCell>{report.nombre_centro}</TableCell>
-                        
+
                         <TableCell>{report.fecha}</TableCell>
                         <TableCell>Peso</TableCell>
                         <TableCell>{report.conductor_asignado}</TableCell>
-                      
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            color="primary"
+                            sx={{ marginLeft: 2 }}
+                            onClick={() => handleOpenResiduoModal(report)}
+                          >
+                            Ver Residuos
+                          </Button>
+                        </TableCell>
                         <TableCell>
                           <Button
                             startIcon={<Visibility />}
@@ -747,7 +873,7 @@ export default function DriverCenterAssignedTable({ data }) {
                           colSpan={18}
                         >
                           <Collapse
-                            in={expandedRow === report.id_report}
+                            in={expandedRow === report.id}
                             timeout="auto"
                             unmountOnExit
                           >
@@ -820,6 +946,237 @@ export default function DriverCenterAssignedTable({ data }) {
           </DialogActions>
         </Dialog>
       )}
+
+      {/* Modal para mostrar los residuos del reporte */}
+      <Dialog
+        open={openResiduoModal}
+        onClose={handleCloseResiduoModal}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Residuos del Reporte</DialogTitle>
+        <DialogContent dividers>
+          {residueReportInfo.residues_summary &&
+          residueReportInfo.residues_summary.length > 0 ? (
+            residueReportInfo.residues_summary.map((residuo, index) => {
+              let displayText = "No verificado";
+              let displayColor = "error.main";
+
+              // Mapeo según el status
+              switch (residuo.verification_status) {
+                case "VERIFICADO":
+                  displayText = "Verificado";
+                  displayColor = "success.main";
+                  break;
+                case "REPORTADO":
+                  displayText = "Reportado";
+                  displayColor = "warning.main"; // o el color que prefieras
+                  break;
+                default:
+                  displayText = "No verificado";
+                  displayColor = "error.main";
+              }
+
+              return (
+                <Box
+                  key={index}
+                  marginBottom={1}
+                  display="flex"
+                  alignItems="center"
+                  flexWrap="wrap"
+                >
+                  <Typography
+                    variant="subtitle1"
+                    display="inline"
+                    color="secondary"
+                    fontWeight={500}
+                  >
+                    Nombre:{" "}
+                  </Typography>
+                  <Typography variant="body1" display="inline">
+                    {residuo.residue_name}
+                  </Typography>
+
+                  <Typography
+                    variant="subtitle1"
+                    display="inline"
+                    color="secondary"
+                    fontWeight={500}
+                    sx={{ marginLeft: 2 }}
+                  >
+                    Cantidad:{" "}
+                  </Typography>
+                  <Typography variant="body1" display="inline">
+                    {residuo.total_kg} Kg
+                  </Typography>
+
+                  <Typography
+                    variant="subtitle1"
+                    display="inline"
+                    color="secondary"
+                    fontWeight={500}
+                    sx={{ marginLeft: 2 }}
+                  >
+                    Volumen:{" "}
+                  </Typography>
+                  <Typography variant="body1" display="inline">
+                    {residuo.total_m3} cm3
+                  </Typography>
+
+                  {/* Botón para verificar el residuo */}
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ marginLeft: 2 }}
+                    onClick={() => handleOpenConfirmModal(index, residuo)}
+                    color={
+                      residuo.verification_status === "VERIFICADO"
+                        ? "success"
+                        : "primary"
+                    }
+                    disabled={residuo.verification_status === "VERIFICADO"} 
+                  >
+                    Verificar
+                  </Button>
+
+                  {/* Mostrar el estado en función del status */}
+                  <Typography
+                    variant="body2"
+                    color={displayColor}
+                    sx={{ marginLeft: 1 }}
+                  >
+                    {displayText}
+                  </Typography>
+                </Box>
+              );
+            })
+          ) : (
+            <Typography variant="body1">
+              No hay residuos para este reporte.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseResiduoModal} color="primary">
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Modal de confirmación para verificar el residuo */}
+      <Dialog
+        open={openConfirmModal}
+        onClose={() => setOpenConfirmModal(false)}
+      >
+        <DialogTitle>Verificar Residuo</DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body1">¿El residuo está correcto?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmCorrect} color="primary">
+            Sí, es correcto
+          </Button>
+          <Button onClick={handleOpenEditModal} color="secondary">
+            No, editar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Modal de edición para actualizar los datos del residuo */}
+      <Dialog
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Editar Residuo</DialogTitle>
+        <DialogContent dividers>
+          {/* Select para escoger el residuo a partir de la data obtenida */}
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Nombre del Residuo</InputLabel>
+            <Select
+              value={editedResidueName}
+              onChange={(e) => setEditedResidueName(e.target.value)}
+              label="Nombre del Residuo"
+            >
+              {residues.map((item, index) => (
+                <MenuItem key={index} value={item.nombre}>
+                  {item.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <TextField
+            fullWidth
+            margin="dense"
+            label="Cantidad (Kg)"
+            type="number"
+            value={editedPeso}
+            onChange={(e) => {
+              // Convertimos a número
+              const valor = parseFloat(e.target.value);
+
+              // Permitir vaciar el campo
+              if (e.target.value === "") {
+                setEditedPeso("");
+                return;
+              }
+
+              // Validar rango
+              if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
+                setEditedPeso(e.target.value);
+              }
+            }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+            }}
+            inputProps={{
+              min: 0,
+              max: 1000,
+              step: 0.001,
+            }}
+          />
+
+          {/* Volumen en m³ */}
+          <TextField
+            fullWidth
+            margin="dense"
+            label="Volumen (m³)"
+            type="number"
+            value={editedVolumen}
+            onChange={(e) => {
+              const valor = parseFloat(e.target.value);
+
+              if (e.target.value === "") {
+                setEditedVolumen("");
+                return;
+              }
+
+              if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
+                setEditedVolumen(e.target.value);
+              }
+            }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">m³</InputAdornment>,
+            }}
+            inputProps={{
+              min: 0,
+              max: 1000,
+              step: 0.001, // o el nivel de precisión que desees
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          {/* handleEditSubmit hará la petición HTTP para guardar cambios */}
+          <Button onClick={handleEditSubmit} color="primary">
+            Guardar
+          </Button>
+          <Button onClick={() => setOpenEditModal(false)} color="secondary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

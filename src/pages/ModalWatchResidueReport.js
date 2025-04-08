@@ -87,10 +87,10 @@ export default function ModalWatchResidueReport({ report }) {
         console.log("handleConfirmClose");
         console.log("report", report.id);
         const data = {
-            id_order: report.id,
+          orderId: report.id,
             
         }
-        axios.post(`${process.env.REACT_APP_API_URL}/recollected-order-center-recollection/`, data)
+        axios.post(`${process.env.REACT_APP_API_URL}/driver-recollected-order-reports/`, data)
             .then(response => {
                 console.log(response.data);
                 closeModal();

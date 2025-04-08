@@ -24,6 +24,7 @@ export default function ReportInfoRecycling({ request }) {
 
   console.log("request", request);
 
+  const [orderRecollectionInfo, setOrderRecollectionInfo] = useState(request);
   const [openResiduoModal, setOpenResiduoModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [residuesPerReport, setResiduesPerReport] = useState([]);
@@ -60,18 +61,26 @@ export default function ReportInfoRecycling({ request }) {
 
   // Abre el modal de confirmación para el residuo seleccionado.
   const handleOpenConfirmModal = (index) => {
+    console.log("Residuo seleccionado:", residueReportInfo[index]);
+    console.log("Residuo seleccionado:", residueReportInfo[index].residue);
+    console.log("Residuo seleccionado:", residueReportInfo[index].peso);
+
     setSelectedResiduoIndex(index);
     setOpenConfirmModal(true);
   };
 
   // Si el usuario confirma que el residuo es correcto, se marca como verificado.
   const handleConfirmCorrect = () => {
-    // llamado https a la API para marcar el residuo como verificado
+    console.log("Residuo verificado:", editedResidueName);
+    console.log("Residuo verificado:", residueReportInfo[selectedResiduoIndex].residue);
+    console.log("Residuo verificado:", residueReportInfo[selectedResiduoIndex].peso);
+    console.log("Residuo verificado:", orderRecollectionInfo.id);
     axios
       .post(
         `${process.env.REACT_APP_SERVER_URL}/Rennueva/driver-collected-status-residue/`,
         {
-          residueId: residueReportInfo[selectedResiduoIndex].id_report_residue,
+          residue_name: "editedResidueName",
+          residueId: orderRecollectionInfo.id ,
           status: "VERIFICADO",
         }
       )
@@ -79,14 +88,14 @@ export default function ReportInfoRecycling({ request }) {
         console.log("Residuo verificado:", response.data);
 
         // Actualiza el estado del residuo verificado
-        setResidueReportInfo((prev) => {
-          const newResidues = [...prev];
-          newResidues[selectedResiduoIndex] = {
-            ...newResidues[selectedResiduoIndex],
-            verified: true,
-          };
-          return newResidues;
-        });
+        // setResidueReportInfo((prev) => {
+        //   const newResidues = [...prev];
+        //   newResidues[selectedResiduoIndex] = {
+        //     ...newResidues[selectedResiduoIndex],
+        //     verified: true,
+        //   };
+        //   return newResidues;
+        // });
       })
       .catch((error) => {
         console.error(error);
@@ -375,7 +384,7 @@ export default function ReportInfoRecycling({ request }) {
                 {report.estado_reporte}
               </Typography>
               {/* Botón para abrir modal de residuos */}
-              <Button
+              {/* <Button
                 variant="outlined"
                 size="small"
                 color="primary"
@@ -383,7 +392,7 @@ export default function ReportInfoRecycling({ request }) {
                 onClick={() => handleOpenResiduoModal(report)}
               >
                 Ver Residuos
-              </Button>
+              </Button> */}
             </Box>
           ))
         ) : (
@@ -594,7 +603,7 @@ export default function ReportInfoRecycling({ request }) {
         inputProps={{
           min: 0,
           max: 1000,
-          step: 0.1, 
+          step: 0.001, 
         }}
       />
 
@@ -623,7 +632,7 @@ export default function ReportInfoRecycling({ request }) {
         inputProps={{
           min: 0,
           max: 1000,
-          step: 0.1, // o el nivel de precisión que desees
+          step: 0.001, // o el nivel de precisión que desees
         }}
       />
       </DialogContent>
