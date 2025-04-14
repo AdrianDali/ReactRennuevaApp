@@ -139,7 +139,7 @@ export default function AssignModal({ setOpen, isOpen, center }) {
       ?? selected.reports?.[0]?.RecyclingCenter // centro de reciclaje (si aplica)
       ?? "Sin centro asignado";
 
-    setCenter(center);                         // si necesitas guardarlo
+                       // si necesitas guardarlo
   }}
 >
   {folios.map((folio) => {
