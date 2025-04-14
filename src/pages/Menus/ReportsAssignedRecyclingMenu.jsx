@@ -20,7 +20,7 @@ export function ReportsAssignedRecyclingMenu() {
                 checker_username: userData?.user
             })
             .then((response) => {
-                //console.log(response.data);
+                console.log(response.data);
                 setReports(response.data);
             })
             .catch((error) => {

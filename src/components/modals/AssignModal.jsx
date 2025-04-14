@@ -127,20 +127,36 @@ export default function AssignModal({ setOpen, isOpen, center }) {
                     <FormControl fullWidth margin="dense">
                         <InputLabel id="select-report-label">Folio</InputLabel>
                         <Select
-                            onChange={(e) => {
-                                setFolio(e.target.value.ReportFolio)
-                                //setCenter(e.target.value.CollectionCenterSignature__CollectionCenterName? e.target.value.CollectionCenterSignature__CollectionCenterName : e.target.value.RecyclingCenterSignature__RecyclingCenterName)
-                            }}
-                            labelId="select-report-label"
-                            id="select-report"
-                            label="Folio"
-                        >
-                            {
-                                folios.map(folio => (
-                                    <MenuItem key={folio.ReportFolio} value={folio}>{folio.ReportFolio}</MenuItem>
-                                ))
-                            }
-                        </Select>
+  labelId="select-report-label"
+  id="select-report"
+  label="Folio"
+  onChange={(e) => {
+    const selected = e.target.value;          // value = objeto folio completo
+    setFolio(selected.RecollectionId);
+
+    const center =
+      selected.reports?.[0]?.CollectionCenter   // centro de acopio
+      ?? selected.reports?.[0]?.RecyclingCenter // centro de reciclaje (si aplica)
+      ?? "Sin centro asignado";
+
+    setCenter(center);                         // si necesitas guardarlo
+  }}
+>
+  {folios.map((folio) => {
+    const center =
+      folio.reports?.[0]?.CollectionCenter
+      ?? folio.reports?.[0]?.RecyclingCenter
+      ?? "Sin centro asignado";
+
+    return (
+      <MenuItem key={folio.RecollectionId} value={folio}>
+        {folio.RecollectionId} — {center} —  {folio.RecollectionDate}
+      </MenuItem>
+    );
+  })}
+</Select>
+
+
                     </FormControl>
                     <FormControl fullWidth margin="dense">
                         <InputLabel id="select-user-label">Usuario</InputLabel>
