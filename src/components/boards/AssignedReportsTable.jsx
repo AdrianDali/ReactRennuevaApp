@@ -66,6 +66,8 @@ import ReportInfoRecycling from "./ReportInfoRecycling";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import VerificationReportModal from "../../pages/VerificationReportModal";
 import { set } from "date-fns";
+import OrderInfoRecycling from "./OrderInfoRecycling";
+import CheckRecyclingOrder from "../../components/modals/CheckRecyclingOrder";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -366,6 +368,7 @@ export default function ReportsTable({ data }) {
     setOpenModalEditResidueReport,
     setUpdateReportInfo,
     openModalFinishReport,
+    
   } = useContext(TodoContext);
   //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
   const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
@@ -375,6 +378,7 @@ export default function ReportsTable({ data }) {
   const [openFiltersModal, setOpenFiltersModal] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
+  const [openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder] = useState(false);
 
   const handleExpandClick = (id) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -452,11 +456,16 @@ export default function ReportsTable({ data }) {
     }
   };
 
-  
+  const handleCloseModal = () => {
+    setOpenModalCheckRecyclingOrder(false);
+   
+  };
 
   const handleEditResidues = (report) => {
     setReportToEdit(report);
-    setOpenModalEditResidueReport(true);
+    console.log(report);
+
+    setOpenModalCheckRecyclingOrder(true);
   };
 
   const handleVerifyReport = (report) => {
@@ -578,12 +587,22 @@ export default function ReportsTable({ data }) {
   }, [data]);
 
   return (
-    <Box sx={{ width: "100%", mb: "3rem" }}>
+    <Box sx={{
+      // Ocupa toda la pantalla y deja 10 % libre (p. ej. para header global)
+      height: "90vh",
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      px: { xs: 1, sm: 2, md: 4 },
+    }}>
       <Paper
+        elevation={3}
         sx={{
-          height: "80%",
-          overflow: "auto",
-          padding: 2,
+          flex: 1,
+          maxWidth: 1280,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",   // Importante: el scroll va en TableContainer
         }}
       >
         <Toolbar
@@ -595,8 +614,22 @@ export default function ReportsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{ maxHeight: "100vh" }}>
-          <Table stickyHeader aria-label="sticky table">
+        <TableContainer sx={{
+            flex: 1,                  // <- ocupa todo el alto restante
+            overflowY: "auto",
+            // scroll más suave en desktop
+            scrollbarGutter: "stable",
+            "&::-webkit-scrollbar": {
+              width: 8,
+            },
+            "&::-webkit-scrollbar-thumb": {
+              borderRadius: 4,
+              backgroundColor: theme.palette.mode === "dark"
+                ? "rgba(255,255,255,.2)"
+                : "rgba(0,0,0,.2)",
+            },
+          }}>
+          <Table stickyHeader aria-label="sticky table" size="small">
             <TableHead sx={{ bgcolor: theme.palette.background.default }}>
               <TableRow>
                 <TableCell>
@@ -617,39 +650,26 @@ export default function ReportsTable({ data }) {
 
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">ID</Typography>
+                    <Typography variant="subtitle2">ID Order</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Nombre</Typography>
+                    <Typography variant="subtitle2">Peso Total</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Apellidos</Typography>
+                    <Typography variant="subtitle2">Volumen Total</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Folio</Typography>
+                    <Typography variant="subtitle2">Centro Acopio</Typography>
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Peso</Typography>
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Centro de acopio</Typography>
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Fecha de inicio</Typography>
-                  </TableSortLabel>
-                </TableCell>
+                
+                
                 <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
@@ -676,20 +696,20 @@ export default function ReportsTable({ data }) {
                       <TableRow
                         hover
                         role="checkbox"
-                        key={`${report.id_report}-${index}`}
-                        selected={isRowSelected(report.id_report)}
+                        key={`${report.id_order}-${index}`}
+                        selected={isRowSelected(report.id_order)}
                         sx={{ cursor: "pointer" }}
                         aria-checked={
-                          isRowSelected(report.id_report) ? true : false
+                          isRowSelected(report.id_order) ? true : false
                         }
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleSelected(report.id_report);
+                          toggleSelected(report.id_order);
                         }}
                         onContextMenu={(e) => {
                           e.preventDefault();
                           setReportToEdit(report);
-                          setReportsToDelete([report.id_report]);
+                          setReportsToDelete([report.id_order]);
                           setRowContextMenuAnchorEl(e.target);
                         }}
                       >
@@ -697,10 +717,10 @@ export default function ReportsTable({ data }) {
                           <Button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleExpandClick(report.id_report);
+                              handleExpandClick(report.id_order);
                             }}
                           >
-                            {expandedRow === report.id_report ? (
+                            {expandedRow === report.id_order ? (
                               <KeyboardArrowUpIcon />
                             ) : (
                               <KeyboardArrowDownIcon />
@@ -711,24 +731,20 @@ export default function ReportsTable({ data }) {
                           <Checkbox
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleSelected(report.id_report);
+                              toggleSelected(report.id_order);
                             }}
-                            checked={isRowSelected(report.id_report)}
+                            checked={isRowSelected(report.id_order)}
                             inputProps={{
-                              "aria-labelledby": report.id_report,
+                              "aria-labelledby": report.id_order,
                             }}
                           />
                         </TableCell>
 
-                        <TableCell>{report.id_report}</TableCell>
-                        <TableCell>{report.nombre_real_usuario}</TableCell>
-                        <TableCell>{report.apellido_usuario}</TableCell>
-                        <TableCell>Folio</TableCell>
-                        <TableCell>Peso</TableCell>
-                        <TableCell>Centro de acopio</TableCell>
-                        <TableCell>
-                          {dateFormater(report.fecha_inicio_reporte)}
-                        </TableCell>
+                        <TableCell>{report.id_order}</TableCell>
+                        <TableCell>{report.kg_total} Kg</TableCell>
+                        <TableCell>{report.m3_total} M3</TableCell>
+                        <TableCell>{report.reportes[0].centro_recoleccion}</TableCell>
+                        
                         <TableCell>
                           <Button
                             startIcon={<Visibility />}
@@ -737,6 +753,7 @@ export default function ReportsTable({ data }) {
                             color="info"
                             onClick={(e) => {
                               e.stopPropagation();
+                              console.log(report);
                               handleEditResidues(report);
                             }}
                           >
@@ -750,11 +767,11 @@ export default function ReportsTable({ data }) {
                           colSpan={18}
                         >
                           <Collapse
-                            in={expandedRow === report.id_report}
+                            in={expandedRow === report.id_order}
                             timeout="auto"
                             unmountOnExit
                           >
-                            <ReportInfoRecycling request={report} />
+                            <OrderInfoRecycling request={report} />
                           </Collapse>
                         </TableCell>
                       </TableRow>
@@ -777,6 +794,12 @@ export default function ReportsTable({ data }) {
 
       <ModalFirmar type={signType} id={reportToEdit} />
       <ModalWatchResidueReport report={reportToEdit} />
+
+      <CheckRecyclingOrder
+        open={openModalCheckRecyclingOrder}
+        onClose={handleCloseModal}
+        report={reportToEdit}
+      /> 
       {/* <ModalFinishReport report={reportToEdit} /> */}
       <DeleteReportsModal reports={reportsToDelete} />
       <ReportsFiltersModal

@@ -73,7 +73,7 @@ function TodoProvider({ children }) {
   const [updateDonorReports, setUpdateDonorReports] = React.useState(false);
   const [openModalFinishReport , setOpenModalFinishReport] = React.useState(false);
   const [userGroups, setUserGroups] = React.useState(null);
-
+  const [openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder] = React.useState(false);
 
 
   return (
@@ -142,7 +142,9 @@ function TodoProvider({ children }) {
       updateCompanyInfo, setUpdateCompanyInfo,
       userGroups, setUserGroups,
       updateDonorReports, setUpdateDonorReports, 
-      openModalFinishReport , setOpenModalFinishReport
+      openModalFinishReport , setOpenModalFinishReport,
+      //openModalCreateCarrier, setOpenModalCreateCarrier,
+      openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder,
 
     }} >
       {children}
