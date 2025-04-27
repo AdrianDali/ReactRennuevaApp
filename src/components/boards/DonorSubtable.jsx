@@ -1,73 +1,113 @@
-import { Box, Typography, Divider } from "@mui/material";
+import React from 'react';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Divider,
+  Grid,
+  Stack,
+  Typography,
+  Avatar,
+  Grow,
+  useMediaQuery,
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import {
+  Person,
+  Business,
+  Phone,
+  Email,
+  Storefront,
+  LocationOn,
+} from '@mui/icons-material';
 
-export default function DonorSubtable({ report }) {
-    return (
-        <Box display="flex" justifyContent="start" gap={10} padding={4} py={6} flexWrap="wrap">
-            <Box>
-                <Typography variant="h6" gutterBottom>Información del donador</Typography>
-                <Box paddingLeft={2}>
-                    <Box>
-                        <Typography variant="subtitle1" color="secondary" display="inline" fontWeight={500} gutterBottom>Nombre: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.nombre_real_usuario}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Apellidos: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.apellido_usuario}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" color="secondary" display="inline" fontWeight={500} gutterBottom>RFC: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.rfc_usuario}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" color="secondary" display="inline" fontWeight={500} gutterBottom>Teléfono: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.telefono_usuario}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" color="secondary" display="inline" fontWeight={500} gutterBottom>Correo electrónico: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.email_usuario}</Typography>
-                    </Box>
-                </Box>
+export default function EnhancedDonorSubtable({ report }) {
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
-            </Box>
-            <Divider orientation="vertical" flexItem />
+  return (
+    <Grow in>
+      <Card elevation={3} sx={{ mt: 2 }}>
+        <CardHeader
+          avatar={<Avatar>{report.nombre_real_usuario.charAt(0)}</Avatar>}
+          title={
+            <Typography variant={isSm ? 'h6' : 'h5'}>
+              Detalles del Reporte
+            </Typography>
+          }
+          subheader={
+            <Typography variant="body2">
+              Centro: {report.centro_recoleccion}
+            </Typography>
+          }
+        />
 
-            <Box>
-                <Typography variant="h6" gutterBottom>Información del contenedor</Typography>
-                <Box paddingLeft={2}>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Nombre del centro: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.centro_recoleccion}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Calle: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.calle_reporte}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Número exterior: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.recollection_address_num_ext}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Número interior: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.recollection_address_num_int}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Colonia: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.colonia_reporte}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Código postal: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.cp_reporte}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Ciudad: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.estado_reporte}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Estado: </Typography>
-                        <Typography variant="body1" display="inline" gutterBottom>{report.estado_reporte}</Typography>
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
-    )
+        <Divider />
+
+        <CardContent>
+          <Grid container spacing={2}>
+            {/* Información del donador */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1" gutterBottom>
+                Información del Donador
+              </Typography>
+              <Stack spacing={1}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Person color="primary" />
+                  <Typography>
+                    <strong>Nombre:</strong> {report.nombre_real_usuario}{' '}
+                    {report.apellido_usuario}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Business color="primary" />
+                  <Typography>
+                    <strong>RFC:</strong> {report.rfc_usuario}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Phone color="primary" />
+                  <Typography>
+                    <strong>Teléfono:</strong> {report.telefono_usuario}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Email color="primary" />
+                  <Typography>
+                    <strong>Email:</strong> {report.email_usuario}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </Grid>
+
+            {/* Información del contenedor */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1" gutterBottom>
+                Información del Contenedor
+              </Typography>
+              <Stack spacing={1}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Storefront color="primary" />
+                  <Typography>
+                    <strong>Centro:</strong> {report.centro_recoleccion}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <LocationOn color="primary" />
+                  <Typography>
+                    <strong>Dirección:</strong> {report.calle_reporte}{' '}
+                    {report.recollection_address_num_ext}
+                    {report.recollection_address_num_int
+                      ? ` int. ${report.recollection_address_num_int}`
+                      : ''
+                    }, {report.colonia_reporte}, CP {report.cp_reporte}, {report.estado_reporte}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    </Grow>
+  );
 }
