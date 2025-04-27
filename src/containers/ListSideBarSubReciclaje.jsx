@@ -39,8 +39,8 @@ const status = new ListTemplateItem({
     redirection: '/centro/status'
 })
 
-export default function ReciclajeList() {
+export default function SubReciclajeList() {
     return (
-        <ListTemplate items={[ usersItem, asignaciones ]} />
+        <ListTemplate items={[ asignaciones ]} />
     )
 }

@@ -393,7 +393,7 @@ export default function DriverCenterAssignedTable({ data }) {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [statusResidue, setStatusResidue] = useState("");
   const [idOrderSelected, setIdOrderSelected] = useState(null);
-
+  const [reportResidueId, setReportResidueId] = useState(null);
   const handleExpandClick = (id) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
@@ -622,6 +622,9 @@ export default function DriverCenterAssignedTable({ data }) {
     setOpenConfirmModal(true);
     setResidueIndex(index);
     setEditedResidueName(residuo.residue_name);
+    console.log("Residuo name:", residuo.report_residue_id);
+    setReportResidueId(residuo.report_residue_id);
+
     setEditedPeso(residuo.total_kg);
     setEditedVolumen(residuo.total_m3);
     setStatusResidue(residuo.verification_status);
@@ -673,18 +676,65 @@ export default function DriverCenterAssignedTable({ data }) {
   };
 
   const handleOpenEditModal = () => {
+
     setOpenEditModal(true);
   };
   const handleEditSubmit = () => {
     // Aquí puedes manejar el envío de los datos editados
+
     console.log(
       "Residuo editado:",
       editedResidueName,
       editedPeso,
-      editedVolumen
+      editedVolumen,
+      reportResidueId 
     );
+
+    axios
+    .post(
+      `${process.env.REACT_APP_SERVER_URL}/Rennueva/checker-verified-report/`,
+      [{
+        residue_id: reportResidueId,
+        checker_username : dataUser.user,
+        status: "REPORTADO",
+        //residue_name: editedResidueName,
+        new_weight: editedPeso,
+        new_m3: editedVolumen,
+        measurement_comments : "Residuo editado"
+      }]
+
+    )
+      .then((response) => {
+        console.log("Residuo editado:", response.data);
+        // Aquí puedes manejar la respuesta de la API después de editar el residuo
+        // Por ejemplo, puedes cerrar el modal o mostrar un mensaje de éxito
+        setOpenEditModal(false);
+        setOpenModalText(true);
+        setTextOpenModalText("Residuo editado correctamente");
+        setUpdateReportInfo((prev) => !prev);
+      })
+
+      .catch((error) => {
+        console.error("Error al editar el residuo:", error);
+      });
+
+    
+
     setOpenEditModal(false);
   };
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+      .then(response => {
+        const data = response.data;
+        console.log("Residuos:", data);
+        setResidues(data);
+      })
+      .catch(error => {
+        console.error(error);
+      })
+  }, []);
 
   return (
     <Box sx={{ width: "100%", mb: "3rem" }}>
@@ -1095,10 +1145,49 @@ export default function DriverCenterAssignedTable({ data }) {
           <FormControl fullWidth margin="dense">
             <InputLabel>Nombre del Residuo</InputLabel>
             <Select
-              value={editedResidueName}
-              onChange={(e) => setEditedResidueName(e.target.value)}
+              value={residues.find((item) => item.nombre === editedResidueName)?.nombre}
+              onChange={(e) => {
+                setEditedResidueName(e.target.value);
+                const selectedResidue = residues.find(
+                  (item) => item.nombre === e.target.value
+                );
+                console.log("Residuo seleccionado:", selectedResidue);  
+
+                
+                // if (selectedResidue) {
+                //   setEditedPeso(selectedResidue.total_kg);
+                //   setEditedVolumen(selectedResidue.total_m3);
+                // }
+                
+              }}
               label="Nombre del Residuo"
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    maxHeight: 200,
+                    "& .MuiMenuItem-root": {
+                      padding: 1,
+
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.main,
+                        color: theme.palette.common.white,
+                      },
+                      "&:focus": {
+                        backgroundColor: theme.palette.primary.main,
+                        color: theme.palette.common.white,
+                      },
+                      "&:active": {
+                        backgroundColor: theme.palette.primary.main,
+                        color: theme.palette.common.white,
+                      },
+                    },
+                  },
+                },
+              }}
             >
+              {/* Mapeamos los residuos para crear las opciones del select */}
+
+            
               {residues.map((item, index) => (
                 <MenuItem key={index} value={item.nombre}>
                   {item.nombre}
