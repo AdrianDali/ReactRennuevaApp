@@ -1,265 +1,206 @@
-import { Box, Typography, Divider, Chip } from "@mui/material";
-import cancelationReassonText from "../../helpers/cancelationReassonText";
+import React from 'react';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Divider,
+  Chip,
+  Grid,
+  Stack,
+  Typography,
+  Avatar,
+  Slide,
+  Fade,
+  useMediaQuery,
+} from '@mui/material';
+import { useTheme, alpha } from '@mui/material/styles';
+import {
+  Person,
+  Phone,
+  Email,
+  Group,
+  LocationOn,
+  Home,
+  Business,
+} from '@mui/icons-material';
+import cancelationReassonText from '../../helpers/cancelationReassonText';
 
-export default function UserInfoSubTable({ request }) {
-  console.log("request", request);
+export default function EnhancedUserInfoSubTable({ request }) {
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+  const [hoveredSection, setHoveredSection] = React.useState(null);
+
   return (
-    <Box mt={2}>
-      {request.status === "cancelado" && (
-        <Chip
-          label={`Solicitud cancelada: ${cancelationReassonText(
-            request.comment_cancelation
-          )}`}
-          color="error"
-        />
-      )}
-      <Box
-        display="flex"
-        justifyContent="start"
-        gap={10}
-        padding={4}
-        py={6}
-        flexWrap="nowrap"
-        overflow="scroll"
+    <Slide direction="down" in mountOnEnter unmountOnExit>
+      <Card
+        elevation={3}
+        sx={{
+          mt: 2,
+          position: 'relative',
+          borderRadius: 2,
+          transition: 'box-shadow 0.3s ease',
+          '&:hover': {
+            boxShadow: theme.shadows[6],
+          },
+        }}
       >
-        <Box flexShrink={0}>
-          <Typography variant="h6" gutterBottom>
-            Información del Usuario
-          </Typography>
-          <Box paddingLeft={2}>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                color="secondary"
-                display="inline"
-                fontWeight={500}
-                gutterBottom
-              >
-                Nombre completo:{" "}
+        {request.status === 'cancelado' && (
+          <Chip
+            label={`Solicitud cancelada: ${cancelationReassonText(
+              request.comment_cancelation
+            )}`}
+            color="error"
+            sx={{ position: 'absolute', top: theme.spacing(2), right: theme.spacing(2) }}
+          />
+        )}
+
+        <CardHeader
+          avatar={<Avatar>{request.complete_name.charAt(0)}</Avatar>}
+          title={
+            <Typography variant={isSm ? 'h6' : 'h5'}>
+              Información del Usuario
+            </Typography>
+          }
+          subheader={
+            <Fade in timeout={500}>
+              <Typography variant="body2">
+                Grupo: {request.groups[0]}
               </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.complete_name}
+            </Fade>
+          }
+        />
+
+        <Divider />
+
+        <CardContent>
+          <Grid container spacing={2}>
+            {/* Usuario */}
+            <Grid
+              item
+              xs={12}
+              md={6}
+              onMouseEnter={() => setHoveredSection('user')}
+              onMouseLeave={() => setHoveredSection(null)}
+              sx={{
+                p: 2,
+                borderRadius: 1,
+                transition: 'background-color 0.3s ease',
+                backgroundColor:
+                  hoveredSection === 'user'
+                    ? alpha(theme.palette.primary.light, 0.2)
+                    : 'transparent',
+              }}
+            >
+              <Typography variant="subtitle1" gutterBottom>
+                Detalles del Usuario
               </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                color="secondary"
-                display="inline"
-                fontWeight={500}
-                gutterBottom
-              >
-                Teléfono:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.phone}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                color="secondary"
-                display="inline"
-                fontWeight={500}
-                gutterBottom
-              >
-                Correo electrónico:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.user}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                color="secondary"
-                display="inline"
-                fontWeight={500}
-                gutterBottom
-              >
-                Grupo:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.groups[0]}
-              </Typography>
-            </Box>
-            {request.groups[0] === "Centro" && (
-              <Box>
-                <Typography
-                  variant="subtitle1"
-                  color="secondary"
-                  display="inline"
-                  fontWeight={500}
-                  gutterBottom
-                >
-                  Centro:
-                </Typography>
-                {request.collection_center !== "NO APLICA" ? (
-                  <Typography variant="body1" display="inline" gutterBottom>
-                    {request.collection_center}
+              <Stack spacing={1}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Person color="primary" />
+                  <Typography>
+                    <strong>Nombre completo:</strong> {request.complete_name}
                   </Typography>
-                ) : (
-                  <Typography variant="body1" display="inline" gutterBottom>
-                    {request.recycling_center}
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Phone color="primary" />
+                  <Typography>
+                    <strong>Teléfono:</strong> {request.phone}
                   </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Email color="primary" />
+                  <Typography>
+                    <strong>Correo electrónico:</strong> {request.user}
+                  </Typography>
+                </Stack>
+                {request.groups[0] === 'Centro' && (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Group color="primary" />
+                    <Typography>
+                      <strong>Centro:</strong>{' '}
+                      {request.collection_center !== 'NO APLICA'
+                        ? request.collection_center
+                        : request.recycling_center}
+                    </Typography>
+                  </Stack>
                 )}
-              </Box>
-            )}
-          </Box>
-        </Box>
-        <Divider orientation="vertical" flexItem />
-        <Box flexShrink={0}>
-          <Typography variant="h6" gutterBottom>
-            Dirección
-          </Typography>
-          <Box paddingLeft={2}>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Calle:{" "}
+              </Stack>
+            </Grid>
+
+            {/* Dirección */}
+            <Grid
+              item
+              xs={12}
+              md={6}
+              onMouseEnter={() => setHoveredSection('address')}
+              onMouseLeave={() => setHoveredSection(null)}
+              sx={{
+                p: 2,
+                borderRadius: 1,
+                transition: 'background-color 0.3s ease',
+                backgroundColor:
+                  hoveredSection === 'address'
+                    ? alpha(theme.palette.primary.light, 0.2)
+                    : 'transparent',
+              }}
+            >
+              <Typography variant="subtitle1" gutterBottom>
+                Dirección
               </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_street}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Número exterior:
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_num_ext}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Número interior:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_num_int}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Colonia:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_locality}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Código postal:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_postal_code}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Ciudad:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_city}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Estado:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_state}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                display="inline"
-                color="secondary"
-                fontWeight={500}
-                gutterBottom
-              >
-                Referencias:{" "}
-              </Typography>
-              <Typography variant="body1" display="inline" gutterBottom>
-                {request.address_references}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-        {/* <Divider orientation="vertical" flexItem />
-                <Box flexShrink={0}>
-                    <Typography variant="h6" gutterBottom>Recolección</Typography>
-                    <Box paddingLeft={2}>
-                        <Box>
-                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Peso estimado: </Typography>
-                            <Typography variant="body1" display="inline" gutterBottom>{`${request.peso_estimado} kg`}</Typography>
-                        </Box>
-                        <Box>
-                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Hora de recolección preferente: </Typography>
-                            <Typography variant="body1" display="inline" gutterBottom>{`${request.hora_preferente_recoleccion} hrs`}</Typography>
-                        </Box>
-                        {
-                            request.comment_cancelation &&
-                            <Box>
-                                <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Comentarios de recolección: </Typography>
-                                <Typography variant="body1" display="inline" gutterBottom>{cancelationReassonText(request.comment_cancelation) === "Consulte comentarios de cancelación"? request.comment_cancelation:cancelationReassonText(request.comment_cancelation)}</Typography>
-                            </Box>
-                        }
-                        {
-                            request.conductor_asignado &&
-                            <Box>
-                                <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>Conductor asignado: </Typography>
-                                <Typography variant="body1" display="inline" gutterBottom>{request.conductor_asignado}</Typography>
-                            </Box>
-                        }
-                        <Box>
-                            <Typography variant="subtitle1" display="inline" color="secondary" fontWeight={500} gutterBottom>fecha de recolección estimada: </Typography>
-                            <Typography variant="body1" display="inline" gutterBottom>{request.fecha_estimada_recoleccion !== "2000-01-01" ? request.fecha_estimada_recoleccion : "Sin asignar"}</Typography>
-                        </Box>
-                    </Box>
-                </Box> */}
-      </Box>
-    </Box>
+              <Stack spacing={1}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Home color="primary" />
+                  <Typography>
+                    <strong>Calle:</strong> {request.address_street}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Business color="primary" />
+                  <Typography>
+                    <strong>Número ext.:</strong> {request.address_num_ext}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Business color="primary" />
+                  <Typography>
+                    <strong>Número int.:</strong> {request.address_num_int}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <LocationOn color="primary" />
+                  <Typography>
+                    <strong>Colonia:</strong> {request.address_locality}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <LocationOn color="primary" />
+                  <Typography>
+                    <strong>CP:</strong> {request.address_postal_code}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <LocationOn color="primary" />
+                  <Typography>
+                    <strong>Ciudad:</strong> {request.address_city}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <LocationOn color="primary" />
+                  <Typography>
+                    <strong>Estado:</strong> {request.address_state}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <LocationOn color="primary" />
+                  <Typography>
+                    <strong>Referencias:</strong> {request.address_references}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    </Slide>
   );
 }
