@@ -42,6 +42,11 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
   const [old_user, setOldUser] = useState(userToEdit ? userToEdit.user : "");
   const [razon_social, setRazonSocial] = useState(userToEdit ? userToEdit.razon_social : "");
 
+  const theme = useTheme();
+  
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm')); // Calcula si debe ser pantalla completa
+
+
   const [center, setCenter] = useState(() => {
     if (userToEdit) {
       const { recycling_center, collection_center } = userToEdit;

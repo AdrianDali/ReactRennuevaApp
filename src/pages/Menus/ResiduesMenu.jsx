@@ -45,7 +45,7 @@ useEffect(() => {
     .catch((error) => {
       console.error(error);
     });
-}, [dataUser]);
+}, [dataUser,updateReportInfo]);
 
 // 2. Efecto para obtener residuos, calcular el peso total y crear la orden
 useEffect(() => {

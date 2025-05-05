@@ -7,7 +7,7 @@ import { TodoContext } from "../../context"
 
 export default function ContainerMenu() {
     const [donorReports, setDonorReports] = useState([])
-    const { updateDonorReports, updateDonorReportsContext } = useContext(TodoContext)
+    const { updateDonorReports, setUpdateDonorReports ,updateDonorReportsContext } = useContext(TodoContext)
     const dataUser = useAuth()
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export default function ContainerMenu() {
 
     return (
         <Container maxWidth={false} sx={{ flexGrow: 1, overflow: 'auto', py: 3 }}>
-            <DonorReportsTable data={donorReports} />
+            <DonorReportsTable data={donorReports} setUpdateDonorReports={setUpdateDonorReports} />
         </Container>
     )
 }

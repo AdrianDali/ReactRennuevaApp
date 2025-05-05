@@ -365,7 +365,7 @@ function SearchField({ filteredData, setVisibleData }) {
   );
 }
 
-export default function DonorReportsTable({ data }) {
+export default function DonorReportsTable({ data, setUpdateDonorReports }) {
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
   const [reportToEdit, setReportToEdit] = useState({});
@@ -438,6 +438,7 @@ console
       setOpenModalConfirm(false);
       setOpenModalText(true); 
       setTextOpenModalText("El status del reporte ha sido actualizado correctamente");
+      setUpdateDonorReports(true)
       
     } catch (error) {
       console.error("Error al actualizar el status:", error);
