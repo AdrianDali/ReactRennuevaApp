@@ -435,7 +435,7 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
 
   return ReactDOM.createPortal(
     <Dialog
-      open={open}
+      open={true}
       onClose={closeModal}
       fullWidth
       maxWidth="md"
