@@ -29,7 +29,7 @@ const usersItem = new ListTemplateItem({
 const asignaciones = new ListTemplateItem({
     tag: "Reportes asignados",
     icon: <Assignment />,
-    redirection: '/centros/assignments'
+    redirection: '/sub-centro/status'
 }, 
 )
 
@@ -39,8 +39,21 @@ const status = new ListTemplateItem({
     redirection: '/centro/status'
 })
 
+const collectRequestItem = new ListTemplateItem({
+    tag: "Recolección",
+    icon: <DirectionsRunRounded />,
+    subElemnets: [
+        new ListTemplateItem({
+            tag: "Reporte Donadores",
+            icon: <AssignmentReturnedIcon />,
+            redirection: "/sub-centro/home",
+        })
+    
+    ]
+})
+
 export default function SubReciclajeList() {
     return (
-        <ListTemplate items={[ asignaciones ]} />
+        <ListTemplate items={[ asignaciones, collectRequestItem ]} />
     )
 }

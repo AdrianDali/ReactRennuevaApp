@@ -600,7 +600,7 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
                 </FormControl>
               </Grid>
             )}
-            {group === 'Reciclaje' && (
+            {['Reciclaje', 'Separador'].includes(group) && (
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel>Centro de Reciclaje</InputLabel>

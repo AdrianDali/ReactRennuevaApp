@@ -128,9 +128,11 @@ function App() {
     {path : '/centros/assignments', element: <CentroLayout List={<ReciclajeList/>}><ReportsAssignedRecyclingMenu/></CentroLayout>},
     {path : '/centrosAcopio', element: <CentroLayout List={<ReciclajeList/>}><CollectionCenterMenu/> </CentroLayout>},
     {path : '/centro/status', element: <CentroLayout List={<ReciclajeList/>}><MenuStatusFolio/> </CentroLayout>},
+    {path:'/centro/create', element: <CentroLayout List={<ReciclajeList/>}><ContainerMenu/></CentroLayout> },
 
 
     {path : '/sub-centro/status', element: <CentroLayout List={<SubReciclajeList/>}><MenuStatusFolio/> </CentroLayout>},
+    {path:'/sub-centro/home', element: <CentroLayout List={<SubReciclajeList/>}><ContainerMenu/></CentroLayout> },
 
 
 

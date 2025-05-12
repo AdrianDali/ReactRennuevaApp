@@ -588,21 +588,19 @@ export default function ReportsTable({ data }) {
 
   return (
     <Box sx={{
-      // Ocupa toda la pantalla y deja 10 % libre (p. ej. para header global)
-      height: "90vh",
       width: "100%",
+      mb: "3rem",
+      height: "80vh",
       display: "flex",
-      justifyContent: "center",
-      px: { xs: 1, sm: 2, md: 4 },
+      flexDirection: "column",
     }}>
       <Paper
         elevation={3}
         sx={{
-          flex: 1,
-          maxWidth: 1280,
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",   // Importante: el scroll va en TableContainer
+          borderRadius: 2, // esquinas redondeadas
+          boxShadow: 1, // sombra ligera
+          p: 2, // padding interno
+          bgcolor: "background.paper",
         }}
       >
         <Toolbar
@@ -615,22 +613,26 @@ export default function ReportsTable({ data }) {
           setVisibleData={setVisibleData}
         />
         <TableContainer sx={{
-            flex: 1,                  // <- ocupa todo el alto restante
+            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
             overflowY: "auto",
-            // scroll más suave en desktop
-            scrollbarGutter: "stable",
-            "&::-webkit-scrollbar": {
-              width: 8,
-            },
+            "&::-webkit-scrollbar": { width: 6 },
             "&::-webkit-scrollbar-thumb": {
-              borderRadius: 4,
-              backgroundColor: theme.palette.mode === "dark"
-                ? "rgba(255,255,255,.2)"
-                : "rgba(0,0,0,.2)",
+              bgcolor: "grey.400",
+              borderRadius: 3,
             },
           }}>
-          <Table stickyHeader aria-label="sticky table" size="small">
-            <TableHead sx={{ bgcolor: theme.palette.background.default }}>
+          <Table >
+            <TableHead sx={{
+                bgcolor: "primary.main",
+                "& .MuiTableCell-root": {
+                  color: "common.white",
+                  borderBottom: "2px solid",
+                  borderColor: "primary.dark",
+                  "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
+                    opacity: 1,
+                  },
+                },
+              }}>
               <TableRow>
                 <TableCell>
                   <TableSortLabel direction="asc">
@@ -698,7 +700,11 @@ export default function ReportsTable({ data }) {
                         role="checkbox"
                         key={`${report.id_order}-${index}`}
                         selected={isRowSelected(report.id_order)}
-                        sx={{ cursor: "pointer" }}
+                        sx={{
+                          "&:nth-of-type(odd)": { bgcolor: "action.hover" },
+                          "&:hover": { bgcolor: "action.selected" },
+                          transition: "background-color 0.2s ease",
+                        }}
                         aria-checked={
                           isRowSelected(report.id_order) ? true : false
                         }
@@ -713,7 +719,8 @@ export default function ReportsTable({ data }) {
                           setRowContextMenuAnchorEl(e.target);
                         }}
                       >
-                        <TableCell>
+                        <TableCell 
+                        >
                           <Button
                             onClick={(e) => {
                               e.stopPropagation();
