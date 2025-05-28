@@ -55,6 +55,7 @@ import CustomProgressBar from "../customProgressBar";
 import CentersOcuppationFiltersModal from "../modals/CentersOccupationFiltersModal";
 import AssignModal from "../modals/AssignModal";
 
+
 function RowContextMenu({ anchorEl, setAnchorEl }) {
     const { setOpenModalEditReport, setOpenModalDeleteReport } =
         useContext(TodoContext);
@@ -335,7 +336,7 @@ export default function CollectionsCentersTable({ data }) {
     const [filtersApplied, setFiltersApplied] = useState(false);
     const [visibleData, setVisibleData] = useState(data);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [orderBy, setOrderBy] = useState("collection_center_name");
     const [order, setOrder] = useState("desc");
     const [sortedData, setSortedData] = useState([]);
@@ -429,13 +430,20 @@ export default function CollectionsCentersTable({ data }) {
 
 
     return (
-        <Box sx={{ width: "100%", mb: "3rem" }}>
+        <Box sx={{
+        width: "100%",
+        mb: "3rem",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+      }}>
             <Paper
                 sx={{
-                    height: "80%",
-                    overflow: "auto",
-                    padding: 2,
-                }}
+          borderRadius: 2, // esquinas redondeadas
+          boxShadow: 1, // sombra ligera
+          p: 2, // padding interno
+          bgcolor: "background.paper",
+        }}
             >
                 {desktop ? (
                     <Toolbar
@@ -459,9 +467,27 @@ export default function CollectionsCentersTable({ data }) {
                         setVisibleData={setVisibleData}
                     />
                 )}
-                <TableContainer sx={{ minHeight: "calc(100vh - 350px)" }}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead sx={{ bgcolor: theme.palette.background.default }}>
+                <TableContainer sx={{
+            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { width: 6 },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "grey.400",
+              borderRadius: 3,
+            },
+          }}>
+                    <Table >
+                        <TableHead sx={{
+                bgcolor: "primary.main",
+                "& .MuiTableCell-root": {
+                  color: "common.white",
+                  borderBottom: "2px solid",
+                  borderColor: "primary.dark",
+                  "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
+                    opacity: 1,
+                  },
+                },
+              }}>
                             <TableRow>
                                 <TableCell>
                                     <TableSortLabel direction="asc">
@@ -598,7 +624,7 @@ export default function CollectionsCentersTable({ data }) {
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[10, 15, 20]}
                     component="div"
                     count={sortedData.length}
                     rowsPerPage={rowsPerPage}
