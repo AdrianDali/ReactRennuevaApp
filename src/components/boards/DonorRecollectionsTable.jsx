@@ -621,7 +621,7 @@ export default function DonorRecollectionsTable({ data }) {
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Peso estimado</Typography>
+                    <Typography variant="subtitle2">Peso estimado(KG)</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>

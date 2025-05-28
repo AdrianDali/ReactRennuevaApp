@@ -131,7 +131,7 @@ function App() {
     {path:'/centro/create', element: <CentroLayout List={<ReciclajeList/>}><ContainerMenu/></CentroLayout> },
 
 
-    {path : '/sub-centro/status', element: <CentroLayout List={<SubReciclajeList/>}><MenuStatusFolio/> </CentroLayout>},
+    {path : '/sub-centro/assignments', element: <CentroLayout List={<SubReciclajeList/>}><ReportsAssignedRecyclingMenu/> </CentroLayout>},
     {path:'/sub-centro/home', element: <CentroLayout List={<SubReciclajeList/>}><ContainerMenu/></CentroLayout> },
 
 

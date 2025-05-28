@@ -63,20 +63,23 @@ export default function EditRecolectionModal({
   const [loading, setLoading] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
+  const reasons = [
+    { value: "noDisponible", label: "Persona no disponible" },
+    { value: "bajaBateria", label: "Batería baja en camioneta" },
+    { value: "faltaEspacio", label: "Falta de espacio en camioneta" },
+    { value: "activoEspontaneo", label: "Actividad espontánea" },
+    { value: "otro", label: "Otro" },
+  ];
+
   useEffect(() => {
-    //console.log(userData);
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
-      .then((response) => {
-        //console.log(response.data);
-        setConductores(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      .then((res) => setConductores(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   useEffect(() => {
+    console.log("recolection", recolection);
     if (recolection === null) return;
     switch (recolection?.status) {
       case null:
@@ -97,9 +100,9 @@ export default function EditRecolectionModal({
           setConductorAsignado(recolection.conductor_asignado);
         }
         break;
-      case "recolectada":
-        setStatus("recolectado");
-        break;
+      // case "recolectada":
+      //   setStatus("recolectado");
+      //   break;
       case "entregadaCentro":
         setStatus("entregado");
         break;
@@ -164,7 +167,6 @@ export default function EditRecolectionModal({
       };
 
       try {
-
         setLoading(true);
 
         const changeStatusResponse = await axios.post(
@@ -224,8 +226,7 @@ export default function EditRecolectionModal({
         })
         .finally(() => {
           setLoading(false);
-        }
-        );
+        });
     }
   };
 
@@ -276,15 +277,7 @@ export default function EditRecolectionModal({
                     Recolección pendiente
                   </MenuItem>
                 ) : null}
-                {status === "solicitado" ||
-                status === "pendienteRecoleccion" ||
-                status === "recolectado" ? (
-                  <MenuItem value="recolectado">Recolectada</MenuItem>
-                ) : null}
-                {status === "recolectado" ||
-                status === "pendienteRecoleccion" ? (
-                  <MenuItem value="entregado">Entregado</MenuItem>
-                ) : null}
+
                 {status === "solicitado" ||
                 status === "pendienteRecoleccion" ? (
                   <MenuItem value="cancelado">Cancelado</MenuItem>
@@ -405,14 +398,14 @@ export default function EditRecolectionModal({
 
             {status === "pendienteRecoleccion" ? (
               <Button
-              fullWidth
-              color="success"
-              variant="contained"
-              type="submit"
-              disabled={status === "" || loading} // deshabilitar si no hay status o si está cargando
-            >
-              {loading ? "Cargando..." : "Guardar cambios"}
-            </Button>
+                fullWidth
+                color="success"
+                variant="contained"
+                type="submit"
+                disabled={status === "" || loading} // deshabilitar si no hay status o si está cargando
+              >
+                {loading ? "Cargando..." : "Guardar cambios"}
+              </Button>
             ) : status === "cancelado" ? (
               <Button
                 fullWidth

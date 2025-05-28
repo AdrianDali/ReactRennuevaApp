@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useState, useEffect, useContext } from "react";
+import ReactDOM from "react-dom";
 import {
   Modal,
   TextField,
@@ -12,55 +12,66 @@ import {
   IconButton,
   Stack,
   Typography,
-  InputAdornment
-} from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import { Close } from '@mui/icons-material';
-import axios from 'axios';
-import { TodoContext } from '../context/index.js';
+  InputAdornment,
+} from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { Close } from "@mui/icons-material";
+import axios from "axios";
+import { TodoContext } from "../context/index.js";
 
 function ModalResidueReport({ report }) {
   const [residues, setResidues] = useState([]);
-  const [entries, setEntries] = useState([{
-    user: report.nombre_usuario,
-    report: report.id_report,
-    residue: '',
-    peso: '',
-    volumen: ''
-  }]);
+  const [entries, setEntries] = useState([
+    {
+      user: report.nombre_usuario,
+      report: report.id_report,
+      residue: "",
+      peso: "",
+      volumen: "",
+    },
+  ]);
   const [botonAdd, setBotonAdd] = useState(false);
 
   const {
     openModalEditResidueReport,
     setOpenModalEditResidueReport,
-    setUpdateReportInfo
+    setUpdateReportInfo,
   } = useContext(TodoContext);
 
   const closeModal = () => {
-    setUpdateReportInfo(prev => !prev);
+    setUpdateReportInfo((prev) => !prev);
     setOpenModalEditResidueReport(false);
   };
 
   useEffect(() => {
     const getResidues = {
-      reportId: report.id_report ? report.id_report : report.id
+      reportId: report.id_report ? report.id_report : report.id,
     };
 
     // 1. Obtener todos los residuos
-    axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
-      .then(response => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+      .then((response) => {
         console.log("Todos los residuos:", response.data);
         setResidues(response.data);
       })
-      .catch(error => {
-        console.error('Hubo un problema al obtener los residuos:', error);
+      .catch((error) => {
+        console.error("Hubo un problema al obtener los residuos:", error);
       });
 
     // 2. Obtener todos los residuos de este reporte (si existe reportId)
-    if (getResidues.reportId !== undefined && getResidues.reportId !== null && getResidues.reportId !== '') {
-      axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, getResidues)
-        .then(response => {
+    if (
+      getResidues.reportId !== undefined &&
+      getResidues.reportId !== null &&
+      getResidues.reportId !== ""
+    ) {
+      axios
+        .post(
+          `${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`,
+          getResidues
+        )
+        .then((response) => {
           const data = response.data;
           console.log("Todos los residuos del reporte:", data);
           setEntries(data);
@@ -68,11 +79,10 @@ function ModalResidueReport({ report }) {
             setBotonAdd(true);
           }
         })
-        .catch(error => {
-          console.error('Hubo un problema al obtener los residuos:', error);
+        .catch((error) => {
+          console.error("Hubo un problema al obtener los residuos:", error);
         });
     }
-
   }, [report]);
 
   const handleInputChange = (index, event) => {
@@ -88,10 +98,10 @@ function ModalResidueReport({ report }) {
       {
         user: report.nombre_usuario,
         report: report.id_report,
-        residue: '',
-        peso: '',
-        volumen: ''
-      }
+        residue: "",
+        peso: "",
+        volumen: "",
+      },
     ]);
   };
 
@@ -108,37 +118,38 @@ function ModalResidueReport({ report }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`${process.env.REACT_APP_API_URL}/create-report-residue-user/`, entries)
-      .then(response => {
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL}/create-report-residue-user/`,
+        entries
+      )
+      .then((response) => {
         e.target.reset();
         closeModal();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   };
 
   return ReactDOM.createPortal(
-    <Modal
-      open={openModalEditResidueReport}
-      onClose={closeModal}
-    >
+    <Modal open={openModalEditResidueReport} onClose={closeModal}>
       <Box
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: { xs: '90%', md: 700 },
-          bgcolor: 'background.paper',
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: { xs: "90%", md: 700 },
+          bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
-          borderRadius: 2
+          borderRadius: 2,
         }}
       >
         <IconButton
           onClick={closeModal}
-          sx={{ position: 'absolute', right: 8, top: 8 }}
+          sx={{ position: "absolute", right: 8, top: 8 }}
         >
           <Close />
         </IconButton>
@@ -151,7 +162,7 @@ function ModalResidueReport({ report }) {
               <Box
                 key={index}
                 display="flex"
-                flexDirection={{ xs: 'column', md: 'row' }}
+                flexDirection={{ xs: "column", md: "row" }}
                 alignItems="center"
               >
                 {/* Campo Select para el Residuo */}
@@ -160,7 +171,7 @@ function ModalResidueReport({ report }) {
                   <Select
                     name="residue"
                     value={entry.residue}
-                    onChange={event => handleInputChange(index, event)}
+                    onChange={(event) => handleInputChange(index, event)}
                   >
                     {residues.map((residue, idx) => (
                       <MenuItem key={idx} value={residue.nombre}>
@@ -172,69 +183,76 @@ function ModalResidueReport({ report }) {
 
                 {/* Campo de texto para el Peso con adornment y validación 0-1000 */}
                 <TextField
-  sx={{ m: 1, flexBasis: { xs: '100%', md: '35%' } }}
-  name="peso"
-  label="Peso en kg"
-  variant="outlined"
-  type="number"
-  value={entry.peso}
-  onChange={(event) => {
-    const valor = parseFloat(event.target.value);
-    // Validar que esté dentro del rango y con máximo 3 decimales
-    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
+                  sx={{ m: 1, flexBasis: { xs: "100%", md: "35%" } }}
+                  name="peso"
+                  label="Peso en kg"
+                  variant="outlined"
+                  type="number"
+                  value={entry.peso}
+                  onChange={(event) => {
+                    const valor = parseFloat(event.target.value);
+                    // Validar que esté dentro del rango y con máximo 3 decimales
+                    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
 
-    if (
-      (!event.target.value || regexTresDecimales.test(event.target.value)) &&
-      valor >= 0 &&
-      valor <= 1000
-    ) {
-      handleInputChange(index, event);
-    }
-  }}
-  InputProps={{
-    endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-  }}
-  inputProps={{
-    min: 0,
-    max: 1000,
-    step: 0.001
-  }}
-/>
-
+                    if (
+                      (!event.target.value ||
+                        regexTresDecimales.test(event.target.value)) &&
+                      valor >= 0 &&
+                      valor <= 1000
+                    ) {
+                      handleInputChange(index, event);
+                    }
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">kg</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    min: 0,
+                    max: 1000,
+                    step: 0.001,
+                  }}
+                />
 
                 {/* Campo de texto para el Volumen con adornment y validación 0-1000 */}
                 <TextField
-  sx={{ m: 1, flexBasis: { xs: '100%', md: '35%' } }}
-  name="volumen"
-  label="Volumen en m³"
-  variant="outlined"
-  type="number"
-  value={entry.volumen}
-  onChange={(event) => {
-    const valor = parseFloat(event.target.value);
-    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
+                  sx={{ m: 1, flexBasis: { xs: "100%", md: "35%" } }}
+                  name="volumen"
+                  label="Volumen en m³"
+                  variant="outlined"
+                  type="number"
+                  value={entry.volumen}
+                  onChange={(event) => {
+                    const valor = parseFloat(event.target.value);
+                    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
 
-    if (
-      (!event.target.value || regexTresDecimales.test(event.target.value)) &&
-      valor >= 0 &&
-      valor <= 1000
-    ) {
-      handleInputChange(index, event);
-    }
-  }}
-  InputProps={{
-    endAdornment: <InputAdornment position="end">m³</InputAdornment>,
-  }}
-  inputProps={{
-    min: 0,
-    max: 1000,
-    step: 0.001
-  }}
-/>
-
+                    if (
+                      (!event.target.value ||
+                        regexTresDecimales.test(event.target.value)) &&
+                      valor >= 0 &&
+                      valor <= 1000
+                    ) {
+                      handleInputChange(index, event);
+                    }
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">m³</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    min: 0,
+                    max: 1000,
+                    step: 0.001,
+                  }}
+                />
 
                 {/* Botón para eliminar la fila */}
-                <IconButton onClick={() => handleRemoveFields(index)} sx={{ m: 1 }}>
+                <IconButton
+                  onClick={() => handleRemoveFields(index)}
+                  sx={{ m: 1 }}
+                >
                   <RemoveCircleOutlineIcon />
                 </IconButton>
 
@@ -255,7 +273,7 @@ function ModalResidueReport({ report }) {
 
         {botonAdd && (
           <Button
-            type='button'
+            type="button"
             variant="contained"
             fullWidth
             onClick={handleAddFirstFields}
@@ -265,7 +283,7 @@ function ModalResidueReport({ report }) {
         )}
       </Box>
     </Modal>,
-    document.getElementById('modal')
+    document.getElementById("modal")
   );
 }
 

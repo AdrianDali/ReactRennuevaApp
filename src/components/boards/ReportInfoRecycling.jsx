@@ -29,7 +29,6 @@ export default function ReportInfoRecycling({ request }) {
   const [selectedReport, setSelectedReport] = useState(null);
   const [residuesPerReport, setResiduesPerReport] = useState([]);
 
-
   // Estados para controlar los modales de confirmación y edición.
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -72,15 +71,21 @@ export default function ReportInfoRecycling({ request }) {
   // Si el usuario confirma que el residuo es correcto, se marca como verificado.
   const handleConfirmCorrect = () => {
     console.log("Residuo verificado:", editedResidueName);
-    console.log("Residuo verificado:", residueReportInfo[selectedResiduoIndex].residue);
-    console.log("Residuo verificado:", residueReportInfo[selectedResiduoIndex].peso);
+    console.log(
+      "Residuo verificado:",
+      residueReportInfo[selectedResiduoIndex].residue
+    );
+    console.log(
+      "Residuo verificado:",
+      residueReportInfo[selectedResiduoIndex].peso
+    );
     console.log("Residuo verificado:", orderRecollectionInfo.id);
     axios
       .post(
         `${process.env.REACT_APP_SERVER_URL}/Rennueva/driver-collected-status-residue/`,
         {
           residue_name: "editedResidueName",
-          residueId: orderRecollectionInfo.id ,
+          residueId: orderRecollectionInfo.id,
           status: "VERIFICADO",
         }
       )
@@ -181,22 +186,21 @@ export default function ReportInfoRecycling({ request }) {
     //   return newResidues;
     // });
     // setOpenEditModal(false);
-    
+
     // Petición HTTP para actualizar los datos del residuo
-    const jsonRequest = [ 
+    const jsonRequest = [
       {
         residue_id: residueReportInfo[selectedResiduoIndex].id_report_residue,
-        checker_username: request.conductor_asignado, 
+        checker_username: request.conductor_asignado,
         status: "REPORTADO",
         comments: "Residuo reportado por el recolector",
         new_weight: editedPeso,
         new_m3: editedVolumen,
-        measurement_comments : "Mediciones actualizadas por el recolector"
+        measurement_comments: "Mediciones actualizadas por el recolector",
+      },
+    ];
 
-      } ]
-      
-    
-      console.log(jsonRequest);
+    console.log(jsonRequest);
 
     axios
       .post(
@@ -220,7 +224,6 @@ export default function ReportInfoRecycling({ request }) {
         console.error(error);
       });
     setOpenEditModal(false);
-
   };
 
   const handleOpenEditModal = () => {
@@ -409,121 +412,98 @@ export default function ReportInfoRecycling({ request }) {
       >
         <DialogTitle>Residuos del Reporte</DialogTitle>
         <DialogContent dividers>
+          {residueReportInfo && residueReportInfo.length > 0 ? (
+            residueReportInfo.map((residuo, index) => {
+              let displayText = "No verificado";
+              let displayColor = "error.main";
 
+              // Mapeo según el status
+              switch (residuo.status) {
+                case "VERIFICADO":
+                  displayText = "Verificado";
+                  displayColor = "success.main";
+                  break;
+                case "REPORTADO":
+                  displayText = "Reportado";
+                  displayColor = "warning.main"; // o el color que prefieras
+                  break;
+                default:
+                  displayText = "No verificado";
+                  displayColor = "error.main";
+              }
 
+              return (
+                <Box
+                  key={index}
+                  marginBottom={1}
+                  display="flex"
+                  alignItems="center"
+                  flexWrap="wrap"
+                >
+                  <Typography
+                    variant="subtitle1"
+                    display="inline"
+                    color="secondary"
+                    fontWeight={500}
+                  >
+                    Nombre:{" "}
+                  </Typography>
+                  <Typography variant="body1" display="inline">
+                    {residuo.residue}
+                  </Typography>
 
-        
+                  <Typography
+                    variant="subtitle1"
+                    display="inline"
+                    color="secondary"
+                    fontWeight={500}
+                    sx={{ marginLeft: 2 }}
+                  >
+                    Cantidad:{" "}
+                  </Typography>
+                  <Typography variant="body1" display="inline">
+                    {residuo.peso} Kg
+                  </Typography>
 
-        {residueReportInfo && residueReportInfo.length > 0 ? (
-  residueReportInfo.map((residuo, index) => {
-    let displayText = "No verificado";
-    let displayColor = "error.main";
+                  <Typography
+                    variant="subtitle1"
+                    display="inline"
+                    color="secondary"
+                    fontWeight={500}
+                    sx={{ marginLeft: 2 }}
+                  >
+                    Volumen:{" "}
+                  </Typography>
+                  <Typography variant="body1" display="inline">
+                    {residuo.volumen}
+                  </Typography>
 
-    // Mapeo según el status
-    switch (residuo.status) {
-      case "VERIFICADO":
-        displayText = "Verificado";
-        displayColor = "success.main";
-        break;
-      case "REPORTADO":
-        displayText = "Reportado";
-        displayColor = "warning.main"; // o el color que prefieras
-        break;
-      default:
-        displayText = "No verificado";
-        displayColor = "error.main";
-    }
+                  {/* Botón para verificar el residuo */}
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ marginLeft: 2 }}
+                    onClick={() => handleOpenConfirmModal(index)}
+                  >
+                    Verificar
+                  </Button>
 
-    return (
-      <Box
-        key={index}
-        marginBottom={1}
-        display="flex"
-        alignItems="center"
-        flexWrap="wrap"
-      >
-        <Typography
-          variant="subtitle1"
-          display="inline"
-          color="secondary"
-          fontWeight={500}
-        >
-          Nombre:{" "}
-        </Typography>
-        <Typography variant="body1" display="inline">
-          {residuo.residue}
-        </Typography>
-
-        <Typography
-          variant="subtitle1"
-          display="inline"
-          color="secondary"
-          fontWeight={500}
-          sx={{ marginLeft: 2 }}
-        >
-          Cantidad:{" "}
-        </Typography>
-        <Typography variant="body1" display="inline">
-          {residuo.peso} Kg
-        </Typography>
-
-        <Typography
-          variant="subtitle1"
-          display="inline"
-          color="secondary"
-          fontWeight={500}
-          sx={{ marginLeft: 2 }}
-        >
-          Volumen:{" "}
-        </Typography>
-        <Typography variant="body1" display="inline">
-          {residuo.volumen}
-        </Typography>
-
-        {/* Botón para verificar el residuo */}
-        <Button
-          variant="outlined"
-          size="small"
-          sx={{ marginLeft: 2 }}
-          onClick={() => handleOpenConfirmModal(index)}
-        >
-          Verificar
-        </Button>
-
-        {/* Mostrar el estado en función del status */}
-        <Typography
-          variant="body2"
-          color={displayColor}
-          sx={{ marginLeft: 1 }}
-        >
-          {displayText}
-        </Typography>
-      </Box>
-    );
-  })
-) : (
-  <Typography variant="body1">
-    No hay residuos para este reporte.
-  </Typography>
-)}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                  {/* Mostrar el estado en función del status */}
+                  <Typography
+                    variant="body2"
+                    color={displayColor}
+                    sx={{ marginLeft: 1 }}
+                  >
+                    {displayText}
+                  </Typography>
+                </Box>
+              );
+            })
+          ) : (
+            <Typography variant="body1">
+              No hay residuos para este reporte.
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseResiduoModal} color="primary">
@@ -553,99 +533,99 @@ export default function ReportInfoRecycling({ request }) {
 
       {/* Modal de edición para actualizar los datos del residuo */}
       <Dialog
-      open={openEditModal}
-      onClose={() => setOpenEditModal(false)}
-      fullWidth
-      maxWidth="sm"
-    >
-      <DialogTitle>Editar Residuo</DialogTitle>
-      <DialogContent dividers>
-        {/* Select para escoger el residuo a partir de la data obtenida */}
-        <FormControl fullWidth margin="dense">
-          <InputLabel>Nombre del Residuo</InputLabel>
-          <Select
-            value={editedResidueName}
-            onChange={(e) => setEditedResidueName(e.target.value)}
-            label="Nombre del Residuo"
-          >
-            {residues.map((item, index) => (
-              <MenuItem key={index} value={item.nombre}>
-                {item.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <TextField
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
         fullWidth
-        margin="dense"
-        label="Cantidad (Kg)"
-        type="number"
-        value={editedPeso}
-        onChange={(e) => {
-          // Convertimos a número
-          const valor = parseFloat(e.target.value);
+        maxWidth="sm"
+      >
+        <DialogTitle>Editar Residuo</DialogTitle>
+        <DialogContent dividers>
+          {/* Select para escoger el residuo a partir de la data obtenida */}
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Nombre del Residuo</InputLabel>
+            <Select
+              value={editedResidueName}
+              onChange={(e) => setEditedResidueName(e.target.value)}
+              label="Nombre del Residuo"
+            >
+              {residues.map((item, index) => (
+                <MenuItem key={index} value={item.nombre}>
+                  {item.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-          // Permitir vaciar el campo
-          if (e.target.value === '') {
-            setEditedPeso('');
-            return;
-          }
+          <TextField
+            fullWidth
+            margin="dense"
+            label="Cantidad (Kg)"
+            type="number"
+            value={editedPeso}
+            onChange={(e) => {
+              // Convertimos a número
+              const valor = parseFloat(e.target.value);
 
-          // Validar rango
-          if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
-            setEditedPeso(e.target.value);
-          }
-        }}
-        InputProps={{
-          endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-        }}
-        inputProps={{
-          min: 0,
-          max: 1000,
-          step: 0.001, 
-        }}
-      />
+              // Permitir vaciar el campo
+              if (e.target.value === "") {
+                setEditedPeso("");
+                return;
+              }
 
-      {/* Volumen en m³ */}
-      <TextField
-        fullWidth
-        margin="dense"
-        label="Volumen (m³)"
-        type="number"
-        value={editedVolumen}
-        onChange={(e) => {
-          const valor = parseFloat(e.target.value);
+              // Validar rango
+              if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
+                setEditedPeso(e.target.value);
+              }
+            }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+            }}
+            inputProps={{
+              min: 0,
+              max: 1000,
+              step: 0.001,
+            }}
+          />
 
-          if (e.target.value === '') {
-            setEditedVolumen('');
-            return;
-          }
+          {/* Volumen en m³ */}
+          <TextField
+            fullWidth
+            margin="dense"
+            label="Volumen (m³)"
+            type="number"
+            value={editedVolumen}
+            onChange={(e) => {
+              const valor = parseFloat(e.target.value);
 
-          if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
-            setEditedVolumen(e.target.value);
-          }
-        }}
-        InputProps={{
-          endAdornment: <InputAdornment position="end">m³</InputAdornment>,
-        }}
-        inputProps={{
-          min: 0,
-          max: 1000,
-          step: 0.001, // o el nivel de precisión que desees
-        }}
-      />
-      </DialogContent>
-      <DialogActions>
-        {/* handleEditSubmit hará la petición HTTP para guardar cambios */}
-        <Button onClick={handleEditSubmit} color="primary">
-          Guardar
-        </Button>
-        <Button onClick={() => setOpenEditModal(false)} color="secondary">
-          Cancelar
-        </Button>
-      </DialogActions>
-    </Dialog>
+              if (e.target.value === "") {
+                setEditedVolumen("");
+                return;
+              }
+
+              if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
+                setEditedVolumen(e.target.value);
+              }
+            }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">m³</InputAdornment>,
+            }}
+            inputProps={{
+              min: 0,
+              max: 1000,
+              step: 0.001, // o el nivel de precisión que desees
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          {/* handleEditSubmit hará la petición HTTP para guardar cambios */}
+          <Button onClick={handleEditSubmit} color="primary">
+            Guardar
+          </Button>
+          <Button onClick={() => setOpenEditModal(false)} color="secondary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

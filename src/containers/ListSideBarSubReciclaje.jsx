@@ -29,7 +29,7 @@ const usersItem = new ListTemplateItem({
 const asignaciones = new ListTemplateItem({
     tag: "Reportes asignados",
     icon: <Assignment />,
-    redirection: '/sub-centro/status'
+    redirection: '/sub-centro/assignments'
 }, 
 )
 

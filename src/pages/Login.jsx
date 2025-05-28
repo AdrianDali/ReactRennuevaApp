@@ -138,7 +138,7 @@ export default function SignInSide() {
         navigate("/centrosAcopio");
       }else if (dataUser.groups[0] === "Separador") {
         console.log("Separador");
-        navigate("/sub-centro/status");
+        navigate("/sub-centro/assignments");
       }
 
     } catch (error) {
