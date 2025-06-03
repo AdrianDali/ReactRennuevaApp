@@ -1,24 +1,34 @@
 import React, { useState, useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import {
-  Modal,
-  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Typography,
   Button,
-  Box,
-  FormControl,
-  InputLabel,
+  TextField,
   Select,
   MenuItem,
-  IconButton,
-  Stack,
-  Typography,
+  FormControl,
+  InputLabel,
   InputAdornment,
+  Grid,
+  Stack,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { Close } from "@mui/icons-material";
+import {
+  Close as CloseIcon,
+  RemoveCircleOutline as RemoveCircleOutlineIcon,
+  AddCircleOutline as AddCircleOutlineIcon,
+} from "@mui/icons-material";
 import axios from "axios";
 import { TodoContext } from "../context/index.js";
+import { PersistentAlert } from "../components/alerts/PersistentAlert.jsx";
+
+
 
 function ModalResidueReport({ report }) {
   const [residues, setResidues] = useState([]);
@@ -32,6 +42,13 @@ function ModalResidueReport({ report }) {
     },
   ]);
   const [botonAdd, setBotonAdd] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState("success"); // "success" o "error"
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const {
     openModalEditResidueReport,
@@ -124,166 +141,291 @@ function ModalResidueReport({ report }) {
         entries
       )
       .then((response) => {
-        e.target.reset();
-        closeModal();
+        setAlertType("success");
+        setAlertMessage("Residuos guardados correctamente.");
+        setAlertOpen(true);
+         e.target.reset();
+         closeModal();
       })
       .catch((error) => {
+        // Mostrar alerta de error
         console.error(error);
+        setAlertType("error");
+        setAlertMessage("Error al guardar. Inténtalo de nuevo.");
+        setAlertOpen(true);
       });
   };
 
   return ReactDOM.createPortal(
-    <Modal open={openModalEditResidueReport} onClose={closeModal}>
-      <Box
+    <>
+    {/* 1) La alerta persistente en la parte superior */}
+      <PersistentAlert
+        open={alertOpen}
+        type={alertType}
+        message={alertMessage}
+        onClose={() => {
+          setAlertOpen(false);
+          // Si quieres cerrar el modal apenas el usuario cierre la alerta:
+          if (alertType === "success") {
+            closeModal();
+          }
+        }}
+      />
+      
+    <Dialog
+      open={openModalEditResidueReport}
+      onClose={closeModal}
+      fullWidth
+      maxWidth="sm"
+      fullScreen={isMobile}
+      PaperProps={{
+        sx: {
+          bgcolor: 'background.paper',
+          borderRadius: isMobile ? 3 : 4,      // bordes más redondeados
+          maxHeight: '90vh',
+        },
+      }}
+    >
+      {/* Encabezado del diálogo */}
+      <DialogTitle
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: { xs: "90%", md: 700 },
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          px: isMobile ? 2 : 3,
+          py: isMobile ? 1 : 2,
+          borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
+        <Typography variant="h6">Reporte de Residuos</Typography>
         <IconButton
+          edge="end"
+          color="inherit"
           onClick={closeModal}
-          sx={{ position: "absolute", right: 8, top: 8 }}
+          aria-label="cerrar"
         >
-          <Close />
+          <CloseIcon />
         </IconButton>
-        <Typography variant="h6" component="h2" mb={2}>
-          Reporte de Residuos
-        </Typography>
+      </DialogTitle>
+
+      {/* Contenido: formulario con scroll interno si excede */}
+      <DialogContent
+        dividers
+        sx={{
+          px: isMobile ? 2 : 3,
+          pt: 2,
+          pb: 2,
+          overflowY: "auto",
+          maxHeight: "70vh",
+        }}
+      >
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
-            {entries.map((entry, index) => (
-              <Box
-                key={index}
-                display="flex"
-                flexDirection={{ xs: "column", md: "row" }}
-                alignItems="center"
+            {/* Si no hay entradas y botonAdd=true, mostramos solo el botón para agregar la primera fila */}
+            {entries.length === 0 && botonAdd && (
+              <Button
+                type="button"
+                variant="contained"
+                fullWidth={isMobile}
+                onClick={handleAddFirstFields}
+                sx={{ mt: 1 }}
               >
-                {/* Campo Select para el Residuo */}
-                <FormControl fullWidth sx={{ m: 1 }}>
-                  <InputLabel>Residuo</InputLabel>
-                  <Select
-                    name="residue"
-                    value={entry.residue}
-                    onChange={(event) => handleInputChange(index, event)}
-                  >
-                    {residues.map((residue, idx) => (
-                      <MenuItem key={idx} value={residue.nombre}>
-                        {residue.nombre}
+                Agregar Residuo
+              </Button>
+            )}
+
+            {/* Mapeo de cada fila de entrada */}
+            {entries.map((entry, index) => (
+              <Grid
+                container
+                spacing={1}
+                key={index}
+                sx={{
+                  border: `1px solid ${theme.palette.divider}`,
+                  borderRadius: 2,
+                  p: 2,
+                  position: 'relative',
+                  bgcolor: theme.palette.background.default,
+                  mb: 1,
+                }}
+              >
+                
+
+                {/* Campo “Residuo” */}
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id={`label-residue-${index}`}>
+                      Residuo
+                    </InputLabel>
+                    <Select
+                      labelId={`label-residue-${index}`}
+                      name="residue"
+                      value={entry.residue}
+                      label="Residuo"
+                      onChange={(event) => handleInputChange(index, event)}
+                      sx={{
+                        // agregamos algo de margen derecho para que no quede tan pegado al ícono
+                        pr: isMobile ? 0 : 1,
+                        
+                      }}
+                    >
+                      <MenuItem value="">
+                        <em>Selecciona…</em>
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                      {residues.map((res, idx) => (
+                        <MenuItem key={idx} value={res.nombre}>
+                          {res.nombre}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-                {/* Campo de texto para el Peso con adornment y validación 0-1000 */}
-                <TextField
-                  sx={{ m: 1, flexBasis: { xs: "100%", md: "35%" } }}
-                  name="peso"
-                  label="Peso en kg"
-                  variant="outlined"
-                  type="number"
-                  value={entry.peso}
-                  onChange={(event) => {
-                    const valor = parseFloat(event.target.value);
-                    // Validar que esté dentro del rango y con máximo 3 decimales
-                    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
+                {/* Campo “Peso en kg” */}
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="peso"
+                    label="Peso (kg)"
+                    variant="outlined"
+                    type="number"
+                    value={entry.peso}
+                    onChange={(event) => {
+                      const valor = parseFloat(event.target.value);
+                      const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
 
-                    if (
-                      (!event.target.value ||
-                        regexTresDecimales.test(event.target.value)) &&
-                      valor >= 0 &&
-                      valor <= 1000
-                    ) {
-                      handleInputChange(index, event);
-                    }
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">kg</InputAdornment>
-                    ),
-                  }}
-                  inputProps={{
-                    min: 0,
-                    max: 1000,
-                    step: 0.001,
-                  }}
-                />
+                      if (
+                        (!event.target.value ||
+                          regexTresDecimales.test(event.target.value)) &&
+                        valor >= 0 &&
+                        valor <= 1000
+                      ) {
+                        handleInputChange(index, event);
+                      }
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">kg</InputAdornment>
+                      ),
+                      inputProps: { min: 0, max: 1000, step: 0.001 },
+                    }}
+                  />
+                </Grid>
 
-                {/* Campo de texto para el Volumen con adornment y validación 0-1000 */}
-                <TextField
-                  sx={{ m: 1, flexBasis: { xs: "100%", md: "35%" } }}
-                  name="volumen"
-                  label="Volumen en m³"
-                  variant="outlined"
-                  type="number"
-                  value={entry.volumen}
-                  onChange={(event) => {
-                    const valor = parseFloat(event.target.value);
-                    const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
+                {/* Campo “Volumen en m³” */}
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="volumen"
+                    label="Volumen (m³)"
+                    variant="outlined"
+                    type="number"
+                    value={entry.volumen}
+                    onChange={(event) => {
+                      const valor = parseFloat(event.target.value);
+                      const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
 
-                    if (
-                      (!event.target.value ||
-                        regexTresDecimales.test(event.target.value)) &&
-                      valor >= 0 &&
-                      valor <= 1000
-                    ) {
-                      handleInputChange(index, event);
-                    }
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">m³</InputAdornment>
-                    ),
-                  }}
-                  inputProps={{
-                    min: 0,
-                    max: 1000,
-                    step: 0.001,
-                  }}
-                />
+                      if (
+                        (!event.target.value ||
+                          regexTresDecimales.test(event.target.value)) &&
+                        valor >= 0 &&
+                        valor <= 1000
+                      ) {
+                        handleInputChange(index, event);
+                      }
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">m³</InputAdornment>
+                      ),
+                      inputProps: { min: 0, max: 1000, step: 0.001 },
+                    }}
+                  />
+                </Grid>
 
-                {/* Botón para eliminar la fila */}
-                <IconButton
-                  onClick={() => handleRemoveFields(index)}
-                  sx={{ m: 1 }}
-                >
-                  <RemoveCircleOutlineIcon />
-                </IconButton>
+                 <IconButton
+        onClick={() => handleRemoveFields(index)}
+        sx={{
+          color: theme.palette.error.main,
+          p: isMobile ? 1.5 : 1,
+          mr:  isMobile ? 1.5 : 1,      // margen entre el botón “Eliminar” y el de “Agregar”
+          ...(isMobile && { transform: 'scale(1.4)' }),
+          '&:hover': { backgroundColor: 'transparent' },
+        }}
+        aria-label="Eliminar residuo"
+      >
+        <RemoveCircleOutlineIcon fontSize={isMobile ? 'large' : 'medium'} />
+      </IconButton>
 
-                {/* Botón para agregar otra fila */}
-                <IconButton onClick={handleAddFields} sx={{ m: 1 }}>
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Box>
+      <IconButton
+        onClick={handleAddFields}
+        sx={{
+          color: theme.palette.primary.main,
+          p: isMobile ? 1.5 : 1,
+          ...(isMobile && { transform: 'scale(1.4)' }),
+          '&:hover': { backgroundColor: 'transparent' },
+        }}
+        aria-label="Agregar residuo"
+      >
+        <AddCircleOutlineIcon fontSize={isMobile ? 'large' : 'medium'} />
+      </IconButton>
+              </Grid>
             ))}
 
-            {!botonAdd && (
-              <Button type="submit" variant="contained" fullWidth>
+            {/* Si hay al menos una entrada y botonAdd=false, mostramos el botón de “Enviar” */}
+            {entries.length > 0 && !botonAdd && (
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth={isMobile}
+                sx={{ mt: 2 }}
+              >
                 Enviar
               </Button>
             )}
           </Stack>
         </form>
+      </DialogContent>
 
-        {botonAdd && (
+      {/* Si sigue sin haber entradas y botonAdd=false (caso excepcional), mostramos igualmente “Agregar Residuo” */}
+      {entries.length === 0 && !botonAdd && (
+        <DialogActions sx={{ px: isMobile ? 2 : 3, pb: isMobile ? 2 : 3 }}>
           <Button
             type="button"
             variant="contained"
-            fullWidth
+            fullWidth={isMobile}
             onClick={handleAddFirstFields}
           >
             Agregar Residuo
           </Button>
-        )}
-      </Box>
-    </Modal>,
-    document.getElementById("modal")
+        </DialogActions>
+      )}
+
+      {/* Si ya hay entradas y botonAdd=true, mostramos “Agregar Residuo” debajo del contenido */}
+      {entries.length > 0 && botonAdd && (
+        <DialogActions sx={{ px: isMobile ? 2 : 3, pb: isMobile ? 2 : 3 }}>
+          <Button
+            type="button"
+            variant="contained"
+            fullWidth={isMobile}
+            onClick={handleAddFirstFields}
+          >
+            Agregar Residuo
+          </Button>
+        </DialogActions>
+      )}
+    </Dialog>
+    
+    </>,
+    // Usamos ReactDOM.createPortal para renderizar el modal en un nodo específico del DOM
+    document.getElementById("modal-root") ||
+      document.body ||
+      document.documentElement ||
+      document.createElement("div") // Fallback for environments without a modal root
+
+      
   );
 }
 
