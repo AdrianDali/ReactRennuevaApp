@@ -1,44 +1,64 @@
-import GeneratorTable from "../../components/GeneratorTable";
-import GeneratorsTable from "../../components/boards/GeneratorsTable";
 import { Container, Grid, Paper, CssBaseline } from "@mui/material";
+import DriverCenterAssignedTable from "../../components/boards/DriverCenterAssignedTable";
 import { TodoContext } from "../../context";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import useAuth from "../../hooks/useAuth";
-import ReportsTable from "../../components/boards/ReportsTable";
-import GetDriverOrderRecollection from "../../services/ApiGetDriverOrderRecollection";
-import DriverOrderAssignedTable from "../../components/boards/DriverOrderAssignedTable";
+//import useAuth from "../../hooks/useAuth";
+ 
+import getCookieValue from "../../services/GetCookie"; 
+import ReportInfoDonor from "../../components/boards/ReportInfoDonor";
+
 
 export default function MenuAssignedOrders() {
-  //const [dataUser, setDataUser] = useState([]);
-  const dataUser = useAuth();
-
-  const [userInfo, setUserInfo] = useState([]);
-  
-
-  useEffect(() => {
-    console.log("dataUser", dataUser);
-    
-    const fetchData = async () => {
-      const { dataUser } = await GetDriverOrderRecollection();
-      setUserInfo(dataUser);
-    };
-    fetchData();
-  }
-  , []);
 
   
+  const [reports, setReports] = useState([]);
+  const { updateReportInfo, setUpdateReportInfo, updStatusResiduesGeneric,setUpdStatusResiduesGeneric } = useContext(TodoContext);
+  const[loading, setLoading] = useState(true);
+  const [clientes, setClientes] = useState([]);
+  const [auxClientes, setAuxClientes] = useState([]);
+  const [correoCliente, setCorreoCliente] = useState([]);
+  const [updateDonorInfo, setUpdateDonorInfo] = useState(true);
+  const [orderRecollection, setOrderRecollection] = useState([]);
+
+  const user = getCookieValue("user");
+
+    useEffect(() => {
+      axios
+        .post(
+          `${process.env.REACT_APP_SERVER_URL}/Rennueva/get-all-pickup-orders-assigned-to-driver/`,
+          {
+            user: user,
+            status: "pendienteRecoleccion",
+          }
+        )
+        .then((response) => {
+          console.log("Órdenes asignadas:", response.data);
+          setOrderRecollection(response.data);
+          setAuxClientes(response.data);
+          const cli = response.data.map((cliente) => {
+            return { email: cliente.correo_donador };
+          });
+          setCorreoCliente(cli);
+          setUpdateDonorInfo(false);
+          setUpdStatusResiduesGeneric(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }, [updateDonorInfo, updStatusResiduesGeneric]);
+
   return (
     <Container
       maxWidth={false}
       sx={{
         flexGrow: 1,
-        overflow: "auto",
+        overflow: 'auto',
         py: 3,
-        height: "100%",
+        height: '100%',
       }}
     >
-      <DriverOrderAssignedTable data={dataUser} />
+      <ReportInfoDonor data = {orderRecollection} />
     </Container>
   );
 }

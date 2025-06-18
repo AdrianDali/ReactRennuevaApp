@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import SignaturePad from 'react-signature-canvas';
 import './Signature.css'; // Estilos para el canvas
 import { Button, Box, Typography } from '@mui/material';
 import axios from 'axios';
+import { TodoContext } from '../context/index.js'; // Asegúrate de que la ruta sea correcta para tu proyecto
 
 const SignatureComponent = ({ id, type }) => {
   const [imageURL, setImageURL] = useState(null); // para guardar la imagen de la firma
   const sigCanvas = useRef({}); // referencia al componente SignaturePad
-
+  const { updStatusResiduesGeneric, setUpdStatusResiduesGeneric } = useContext(TodoContext);
   // Para limpiar el área de firma
   const clear = () => sigCanvas.current.clear();
 
@@ -22,9 +23,11 @@ const SignatureComponent = ({ id, type }) => {
       url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
     } else if ( type === "Generador") {
       url = `${process.env.REACT_APP_API_URL}/update-report-generator-signature/`;
-    }else if (type === "Donor") {
+    }else if (type === "Donor" || type === "Donador Recoleccion") {
+      console.log("entro al donador")
       url = `${process.env.REACT_APP_API_URL}/update-report-donor-signature/`;
-    }else if (type === "Conductor") {
+    }else if (type === "Conductor" || type === "Conductor Recoleccion") {
+      console.log("entro al conductor")
       url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
     }
 
@@ -43,7 +46,8 @@ const SignatureComponent = ({ id, type }) => {
           reportId: id,
           reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
         }
-      }else if (type === "Donor" || type === "Conductor") {
+      }else if (type === "Donor" || type === "Conductor" || type === "Donador Recoleccion" || type === "Conductor Recoleccion") {
+        console.log("entro al donador o conductor")
         data = {
           reportId: id,
           recollectionFirm: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
@@ -51,9 +55,15 @@ const SignatureComponent = ({ id, type }) => {
       }
 
       const response = await axios.post(url, data);
+      console.log("Firma guardada:", response.data);
+      setUpdStatusResiduesGeneric(prev => !prev); // Actualiza el estado global para reflejar el cambio
+      alert("Firma guardada correctamente");
       return response.data;
     } catch (error) {
       console.log(error)
+      alert("Error al guardar la firma");
+      console.error("Error al guardar la firma:", error);
+
       throw error;
     }
   };
