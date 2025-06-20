@@ -31,6 +31,7 @@ import { set } from "date-fns";
 import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
 import getReportInfo from "../../services/getReportInfo";
 import generateQR from "../../services/generateQR";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -63,14 +64,6 @@ export default function EditRecolectionModal({
   const [loading, setLoading] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
-  const reasons = [
-    { value: "noDisponible", label: "Persona no disponible" },
-    { value: "bajaBateria", label: "Batería baja en camioneta" },
-    { value: "faltaEspacio", label: "Falta de espacio en camioneta" },
-    { value: "activoEspontaneo", label: "Actividad espontánea" },
-    { value: "otro", label: "Otro" },
-  ];
-
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
@@ -100,9 +93,9 @@ export default function EditRecolectionModal({
           setConductorAsignado(recolection.conductor_asignado);
         }
         break;
-      // case "recolectada":
-      //   setStatus("recolectado");
-      //   break;
+      case "recolectada":
+        setStatus("recolectado");
+        break;
       case "entregadaCentro":
         setStatus("entregado");
         break;
@@ -124,6 +117,7 @@ export default function EditRecolectionModal({
       setValue(recolection.comment_cancelation);
     }
   }, [recolection, open]);
+
   const handleSubmit = async (e) => {
     if (status === "pendienteRecoleccion") {
       if (!isDateCorrect) return;
@@ -276,6 +270,16 @@ export default function EditRecolectionModal({
                   <MenuItem value="pendienteRecoleccion">
                     Recolección pendiente
                   </MenuItem>
+                ) : null}
+
+                {status === "solicitado" ||
+                status === "pendienteRecoleccion" ||
+                status === "recolectado" ? (
+                  <MenuItem value="recolectado">Recolectada</MenuItem>
+                ) : null}
+                {status === "recolectado" ||
+                status === "pendienteRecoleccion" ? (
+                  <MenuItem value="entregado">Entregado</MenuItem>
                 ) : null}
 
                 {status === "solicitado" ||

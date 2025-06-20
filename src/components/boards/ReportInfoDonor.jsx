@@ -78,6 +78,7 @@ import OrderInfoCollapse from "./OrderInfoCollapse";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { ModalWeightVolumeReport } from "../../pages/WeightVolumeDialog";
 import { statusColor, statusText } from "../../helpers/statusModifiers";
+import EditRecolectionModal from "./EditRecolectionModal";
 
 function MobileToolbar({
   selected,
@@ -516,6 +517,8 @@ export default function ReportInfoDonor({ data }) {
     setOpenModalDeleteReport,
     openModalWeightVolumeReport,
     setOpenModalWeightVolumeReport,
+    updStatusResiduesGeneric,
+    setUpdStatusResiduesGeneric,
   } = useContext(TodoContext);
 
   //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
@@ -586,16 +589,6 @@ export default function ReportInfoDonor({ data }) {
     } else {
       setGeneralCheckboxStatus("checked");
     }
-  };
-
-  const handleEditResidues = (report) => {
-    setReportToEdit(report);
-    setOpenModalEditResidueReport(true);
-  };
-
-  const handleVerifyReport = (report) => {
-    setReportToEdit(report);
-    setOpenVerificationModal(true);
   };
 
   const handleGeneralCheckboxChange = (e) => {
@@ -1025,11 +1018,28 @@ export default function ReportInfoDonor({ data }) {
 
                           <TableCell>
                             <IconButton
+                              // Deshabilita si falta alguna firma o no hay residuos
+                              disabled={
+                                !(
+                                  report.firma_donador &&
+                                  report.firma_receptor &&
+                                  report.residuos
+                                )
+                              }
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setReportToEdit(report);
                                 setOpenModalEditReport(true);
+                                setOpenEditModal(true);
                               }}
+                              // Puedes añadir un tooltip para mayor UX
+                              title={
+                                report.firma_donador &&
+                                report.firma_receptor &&
+                                report.residuos
+                                  ? "Editar reporte"
+                                  : "Completa firmas y agrega residuos"
+                              }
                             >
                               <Edit />
                             </IconButton>
@@ -1072,211 +1082,211 @@ export default function ReportInfoDonor({ data }) {
         )}
 
         {isMobile && (
-  <Stack spacing={1} sx={{ px: 1, py: 1 }}>
-    {visibleData.length === 0 ? (
-      <Typography
-        variant="subtitle1"
-        color="textSecondary"
-        align="center"
-        sx={{ my: 3 }}
-      >
-        No se encontraron reportes
-      </Typography>
-    ) : (
-      visibleData
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-        .map((report) => (
-          <Paper
-            key={report.id}
-            elevation={1}
-            sx={{
-              borderRadius: 2,
-              p: 1.5,
-              position: "relative",
-              bgcolor: "background.paper",
-            }}
-          >
-            {/* Header: ID + fecha */}
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              spacing={0.5}
-            >
-              <Stack direction="row" alignItems="center" spacing={0.5}>
-                {/* Checkbox de selección */}
-                <Checkbox
-                  checked={isRowSelected(report.id)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleSelected(report.id);
-                  }}
-                  size="small"
-                  inputProps={{ "aria-labelledby": report.id }}
-                />
-                <Typography variant="body1" fontWeight={600}>
-                  #{report.id}
-                </Typography>
-              </Stack>
-              <Typography variant="caption" color="textSecondary">
-                {new Date(report.fecha).toLocaleDateString("es-MX", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
+          <Stack spacing={1} sx={{ px: 1, py: 1 }}>
+            {visibleData.length === 0 ? (
+              <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                align="center"
+                sx={{ my: 3 }}
+              >
+                No se encontraron reportes
               </Typography>
-            </Stack>
+            ) : (
+              visibleData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((report) => (
+                  <Paper
+                    key={report.id}
+                    elevation={1}
+                    sx={{
+                      borderRadius: 2,
+                      p: 1.5,
+                      position: "relative",
+                      bgcolor: "background.paper",
+                    }}
+                  >
+                    {/* Header: ID + fecha */}
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      spacing={0.5}
+                    >
+                      <Stack direction="row" alignItems="center" spacing={0.5}>
+                        {/* Checkbox de selección */}
+                        <Checkbox
+                          checked={isRowSelected(report.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleSelected(report.id);
+                          }}
+                          size="small"
+                          inputProps={{ "aria-labelledby": report.id }}
+                        />
+                        <Typography variant="body1" fontWeight={600}>
+                          #{report.id}
+                        </Typography>
+                      </Stack>
+                      <Typography variant="caption" color="textSecondary">
+                        {new Date(report.fecha).toLocaleDateString("es-MX", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </Typography>
+                    </Stack>
 
-            {/* Detalles */}
-            <Stack spacing={0.5} sx={{ mt: 0.5 }}>
-              <Typography variant="caption">
-                <strong>Donador:</strong> {report.nombre}
-              </Typography>
-              <Typography variant="caption">
-                <strong>Dirección:</strong> {report.direccion_completa}
-              </Typography>
-            </Stack>
+                    {/* Detalles */}
+                    <Stack spacing={0.5} sx={{ mt: 0.5 }}>
+                      <Typography variant="caption">
+                        <strong>Donador:</strong> {report.nombre}
+                      </Typography>
+                      <Typography variant="caption">
+                        <strong>Dirección:</strong> {report.direccion_completa}
+                      </Typography>
+                    </Stack>
 
-            {/* Acciones */}
-            <Stack
-              direction="row"
-              spacing={0.5}
-              sx={{
-                overflowX: "auto",
-                py: 0.5,
-                "&::-webkit-scrollbar": { display: "none" },
-              }}
-            >
-              {/* Firma donador */}
-              <Button
-                startIcon={<Draw />}
-                variant="contained"
-                size="small"
-                fullWidth
-                sx={{
-                  bgcolor: report.firma_donador
-                    ? "success.main"
-                    : "warning.main",
-                  "&:hover": {
-                    bgcolor: report.firma_donador
-                      ? "success.dark"
-                      : "warning.dark",
-                  },
-                }}
-                onClick={() => onEditGeneratorSign(report.id)}
-              >
-                Firmar
-              </Button>
+                    {/* Acciones */}
+                    <Stack
+                      direction="row"
+                      spacing={0.5}
+                      sx={{
+                        overflowX: "auto",
+                        py: 0.5,
+                        "&::-webkit-scrollbar": { display: "none" },
+                      }}
+                    >
+                      {/* Firma donador */}
+                      <Button
+                        startIcon={<Draw />}
+                        variant="contained"
+                        size="small"
+                        fullWidth
+                        sx={{
+                          bgcolor: report.firma_donador
+                            ? "success.main"
+                            : "warning.main",
+                          "&:hover": {
+                            bgcolor: report.firma_donador
+                              ? "success.dark"
+                              : "warning.dark",
+                          },
+                        }}
+                        onClick={() => onEditGeneratorSign(report.id)}
+                      >
+                        Firmar
+                      </Button>
 
-              {/* Agregar residuos */}
-              <Button
-                startIcon={<Add />}
-                variant="contained"
-                size="small"
-                fullWidth
-                sx={{
-                  bgcolor: report.residuos
-                    ? "success.main"
-                    : "warning.main",
-                  "&:hover": {
-                    bgcolor: report.residuos
-                      ? "success.dark"
-                      : "warning.dark",
-                  },
-                }}
-                onClick={() => {
-                  setReportToEdit(report);
-                  setOpenModalWeightVolumeReport(true);
-                }}
-              >
-                Agregar
-              </Button>
+                      {/* Agregar residuos */}
+                      <Button
+                        startIcon={<Add />}
+                        variant="contained"
+                        size="small"
+                        fullWidth
+                        sx={{
+                          bgcolor: report.residuos
+                            ? "success.main"
+                            : "warning.main",
+                          "&:hover": {
+                            bgcolor: report.residuos
+                              ? "success.dark"
+                              : "warning.dark",
+                          },
+                        }}
+                        onClick={() => {
+                          setReportToEdit(report);
+                          setOpenModalWeightVolumeReport(true);
+                        }}
+                      >
+                        Agregar
+                      </Button>
 
-              {/* Firma receptor */}
-              <Button
-                startIcon={<Draw />}
-                variant="contained"
-                size="small"
-                fullWidth
-                sx={{
-                  bgcolor: report.firma_receptor
-                    ? "success.main"
-                    : "warning.main",
-                  "&:hover": {
-                    bgcolor: report.firma_receptor
-                      ? "success.dark"
-                      : "warning.dark",
-                  },
-                }}
-                onClick={() => onEditReceiverSign(report.id)}
-              >
-                Firmar R.
-              </Button>
+                      {/* Firma receptor */}
+                      <Button
+                        startIcon={<Draw />}
+                        variant="contained"
+                        size="small"
+                        fullWidth
+                        sx={{
+                          bgcolor: report.firma_receptor
+                            ? "success.main"
+                            : "warning.main",
+                          "&:hover": {
+                            bgcolor: report.firma_receptor
+                              ? "success.dark"
+                              : "warning.dark",
+                          },
+                        }}
+                        onClick={() => onEditReceiverSign(report.id)}
+                      >
+                        Firmar R.
+                      </Button>
 
-              {/* Editar reporte */}
-              <IconButton
-                onClick={() => {
-                  setReportToEdit(report);
-                  setOpenModalEditReport(true);
-                }}
-              >
-                <Edit />
-              </IconButton>
+                      {/* Editar reporte */}
+                      <IconButton
+                        onClick={() => {
+                          console.log("Editar reporte", report);
+                          setReportToEdit(report);
+                          setOpenModalEditReport(true);
+                          setOpenEditModal(true);
+                        }}
+                      >
+                        <Edit />
+                      </IconButton>
 
-              {/* Eliminar */}
-              <IconButton
-                color="error"
-                onClick={() => {
-                  setReportsToDelete([report.id]);
-                  setOpenModalDeleteReport(true);
-                }}
-              >
-                <Delete />
-              </IconButton>
+                      {/* Eliminar */}
+                      <IconButton
+                        color="error"
+                        onClick={() => {
+                          setReportsToDelete([report.id]);
+                          setOpenModalDeleteReport(true);
+                        }}
+                      >
+                        <Delete />
+                      </IconButton>
 
-              {/* Expandir/Colapsar */}
-              <IconButton
-                onClick={() =>
-                  setExpandedRow(
-                    expandedRow === report.id ? null : report.id
-                  )
-                }
-              >
-                {expandedRow === report.id ? (
-                  <KeyboardArrowUpIcon />
-                ) : (
-                  <KeyboardArrowDownIcon />
-                )}
-              </IconButton>
-            </Stack>
+                      {/* Expandir/Colapsar */}
+                      <IconButton
+                        onClick={() =>
+                          setExpandedRow(
+                            expandedRow === report.id ? null : report.id
+                          )
+                        }
+                      >
+                        {expandedRow === report.id ? (
+                          <KeyboardArrowUpIcon />
+                        ) : (
+                          <KeyboardArrowDownIcon />
+                        )}
+                      </IconButton>
+                    </Stack>
 
-            {/* Estado */}
-            <Stack direction="row" alignItems="center" sx={{ mt: 0.5 }}>
-              <Chip
-                label={statusText(report.status)}
-                color={statusColor(report.status)}
-                variant="outlined"
-                size="small"
-              />
-            </Stack>
+                    {/* Estado */}
+                    <Stack direction="row" alignItems="center" sx={{ mt: 0.5 }}>
+                      <Chip
+                        label={statusText(report.status)}
+                        color={statusColor(report.status)}
+                        variant="outlined"
+                        size="small"
+                      />
+                    </Stack>
 
-            {/* Collapse detalles extra */}
-            <Collapse
-              in={expandedRow === report.id}
-              timeout="auto"
-              unmountOnExit
-            >
-              <Box sx={{ mt: 1 }}>
-                <OrderInfoCollapse request={report} />
-              </Box>
-            </Collapse>
-          </Paper>
-        ))
-    )}
-  </Stack>
-)}
-
-
+                    {/* Collapse detalles extra */}
+                    <Collapse
+                      in={expandedRow === report.id}
+                      timeout="auto"
+                      unmountOnExit
+                    >
+                      <Box sx={{ mt: 1 }}>
+                        <OrderInfoCollapse request={report} />
+                      </Box>
+                    </Collapse>
+                  </Paper>
+                ))
+            )}
+          </Stack>
+        )}
 
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -1292,6 +1302,18 @@ export default function ReportInfoDonor({ data }) {
       <ModalFirmar type={signType} id={reportToEdit} />
       {openModalWeightVolumeReport && (
         <ModalWeightVolumeReport report={reportToEdit} />
+      )}
+
+      {openEditModal && (
+        <EditRecolectionModal
+          open={openEditModal}
+          setOpen={setOpenEditModal}
+          recolection={reportToEdit}
+          setMessage={setTextOpenModalText}
+          setOpenMessageModal={setOpenModalText}
+          update={updStatusResiduesGeneric}
+          setUpdate={setUpdStatusResiduesGeneric}
+        />
       )}
     </Box>
   );
