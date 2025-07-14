@@ -44,6 +44,7 @@ import { ReportsAssignedRecyclingMenu } from '../pages/Menus/ReportsAssignedRecy
 import { MenuStatusFolio } from '../pages/Menus/MenuStatusFolios.jsx';
 import MenuAssignedAcopioOrders from '../pages/Menus/MenuAssignedAcopioOrders.js';
 import { GlobalStyles } from '@mui/material';
+import { UsersReportsAssignedRecyclingMenu } from '../pages/Menus/UsersAssignedRecycling.jsx';
 
 function App() {
 
@@ -127,6 +128,10 @@ function App() {
     {path : '/centro/residuos', element: <CentroLayout List={<CentroList/>}><ResiduesMenu/> </CentroLayout>},
     {path : '/centros/assignments', element: <CentroLayout List={<ReciclajeList/>}><ReportsAssignedRecyclingMenu/></CentroLayout>},
     {path : '/centrosAcopio', element: <CentroLayout List={<ReciclajeList/>}><CollectionCenterMenu/> </CentroLayout>},
+    {path : '/user/assignments', element: <CentroLayout List={<ReciclajeList/>}><UsersReportsAssignedRecyclingMenu/> </CentroLayout>},
+
+
+
     {path : '/centro/status', element: <CentroLayout List={<ReciclajeList/>}><MenuStatusFolio/> </CentroLayout>},
     {path:'/centro/create', element: <CentroLayout List={<ReciclajeList/>}><ContainerMenu/></CentroLayout> },
 

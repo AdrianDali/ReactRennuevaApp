@@ -40,6 +40,23 @@ import {
   SaveAlt,
   Close,
   Watch,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  Assignment,
+  InfoOutlined,
+  DateRange,
+  AccountCircle,
+  Phone,
+  CheckCircle,
+  Warning,
+  WarningAmber,
+  CheckCircleOutline,
+  PhoneEnabled,
+  PhoneDisabled,
+  PhoneInTalk,
+  Business,
+  LocalOffer,
+  Place,
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
@@ -68,6 +85,7 @@ import VerificationReportModal from "../../pages/VerificationReportModal";
 import { set } from "date-fns";
 import OrderInfoRecycling from "./OrderInfoRecycling";
 import CheckRecyclingOrder from "../../components/modals/CheckRecyclingOrder";
+import { ModalOrderResidueDetail } from "../../components/modals/UserReportsAssignedRecyclingModal";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -205,9 +223,7 @@ function Toolbar({
             selected.length === 1 ? "seleccionado" : "seleccionados"
           }`}
         </Typography>
-        <Box>
-          
-        </Box>
+        <Box></Box>
         <ExportOptionsMenu
           selectedData={selected}
           filteredData={filteredData}
@@ -227,7 +243,7 @@ function Toolbar({
       py={2}
     >
       <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
-        Responsivas asignadas
+        Residuos de usuarios asignados
       </Typography>
       <Box>
         <SearchField
@@ -276,7 +292,6 @@ function SearchField({ filteredData, setVisibleData }) {
   }, [showSearch]);
 
   const handleSearch = (e) => {
-    
     if (e.key === "Enter") {
       const search = searchValue.trim().toLowerCase();
       if (search === "") {
@@ -344,13 +359,11 @@ function SearchField({ filteredData, setVisibleData }) {
   );
 }
 
-export default function ReportsTable({ data }) {
+export default function UsersReportsAssignedRecyclingTable({ data }) {
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
   const [reportToEdit, setReportToEdit] = useState(null);
   const [filtersApplied, setFiltersApplied] = useState(false);
-  console.log("Data in ReportsTable:");
-  console.log(data);
   const [visibleData, setVisibleData] = useState(data);
   const [signType, setSignType] = useState("Generador");
   const [page, setPage] = useState(0);
@@ -370,7 +383,9 @@ export default function ReportsTable({ data }) {
     setOpenModalEditResidueReport,
     setUpdateReportInfo,
     openModalFinishReport,
-    
+    openModalEditResidueReport,
+    userReportsAssignedRecycling, setUserReportsAssignedRecycling
+
   } = useContext(TodoContext);
   //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
   const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
@@ -380,7 +395,8 @@ export default function ReportsTable({ data }) {
   const [openFiltersModal, setOpenFiltersModal] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
-  const [openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder] = useState(false);
+  const [openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder] =
+    useState(false);
 
   const handleExpandClick = (id) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -426,54 +442,18 @@ export default function ReportsTable({ data }) {
     }
   };
 
-  const handleSavePDF = async (report) => {
-    const validate = await validateReport(report.id_report);
-    if (validate == true) {
-      const data = await getReportInfo(report.id_report);
-
-      let key_centro = "";
-      if (data[0].key_centro_reciclaje != null) {
-        key_centro = data[0].key_centro_reciclaje;
-      }
-      if (data[0].key_centro_recoleccion != null) {
-        key_centro = data[0].key_centro_recoleccion;
-      }
-
-      const folio_busqueda =
-        data[0].key_grupo_usuario + "-" + key_centro + "-" + report.id_report;
-
-      const qrImage = await generateQR(
-        "https://rewards.rennueva.com/tracking-external/" + folio_busqueda // Aquí deberías poner la URL correcta para el reporte
-      );
-      if (report.grupo_usuario === "Donador") {
-        generateDonorReportPDF(report, data, qrImage);
-      } else {
-        generateReportPDF(report, data, qrImage);
-      }
-    } else {
-      setOpenModalText(true);
-      setTextOpenModalText(
-        "No se puede generar el reporte, aun no se han firmado todos los campos"
-      );
-    }
-  };
-
   const handleCloseModal = () => {
     setOpenModalCheckRecyclingOrder(false);
-   
   };
 
   const handleEditResidues = (report) => {
     setReportToEdit(report);
     console.log(report);
-
+    setUserReportsAssignedRecycling(true)
     setOpenModalCheckRecyclingOrder(true);
+    //setOpenModalEditResidueReport(true);
+    //setOpenModalCheckRecyclingOrder(true);
   };
-
-  const handleVerifyReport = (report) => {
-    setReportToEdit(report);
-    setOpenVerificationModal(true);
-  }
 
   const handleGeneralCheckboxChange = (e) => {
     if (e.target.checked) {
@@ -589,13 +569,15 @@ export default function ReportsTable({ data }) {
   }, [data]);
 
   return (
-    <Box sx={{
-      width: "100%",
-      mb: "3rem",
-      height: "80vh",
-      display: "flex",
-      flexDirection: "column",
-    }}>
+    <Box
+      sx={{
+        width: "100%",
+        mb: "3rem",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Paper
         elevation={3}
         sx={{
@@ -614,17 +596,21 @@ export default function ReportsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{
-            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+        <TableContainer
+          sx={{
+            maxHeight: "calc(70vh - 64px)",
             overflowY: "auto",
+            backgroundColor: "background.paper",
             "&::-webkit-scrollbar": { width: 6 },
             "&::-webkit-scrollbar-thumb": {
               bgcolor: "grey.400",
               borderRadius: 3,
             },
-          }}>
-          <Table >
-            <TableHead sx={{
+          }}
+        >
+          <Table>
+            <TableHead
+              sx={{
                 bgcolor: "primary.main",
                 "& .MuiTableCell-root": {
                   color: "common.white",
@@ -634,27 +620,21 @@ export default function ReportsTable({ data }) {
                     opacity: 1,
                   },
                 },
-              }}>
+              }}
+            >
               <TableRow>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2"> </Typography>
-                  </TableSortLabel>
-                </TableCell>
+                <TableCell />
                 <TableCell>
                   <Checkbox
-                    checked={generalCheckboxStatus === "checked" ? true : false}
+                    checked={generalCheckboxStatus === "checked"}
+                    indeterminate={generalCheckboxStatus === "indeterminate"}
                     onClick={handleGenaeralCheckboxClick}
-                    indeterminate={
-                      generalCheckboxStatus === "indeterminate" ? true : false
-                    }
                     onChange={handleGeneralCheckboxChange}
                   />
                 </TableCell>
-
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">ID Order</Typography>
+                    <Typography variant="subtitle2">ID Orden</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
@@ -669,11 +649,9 @@ export default function ReportsTable({ data }) {
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Centro Acopio</Typography>
+                    <Typography variant="subtitle2">Folio Reporte</Typography>
                   </TableSortLabel>
                 </TableCell>
-                
-                
                 <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
@@ -682,7 +660,7 @@ export default function ReportsTable({ data }) {
             <TableBody>
               {visibleData.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={18}>
+                  <TableCell colSpan={12}>
                     <Typography
                       variant="h6"
                       color="textSecondary"
@@ -695,65 +673,73 @@ export default function ReportsTable({ data }) {
               ) : (
                 visibleData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((report, index) => (
-                    <React.Fragment key={`report-assigned-${index}`}>
+                  .map((order) => (
+                    <React.Fragment key={`order-${order.id_order}`}>
                       <TableRow
                         hover
                         role="checkbox"
-                        key={`${report.id_order}-${index}`}
-                        selected={isRowSelected(report.id_order)}
+                        selected={isRowSelected(order.id_order)}
                         sx={{
                           "&:nth-of-type(odd)": { bgcolor: "action.hover" },
                           "&:hover": { bgcolor: "action.selected" },
                           transition: "background-color 0.2s ease",
                         }}
-                        aria-checked={
-                          isRowSelected(report.id_order) ? true : false
-                        }
+                        aria-checked={isRowSelected(order.id_order)}
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleSelected(report.id_order);
+                          toggleSelected(order.id_order);
                         }}
                         onContextMenu={(e) => {
                           e.preventDefault();
-                          setReportToEdit(report);
-                          setReportsToDelete([report.id_order]);
+                          setReportToEdit(order);
+                          setReportsToDelete([order.id_order]);
                           setRowContextMenuAnchorEl(e.target);
                         }}
                       >
-                        <TableCell 
-                        >
-                          <Button
+                        {/* Expand/Collapse */}
+                        <TableCell>
+                          <IconButton
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleExpandClick(report.id_order);
+                              handleExpandClick(order.id_order);
                             }}
+                            size="small"
                           >
-                            {expandedRow === report.id_order ? (
-                              <KeyboardArrowUpIcon />
+                            {expandedRow === order.id_order ? (
+                              <KeyboardArrowUp />
                             ) : (
-                              <KeyboardArrowDownIcon />
+                              <KeyboardArrowDown />
                             )}
-                          </Button>
+                          </IconButton>
                         </TableCell>
+                        {/* Checkbox */}
                         <TableCell>
                           <Checkbox
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleSelected(report.id_order);
+                              toggleSelected(order.id_order);
                             }}
-                            checked={isRowSelected(report.id_order)}
+                            checked={isRowSelected(order.id_order)}
                             inputProps={{
-                              "aria-labelledby": report.id_order,
+                              "aria-labelledby": order.id_order,
                             }}
                           />
                         </TableCell>
-
-                        <TableCell>{report.id_order}</TableCell>
-                        <TableCell>{report.kg_total} Kg</TableCell>
-                        <TableCell>{report.m3_total} M3</TableCell>
-                        <TableCell>{report.reportes[0].centro_recoleccion}</TableCell>
-                        
+                        {/* Datos */}
+                        <TableCell>{order.id_order}</TableCell>
+                        <TableCell>
+                          {order.peso_total_orden !== null
+                            ? `${order.peso_total_orden} Kg`
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          {order.m3_total_orden !== null
+                            ? `${order.m3_total_orden} m³`
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          {order.reportes?.[0]?.folio ?? "-"}
+                        </TableCell>
                         <TableCell>
                           <Button
                             startIcon={<Visibility />}
@@ -762,25 +748,201 @@ export default function ReportsTable({ data }) {
                             color="info"
                             onClick={(e) => {
                               e.stopPropagation();
-                              console.log(report);
-                              handleEditResidues(report);
+                              handleEditResidues(order);
                             }}
                           >
                             Verificar
                           </Button>
                         </TableCell>
                       </TableRow>
+
                       <TableRow>
                         <TableCell
                           style={{ paddingBottom: 0, paddingTop: 0 }}
-                          colSpan={18}
+                          colSpan={12}
                         >
                           <Collapse
-                            in={expandedRow === report.id_order}
+                            in={expandedRow === order.id_order}
                             timeout="auto"
                             unmountOnExit
                           >
-                            <OrderInfoRecycling request={report} />
+                            <Box
+                              sx={{
+                                mx: 3,
+                                my: 2,
+                                background: "#fff",
+                                borderRadius: 2,
+                                border: "1px solid #eee",
+                                p: 2,
+                                boxShadow: "0px 1px 4px rgba(0,0,0,0.02)",
+                              }}
+                            >
+                              {order.reportes && order.reportes.length > 0 ? (
+                                order.reportes.map((reporte) => (
+                                  <Box
+                                    key={reporte.id_report}
+                                    sx={{
+                                      mb: 2,
+                                      pb: 1,
+                                      borderBottom: "1px dashed #eee",
+                                      "&:last-child": { borderBottom: "none" },
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Assignment
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "primary.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Folio:</b> {reporte.folio}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <InfoOutlined
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "info.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Status:</b> {reporte.status_reporte}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <DateRange
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "success.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Fecha:</b>{" "}
+                                        {reporte.report_date
+                                          ? new Date(
+                                              reporte.report_date
+                                            ).toLocaleString("es-MX")
+                                          : "-"}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <AccountCircle
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "secondary.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Usuario:</b>{" "}
+                                        {reporte.usuario?.username}{" "}
+                                        <Phone
+                                          fontSize="inherit"
+                                          sx={{
+                                            ml: 1,
+                                            mr: 0.5,
+                                            color: "grey.600",
+                                          }}
+                                        />
+                                        {reporte.usuario?.telefono}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Business
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "warning.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Empresa:</b>{" "}
+                                        {reporte.usuario?.company}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <LocalOffer
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "info.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>RFC:</b> {reporte.usuario?.rfc}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Place
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "error.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Dirección:</b>{" "}
+                                        {[
+                                          reporte.direccion?.calle,
+                                          reporte.direccion?.num_ext,
+                                          reporte.direccion?.localidad,
+                                          reporte.direccion?.ciudad,
+                                          reporte.direccion?.estado,
+                                          `CP ${reporte.direccion?.cp}`,
+                                        ]
+                                          .filter(Boolean)
+                                          .join(", ")}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <InfoOutlined
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "grey.600" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Referencia:</b>{" "}
+                                        {reporte.direccion?.referencia}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                ))
+                              ) : (
+                                <Typography variant="body2">
+                                  No hay reportes para esta orden.
+                                </Typography>
+                              )}
+                            </Box>
                           </Collapse>
                         </TableCell>
                       </TableRow>
@@ -790,6 +952,7 @@ export default function ReportsTable({ data }) {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -804,11 +967,12 @@ export default function ReportsTable({ data }) {
       <ModalFirmar type={signType} id={reportToEdit} />
       <ModalWatchResidueReport report={reportToEdit} />
 
-      <CheckRecyclingOrder
-        open={openModalCheckRecyclingOrder}
-        onClose={handleCloseModal}
-        report={reportToEdit}
-      /> 
+      {openModalCheckRecyclingOrder && (
+        <ModalOrderResidueDetail
+          
+          orderReport={reportToEdit}
+        />
+      )}
       {/* <ModalFinishReport report={reportToEdit} /> */}
       <DeleteReportsModal reports={reportsToDelete} />
       <ReportsFiltersModal
