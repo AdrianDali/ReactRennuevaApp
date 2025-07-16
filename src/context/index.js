@@ -77,6 +77,7 @@ function TodoProvider({ children }) {
   const [openModalWeightVolumeReport, setOpenModalWeightVolumeReport] = React.useState(false);
   const [updStatusResiduesGeneric, setUpdStatusResiduesGeneric] = React.useState(false);
   const [userReportsAssignedRecycling, setUserReportsAssignedRecycling] = React.useState(false);
+  const [openFinishVerificationModal, setOpenFinishVerificationModal] = React.useState(false);
 
   return (
     <TodoContext.Provider value={{
@@ -149,7 +150,9 @@ function TodoProvider({ children }) {
       openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder,
       openModalWeightVolumeReport, setOpenModalWeightVolumeReport,
       updStatusResiduesGeneric, setUpdStatusResiduesGeneric,
-      userReportsAssignedRecycling, setUserReportsAssignedRecycling
+      userReportsAssignedRecycling, setUserReportsAssignedRecycling, 
+      openFinishVerificationModal, setOpenFinishVerificationModal
+      
 
     }} >
       {children}

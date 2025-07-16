@@ -1,4 +1,5 @@
 const statusText = (status) => {
+  console.log("statusText", status.toLowerCase())
     status = status.toLowerCase()
 
     switch (status) {
@@ -12,10 +13,12 @@ const statusText = (status) => {
             return 'Cancelada'
         case 'entregadacentro':
             return 'Entregada al centro'
-        case 'verificado' || 'verificada' || 'verificado' || 'verificada':
+        case 'verificado' || 'verificada':  
             return 'Verificada'
+        case 'terminado'|| 'terminada':
+            return 'Veridicada'
         default:
-            return 'indefinido'
+            return status.charAt(0).toUpperCase() + status.slice(1); // Capitaliza la primera letra
     }
 }
 
@@ -46,6 +49,9 @@ const statusColor = (rawStatus = "") => {
   
       case "cancelado":
         return "error";
+      case "terminado":
+        return "success";
+
   
       default:
         return "info";

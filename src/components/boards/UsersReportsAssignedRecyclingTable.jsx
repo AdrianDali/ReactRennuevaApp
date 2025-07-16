@@ -86,6 +86,9 @@ import { set } from "date-fns";
 import OrderInfoRecycling from "./OrderInfoRecycling";
 import CheckRecyclingOrder from "../../components/modals/CheckRecyclingOrder";
 import { ModalOrderResidueDetail } from "../../components/modals/UserReportsAssignedRecyclingModal";
+import FinishVerificationDialog from "../modals/FinishVerificationDialog";
+import getSingleReport from "../../services/ApGetSingleReport";
+import finishVerifiedDonorReport from "../../services/ApiFinishVerifiedDonorReport";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -384,7 +387,8 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
     setUpdateReportInfo,
     openModalFinishReport,
     openModalEditResidueReport,
-    userReportsAssignedRecycling, setUserReportsAssignedRecycling
+    userReportsAssignedRecycling, setUserReportsAssignedRecycling,
+    openFinishVerificationModal, setOpenFinishVerificationModal,
 
   } = useContext(TodoContext);
   //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
@@ -395,6 +399,9 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
   const [openFiltersModal, setOpenFiltersModal] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
+
+  
+
   const [openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder] =
     useState(false);
 
@@ -454,6 +461,70 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
     //setOpenModalEditResidueReport(true);
     //setOpenModalCheckRecyclingOrder(true);
   };
+
+  const handleFinishReport = (report) => {
+    setReportToEdit(report);
+    setOpenFinishVerificationModal(true);
+  };
+
+  const finalizarVerificacion = async (report) => {
+    if (report) {
+  console.log("Finalizando verificación del reporte:", report);
+
+  const idToUse = report.reportes[0]?.id_report ?? report.id_report;
+  const validate = await validateReport(idToUse);
+  if (validate === true) {
+    const data = await getReportInfo(idToUse);
+
+    let key_centro = "";
+    if (data[0]?.key_centro_reciclaje != null) {
+      key_centro = data[0].key_centro_reciclaje;
+    }
+    if (data[0]?.key_centro_recoleccion != null) {
+      key_centro = data[0].key_centro_recoleccion;
+    }
+
+    const folio_busqueda =
+      data[0]?.key_grupo_usuario + "-" + key_centro + "-" + idToUse;
+
+    const qrImage = await generateQR(
+      "https://rewards.rennueva.com/tracking-external/" + folio_busqueda
+    );
+
+    const singleReport = await getSingleReport(idToUse);
+
+    // Aquí generas el PDF según el grupo
+    if (singleReport?.grupo_usuario === "Donador") {
+      generateDonorReportPDF(singleReport, data, qrImage);
+    } else {
+      generateReportPDF(singleReport, data, qrImage);
+    }
+
+    // === Llama al servicio para finalizar el reporte y la orden ===
+    const result = await finishVerifiedDonorReport(idToUse);
+
+    if (result.error) {
+      setOpenModalText(true);
+      setTextOpenModalText(
+        result.detail?.error ||
+        "Ocurrió un error al finalizar el reporte. Intenta de nuevo."
+      );
+      return;
+    }
+
+    // Éxito: muestra mensaje de éxito, puedes refrescar datos si lo necesitas
+    setOpenModalText(true);
+    setTextOpenModalText(result.message || "Reporte finalizado correctamente");
+    // Ejemplo: setUpdateReportInfo(prev => !prev); // si necesitas refrescar la tabla
+  } else {
+    setOpenModalText(true);
+    setTextOpenModalText(
+      "No se puede generar el reporte, aun no se han firmado todos los campos"
+    );
+  }
+}
+
+    };
 
   const handleGeneralCheckboxChange = (e) => {
     if (e.target.checked) {
@@ -655,6 +726,11 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
                 <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
+
+                <TableCell>
+                  <Typography variant="subtitle2">Finalizar</Typography>
+                </TableCell>
+
               </TableRow>
             </TableHead>
             <TableBody>
@@ -754,6 +830,25 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
                             Verificar
                           </Button>
                         </TableCell>
+
+                        <TableCell>
+                          <Button
+                            startIcon={<Visibility />}
+                            variant="contained"
+                            size="small"
+                            color="success"
+                          
+
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFinishReport(order);
+                            }}
+                          >
+                            Finalizar
+                          </Button>
+                        </TableCell>
+                        
+
                       </TableRow>
 
                       <TableRow>
@@ -967,12 +1062,18 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
       <ModalFirmar type={signType} id={reportToEdit} />
       <ModalWatchResidueReport report={reportToEdit} />
 
+       <FinishVerificationDialog onFinish={() => finalizarVerificacion(reportToEdit)} />
+
+
       {openModalCheckRecyclingOrder && (
         <ModalOrderResidueDetail
           
           orderReport={reportToEdit}
         />
       )}
+
+
+      
       {/* <ModalFinishReport report={reportToEdit} /> */}
       <DeleteReportsModal reports={reportsToDelete} />
       <ReportsFiltersModal
