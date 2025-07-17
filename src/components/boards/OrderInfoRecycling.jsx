@@ -40,6 +40,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function ReportInfoRecycling({ request }) {
+  console.log("request", request);
+  
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 

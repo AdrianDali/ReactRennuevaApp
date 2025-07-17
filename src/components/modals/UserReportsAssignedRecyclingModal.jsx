@@ -78,6 +78,9 @@ function ModalOrderResidueDetail({ orderReport }) {
   };
 
   useEffect(() => {
+
+    const getResidues = {reportId : orderReport.reportes[0].id_report ? orderReport.reportes[0].id_report : orderReport.id};
+
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
       .then((response) => {
@@ -86,6 +89,18 @@ function ModalOrderResidueDetail({ orderReport }) {
       .catch((error) => {
         console.error("Hubo un problema al obtener los residuos:", error);
       });
+
+    axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, getResidues)
+            .then(response => {
+                const data = response.data;
+                console.log(response.data)
+                setEntries([...data]);
+            })
+            .catch(error => {
+                console.error('Hubo un problema al obtener los residuos:', error);
+            });
+
+    
   }, [orderReport]);
 
   const handleInputChange = (index, event) => {
@@ -129,12 +144,12 @@ function ModalOrderResidueDetail({ orderReport }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (bloqueado) {
-      setAlertType("error");
-      setAlertMessage("No puedes superar el peso o volumen total asignado.");
-      setAlertOpen(true);
-      return;
-    }
+    // if (bloqueado) {
+    //   setAlertType("error");
+    //   setAlertMessage("No puedes superar el peso o volumen total asignado.");
+    //   setAlertOpen(true);
+    //   return;
+    // }
 
     // Prepara el array con la estructura deseada
     const userMail =
@@ -444,14 +459,10 @@ function ModalOrderResidueDetail({ orderReport }) {
                   variant="contained"
                   fullWidth={isMobile}
                   sx={{ mt: 2 }}
-                  disabled={bloqueado}
+                  //disabled={bloqueado}
                   color={cumpleTotales ? "success" : "primary"}
                 >
-                  {bloqueado
-                    ? "No puedes exceder el total"
-                    : cumpleTotales
-                    ? "Totales completados"
-                    : "Enviar"}
+                  { "Enviar"}
                 </Button>
               )}
             </Stack>

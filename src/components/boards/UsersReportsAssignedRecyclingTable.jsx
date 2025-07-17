@@ -1060,7 +1060,7 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
       </Paper>
 
       <ModalFirmar type={signType} id={reportToEdit} />
-      <ModalWatchResidueReport report={reportToEdit} />
+      {/* <ModalWatchResidueReport report={reportToEdit} /> */}
 
        <FinishVerificationDialog onFinish={() => finalizarVerificacion(reportToEdit)} />
 
