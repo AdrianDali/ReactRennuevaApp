@@ -29,7 +29,9 @@ import axios from "axios";
 import { TodoContext } from "../../context";
 import { PersistentAlert } from "../../components/alerts/PersistentAlert.jsx";
 
-function ModalOrderResidueDetail({ orderReport }) {
+function ModalOrderResidueDetail({ orderReport , dataUser }) {
+  console.log("ModalOrderResidueDetail orderReport:", orderReport);
+  console.log("ModalOrderResidueDetail dataUser:", dataUser);
   // 1. Estados locales
   const [residues, setResidues] = useState([]);
   const [entries, setEntries] = useState([
@@ -142,48 +144,83 @@ function ModalOrderResidueDetail({ orderReport }) {
   // GENERA UN ID TEMPORAL ÚNICO PARA id_report_residue
   const generateTempId = (idx) => Date.now() + idx;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // if (bloqueado) {
-    //   setAlertType("error");
-    //   setAlertMessage("No puedes superar el peso o volumen total asignado.");
-    //   setAlertOpen(true);
-    //   return;
-    // }
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // Prepara el array con la estructura deseada
-    const userMail =
-      orderReport?.reportes?.[0]?.usuario?.username || "anonimo@anonimo.com";
-    const reportId = orderReport?.reportes?.[0]?.id_report;
+  // Calcula si totales son correctos
+  const totalsOk =
+    totalPesoAgregado === maxPeso &&
+    totalVolumenAgregado === maxVolumen &&
+    maxPeso > 0 &&
+    maxVolumen > 0;
 
-    const dataToSend = entries.map((entry, idx) => ({
-      report: reportId,
-      id_report_residue: generateTempId(idx),
-      residue: entry.residue,
-      user: userMail,
-      peso: Number(entry.peso),
-      volumen: Number(entry.volumen),
-      status: "NO_VERIFICADO",
-    }));
+  // Define el status según condición para ambas peticiones
+  const statusGeneral = totalsOk ? "VERIFICADO" : "REPORTADO";
 
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/create-report-residue-user/`,
-        dataToSend
-      )
-      .then((response) => {
-        setAlertType("success");
-        setAlertMessage("Residuos guardados correctamente.");
-        setAlertOpen(true);
-        e.target.reset();
-        closeModal();
-      })
-      .catch((error) => {
-        setAlertType("error");
-        setAlertMessage("Error al guardar. Inténtalo de nuevo.");
-        setAlertOpen(true);
-      });
-  };
+  const userMail = orderReport?.reportes?.[0]?.usuario?.username || "anonimo@anonimo.com";
+  const reportId = orderReport?.reportes?.[0]?.id_report;
+
+  const dataToSend = entries.map((entry, idx) => ({
+    report: reportId,
+    id_report_residue: generateTempId(idx),
+    residue: entry.residue,
+    user: userMail,
+    peso: Number(entry.peso),
+    volumen: Number(entry.volumen),
+    status: statusGeneral, // <-- Aquí está el cambio importante
+  }));
+
+  // PRIMERA PETICIÓN: Guarda los residuos
+  axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/create-report-residue-user/`,
+      dataToSend
+    )
+    .then((response) => {
+      // Usa los IDs generados en response.data.generated_report_residue_ids
+      const generatedIds = response.data.generated_report_residue_ids || [];
+      const jsonRequest = entries.map((entry, idx) => ({
+        residue_id: generatedIds[idx], // Usar el ID generado correcto
+        checker_username: dataUser.user,
+        status: statusGeneral,
+        comments: statusGeneral === "VERIFICADO"
+          ? "Residuo verificado correctamente por el recolector"
+          : "Residuo reportado por el recolector",
+        new_weight: Number(entry.peso),
+        new_m3: Number(entry.volumen),
+        measurement_comments: "Mediciones actualizadas por el recolector",
+      }));
+
+      axios
+        .post(
+          `${process.env.REACT_APP_SERVER_URL}/Rennueva/checker-verified-report/`,
+          jsonRequest
+        )
+        .then((response) => {
+          setAlertType("success");
+          setAlertMessage(
+            statusGeneral === "VERIFICADO"
+              ? "Residuo verificado correctamente."
+              : "Residuo reportado correctamente."
+          );
+          setAlertOpen(true);
+          setUpdateReportInfo((prev) => !prev);
+          closeModal();
+        })
+        .catch((error) => {
+          setAlertType("error");
+          setAlertMessage("Error al actualizar el residuo. Inténtalo de nuevo.");
+          setAlertOpen(true);
+        });
+    })
+    .catch((error) => {
+      setAlertType("error");
+      setAlertMessage("Error al guardar los residuos. Inténtalo de nuevo.");
+      setAlertOpen(true);
+    });
+};
+
+
 
   return ReactDOM.createPortal(
     <>

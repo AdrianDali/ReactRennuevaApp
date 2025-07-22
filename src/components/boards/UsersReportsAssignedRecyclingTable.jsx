@@ -837,7 +837,9 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
                             variant="contained"
                             size="small"
                             color="success"
-                          
+                            disabled={
+                              order.tiene_residuos === false  
+                            }
 
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1067,7 +1069,7 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
 
       {openModalCheckRecyclingOrder && (
         <ModalOrderResidueDetail
-          
+          dataUser={dataUser}
           orderReport={reportToEdit}
         />
       )}
