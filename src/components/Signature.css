@@ -1,5 +1,5 @@
 .signatureCanvas {
-  width: 100%;
+  width: 400px; /* Ancho estático para el canvas */
   height: 200px; /* Tamaño estático para la firma */
   border: 1px solid #000;
   border-radius: 4px;

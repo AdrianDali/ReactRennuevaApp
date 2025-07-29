@@ -3,17 +3,22 @@ import SignaturePad from 'react-signature-canvas';
 import './Signature.css'; // Estilos para el canvas
 import { Button, Box, Typography } from '@mui/material';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { TodoContext } from '../context/index.js'; // Asegúrate de que la ruta sea correcta para tu proyecto
 
 const SignatureComponent = ({ id, type }) => {
+ 
   const [imageURL, setImageURL] = useState(null); // para guardar la imagen de la firma
   const sigCanvas = useRef({}); // referencia al componente SignaturePad
   const { updStatusResiduesGeneric, setUpdStatusResiduesGeneric } = useContext(TodoContext);
   // Para limpiar el área de firma
   const clear = () => sigCanvas.current.clear();
-
   // Para guardar la imagen y posiblemente hacer algo más con ella (por ejemplo, enviarla a un servidor)
   const save = async () => {
+    // if (sigCanvas.current.isEmpty()) {
+    //   toast.error("Por favor, firme antes de guardar.");
+    //   return;
+    // }
     let url = "";
     if (type === "Receptor") {
       url = `${process.env.REACT_APP_API_URL}/update-report-admin-receptor-signature/`;
@@ -31,39 +36,39 @@ const SignatureComponent = ({ id, type }) => {
       url = `${process.env.REACT_APP_API_URL}/update-report-receptor-signature/`;
     }
 
-    setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
+    setImageURL(sigCanvas.current.getCanvas().toDataURL("image/png"));
 
     try {
       let data;
+      const firmaData = sigCanvas.current.getCanvas().toDataURL("image/png");
 
       if (type === "Receptor" || type === "Generador") {
         data = {
           reportId: id,
-          reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
+          reportGeneratorSignature: firmaData
         };
       } else if (type === "Donador" || type === "Recolector") {
         data = {
           reportId: id,
-          reportGeneratorSignature: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
+          reportGeneratorSignature: firmaData
         }
       }else if (type === "Donor" || type === "Conductor" || type === "Donador Recoleccion" || type === "Conductor Recoleccion") {
         console.log("entro al donador o conductor")
         data = {
           reportId: id,
-          recollectionFirm: sigCanvas.current.getTrimmedCanvas().toDataURL("image/png")
+          recollectionFirm: firmaData
         }
       }
 
       const response = await axios.post(url, data);
       console.log("Firma guardada:", response.data);
       setUpdStatusResiduesGeneric(prev => !prev); // Actualiza el estado global para reflejar el cambio
-      alert("Firma guardada correctamente");
+      toast.success("Firma guardada correctamente");
       return response.data;
     } catch (error) {
       console.log(error)
-      alert("Error al guardar la firma");
+      toast.error("Error al guardar la firma"); 
       console.error("Error al guardar la firma:", error);
-
       throw error;
     }
   };
@@ -74,6 +79,8 @@ const SignatureComponent = ({ id, type }) => {
       <SignaturePad
         ref={sigCanvas}
         canvasProps={{
+          width: 400, // Ancho del canvas
+          height: 200, // Alto del canvas
           className: 'signatureCanvas' // clase para el estilo CSS si lo necesitas
         }}
       />
