@@ -83,9 +83,8 @@ function Toolbar({
           color="secondary"
           sx={{ p: 2 }}
         >
-          {`${selected.length} ${
-            selected.length === 1 ? "seleccionado" : "seleccionados"
-          }`}
+          {`${selected.length} ${selected.length === 1 ? "seleccionado" : "seleccionados"
+            }`}
         </Typography>
         <Box></Box>
       </Box>
@@ -440,7 +439,15 @@ export default function DonorReportsTable({ data, setUpdateDonorReports }) {
       });
       // Una vez realizado el fetch, cierra el modal
 
-      // Se obtienen los re
+      setFilteredData((prev) =>
+        prev.map((rep) =>
+          rep.id_report === reportToEdit
+            ? { ...rep, status_reporte: "Pendiente" }
+            : rep
+        )
+      ); // Actualiza el estado local con el nuevo status para cambiar el color del botón.
+
+      // Se obtienen los reportes filtrados por el usuario actual
       console.log("Reporte a editar:");
       console.log(data);
       const reports = filteredData.filter(
@@ -818,7 +825,7 @@ export default function DonorReportsTable({ data, setUpdateDonorReports }) {
                               size="small"
                               color={
                                 report.firma_responsiva_generador &&
-                                report.firma_responsiva_receptor
+                                  report.firma_responsiva_receptor
                                   ? "success"
                                   : "warning"
                               }
@@ -1084,13 +1091,13 @@ export default function DonorReportsTable({ data, setUpdateDonorReports }) {
                           ...buttonSx,
                           bgcolor:
                             report.firma_responsiva_generador &&
-                            report.firma_responsiva_receptor
+                              report.firma_responsiva_receptor
                               ? "success.main"
                               : "warning.main",
                           "&:hover": {
                             bgcolor:
                               report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor
+                                report.firma_responsiva_receptor
                                 ? "success.dark"
                                 : "warning.dark",
                           },
