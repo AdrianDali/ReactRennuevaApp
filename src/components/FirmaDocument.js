@@ -15,6 +15,7 @@ const SignatureComponent = ({ id, type }) => {
   const clear = () => sigCanvas.current.clear();
   // Para guardar la imagen y posiblemente hacer algo más con ella (por ejemplo, enviarla a un servidor)
   const save = async () => {
+    //Aqui puedes agregar una validación para asegurarte de que el canvas no esté vacío antes de guardar la firma
     // if (sigCanvas.current.isEmpty()) {
     //   toast.error("Por favor, firme antes de guardar.");
     //   return;
@@ -79,7 +80,7 @@ const SignatureComponent = ({ id, type }) => {
       <SignaturePad
         ref={sigCanvas}
         canvasProps={{
-          width: 400, // Ancho del canvas
+          width: 300, // Ancho del canvas
           height: 200, // Alto del canvas
           className: 'signatureCanvas' // clase para el estilo CSS si lo necesitas
         }}
