@@ -43,7 +43,7 @@ export function ReportsAssignedRecyclingMenu() {
         >
 
 
-            <ReportsTable data={reports} />
+            <ReportsTable data={reports} userData={userData} />
 
         </Container>
     );

@@ -175,18 +175,6 @@ export default function ReportInfoRecycling({ request }) {
   };
 
   const handleEditSubmit = () => {
-    // setResidueReportInfo((prev) => {
-    //   const newResidues = [...prev];
-    //   newResidues[selectedResiduoIndex] = {
-    //     ...newResidues[selectedResiduoIndex],
-    //     residue: editedResidueName,
-    //     peso: editedPeso,
-    //     volumen: editedVolumen,
-    //   };
-    //   return newResidues;
-    // });
-    // setOpenEditModal(false);
-
     // Petición HTTP para actualizar los datos del residuo
     const jsonRequest = [
       {

@@ -68,6 +68,7 @@ import VerificationReportModal from "../../pages/VerificationReportModal";
 import { set } from "date-fns";
 import OrderInfoRecycling from "./OrderInfoRecycling";
 import CheckRecyclingOrder from "../../components/modals/CheckRecyclingOrder";
+import VerifyResiduesDialog from "../modals/VerifyResiduesDialog";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -344,7 +345,7 @@ function SearchField({ filteredData, setVisibleData }) {
   );
 }
 
-export default function ReportsTable({ data }) {
+export default function ReportsTable({ data , userData }) {
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
   const [reportToEdit, setReportToEdit] = useState(null);
@@ -357,9 +358,9 @@ export default function ReportsTable({ data }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openVerificationModal, setOpenVerificationModal] = useState(false);
 
-  const dataUser = useAuth();
+  const [user, setUser] = useState(userData);
 
-  //console.log(data);
+  console.log(user);
   const {
     setTextOpenModalText,
     openModalCreateReport,
@@ -381,6 +382,7 @@ export default function ReportsTable({ data }) {
   const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
   const [openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder] = useState(false);
+  const [openDialogVerifyResidues, setOpenDialogVerifyResidues] = useState(false);
 
   const handleExpandClick = (id) => {
     setExpandedRow((prev) => (prev === id ? null : id));
@@ -469,6 +471,16 @@ export default function ReportsTable({ data }) {
 
     setOpenModalCheckRecyclingOrder(true);
   };
+
+  const handleVerifyResidues = (report) => {
+    setReportToEdit(report);
+    console.log(report);
+    setOpenDialogVerifyResidues(true);
+
+
+    
+  };
+
 
   const handleVerifyReport = (report) => {
     setReportToEdit(report);
@@ -672,6 +684,12 @@ export default function ReportsTable({ data }) {
                     <Typography variant="subtitle2">Centro Acopio</Typography>
                   </TableSortLabel>
                 </TableCell>
+
+                <TableCell>
+                  <TableSortLabel direction="asc">
+                    <Typography variant="subtitle2">Residuos</Typography>
+                  </TableSortLabel>
+                </TableCell>
                 
                 
                 <TableCell>
@@ -753,6 +771,22 @@ export default function ReportsTable({ data }) {
                         <TableCell>{report.kg_total} Kg</TableCell>
                         <TableCell>{report.m3_total} M3</TableCell>
                         <TableCell>{report.reportes[0].centro_recoleccion}</TableCell>
+
+                        <TableCell>
+                          <Button
+                            startIcon={<Visibility />}
+                            variant="contained"
+                            size="small"
+                            color="info"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log(report);
+                              handleVerifyResidues(report);
+                            }}
+                          >
+                            Verificar Residuos
+                          </Button>
+                        </TableCell>
                         
                         <TableCell>
                           <Button
@@ -803,6 +837,19 @@ export default function ReportsTable({ data }) {
 
       <ModalFirmar type={signType} id={reportToEdit} />
       <ModalWatchResidueReport report={reportToEdit} />
+
+      <VerifyResiduesDialog
+        open={openDialogVerifyResidues}
+        onClose={() => setOpenDialogVerifyResidues(false)}
+        report={reportToEdit}
+        onSubmit={(data) => {
+          console.log("Verificación enviada:", data);
+          // Aquí puedes hacer un POST a tu backend
+        }}
+
+        user ={user.user}
+
+      />
 
       <CheckRecyclingOrder
         open={openModalCheckRecyclingOrder}
