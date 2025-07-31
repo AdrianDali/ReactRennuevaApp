@@ -75,15 +75,11 @@ const SignatureComponent = ({ id, type }) => {
   };
 
   return (
-    <Box sx={{ p: 2, maxWidth: 400, mx: 'auto', textAlign: 'center' }}>
+    <Box sx={{ p: 2, mx: 'auto', textAlign: 'center', maxHeight: '800px', overflowY: 'auto' }}>
       <Typography variant="h6" gutterBottom>{`Firma del ${type}`}</Typography>
       <SignaturePad
         ref={sigCanvas}
-        canvasProps={{
-          width: 400, // Ancho del canvas
-          height: 200, // Alto del canvas
-          className: 'signatureCanvas' // clase para el estilo CSS si lo necesitas
-        }}
+        canvasProps={{ className: 'signatureCanvas' }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
         <Button variant="outlined" color="secondary" onClick={clear} sx={{ flexGrow: 1, mr: 1 }}>
