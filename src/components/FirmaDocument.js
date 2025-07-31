@@ -75,7 +75,7 @@ const SignatureComponent = ({ id, type }) => {
   };
 
   return (
-    <Box sx={{ p: 2, mx: 'auto', textAlign: 'center', maxHeight: '800px', overflowY: 'auto' }}>
+    <Box sx={{ p: 2, mx: 'auto', textAlign: 'center', maxHeight: '500px', overflowY: 'auto' }}>
       <Typography variant="h6" gutterBottom>{`Firma del ${type}`}</Typography>
       <SignaturePad
         ref={sigCanvas}
