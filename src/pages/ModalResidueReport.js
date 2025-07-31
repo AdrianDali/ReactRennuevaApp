@@ -292,12 +292,16 @@ function ModalResidueReport({ report }) {
                     type="number"
                     value={entry.peso}
                     onChange={(event) => {
-                      const valor = parseFloat(event.target.value);
+                      const value = event.target.value;
+                      if(value === "") {
+                        handleInputChange(index, event);
+                        return;
+                      }
+                      const valor = parseFloat(value);
                       const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
 
                       if (
-                        (!event.target.value ||
-                          regexTresDecimales.test(event.target.value)) &&
+                        (regexTresDecimales.test(value)) &&
                         valor >= 0 &&
                         valor <= 1000
                       ) {
@@ -324,12 +328,16 @@ function ModalResidueReport({ report }) {
                     type="number"
                     value={entry.volumen}
                     onChange={(event) => {
-                      const valor = parseFloat(event.target.value);
+                      const value = event.target.value;
+                      if(value === "") {
+                        handleInputChange(index, event);
+                        return;
+                      }
+                      const valor = parseFloat(value);
                       const regexTresDecimales = /^\d*(\.\d{0,3})?$/;
 
                       if (
-                        (!event.target.value ||
-                          regexTresDecimales.test(event.target.value)) &&
+                        (regexTresDecimales.test(value)) &&
                         valor >= 0 &&
                         valor <= 1000
                       ) {

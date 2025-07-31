@@ -30,6 +30,7 @@
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.5.2",
     "react-icons": "^4.10.1",
     "react-pdf": "^7.5.1",
     "react-pro-sidebar": "^1.1.0-alpha.1",

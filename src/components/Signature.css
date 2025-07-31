@@ -1,6 +1,10 @@
 .signatureCanvas {
-  width: 100%;
-  height: 200px; /* Tamaño estático para la firma */
+  height: 100%; /* Alto del canvas al 100% del contenedor */
+  width: 100%; /* Ancho del canvas al 100% del contenedor */
+  max-width: 400px; /* Ancho máximo para el canvas */
+  max-width: 310px;
+  min-height: 200px; /* Alto mínimo para el canvas */
   border: 1px solid #000;
   border-radius: 4px;
+  box-sizing: border-box; /* Asegura que el padding y el border se incluyan en el ancho y alto */
 }
