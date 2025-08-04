@@ -871,7 +871,7 @@ export default function ReportsTable({ data , userData }) {
         setAnchorEl={setRowContextMenuAnchorEl}
       />
       {openModalFinishReport && <ModalFinishReport report={reportToEdit} />}
-      {openModalCreateReport && (
+      {/* {openModalCreateReport && (
         <ModalReport mode={"CREAR"} creatorUser={dataUser.user} />
       )}
       {openModalEditReport && (
@@ -880,7 +880,7 @@ export default function ReportsTable({ data , userData }) {
           report={reportToEdit}
           creatorUser={dataUser.user}
         />
-      )}
+      )} */}
       {openModalText && (
         <Dialog
           open={openModalText}
