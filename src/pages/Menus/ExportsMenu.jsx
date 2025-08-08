@@ -12,8 +12,9 @@ export default function ExportsMenu() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-generator/`)
+      .get(`${process.env.REACT_APP_API_URL}/get-all-generator/`) // Se guarda en la variable url la URL de la API
       .then(response => {
+        console.log(response.data);
         setClientes(response.data);
       })
       .catch(error => {
