@@ -72,6 +72,7 @@ import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import VerificationReportModal from "../../pages/VerificationReportModal";
 import { set } from "date-fns";
 import axios from "axios";
+import UnifiedVerifyResiduesDialog from "../modals/UnifiedVerifyResiduesDialog";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -573,7 +574,7 @@ export default function DriverCenterAssignedTable({ data }) {
     try {
       // Mostrar en consola el reporte recibido
       console.log("Reporte recibido:", report);
-
+      setReportToEdit(report);
       // Extrae el reportId del folio (asumiendo que es el último elemento separado por guiones)
       const orderRecollectionId = report.id;
       console.log("ID de recolección:", orderRecollectionId);
@@ -1023,275 +1024,17 @@ export default function DriverCenterAssignedTable({ data }) {
         </Dialog>
       )}
 
-      {/* Modal para mostrar los residuos del reporte */}
-      <Dialog
+
+      <UnifiedVerifyResiduesDialog
         open={openResiduoModal}
-        onClose={handleCloseResiduoModal}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Residuos del Reporte</DialogTitle>
-        <DialogContent dividers>
-          {residueReportInfo.residues_summary &&
-          residueReportInfo.residues_summary.length > 0 ? (
-            residueReportInfo.residues_summary.map((residuo, index) => {
-              let displayText = "No verificado";
-              let displayColor = "error.main";
-
-              // Mapeo según el status
-              switch (residuo.verification_status) {
-                case "VERIFICADO":
-                  displayText = "Verificado";
-                  displayColor = "success.main";
-                  break;
-                case "REPORTADO":
-                  displayText = "Reportado";
-                  displayColor = "warning.main"; // o el color que prefieras
-                  break;
-                default:
-                  displayText = "No verificado";
-                  displayColor = "error.main";
-              }
-
-              return (
-                <Box
-                  key={index}
-                  marginBottom={1}
-                  display="flex"
-                  alignItems="center"
-                  flexWrap="wrap"
-                >
-                  <Typography
-                    variant="subtitle1"
-                    display="inline"
-                    color="secondary"
-                    fontWeight={500}
-                  >
-                    Nombre:{" "}
-                  </Typography>
-                  <Typography variant="body1" display="inline">
-                    {residuo.residue_name}
-                  </Typography>
-
-                  <Typography
-                    variant="subtitle1"
-                    display="inline"
-                    color="secondary"
-                    fontWeight={500}
-                    sx={{ marginLeft: 2 }}
-                  >
-                    Cantidad:{" "}
-                  </Typography>
-                  <Typography variant="body1" display="inline">
-                    {residuo.total_kg} Kg
-                  </Typography>
-
-                  <Typography
-                    variant="subtitle1"
-                    display="inline"
-                    color="secondary"
-                    fontWeight={500}
-                    sx={{ marginLeft: 2 }}
-                  >
-                    Volumen:{" "}
-                  </Typography>
-                  <Typography variant="body1" display="inline">
-                    {residuo.total_m3} cm3
-                  </Typography>
-
-                  {/* Botón para verificar el residuo */}
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    sx={{ marginLeft: 2 }}
-                    onClick={() => handleOpenConfirmModal(index, residuo)}
-                    color={
-                      residuo.verification_status === "VERIFICADO"
-                        ? "success"
-                        : "primary"
-                    }
-                    disabled={residuo.verification_status === "VERIFICADO"} 
-                  >
-                    Verificar
-                  </Button>
-
-                  {/* Mostrar el estado en función del status */}
-                  <Typography
-                    variant="body2"
-                    color={displayColor}
-                    sx={{ marginLeft: 1 }}
-                  >
-                    {displayText}
-                  </Typography>
-                </Box>
-              );
-            })
-          ) : (
-            <Typography variant="body1">
-              No hay residuos para este reporte.
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseResiduoModal} color="primary">
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Modal de confirmación para verificar el residuo */}
-      <Dialog
-        open={openConfirmModal}
-        onClose={() => setOpenConfirmModal(false)}
-      >
-        <DialogTitle>Verificar Residuo</DialogTitle>
-        <DialogContent dividers>
-          <Typography variant="body1">¿El residuo está correcto?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirmCorrect} color="primary">
-            Sí, es correcto
-          </Button>
-          <Button onClick={handleOpenEditModal} color="secondary">
-            No, editar
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Modal de edición para actualizar los datos del residuo */}
-      <Dialog
-        open={openEditModal}
-        onClose={() => setOpenEditModal(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Editar Residuo</DialogTitle>
-        <DialogContent dividers>
-          {/* Select para escoger el residuo a partir de la data obtenida */}
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Nombre del Residuo</InputLabel>
-            <Select
-              value={residues.find((item) => item.nombre === editedResidueName)?.nombre}
-              onChange={(e) => {
-                setEditedResidueName(e.target.value);
-                const selectedResidue = residues.find(
-                  (item) => item.nombre === e.target.value
-                );
-                console.log("Residuo seleccionado:", selectedResidue);  
-
-                
-                // if (selectedResidue) {
-                //   setEditedPeso(selectedResidue.total_kg);
-                //   setEditedVolumen(selectedResidue.total_m3);
-                // }
-                
-              }}
-              label="Nombre del Residuo"
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    maxHeight: 200,
-                    "& .MuiMenuItem-root": {
-                      padding: 1,
-
-                      "&:hover": {
-                        backgroundColor: theme.palette.primary.main,
-                        color: theme.palette.common.white,
-                      },
-                      "&:focus": {
-                        backgroundColor: theme.palette.primary.main,
-                        color: theme.palette.common.white,
-                      },
-                      "&:active": {
-                        backgroundColor: theme.palette.primary.main,
-                        color: theme.palette.common.white,
-                      },
-                    },
-                  },
-                },
-              }}
-            >
-              {/* Mapeamos los residuos para crear las opciones del select */}
-
-            
-              {residues.map((item, index) => (
-                <MenuItem key={index} value={item.nombre}>
-                  {item.nombre}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <TextField
-            fullWidth
-            margin="dense"
-            label="Cantidad (Kg)"
-            type="number"
-            value={editedPeso}
-            onChange={(e) => {
-              // Convertimos a número
-              const valor = parseFloat(e.target.value);
-
-              // Permitir vaciar el campo
-              if (e.target.value === "") {
-                setEditedPeso("");
-                return;
-              }
-
-              // Validar rango
-              if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
-                setEditedPeso(e.target.value);
-              }
-            }}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-            }}
-            inputProps={{
-              min: 0,
-              max: 1000,
-              step: 0.001,
-            }}
-          />
-
-          {/* Volumen en m³ */}
-          <TextField
-            fullWidth
-            margin="dense"
-            label="Volumen (m³)"
-            type="number"
-            value={editedVolumen}
-            onChange={(e) => {
-              const valor = parseFloat(e.target.value);
-
-              if (e.target.value === "") {
-                setEditedVolumen("");
-                return;
-              }
-
-              if (!isNaN(valor) && valor >= 0 && valor <= 1000) {
-                setEditedVolumen(e.target.value);
-              }
-            }}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">m³</InputAdornment>,
-            }}
-            inputProps={{
-              min: 0,
-              max: 1000,
-              step: 0.001, // o el nivel de precisión que desees
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          {/* handleEditSubmit hará la petición HTTP para guardar cambios */}
-          <Button onClick={handleEditSubmit} color="primary">
-            Guardar
-          </Button>
-          <Button onClick={() => setOpenEditModal(false)} color="secondary">
-            Cancelar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onClose={() => setOpenResiduoModal(false)}
+        residueReportInfo={residueReportInfo}
+        residues={residues}
+        report={reportToEdit}
+        user={"driver"}
+        //onSubmit={handleDialogSubmit}
+      />
+      
     </Box>
   );
 }
