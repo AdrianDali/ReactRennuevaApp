@@ -138,6 +138,8 @@ function App() {
 
     {path : '/sub-centro/assignments', element: <CentroLayout List={<SubReciclajeList/>}><ReportsAssignedRecyclingMenu/> </CentroLayout>},
     {path:'/sub-centro/home', element: <CentroLayout List={<SubReciclajeList/>}><ContainerMenu/></CentroLayout> },
+    {path : '/sub-centro/user-assignments', element: <CentroLayout List={<SubReciclajeList/>}><UsersReportsAssignedRecyclingMenu/> </CentroLayout>},
+
 
 
 
