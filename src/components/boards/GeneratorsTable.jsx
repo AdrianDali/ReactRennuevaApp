@@ -259,99 +259,99 @@ function Toolbar({ selected, setOpenFiltersModal, setUsersToDelete, filtersAppli
   )
 
   return (
-  <Box
-    display="flex"
-    flexDirection={{ xs: 'column', sm: 'row' }}
-    justifyContent="space-between"
-    alignItems="center"
-    py={2}
-    px={2}
-    flexWrap="wrap"
-    gap={{ xs: 2, sm: 0 }}
-  >
-    {/* Título */}
-    <Typography
-      variant="h4"
-      component="div"
-      color="primary"
-      sx={{
-        px: { xs: 0, sm: 2 },
-        width: { xs: '100%', sm: 'auto' },
-        textAlign: { xs: 'center', sm: 'left' }
-      }}
-    >
-      Generadores
-    </Typography>
-
-    {/* Controles */}
     <Box
       display="flex"
       flexDirection={{ xs: 'column', sm: 'row' }}
-      alignItems={{ xs: 'stretch', sm: 'center' }}
-      justifyContent="flex-end"
-      gap={{ xs: 1, sm: 2 }}
-      width={{ xs: '100%', sm: 'auto' }}
+      justifyContent="space-between"
+      alignItems="center"
+      py={2}
+      px={2}
+      flexWrap="wrap"
+      gap={{ xs: 2, sm: 0 }}
     >
-      {/* Search */}
-      <SearchField
-        filteredData={filteredData}
-        setVisibleData={setVisibleData}
-      />
-
-      {/* Filtrar */}
-      <Badge
-        color="error"
-        overlap="circular"
-        badgeContent=" "
-        variant="dot"
-        invisible={!filtersApplied}
+      {/* Título */}
+      <Typography
+        variant="h4"
+        component="div"
+        color="primary"
+        sx={{
+          px: { xs: 0, sm: 2 },
+          width: { xs: '100%', sm: 'auto' },
+          textAlign: { xs: 'center', sm: 'left' }
+        }}
       >
+        Generadores
+      </Typography>
+
+      {/* Controles */}
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        justifyContent="flex-end"
+        gap={{ xs: 1, sm: 2 }}
+        width={{ xs: '100%', sm: 'auto' }}
+      >
+        {/* Search */}
+        <SearchField
+          filteredData={filteredData}
+          setVisibleData={setVisibleData}
+        />
+
+        {/* Filtrar */}
+        <Badge
+          color="error"
+          overlap="circular"
+          badgeContent=" "
+          variant="dot"
+          invisible={!filtersApplied}
+        >
+          <Button
+            variant="text"
+            size="large"
+            color="secondary"
+            startIcon={<FilterList />}
+            onClick={() => setOpenFiltersModal(true)}
+            fullWidth={{ xs: true, sm: false }}
+          >
+            Filtrar
+          </Button>
+        </Badge>
+
+        {/* Exportar */}
         <Button
-          variant="text"
+          variant="outlined"
           size="large"
-          color="secondary"
-          startIcon={<FilterList />}
-          onClick={() => setOpenFiltersModal(true)}
+          color="success"
+          startIcon={<Download />}
+          onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
           fullWidth={{ xs: true, sm: false }}
         >
-          Filtrar
+          Exportar
         </Button>
-      </Badge>
 
-      {/* Exportar */}
-      <Button
-        variant="outlined"
-        size="large"
-        color="success"
-        startIcon={<Download />}
-        onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
-        fullWidth={{ xs: true, sm: false }}
-      >
-        Exportar
-      </Button>
+        {/* Nuevo */}
+        <Button
+          variant="contained"
+          size="large"
+          color="primary"
+          startIcon={<Add />}
+          onClick={() => setOpenModalCreateGenerator(true)}
+          fullWidth={{ xs: true, sm: false }}
+        >
+          Nuevo
+        </Button>
 
-      {/* Nuevo */}
-      <Button
-        variant="contained"
-        size="large"
-        color="primary"
-        startIcon={<Add />}
-        onClick={() => setOpenModalCreateGenerator(true)}
-        fullWidth={{ xs: true, sm: false }}
-      >
-        Nuevo
-      </Button>
-
-      <ExportOptionsMenu
-        selectedData={selected}
-        filteredData={filteredData}
-        allData={allData}
-        anchorEl={exportOptionsAchorEl}
-        setAnchorEl={setExportOptionsAnchorEl}
-      />
+        <ExportOptionsMenu
+          selectedData={selected}
+          filteredData={filteredData}
+          allData={allData}
+          anchorEl={exportOptionsAchorEl}
+          setAnchorEl={setExportOptionsAnchorEl}
+        />
+      </Box>
     </Box>
-  </Box>
-);
+  );
 }
 
 
@@ -475,8 +475,13 @@ export default function GeneratorsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer>
-          <Table>
+        <TableContainer
+          sx={{
+            overflowX: 'auto',     // scroll si hay muchas columnas
+            maxHeight: '60vh'   // altura máxima para que no crezca indefinidamente
+          }}
+        >
+          <Table sx={{ maxWidth: '100%' }}>
             <TableHead
               sx={{
                 bgcolor: '#93C031',
