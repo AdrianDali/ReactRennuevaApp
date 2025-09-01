@@ -46,10 +46,11 @@ export default function UnifiedVerifyResiduesDialog({
 
   // Inicializa los residuos del reporte
   useEffect(() => {
+    console.log("Cargando residuos del reporte:", residueReportInfo);
     if (residueReportInfo?.residues_summary) {
       setResiduesState(
         residueReportInfo.residues_summary.map((residuo) => ({
-          id: residuo.id, // si tienes ID
+          id: residuo.report_residue_id, // si tienes ID
           residuo: residuo.residue_name,
           kg: residuo.total_kg,
           m3: residuo.total_m3,
@@ -134,6 +135,16 @@ export default function UnifiedVerifyResiduesDialog({
     measurement_comments,
   }) => {
     try {
+      console.log("Editando residuo con datos:", {
+        residue_id,
+        checker_username,
+        status,
+        new_weight,
+        new_m3,
+        measurement_comments,
+      });
+
+
       await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/Rennueva/checker-verified-report/`,
         [

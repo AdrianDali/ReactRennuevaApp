@@ -361,6 +361,8 @@ export default function DriverCenterAssignedTable({ data }) {
 
   const dataUser = useAuth();
 
+  const user = "Conductor02@mailinator.com"
+
   //console.log(data);
   const {
     setTextOpenModalText,
@@ -1031,7 +1033,7 @@ export default function DriverCenterAssignedTable({ data }) {
         residueReportInfo={residueReportInfo}
         residues={residues}
         report={reportToEdit}
-        user={"driver"}
+        user={user}
         //onSubmit={handleDialogSubmit}
       />
       
