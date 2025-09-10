@@ -73,6 +73,7 @@ import VerificationReportModal from "../../pages/VerificationReportModal";
 import { set } from "date-fns";
 import axios from "axios";
 import UnifiedVerifyResiduesDialog from "../modals/UnifiedVerifyResiduesDialog";
+import getCookieValue from "../../services/GetCookie";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -361,7 +362,11 @@ export default function DriverCenterAssignedTable({ data }) {
 
   const dataUser = useAuth();
 
-  const user = "Conductor02@mailinator.com"
+  
+
+  const user = getCookieValue("user");
+  console.log("user", user);
+  
 
   //console.log(data);
   const {
