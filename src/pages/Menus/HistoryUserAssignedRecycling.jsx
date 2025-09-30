@@ -7,7 +7,7 @@ import useAuth from "../../hooks/useAuth";
 import LoadingComponent from "./LoadingComponent";
 import UsersReportsAssignedRecyclingTable from "../../components/boards/UsersReportsAssignedRecyclingTable";
 
-export function UsersReportsAssignedRecyclingMenu() {
+export function HistoryUserAssignedRecycling() {
     const [reports, setReports] = useState([]);
     const { updateReportInfo,userReportsAssignedRecycling } = useContext(TodoContext);
     const userData = useAuth();
@@ -17,7 +17,9 @@ export function UsersReportsAssignedRecyclingMenu() {
         if(userData === null) return;
         axios
             .post(`${process.env.REACT_APP_API_URL}/get-single-order-totals/`, {
-                checker_username: userData?.user
+                checker_username: userData?.user,
+                report_status: 'Verificado' 
+
             })
             .then((response) => {
                 console.log(response.data);
@@ -43,7 +45,7 @@ export function UsersReportsAssignedRecyclingMenu() {
         >
 
 
-            <UsersReportsAssignedRecyclingTable data={reports} />
+            <UsersReportsAssignedRecyclingTable data={reports} finish ={true}/>
 
 
         </Container>

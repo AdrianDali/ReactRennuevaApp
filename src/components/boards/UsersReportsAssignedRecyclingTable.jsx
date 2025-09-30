@@ -362,7 +362,7 @@ function SearchField({ filteredData, setVisibleData }) {
   );
 }
 
-export default function UsersReportsAssignedRecyclingTable({ data }) {
+export default function UsersReportsAssignedRecyclingTable({ data , finish = false}) {
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
   const [reportToEdit, setReportToEdit] = useState(null);
@@ -723,14 +723,17 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
                     <Typography variant="subtitle2">Folio Reporte</Typography>
                   </TableSortLabel>
                 </TableCell>
+                  {!finish && (
                 <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
+                  )}
 
+                  {!finish && (
                 <TableCell>
                   <Typography variant="subtitle2">Finalizar</Typography>
                 </TableCell>
-
+                  )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -816,6 +819,7 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
                         <TableCell>
                           {order.reportes?.[0]?.folio ?? "-"}
                         </TableCell>
+                          {!finish && (
                         <TableCell>
                           <Button
                             startIcon={<Visibility />}
@@ -830,7 +834,8 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
                             Verificar
                           </Button>
                         </TableCell>
-
+                          )}
+                          {!finish && (
                         <TableCell>
                           <Button
                             startIcon={<Visibility />}
@@ -849,6 +854,7 @@ export default function UsersReportsAssignedRecyclingTable({ data }) {
                             Finalizar
                           </Button>
                         </TableCell>
+                          )}
                         
 
                       </TableRow>
