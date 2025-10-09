@@ -27,6 +27,8 @@ import {
   TablePagination,
   Chip,
   Collapse,
+  useMediaQuery,
+
 } from "@mui/material";
 import {
   Add,
@@ -39,6 +41,7 @@ import {
   Edit,
   Close,
   KeyboardArrowDown,
+  
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
@@ -384,9 +387,11 @@ export default function UserInfoTable({ data, centers, recyclingCenters, collect
   const [visibleData, setVisibleData] = useState(data);
   const dataUser = useAuth();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showCompleteInfo, setShowCompleteInfo] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+
 
   const {
     setOpenModalDeleteGenerator,
@@ -496,12 +501,21 @@ export default function UserInfoTable({ data, centers, recyclingCenters, collect
   }, [data]);
 
   return (
-    <Box sx={{ width: "100%", mb: "3rem" }}>
-      <Paper sx={{
-        height: "80%",
-        overflow: "auto",
-        padding: 2,
-      }}>
+    <Box sx={{
+      width: "100%",
+      mb: "3rem",
+      height: "80vh",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      <Paper 
+      elevation={3}
+        sx={{
+          borderRadius: 2, // esquinas redondeadas
+          boxShadow: 1, // sombra ligera
+          p: 2, // padding interno
+          bgcolor: "background.paper",
+        }}>
         <Toolbar
           setPage={setPage}
           selected={selected}
@@ -512,9 +526,27 @@ export default function UserInfoTable({ data, centers, recyclingCenters, collect
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{ maxHeight: "100vh" }}>
+        <TableContainer sx={{
+            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { width: 6 },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "grey.400",
+              borderRadius: 3,
+            },
+          }}>
           <Table>
-            <TableHead sx={{ bgcolor: theme.palette.background.default }}>
+            <TableHead sx={{
+                bgcolor: "primary.main",
+                "& .MuiTableCell-root": {
+                  color: "common.white",
+                  borderBottom: "2px solid",
+                  borderColor: "primary.dark",
+                  "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
+                    opacity: 1,
+                  },
+                },
+              }}>
               <TableRow>
                 <TableCell></TableCell>
                 <TableCell>
@@ -584,10 +616,9 @@ export default function UserInfoTable({ data, centers, recyclingCenters, collect
                         key={request.id}
                         selected={isRowSelected(request.id)}
                         sx={{
-                          cursor: "pointer",
-                          bgcolor:
-                            showCompleteInfo === request.id && "primary.light",
-                          transition: "all 0.3s",
+                          "&:nth-of-type(odd)": { bgcolor: "action.hover" },
+                          "&:hover": { bgcolor: "action.selected" },
+                          transition: "background-color 0.2s ease",
                         }}
                         aria-checked={isRowSelected(request.id) ? true : false}
                         onClick={(e) => {
@@ -695,7 +726,7 @@ export default function UserInfoTable({ data, centers, recyclingCenters, collect
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 20, 25]}
           component="div"
           count={visibleData.length}
           rowsPerPage={rowsPerPage}

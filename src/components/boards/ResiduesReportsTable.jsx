@@ -500,12 +500,20 @@ export default function ResiduesReportsTable({ data }) {
     }, [visibleData, order, orderBy])
 
     return (
-        <Box sx={{ width: "100%", mb: "3rem" }}>
+        <Box sx={{
+            width: "100%",
+            mb: "3rem",
+            height: "80vh",
+            display: "flex",
+            flexDirection: "column",
+          }} >
             <Paper
+                elevation={3}
                 sx={{
-                    height: "80%",
-                    overflow: "auto",
-                    padding: 2,
+                  borderRadius: 2, // esquinas redondeadas
+                  boxShadow: 1, // sombra ligera
+                  p: 2, // padding interno
+                  bgcolor: "background.paper",
                 }}
             >
                 {desktop ? (
@@ -529,9 +537,27 @@ export default function ResiduesReportsTable({ data }) {
                         setVisibleData={setVisibleData}
                     />
                 )}
-                <TableContainer sx={{ minHeight: "calc(100vh - 350px)" }}>
+                <TableContainer sx={{
+            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { width: 6 },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "grey.400",
+              borderRadius: 3,
+            },
+          }}>
                     <Table stickyHeader aria-label="sticky table">
-                        <TableHead sx={{ bgcolor: theme.palette.background.default }}>
+                        <TableHead sx={{
+                bgcolor: "primary.main",
+                "& .MuiTableCell-root": {
+                  color: "common.white",
+                  borderBottom: "2px solid",
+                  borderColor: "primary.dark",
+                  "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
+                    opacity: 1,
+                  },
+                },
+              }}>
                             <TableRow>
                                 <TableCell>
                                     <TableSortLabel direction="asc">
@@ -577,7 +603,7 @@ export default function ResiduesReportsTable({ data }) {
                         </TableHead>
                         <TableBody>
                             {sortedData.length === 0 ? (
-                                <TableRow>
+                                <TableRow key="NoReports" sx={{ '&:nth-of-type(odd)': { bgcolor: 'action.hover' } }} >
                                     <TableCell colSpan={18}>
                                         <Typography
                                             variant="h6"
@@ -597,7 +623,11 @@ export default function ResiduesReportsTable({ data }) {
                                                 hover
                                                 role="checkbox"
                                                 key={report.id_report}
-                                                sx={{ cursor: "pointer" }}
+                                                sx={{
+                                                    "&:nth-of-type(odd)": { bgcolor: "action.hover" },
+                                                    "&:hover": { bgcolor: "action.selected" },
+                                                    transition: "background-color 0.2s ease",
+                                                  }}
 
                                             >
                                                 <TableCell>

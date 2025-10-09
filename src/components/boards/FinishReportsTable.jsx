@@ -491,7 +491,7 @@ export default function FinishReportsTable({ data }) {
   const [visibleData, setVisibleData] = useState(data);
   const [signType, setSignType] = useState("Generador");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState("id_report");
   const [order, setOrder] = useState("desc");
   const [sortedData, setSortedData] = useState([]);
@@ -707,12 +707,21 @@ export default function FinishReportsTable({ data }) {
   }, [visibleData, order, orderBy])
 
   return (
-    <Box sx={{ width: "100%", mb: "3rem" }}>
+    <Box 
+      sx={{
+        width: "100%",
+        mb: "3rem",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+      }}>
       <Paper
+        elevation={3}
         sx={{
-          height: '80vh',
-          overflow: 'auto',
-          padding: 2
+          borderRadius: 2, // esquinas redondeadas
+          boxShadow: 1, // sombra ligera
+          p: 2, // padding interno
+          bgcolor: "background.paper",
         }}
       >
         <Toolbar
@@ -724,9 +733,31 @@ export default function FinishReportsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{ maxHeight: '68vh' }}>
-          <Table stickyHeader>
-            <TableHead sx={{ bgcolor: theme.palette.background.default }}>
+        <TableContainer 
+          sx={{
+            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { width: 6 },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "grey.400",
+              borderRadius: 3,
+            },
+          }}
+          >
+          <Table >
+            <TableHead 
+            sx={{
+                bgcolor: "primary.main",
+                "& .MuiTableCell-root": {
+                  color: "common.white",
+                  borderBottom: "2px solid",
+                  borderColor: "primary.dark",
+                  "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
+                    opacity: 1,
+                  },
+                },
+              }}
+              >
               <TableRow>
                 <TableCell>
                   <TableSortLabel direction="asc">
@@ -922,9 +953,9 @@ export default function FinishReportsTable({ data }) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 20, 25]}
           component="div"
-          count={visibleData.length}
+          count={sortedData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

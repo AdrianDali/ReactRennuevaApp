@@ -26,11 +26,6 @@ import {
   TextField,
   TablePagination,
   Collapse,
-  FormControl,
-  InputLabel,
-  Select,
-  InputAdornment,
-  FormHelperText,
 } from "@mui/material";
 import {
   Add,
@@ -45,6 +40,23 @@ import {
   SaveAlt,
   Close,
   Watch,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  Assignment,
+  InfoOutlined,
+  DateRange,
+  AccountCircle,
+  Phone,
+  CheckCircle,
+  Warning,
+  WarningAmber,
+  CheckCircleOutline,
+  PhoneEnabled,
+  PhoneDisabled,
+  PhoneInTalk,
+  Business,
+  LocalOffer,
+  Place,
 } from "@mui/icons-material";
 import theme from "../../context/theme";
 import { TodoContext } from "../../context";
@@ -71,9 +83,12 @@ import ReportInfoRecycling from "./ReportInfoRecycling";
 import { ModalFinishReport } from "../../pages/ModalFinishReport";
 import VerificationReportModal from "../../pages/VerificationReportModal";
 import { set } from "date-fns";
-import axios from "axios";
-import UnifiedVerifyResiduesDialog from "../modals/UnifiedVerifyResiduesDialog";
-import getCookieValue from "../../services/GetCookie";
+import OrderInfoRecycling from "./OrderInfoRecycling";
+import CheckRecyclingOrder from "../../components/modals/CheckRecyclingOrder";
+import { ModalOrderResidueDetail } from "../../components/modals/UserReportsAssignedRecyclingModal";
+import FinishVerificationDialog from "../modals/FinishVerificationDialog";
+import getSingleReport from "../../services/ApGetSingleReport";
+import finishVerifiedDonorReport from "../../services/ApiFinishVerifiedDonorReport";
 
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
@@ -144,7 +159,7 @@ function ExportOptionsMenu({
   const handleExportSelected = () => {
     //console.log(selectedData)
     const dataToExport = allData.filter((report) =>
-      selectedData.includes(report.id)
+      selectedData.includes(report.id_report)
     );
     //console.log(dataToExport)
     generateExcelFromJson(dataToExport, "Reportes");
@@ -231,7 +246,7 @@ function Toolbar({
       py={2}
     >
       <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
-        Ordenes a Centro Acopio Asignadas
+        Residuos de usuarios asignados
       </Typography>
       <Box>
         <SearchField
@@ -347,9 +362,7 @@ function SearchField({ filteredData, setVisibleData }) {
   );
 }
 
-export default function DriverCenterAssignedTable({ data }) {
-  console.log("DriverCenterAssignedTable");
-  console.log(data);
+export default function UsersReportsAssignedRecyclingTable({ data , finish = false}) {
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
   const [reportToEdit, setReportToEdit] = useState(null);
@@ -362,12 +375,6 @@ export default function DriverCenterAssignedTable({ data }) {
 
   const dataUser = useAuth();
 
-  
-
-  const user = getCookieValue("user");
-  console.log("user", user);
-  
-
   //console.log(data);
   const {
     setTextOpenModalText,
@@ -379,6 +386,10 @@ export default function DriverCenterAssignedTable({ data }) {
     setOpenModalEditResidueReport,
     setUpdateReportInfo,
     openModalFinishReport,
+    openModalEditResidueReport,
+    userReportsAssignedRecycling, setUserReportsAssignedRecycling,
+    openFinishVerificationModal, setOpenFinishVerificationModal,
+
   } = useContext(TodoContext);
   //const  [openModalFinishReport, setOpenModalFinishReport] = useState(false);
   const [rowContextMenuAnchorEl, setRowContextMenuAnchorEl] = useState(null);
@@ -388,20 +399,12 @@ export default function DriverCenterAssignedTable({ data }) {
   const [openFiltersModal, setOpenFiltersModal] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
-  const [openResiduoModal, setOpenResiduoModal] = useState(false);
-  const [residueReportInfo, setResidueReportInfo] = useState([]);
-  const [residuesPerOrderRecollection, setResiduesPerOrderRecollection] =
-    useState([]);
-  const [residueIndex, setResidueIndex] = useState(null);
-  const [residues, setResidues] = useState([]);
-  const [editedResidueName, setEditedResidueName] = useState("");
-  const [editedPeso, setEditedPeso] = useState("");
-  const [editedVolumen, setEditedVolumen] = useState("");
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openConfirmModal, setOpenConfirmModal] = useState(false);
-  const [statusResidue, setStatusResidue] = useState("");
-  const [idOrderSelected, setIdOrderSelected] = useState(null);
-  const [reportResidueId, setReportResidueId] = useState(null);
+
+  
+
+  const [openModalCheckRecyclingOrder, setOpenModalCheckRecyclingOrder] =
+    useState(false);
+
   const handleExpandClick = (id) => {
     setExpandedRow((prev) => (prev === id ? null : id));
   };
@@ -446,19 +449,86 @@ export default function DriverCenterAssignedTable({ data }) {
     }
   };
 
-  const handleEditResidues = (report) => {
-    setReportToEdit(report);
-    setOpenModalEditResidueReport(true);
+  const handleCloseModal = () => {
+    setOpenModalCheckRecyclingOrder(false);
   };
 
-  const handleVerifyReport = (report) => {
+  const handleEditResidues = (report) => {
     setReportToEdit(report);
-    setOpenVerificationModal(true);
+    console.log(report);
+    setUserReportsAssignedRecycling(true)
+    setOpenModalCheckRecyclingOrder(true);
+    //setOpenModalEditResidueReport(true);
+    //setOpenModalCheckRecyclingOrder(true);
   };
+
+  const handleFinishReport = (report) => {
+    setReportToEdit(report);
+    setOpenFinishVerificationModal(true);
+  };
+
+  const finalizarVerificacion = async (report) => {
+    if (report) {
+  console.log("Finalizando verificación del reporte:", report);
+
+  const idToUse = report.reportes[0]?.id_report ?? report.id_report;
+  const validate = await validateReport(idToUse);
+  if (validate === true) {
+    const data = await getReportInfo(idToUse);
+
+    let key_centro = "";
+    if (data[0]?.key_centro_reciclaje != null) {
+      key_centro = data[0].key_centro_reciclaje;
+    }
+    if (data[0]?.key_centro_recoleccion != null) {
+      key_centro = data[0].key_centro_recoleccion;
+    }
+
+    const folio_busqueda =
+      data[0]?.key_grupo_usuario + "-" + key_centro + "-" + idToUse;
+
+    const qrImage = await generateQR(
+      "https://rewards.rennueva.com/tracking-external/" + folio_busqueda
+    );
+
+    const singleReport = await getSingleReport(idToUse);
+
+    // Aquí generas el PDF según el grupo
+    if (singleReport?.grupo_usuario === "Donador") {
+      generateDonorReportPDF(singleReport, data, qrImage);
+    } else {
+      generateReportPDF(singleReport, data, qrImage);
+    }
+
+    // === Llama al servicio para finalizar el reporte y la orden ===
+    const result = await finishVerifiedDonorReport(idToUse);
+
+    if (result.error) {
+      setOpenModalText(true);
+      setTextOpenModalText(
+        result.detail?.error ||
+        "Ocurrió un error al finalizar el reporte. Intenta de nuevo."
+      );
+      return;
+    }
+
+    // Éxito: muestra mensaje de éxito, puedes refrescar datos si lo necesitas
+    setOpenModalText(true);
+    setTextOpenModalText(result.message || "Reporte finalizado correctamente");
+    // Ejemplo: setUpdateReportInfo(prev => !prev); // si necesitas refrescar la tabla
+  } else {
+    setOpenModalText(true);
+    setTextOpenModalText(
+      "No se puede generar el reporte, aun no se han firmado todos los campos"
+    );
+  }
+}
+
+    };
 
   const handleGeneralCheckboxChange = (e) => {
     if (e.target.checked) {
-      setSelected(data.map((report) => report.id));
+      setSelected(data.map((report) => report.id_report));
     } else if (e.target.indeterminate) {
       setSelected(selected);
     } else {
@@ -569,189 +639,16 @@ export default function DriverCenterAssignedTable({ data }) {
     }
   }, [data]);
 
-  /**
-   * Maneja la apertura del modal para el residuo seleccionado.
-   * Realiza una petición POST para obtener los residuos asociados a un reporte,
-   * actualiza el estado del componente y determina el valor de 'verified'
-   * en función del status del primer elemento del arreglo de respuesta.
-   *
-   * @param {Object} report - Objeto con la información del reporte.
-   */
-  const handleOpenResiduoModal = async (report) => {
-    try {
-      // Mostrar en consola el reporte recibido
-      console.log("Reporte recibido:", report);
-      setReportToEdit(report);
-      // Extrae el reportId del folio (asumiendo que es el último elemento separado por guiones)
-      const orderRecollectionId = report.id;
-      console.log("ID de recolección:", orderRecollectionId);
-
-      setIdOrderSelected(orderRecollectionId);
-
-      // Realiza la petición POST para obtener los residuos asociados al reporte
-      const response = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/Rennueva/get-all-residues-total-per-report/`,
-        { orderRecollectionId: report.id }
-      );
-      // Muestra en consola la respuesta de la API
-      console.log("Respuesta de la API:", response.data);
-      // Verifica que la respuesta sea un arreglo y contenga al menos un elemento
-
-      setResiduesPerOrderRecollection(response.data);
-      console.log("Residuos por reporte:", response.data);
-
-      // Se utiliza directamente la respuesta para actualizar el estado,
-      // ya que setResidueReportInfo es asíncrono, evitamos depender del estado actualizado.
-      const residuesData = response.data;
-
-      console.log("Datos de residuos:", residuesData);
-
-      // Actualiza los estados correspondientes con los datos obtenidos
-      setResidueReportInfo(residuesData);
-      setStatusResidue("VERIFICADO");
-
-      // Actualiza el reporte seleccionado y abre el modal
-      //setSelectedReport(report);
-      setOpenResiduoModal(true);
-    } catch (error) {
-      // Captura y registra cualquier error que ocurra durante la ejecución
-      console.error("Error en handleOpenResiduoModal:", error);
-    }
-  };
-
-  const handleCloseResiduoModal = () => {
-    setOpenResiduoModal(false);
-    setResidueReportInfo([]);
-  };
-  const handleOpenConfirmModal = (index, residuo) => {
-    console.log("Residuo index:", index);
-    console.log("Residuo:", residuo);
-
-    setOpenConfirmModal(true);
-    setResidueIndex(index);
-    setEditedResidueName(residuo.residue_name);
-    console.log("Residuo name:", residuo.report_residue_id);
-    setReportResidueId(residuo.report_residue_id);
-
-    setEditedPeso(residuo.total_kg);
-    setEditedVolumen(residuo.total_m3);
-    setStatusResidue(residuo.verification_status);
-
-
-  };
-
-  const handleConfirmCorrect = () => {
-    console.log("Residuo verificado");
-    console.log("Residuo index:", editedResidueName);
-
-    // llamado https a la API para marcar el residuo como verificado
-    axios
-      .post(
-        `${process.env.REACT_APP_SERVER_URL}/Rennueva/driver-verified-order-reports-residue/`,
-        {
-          residue_name : editedResidueName,
-          orderId: idOrderSelected,
-          status: "VERIFICADO",
-        }
-      )
-      .then((response) => {
-        console.log("Residuo verificado:", response.data);
-
-        // // Actualiza el estado del residuo verificado
-        // setResidueReportInfo((prev) => {
-        //   const newResidues = [...prev];
-        //   newResidues[selectedResiduoIndex] = {
-        //     ...newResidues[selectedResiduoIndex],
-        //     verified: true,
-        //   };
-        //   return newResidues;
-        // });
-        // setResidueReportInfo((prev) => {
-        //   const newResidues = [...prev];
-        //   newResidues[residueIndex] = {
-        //     ...newResidues[residueIndex],
-        //     verification_status: "VERIFICADO",
-        //   };
-        //   return newResidues;
-        // });
-        return response.data;
-        
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    setOpenConfirmModal(false);
-  };
-
-  const handleOpenEditModal = () => {
-
-    setOpenEditModal(true);
-  };
-  const handleEditSubmit = () => {
-    // Aquí puedes manejar el envío de los datos editados
-
-    console.log(
-      "Residuo editado:",
-      editedResidueName,
-      editedPeso,
-      editedVolumen,
-      reportResidueId 
-    );
-
-    axios
-    .post(
-      `${process.env.REACT_APP_SERVER_URL}/Rennueva/checker-verified-report/`,
-      [{
-        residue_id: reportResidueId,
-        checker_username : dataUser.user,
-        status: "REPORTADO",
-        //residue_name: editedResidueName,
-        new_weight: editedPeso,
-        new_m3: editedVolumen,
-        measurement_comments : "Residuo editado"
-      }]
-
-    )
-      .then((response) => {
-        console.log("Residuo editado:", response.data);
-        // Aquí puedes manejar la respuesta de la API después de editar el residuo
-        // Por ejemplo, puedes cerrar el modal o mostrar un mensaje de éxito
-        setOpenEditModal(false);
-        setOpenModalText(true);
-        setTextOpenModalText("Residuo editado correctamente");
-        setUpdateReportInfo((prev) => !prev);
-      })
-
-      .catch((error) => {
-        console.error("Error al editar el residuo:", error);
-      });
-
-    
-
-    setOpenEditModal(false);
-  };
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
-      .then(response => {
-        const data = response.data;
-        console.log("Residuos:", data);
-        setResidues(data);
-      })
-      .catch(error => {
-        console.error(error);
-      })
-  }, []);
-
   return (
-    <Box sx={{
-      width: "100%",
-      mb: "3rem",
-      height: "80vh",
-      display: "flex",
-      flexDirection: "column",
-    }}>
+    <Box
+      sx={{
+        width: "100%",
+        mb: "3rem",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Paper
         elevation={3}
         sx={{
@@ -770,17 +667,21 @@ export default function DriverCenterAssignedTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{
-            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+        <TableContainer
+          sx={{
+            maxHeight: "calc(70vh - 64px)",
             overflowY: "auto",
+            backgroundColor: "background.paper",
             "&::-webkit-scrollbar": { width: 6 },
             "&::-webkit-scrollbar-thumb": {
               bgcolor: "grey.400",
               borderRadius: 3,
             },
-          }}>
-          <Table >
-            <TableHead sx={{
+          }}
+        >
+          <Table>
+            <TableHead
+              sx={{
                 bgcolor: "primary.main",
                 "& .MuiTableCell-root": {
                   color: "common.white",
@@ -790,74 +691,55 @@ export default function DriverCenterAssignedTable({ data }) {
                     opacity: 1,
                   },
                 },
-              }}>
+              }}
+            >
               <TableRow>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2"> </Typography>
-                  </TableSortLabel>
-                </TableCell>
+                <TableCell />
                 <TableCell>
                   <Checkbox
-                    checked={generalCheckboxStatus === "checked" ? true : false}
+                    checked={generalCheckboxStatus === "checked"}
+                    indeterminate={generalCheckboxStatus === "indeterminate"}
                     onClick={handleGenaeralCheckboxClick}
-                    indeterminate={
-                      generalCheckboxStatus === "indeterminate" ? true : false
-                    }
                     onChange={handleGeneralCheckboxChange}
                   />
                 </TableCell>
-
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">ID</Typography>
+                    <Typography variant="subtitle2">ID Orden</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">
-                      Nombre Solicitante
-                    </Typography>
+                    <Typography variant="subtitle2">Peso Total</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">
-                      Centro de acopio
-                    </Typography>
-                  </TableSortLabel>
-                </TableCell>
-
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Fecha</Typography>
+                    <Typography variant="subtitle2">Volumen Total</Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Peso</Typography>
+                    <Typography variant="subtitle2">Folio Reporte</Typography>
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Conductor</Typography>
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel direction="asc">
-                    <Typography variant="subtitle2">Residuos</Typography>
-                  </TableSortLabel>
-                </TableCell>
-
+                  {!finish && (
                 <TableCell>
                   <Typography variant="subtitle2">Verificación</Typography>
                 </TableCell>
+                  )}
+
+                  {!finish && (
+                <TableCell>
+                  <Typography variant="subtitle2">Finalizar</Typography>
+                </TableCell>
+                  )}
               </TableRow>
             </TableHead>
             <TableBody>
               {visibleData.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={18}>
+                  <TableCell colSpan={12}>
                     <Typography
                       variant="h6"
                       color="textSecondary"
@@ -870,72 +752,74 @@ export default function DriverCenterAssignedTable({ data }) {
               ) : (
                 visibleData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((report, index) => (
-                    <React.Fragment key={`report-assigned-${index}`}>
+                  .map((order) => (
+                    <React.Fragment key={`order-${order.id_order}`}>
                       <TableRow
                         hover
                         role="checkbox"
-                        key={`${report.id}-${index}`}
-                        selected={isRowSelected(report.id)}
-                        sx={{ cursor: "pointer" }}
-                        aria-checked={isRowSelected(report.id) ? true : false}
+                        selected={isRowSelected(order.id_order)}
+                        sx={{
+                          "&:nth-of-type(odd)": { bgcolor: "action.hover" },
+                          "&:hover": { bgcolor: "action.selected" },
+                          transition: "background-color 0.2s ease",
+                        }}
+                        aria-checked={isRowSelected(order.id_order)}
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleSelected(report.id);
+                          toggleSelected(order.id_order);
                         }}
                         onContextMenu={(e) => {
                           e.preventDefault();
-                          setReportToEdit(report);
-                          setReportsToDelete([report.id]);
+                          setReportToEdit(order);
+                          setReportsToDelete([order.id_order]);
                           setRowContextMenuAnchorEl(e.target);
                         }}
                       >
+                        {/* Expand/Collapse */}
                         <TableCell>
-                          <Button
+                          <IconButton
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleExpandClick(report.id);
+                              handleExpandClick(order.id_order);
                             }}
+                            size="small"
                           >
-                            {expandedRow === report.id ? (
-                              <KeyboardArrowUpIcon />
+                            {expandedRow === order.id_order ? (
+                              <KeyboardArrowUp />
                             ) : (
-                              <KeyboardArrowDownIcon />
+                              <KeyboardArrowDown />
                             )}
-                          </Button>
+                          </IconButton>
                         </TableCell>
+                        {/* Checkbox */}
                         <TableCell>
                           <Checkbox
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleSelected(report.id);
+                              toggleSelected(order.id_order);
                             }}
-                            checked={isRowSelected(report.id)}
+                            checked={isRowSelected(order.id_order)}
                             inputProps={{
-                              "aria-labelledby": report.id,
+                              "aria-labelledby": order.id_order,
                             }}
                           />
                         </TableCell>
-
-                        <TableCell>{report.id}</TableCell>
-                        <TableCell>{report.nombre_donador}</TableCell>
-
-                        <TableCell>{report.nombre_centro}</TableCell>
-
-                        <TableCell>{report.fecha}</TableCell>
-                        <TableCell>Peso</TableCell>
-                        <TableCell>{report.conductor_asignado}</TableCell>
+                        {/* Datos */}
+                        <TableCell>{order.id_order}</TableCell>
                         <TableCell>
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            color="primary"
-                            sx={{ marginLeft: 2 }}
-                            onClick={() => handleOpenResiduoModal(report)}
-                          >
-                            Ver Residuos
-                          </Button>
+                          {order.peso_total_orden !== null
+                            ? `${order.peso_total_orden} Kg`
+                            : "-"}
                         </TableCell>
+                        <TableCell>
+                          {order.m3_total_orden !== null
+                            ? `${order.m3_total_orden} m³`
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          {order.reportes?.[0]?.folio ?? "-"}
+                        </TableCell>
+                          {!finish && (
                         <TableCell>
                           <Button
                             startIcon={<Visibility />}
@@ -944,24 +828,224 @@ export default function DriverCenterAssignedTable({ data }) {
                             color="info"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleEditResidues(report);
+                              handleEditResidues(order);
                             }}
                           >
                             Verificar
                           </Button>
                         </TableCell>
+                          )}
+                          {!finish && (
+                        <TableCell>
+                          <Button
+                            startIcon={<Visibility />}
+                            variant="contained"
+                            size="small"
+                            color="success"
+                            disabled={
+                              order.tiene_residuos === false  
+                            }
+
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFinishReport(order);
+                            }}
+                          >
+                            Finalizar
+                          </Button>
+                        </TableCell>
+                          )}
+                        
+
                       </TableRow>
+
                       <TableRow>
                         <TableCell
                           style={{ paddingBottom: 0, paddingTop: 0 }}
-                          colSpan={18}
+                          colSpan={12}
                         >
                           <Collapse
-                            in={expandedRow === report.id}
+                            in={expandedRow === order.id_order}
                             timeout="auto"
                             unmountOnExit
                           >
-                            <ReportInfoRecycling request={report} />
+                            <Box
+                              sx={{
+                                mx: 3,
+                                my: 2,
+                                background: "#fff",
+                                borderRadius: 2,
+                                border: "1px solid #eee",
+                                p: 2,
+                                boxShadow: "0px 1px 4px rgba(0,0,0,0.02)",
+                              }}
+                            >
+                              {order.reportes && order.reportes.length > 0 ? (
+                                order.reportes.map((reporte) => (
+                                  <Box
+                                    key={reporte.id_report}
+                                    sx={{
+                                      mb: 2,
+                                      pb: 1,
+                                      borderBottom: "1px dashed #eee",
+                                      "&:last-child": { borderBottom: "none" },
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Assignment
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "primary.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Folio:</b> {reporte.folio}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <InfoOutlined
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "info.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Status:</b> {reporte.status_reporte}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <DateRange
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "success.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Fecha:</b>{" "}
+                                        {reporte.report_date
+                                          ? new Date(
+                                              reporte.report_date
+                                            ).toLocaleString("es-MX")
+                                          : "-"}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <AccountCircle
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "secondary.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Usuario:</b>{" "}
+                                        {reporte.usuario?.username}{" "}
+                                        <Phone
+                                          fontSize="inherit"
+                                          sx={{
+                                            ml: 1,
+                                            mr: 0.5,
+                                            color: "grey.600",
+                                          }}
+                                        />
+                                        {reporte.usuario?.telefono}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Business
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "warning.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Empresa:</b>{" "}
+                                        {reporte.usuario?.company}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <LocalOffer
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "info.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>RFC:</b> {reporte.usuario?.rfc}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Place
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "error.main" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Dirección:</b>{" "}
+                                        {[
+                                          reporte.direccion?.calle,
+                                          reporte.direccion?.num_ext,
+                                          reporte.direccion?.localidad,
+                                          reporte.direccion?.ciudad,
+                                          reporte.direccion?.estado,
+                                          `CP ${reporte.direccion?.cp}`,
+                                        ]
+                                          .filter(Boolean)
+                                          .join(", ")}
+                                      </Typography>
+                                    </Box>
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <InfoOutlined
+                                        fontSize="small"
+                                        sx={{ mr: 1, color: "grey.600" }}
+                                      />
+                                      <Typography variant="body2">
+                                        <b>Referencia:</b>{" "}
+                                        {reporte.direccion?.referencia}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                ))
+                              ) : (
+                                <Typography variant="body2">
+                                  No hay reportes para esta orden.
+                                </Typography>
+                              )}
+                            </Box>
                           </Collapse>
                         </TableCell>
                       </TableRow>
@@ -971,6 +1055,7 @@ export default function DriverCenterAssignedTable({ data }) {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -983,7 +1068,20 @@ export default function DriverCenterAssignedTable({ data }) {
       </Paper>
 
       <ModalFirmar type={signType} id={reportToEdit} />
-      <ModalWatchResidueReport report={reportToEdit} />
+      {/* <ModalWatchResidueReport report={reportToEdit} /> */}
+
+       <FinishVerificationDialog onFinish={() => finalizarVerificacion(reportToEdit)} />
+
+
+      {openModalCheckRecyclingOrder && (
+        <ModalOrderResidueDetail
+          dataUser={dataUser}
+          orderReport={reportToEdit}
+        />
+      )}
+
+
+      
       {/* <ModalFinishReport report={reportToEdit} /> */}
       <DeleteReportsModal reports={reportsToDelete} />
       <ReportsFiltersModal
@@ -1030,18 +1128,6 @@ export default function DriverCenterAssignedTable({ data }) {
           </DialogActions>
         </Dialog>
       )}
-
-
-      <UnifiedVerifyResiduesDialog
-        open={openResiduoModal}
-        onClose={() => setOpenResiduoModal(false)}
-        residueReportInfo={residueReportInfo}
-        residues={residues}
-        report={reportToEdit}
-        user={user}
-        //onSubmit={handleDialogSubmit}
-      />
-      
     </Box>
   );
 }

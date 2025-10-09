@@ -31,6 +31,7 @@ import { set } from "date-fns";
 import generateDonorTalonPDF from "../../services/DonorTalonReportPDF";
 import getReportInfo from "../../services/getReportInfo";
 import generateQR from "../../services/generateQR";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -64,19 +65,14 @@ export default function EditRecolectionModal({
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
   useEffect(() => {
-    //console.log(userData);
     axios
       .get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
-      .then((response) => {
-        //console.log(response.data);
-        setConductores(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      .then((res) => setConductores(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   useEffect(() => {
+    console.log("recolection", recolection);
     if (recolection === null) return;
     switch (recolection?.status) {
       case null:
@@ -121,6 +117,7 @@ export default function EditRecolectionModal({
       setValue(recolection.comment_cancelation);
     }
   }, [recolection, open]);
+
   const handleSubmit = async (e) => {
     if (status === "pendienteRecoleccion") {
       if (!isDateCorrect) return;
@@ -164,7 +161,6 @@ export default function EditRecolectionModal({
       };
 
       try {
-
         setLoading(true);
 
         const changeStatusResponse = await axios.post(
@@ -224,8 +220,7 @@ export default function EditRecolectionModal({
         })
         .finally(() => {
           setLoading(false);
-        }
-        );
+        });
     }
   };
 
@@ -276,6 +271,7 @@ export default function EditRecolectionModal({
                     Recolección pendiente
                   </MenuItem>
                 ) : null}
+
                 {status === "solicitado" ||
                 status === "pendienteRecoleccion" ||
                 status === "recolectado" ? (
@@ -285,6 +281,7 @@ export default function EditRecolectionModal({
                 status === "pendienteRecoleccion" ? (
                   <MenuItem value="entregado">Entregado</MenuItem>
                 ) : null}
+
                 {status === "solicitado" ||
                 status === "pendienteRecoleccion" ? (
                   <MenuItem value="cancelado">Cancelado</MenuItem>
@@ -405,14 +402,14 @@ export default function EditRecolectionModal({
 
             {status === "pendienteRecoleccion" ? (
               <Button
-              fullWidth
-              color="success"
-              variant="contained"
-              type="submit"
-              disabled={status === "" || loading} // deshabilitar si no hay status o si está cargando
-            >
-              {loading ? "Cargando..." : "Guardar cambios"}
-            </Button>
+                fullWidth
+                color="success"
+                variant="contained"
+                type="submit"
+                disabled={status === "" || loading} // deshabilitar si no hay status o si está cargando
+              >
+                {loading ? "Cargando..." : "Guardar cambios"}
+              </Button>
             ) : status === "cancelado" ? (
               <Button
                 fullWidth

@@ -136,6 +136,9 @@ export default function SignInSide() {
       }else if (dataUser.groups[0] === "Reciclaje") {
         console.log("Reciclaje");
         navigate("/centrosAcopio");
+      }else if (dataUser.groups[0] === "Separador") {
+        console.log("Separador");
+        navigate("/sub-centro/assignments");
       }
 
     } catch (error) {

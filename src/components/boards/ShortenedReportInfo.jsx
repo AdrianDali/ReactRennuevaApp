@@ -1,79 +1,74 @@
-import { Box, Typography} from "@mui/material";
+import React from 'react';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Divider,
+  Avatar,
+  Stack,
+  Typography,
+  Grow,
+  useMediaQuery,
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import {
+  Person,
+  Phone,
+  Email,
+  Business,
+} from '@mui/icons-material';
 
-export default function ShortenedReportInfo({ request }) {
+export default function EnhancedShortenedReportInfo({ request }) {
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
-    <Box
-      display="flex"
-      justifyContent="start"
-      gap={10}
-      padding={4}
-      py={6}
-      flexWrap="nowrap"
-      overflow="scroll"
-    >
-      <Box flexShrink={0}>
-        <Typography variant="h6" gutterBottom>
-          Información del Reporte
-        </Typography>
-        <Box paddingLeft={2}>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              color="secondary"
-              display="inline"
-              fontWeight={500}
-              gutterBottom
-            >
-              Nombre completo:{" "}
+    <Grow in>
+      <Card elevation={3} sx={{ mt: 2 }}>
+        <CardHeader
+          avatar={<Avatar>{request.nombre_real_usuario.charAt(0)}</Avatar>}
+          title={
+            <Typography variant={isSm ? 'h6' : 'h5'}>
+              Información del Reporte
             </Typography>
-            <Typography variant="body1" display="inline" gutterBottom>
-              {request.nombre_real_usuario} {request.apellido_usuario}{" "}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              color="secondary"
-              display="inline"
-              fontWeight={500}
-              gutterBottom
-            >
-              Teléfono:{" "}
-            </Typography>
-            <Typography variant="body1" display="inline" gutterBottom>
-              {request.telefono_usuario}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              color="secondary"
-              display="inline"
-              fontWeight={500}
-              gutterBottom
-            >
-              Correo electrónico:{" "}
-            </Typography>
-            <Typography variant="body1" display="inline" gutterBottom>
-              {request.nombre_usuario}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              color="secondary"
-              display="inline"
-              fontWeight={500}
-              gutterBottom
-            >
-              RFC:{" "}
-            </Typography>
-            <Typography variant="body1" display="inline" gutterBottom>
-              {request.rfc_usuario}
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          }
+        />
+
+        <Divider />
+
+        <CardContent>
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Person color="primary" />
+              <Typography>
+                <strong>Nombre completo:</strong> {request.nombre_real_usuario}{' '}
+                {request.apellido_usuario}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Phone color="primary" />
+              <Typography>
+                <strong>Teléfono:</strong> {request.telefono_usuario}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Email color="primary" />
+              <Typography>
+                <strong>Correo electrónico:</strong> {request.email_usuario}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Business color="primary" />
+              <Typography>
+                <strong>RFC:</strong> {request.rfc_usuario}
+              </Typography>
+            </Stack>
+          </Stack>
+        </CardContent>
+      </Card>
+    </Grow>
   );
 }

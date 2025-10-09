@@ -494,7 +494,6 @@ export default function ReportsTable({ data }) {
   const [orderBy, setOrderBy] = useState("id_report");
   const [order, setOrder] = useState("desc");
   const [sortedData, setSortedData] = useState([]);
-
   const dataUser = useAuth();
 
   const {
@@ -731,12 +730,20 @@ export default function ReportsTable({ data }) {
   }, [visibleData, order, orderBy])
 
   return (
-    <Box sx={{ width: "100%", mb: "3rem" }}>
+    <Box sx={{
+      width: "100%",
+      mb: "3rem",
+      height: "80vh",
+      display: "flex",
+      flexDirection: "column",
+    }}>
       <Paper
+        elevation={3}
         sx={{
-          height: "80%",
-          overflow: "auto",
-          padding: 2,
+          borderRadius: 2, // esquinas redondeadas
+          boxShadow: 1, // sombra ligera
+          p: 2, // padding interno
+          bgcolor: "background.paper",
         }}
       >
         <Toolbar
@@ -748,9 +755,27 @@ export default function ReportsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer sx={{ maxHeight: "100vh" }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead sx={{ bgcolor: theme.palette.background.default }}>
+        <TableContainer sx={{
+            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { width: 6 },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "grey.400",
+              borderRadius: 3,
+            },
+          }}>
+          <Table >
+            <TableHead sx={{
+                bgcolor: "primary.main",
+                "& .MuiTableCell-root": {
+                  color: "common.white",
+                  borderBottom: "2px solid",
+                  borderColor: "primary.dark",
+                  "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
+                    opacity: 1,
+                  },
+                },
+              }}>
               <TableRow>
                 <TableCell>
                   <TableSortLabel direction="asc">
@@ -937,66 +962,177 @@ export default function ReportsTable({ data }) {
                         <TableCell>
                           {dateFormater(report.fecha_inicio_reporte)}
                         </TableCell>
-                        {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") &&
-                        <>
-                          <TableCell>
-                            {report.firma_responsiva_generador ? (
-                              <Check />
-                            ) : (
-                              <Close />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {report.residuos_agregados ? <Check /> : <Close />}
-                          </TableCell>
-                          <TableCell>
-                            {report.firma_responsiva_receptor ? <Check /> : <Close />}
-                          </TableCell>
-                          <TableCell>
-                            {report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados ? (
-                              <Check />
-                            ) : (
-                              <Close />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {report.firma_responsiva_generador &&
-                              report.firma_responsiva_receptor &&
-                              report.residuos_agregados ? (
-                              <Check />
-                            ) : (
-                              <Close />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setReportToEdit(report);
-                                setOpenModalEditReport(true);
-                              }}
-                            >
-                              <Edit />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              color="error"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setReportsToDelete([report.id_report]);
-                                setOpenModalDeleteReport(true);
-                              }}
-                            >
-                              <Delete />
-                            </IconButton>
-                          </TableCell>
-                        </>
+                        {dataUser && !(dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Registro") && (
+  dataUser.groups[0] !== "Donador" ? (
+    <>
+      <TableCell>
+        <Button
+          startIcon={<Draw />}
+          variant="contained"
+          size="small"
+          color={report.firma_responsiva_generador ? "success" : "warning"}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEditGeneratorSign(report.id_report);
+          }}
+        >
+          Firmar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<Add />}
+          variant="contained"
+          size="small"
+          color={report.residuos_agregados ? "success" : "warning"}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEditResidues(report);
+          }}
+        >
+          Agregar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<Draw />}
+          variant="contained"
+          size="small"
+          color={report.firma_responsiva_receptor ? "success" : "warning"}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEditReceiverSign(report.id_report);
+          }}
+        >
+          Firmar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<SaveAlt />}
+          variant="contained"
+          size="small"
+          color={
+            report.firma_responsiva_generador &&
+            report.firma_responsiva_receptor &&
+            report.residuos_agregados
+              ? "success"
+              : "warning"
+          }
+          onClick={async (e) => {
+            e.stopPropagation();
+            await handleSavePDF(report);
+          }}
+        >
+          Descargar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          startIcon={<SaveAlt />}
+          variant="contained"
+          size="small"
+          color={
+            report.firma_responsiva_generador &&
+            report.firma_responsiva_receptor &&
+            report.residuos_agregados
+              ? "success"
+              : "warning"
+          }
+          onClick={async (e) => {
+            if (
+              report.firma_responsiva_generador &&
+              report.firma_responsiva_receptor &&
+              report.residuos_agregados
+            ) {
+              e.stopPropagation();
+              setOpenModalFinishReport(true);
+              setReportToEdit(report);
+              await handleSavePDF(report);
+            } else {
+              setOpenModalText(true);
+              setTextOpenModalText(
+                "No se puede finalizar el reporte, aun no se han firmado todos los campos o no se han agregado los residuos"
+              );
+            }
+          }}
+        >
+          Finalizar
+        </Button>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportToEdit(report);
+            setOpenModalEditReport(true);
+          }}
+        >
+          <Edit />
+        </IconButton>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          color="error"
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportsToDelete([report.id_report]);
+            setOpenModalDeleteReport(true);
+          }}
+        >
+          <Delete />
+        </IconButton>
+      </TableCell>
+    </>
+  ) : (
+    <>
+      <TableCell>
+        {report.firma_responsiva_generador ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.residuos_agregados ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.firma_responsiva_receptor ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.firma_responsiva_generador &&
+        report.firma_responsiva_receptor &&
+        report.residuos_agregados ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        {report.firma_responsiva_generador &&
+        report.firma_responsiva_receptor &&
+        report.residuos_agregados ? <Check /> : <Close />}
+      </TableCell>
+      <TableCell>
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportToEdit(report);
+            setOpenModalEditReport(true);
+          }}
+        >
+          <Edit />
+        </IconButton>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          color="error"
+          onClick={(e) => {
+            e.stopPropagation();
+            setReportsToDelete([report.id_report]);
+            setOpenModalDeleteReport(true);
+          }}
+        >
+          <Delete />
+        </IconButton>
+      </TableCell>
+    </>
+  )
+)}
 
-                
-                }
+                    
                         {/* <TableCell>
                           <Button
                             startIcon={<Draw />}

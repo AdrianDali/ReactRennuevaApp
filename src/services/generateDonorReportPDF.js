@@ -162,7 +162,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
 
     bodyData.push([
       "Tipo de Residuos",
-      "Cantidad (KG)",
+      //"Cantidad (KG)",
       "Cantidad (M3)",
       "Procedencia de Residuos",
     ]);
@@ -170,7 +170,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
     if (data.length === 0) {
       bodyData.push([
         "No hay residuos",
-        "0 kg",
+        //"0 kg",
         "0 m³",
         "N/A",
       ]);
@@ -178,7 +178,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
       for (let i = 1; i < data.length; i++) {
         bodyData.push([
           data[i].nombre_residuo,
-          data[i].peso + " kg",
+          //data[i].peso + " kg",
           data[i].volumen + " m³",
           data[i].tipo_residuo,
         ]);

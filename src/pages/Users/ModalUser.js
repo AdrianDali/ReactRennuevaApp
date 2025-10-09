@@ -3,16 +3,24 @@ import ReactDOM from 'react-dom';
 import '../../styles/user/CreateUser.css';
 import { TodoContext } from '../../context/index.js';
 import axios from 'axios';
-import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel, IconButton, InputAdornment } from '@mui/material';
+import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel, IconButton, InputAdornment, Grid, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'; 
+import { useTheme, useMediaQuery } from '@mui/material';
+import { useParams } from 'react-router-dom';
 import Title from '../../components/Title';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import DeleteUserModal from '../../components/modals/DeleteUserModal.jsx';
 import { Close } from '@mui/icons-material';
+import { set } from 'date-fns';
 
 
 
 function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recyclingCenters = null, collectionCenters = null }) {
+  console.log("userToEdit", userToEdit)
+  console.log("centers", centers)
+  console.log("recyclingCenters", recyclingCenters)
+  console.log("collectionCenters", collectionCenters)
+  console.log("mode", mode)
   const [groups, setGroups] = useState([""])
   const [users, setUsers] = useState([""])
   const [companies, setCompanies] = useState([""])
@@ -34,22 +42,10 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
   const [old_user, setOldUser] = useState(userToEdit ? userToEdit.user : "");
   const [razon_social, setRazonSocial] = useState(userToEdit ? userToEdit.razon_social : "");
 
-  //logica para centros de reciclaje y centrons de acopio
-  const [reciclingCenter, setReciclingCenter] = useState(() => {
-    if (userToEdit) {
-      const { recycling_center } = userToEdit;
-      return recycling_center;
-    }
-    return '';
-  });
+  const theme = useTheme();
+  
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm')); // Calcula si debe ser pantalla completa
 
-  const [collectionCenter, setCollectionCenter] = useState(() => {
-    if (userToEdit) {
-      const { collection_center } = userToEdit;
-      return collection_center;
-    }
-    return '';
-  });
 
   const [center, setCenter] = useState(() => {
     if (userToEdit) {
@@ -61,6 +57,8 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
     }
     return '';
   });
+  const addressDisabled = Boolean(center);
+
 
   const [centerEdit, setCenterEdit] = useState(() => {
     if (userToEdit) {
@@ -78,7 +76,7 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
   const [address_num_ext, setAddressNumExt] = useState(userToEdit ? userToEdit.address_num_ext : "");
   const [address_reference, setAddressReference] = useState(userToEdit ? userToEdit.address_reference : "");
   const [permisos, setPermisos] = useState([{ "name": "Lectura" }, { "name": "Escritura" }])
-  const [permiso, setPermiso] = useState("Lectura")
+  const [permiso, setPermiso] = useState(userToEdit ? userToEdit.user_permissions : "Lectura");
   const [creator, setCreator] = useState(creatorUser)
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -135,8 +133,11 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
         razon_social: e.target.razon_social.value,
         user_permissions: permiso,
         creator_user: creator,
-        associated_center: center.CenterName
+        associated_center: center
       };
+      console.log("##################")
+      console.log(nuevoDato)
+
 
 
       axios
@@ -326,7 +327,7 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
       console.log(centers)
 
       if (mode === "EDITAR" || mode === "BORRAR") {
-        const centerData = centers.find((cen) => cen.CenterName === centerEdit);
+        const centerData = centers.find((cen) => cen.CenterName === center);
         console.log("###################### CENTER FETCHED ##################################")
         console.log(centerData)
         console.log("###################### CENTER FETCHED ##################################")
@@ -337,10 +338,12 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
         setStreet(centerData ? centerData.AddressStreet : "")
         setAddressNumInt(centerData ? centerData.AddressNumInt : "")
         setPostalCode(centerData ? centerData.AddressPostalCode : "")
-        setAddressNumExt(centerData ? centerData.AddressNumExt : "")
-        setAddressReference(centerData ? centerData.AddressReference : "")
+        //setAddressNumExt(centerData ? centerData.AddressNumExt : "")
+        //setAddressReference(centerData ? centerData.AddressReference : "")
       } else {
-        const centerData = centers.find((cen) => cen.CenterName === center.CenterName);
+        console.log(centers)
+        console.log(center)
+        const centerData = centers.find((cen) => center === cen.CenterName);
         console.log("###################### CENTER FETCHED ##################################")
         console.log(centerData)
         setState(centerData ? centerData.AddressState : "")
@@ -350,7 +353,7 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
         setAddressNumInt(centerData ? centerData.AddressNumInt : "")
         setPostalCode(centerData ? centerData.AddressPostalCode : "")
         setAddressNumExt(center?.AddressNumExt ? center.AddressNumExt : "")
-        setAddressReference(centerData ? centerData.AddressReference : "")
+        //setAddressReference(centerData ? centerData.AddressReference : "")
       }
 
     }
@@ -359,84 +362,110 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
 
   }, [center, centers]);
 
-  const handleSelectChange = (event) => {
-    const selectedOption = event.target.value; // Obtener la opción seleccionada
-
-    setState("SDSADASD")
-    setCity(selectedOption.AddressCity)
-    setLocality(selectedOption.AddressLocality)
-    setStreet(selectedOption.AddressStreet)
-    setPostalCode(selectedOption.AddressPostalCode)
-    setAddressNumInt(selectedOption.AddressNumInt)
-    setAddressNumExt(selectedOption.AddressNumExt)
-    setAddressReference(selectedOption.AddressReference)
-    setCenter(selectedOption.CenterName)
-
-  }
-
-  const handleInputChange = (e, setState, mode) => {
-
+  const handleCenterChange = (e, setState, mode) => {
+    console.log(e.target.value) 
+    console.log(setState)
+    console.log(mode)
     const currentInputValue = e.target.value;
+    
+
     console.log(currentInputValue)
+    
+
+
     if (mode !== "BORRAR") {
       setState(currentInputValue);
     }
     if (mode === "EDITAR") {
 
+      if (currentInputValue === "Acopio" || currentInputValue === "Reciclaje") {
+        console.log("###################### CENTER FETCHED ##################################")
+        console.log("###################### CENTER FETCHED ##################################")
+        console.log(currentInputValue)
+        setCenter(currentInputValue)
+      }else{
+        console.log("###################### CENTER FETCHED ##################################")
+        console.log("###################### CENTER FETCHED ##################################")
+        setCenter("")
+      }
 
       setCenterEdit(currentInputValue.CenterName)
 
 
       setState(currentInputValue);
 
-      setCenter(currentInputValue)
 
+      
 
     }
-
-  };
-
-  const handlePhoneChange = (event) => {
-    const value = event.target.value;
-
-    // Permitir solo números y limitar la longitud a 10 caracteres
-    if (value === '' || (/^\d+$/.test(value) && value.length <= 10)) {
-      setPhone(value);
-    }
-  };
-  const handleRfcChange = (event) => {
-    const value = event.target.value.toUpperCase();
-
-    // Permitir solo letras y números y limitar la longitud a 12-13 caracteres
-    if (/^[0-9A-Z]*$/.test(value) && value.length <= 13) {
-      setRfc(value);
+    if (mode === "CREAR") {
+      setCenter()
     }
   }
 
+  const handleInputChange = (e, setState, mode) => {
+
+    console.log(e.target.value) 
+    console.log(setState)
+    console.log(mode)
+    const currentInputValue = e.target.value;
+    
+
+    console.log(currentInputValue)
+    
+    if (mode !== "BORRAR") {
+      setState(currentInputValue);
+    }
+    //if (mode === "EDITAR") {
+
+
+      //setCenterEdit(currentInputValue.CenterName)
+
+
+      //setState(currentInputValue);
+
+      //setCenter(currentInputValue)
+
+
+    //}
+
+  };
+
+  
 
   return ReactDOM.createPortal(
-    <Modal open={true} onClose={closeModal} >
-      <Box className="ModalContent" sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        p: 4,
-        borderRadius: 2,
-        maxWidth: '95%',
-        boxSizing: 'border-box',
-        maxHeight: '95%'
-      }}>
-        <IconButton onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}><Close /></IconButton>
-        {mode === "CREAR" || mode === "EDITAR" ? (
-          <form onSubmit={handleSubmit} >
-            <Box>
-              <Title> Usuario</Title>
-            </Box>
-            <Box mt={2} mb={2} sx={{ overflowY: 'auto', maxHeight: 450 }}>
+    <Dialog
+      open={true}
+      onClose={closeModal}
+      fullWidth
+      maxWidth="md"
+      fullScreen={fullScreen}
+      scroll="paper"
+      TransitionProps={{
+        timeout: 400,
+      }}
+    >
+      <DialogTitle sx={{ m: 0, p: 2 }}>
+        <Typography variant="h6">
+          {mode === 'CREAR' ? 'Crear Usuario' : 'Editar Usuario'}
+        </Typography>
+        <IconButton
+          aria-label="close"
+          onClick={closeModal}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+          }}
+        >
+          <Close />
+        </IconButton>
+      </DialogTitle>
+
+      <DialogContent dividers sx={{ p: fullScreen ? 2 : 4 }}>
+        <form id="user-form" onSubmit={handleSubmit}>
+          <Grid container spacing={fullScreen ? 2 : 4}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Nombre"
                 name="nombre"
@@ -444,8 +473,10 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
                 fullWidth
                 value={first_name}
                 onChange={(e) => handleInputChange(e, setFirstName, mode)}
-                margin="dense"
+                inputProps={{ maxLength: 50 }}
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Apellido"
                 name="apellido"
@@ -453,45 +484,45 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
                 fullWidth
                 value={last_name}
                 onChange={(e) => handleInputChange(e, setLastName, mode)}
-                margin="dense"
+                inputProps={{ maxLength: 50 }}
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="RFC"
                 name="rfc"
                 fullWidth
                 value={rfc}
-                onChange={handleRfcChange}
-                margin="dense"
-                inputProps={{
-                  maxLength: 13 // Opcional: si quieres forzar la longitud máxima en el HTML
-                }}
-                // Validación de error para la longitud del RFC
+                onChange={(e) => handleInputChange(e, setRfc, mode)}
+                inputProps={{ maxLength: 13 }}
                 error={rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)}
                 helperText={
                   rfc.length > 0 && (rfc.length < 12 || rfc.length > 13)
-                    ? "El RFC debe tener entre 12 y 13 caracteres"
-                    : ""
+                    ? 'El RFC debe tener entre 12 y 13 caracteres'
+                    : ''
                 }
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
-                label="Razón social"
+                label="Razón Social"
                 name="razon_social"
                 required
                 fullWidth
                 value={razon_social}
                 onChange={(e) => handleInputChange(e, setRazonSocial, mode)}
-                margin="dense"
-                inputProps={{
-                  maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
-                }}
-                error={razon_social?.length > 0 && (razon_social?.length < 0 || razon_social?.length > 50)}
-                helperText={
-                  razon_social?.length > 0 && (razon_social?.length < 50 || razon_social?.length > 50)
-                    ? "La Razón Social debe tener entre 0 y 50 caracteres"
-                    : ""
+                inputProps={{ maxLength: 50 }}
+                error={
+                  razon_social.length > 0 && razon_social.length > 50
                 }
-
+                helperText={
+                  razon_social.length > 50
+                    ? 'Máximo 50 caracteres'
+                    : ''
+                }
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Email Usuario"
                 name="email"
@@ -500,30 +531,26 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
                 fullWidth
                 value={email}
                 onChange={(e) => handleInputChange(e, setEmail, mode)}
-                margin="dense"
               />
-
-              <FormControl fullWidth margin='dense'>
-                <InputLabel id="user-permissions-select-label">Permisos</InputLabel>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Permisos</InputLabel>
                 <Select
                   label="Permisos"
-                  labelId="user-permissions-select-label"
-                  id="user-permissions-select"
-                  required
                   value={permiso}
-                  onChange={(e) => {
-                    handleInputChange(e, setPermiso, mode)
-                    //handleGroupChange(e)
-                  }}
+                  onChange={(e) => handleInputChange(e, setPermiso, mode)}
                 >
-                  {permisos.map((name, index) => (
-                    <MenuItem key={index} value={name.name}>{name.name}</MenuItem>
+                  {permisos.map((item, idx) => (
+                    <MenuItem key={idx} value={item.name}>
+                      {item.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-
-
-              {mode === "CREAR" ? (
+            </Grid>
+            {mode === 'CREAR' && (
+              <Grid item xs={12} sm={6}>
                 <TextField
                   label="Password"
                   name="password"
@@ -532,298 +559,251 @@ function ModalUser({ mode, creatorUser, userToEdit = null, centers = [], recycli
                   fullWidth
                   value={password}
                   onChange={(e) => handleInputChange(e, setPassword, mode)}
-                  margin="dense"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={togglePasswordVisibility}
-                        >
+                        <IconButton onClick={togglePasswordVisibility}>
                           {isPasswordVisible ? <Visibility /> : <VisibilityOff />}
                         </IconButton>
                       </InputAdornment>
                     ),
                   }}
                 />
-              ) : null}
-
-              <FormControl fullWidth margin='dense'>
-                <InputLabel id="user-group-select-label">Grupo</InputLabel>
+              </Grid>
+            )}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Grupo</InputLabel>
                 <Select
                   label="Grupo"
-                  labelId="user-group-select-label"
-                  id="user-group-select"
-                  required
                   value={group}
-                  onChange={(e) => {
-                    handleInputChange(e, setGroup, mode)
-                    //handleGroupChange(e)
-                  }}
+                  onChange={(e) => handleCenterChange(e, setGroup, mode)}
                 >
-                  {groups.map((name, index) => (
-                    <MenuItem key={index} value={name.name}>{name.name}</MenuItem>
+                  {groups.map((item, idx) => (
+                    <MenuItem key={idx} value={item.name}>
+                      {item.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              {
-                group === "Acopio"
-                && (
-                  <FormControl fullWidth margin='dense' required>
-                    <InputLabel id="user-centro-select-label">Centro de Acopio</InputLabel>
-                    <Select
-                      label="Centro de Acopio"
-                      labelId="user-centro-select-label"
-                      id="centro-select"
-                      required
-                      value={collectionCenters.find((cen) => cen.CenterName === center)}
-                      onChange={(e) => { handleInputChange(e, setCenter, mode) }}
-                    >
-                      {collectionCenters.map((option, index) => (
-                        console.log("###################### OPTION ##################################"),
-                        console.log(option),
-                        console.log(index),
-                        <MenuItem key={index} value={option}>{option.CenterName}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-
-
-                )
-
-              }
-              {
-                group === "Reciclaje"
-                && (
-                  <FormControl fullWidth margin='dense' required>
-                    <InputLabel id="centro-select-label">Centro de Reciclaje</InputLabel>
-                    <Select
-                      label="Centro de Reciclaje"
-                      labelId="centro-select-label"
-                      id="centro-select"
-                      required
-                      value={recyclingCenters.find((cen) => cen.CenterName === center)}
-                      onChange={(e) => { handleInputChange(e, setCenter, mode) }}
-                    >
-                      {recyclingCenters.map((option, index) => (
-                        console.log("###################### OPTION ##################################"),
-                        console.log(option),
-                        console.log(index),
-                        <MenuItem key={index} value={option}>{option.CenterName}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-
-
-                )
-
-              }
-
-
+            </Grid>
+            {group === 'Acopio' && (
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Centro de Acopio</InputLabel>
+                  <Select
+                    label="Centro de Acopio"
+                    value={center}
+                    onChange={(e) => handleInputChange(e, setCenter, mode)}
+                  >
+                    {collectionCenters.map((cen, idx) => (
+                      <MenuItem key={idx} value={cen.CenterName}>
+                        {cen.CenterName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
+            {['Reciclaje', 'Separador'].includes(group) && (
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Centro de Reciclaje</InputLabel>
+                  <Select
+                    label="Centro de Reciclaje"
+                    value={center}
+                    onChange={(e) => handleInputChange(e, setCenter, mode)}
+                  >
+                    {recyclingCenters.map((cen, idx) => (
+                      <MenuItem key={idx} value={cen.CenterName}>
+                        {cen.CenterName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
+            <Grid item xs={12} sm={6}>
               <TextField
-
                 label="Celular"
                 name="phone"
                 required
                 fullWidth
                 value={phone}
-                onChange={handlePhoneChange}
-                margin="dense"
-                inputProps={{
-
-
-                  // Opcional: usar el tipo "tel" para mejor semántica y compatibilidad móvil
-                  type: "tel",
-                  // maxLength: 10 // Opcional: si quieres forzar la longitud máxima en el HTML
-                }}
-                // Para mostrar un mensaje de error si la longitud es menor a 10
+                onChange={(e) => handleInputChange(e, setPhone, mode)}
+                inputProps={{ maxLength: 10, type: 'tel' }}
                 error={phone.length > 0 && phone.length < 10}
-                helperText={phone.length > 0 && phone.length < 10 ? "El número debe ser de 10 dígitos" : ""}
+                helperText={
+                  phone.length > 0 && phone.length < 10
+                    ? 'El número debe ser de 10 dígitos'
+                    : ''
+                }
               />
-
-              <Title>Ubicación</Title>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1" gutterBottom>
+                Dirección
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Estado"
                 name="state"
                 required
                 fullWidth
+                disabled={addressDisabled}
                 value={state}
                 onChange={(e) => handleInputChange(e, setState, mode)}
-                margin="dense"
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
-                }}
-                error={state.length < 3 && state.length > 50}
+                inputProps={{ maxLength: 50 }}
+                error={state.length > 0 && (state.length < 3 || state.length > 50)}
                 helperText={
                   state.length > 0 && (state.length < 3 || state.length > 50)
-                    ? "El estado debe tener entre 3 y 50 caracteres"
-                    : ""
+                    ? 'El estado debe tener entre 3 y 50 caracteres'
+                    : ''
                 }
-
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Ciudad"
                 name="city"
                 required
                 fullWidth
+                disabled={addressDisabled}
                 value={city}
                 onChange={(e) => handleInputChange(e, setCity, mode)}
-                margin="dense"
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 50, // Opcional: si quieres forzar la longitud máxima en el HTML
-                }}
-                error={state.length < 3 && city.length > 50}
+                inputProps={{ maxLength: 50 }}
+                error={city.length > 0 && (city.length < 3 || city.length > 50)}
                 helperText={
                   city.length > 0 && (city.length < 3 || city.length > 50)
-                    ? "La ciudad debe tener entre 3 y 50 caracteres"
-                    : ""
+                    ? 'La ciudad debe tener entre 3 y 50 caracteres'
+                    : ''
                 }
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
-
                 label="Colonia"
                 name="locality"
                 required
                 fullWidth
+                disabled={addressDisabled}
                 value={locality}
                 onChange={(e) => handleInputChange(e, setLocality, mode)}
-                margin="dense"
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
-                }}
-                error={state.length < 3 && locality.length > 50}
+                inputProps={{ maxLength: 50 }}
+                error={locality.length > 0 && (locality.length < 3 || locality.length > 50)}
                 helperText={
                   locality.length > 0 && (locality.length < 3 || locality.length > 50)
-                    ? "La colonia debe tener entre 3 y 50 caracteres"
-                    : ""
+                    ? 'La colonia debe tener entre 3 y 50 caracteres'
+                    : ''
                 }
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
-                label="Calle "
+                label="Calle"
                 name="street"
                 required
                 fullWidth
+                disabled={addressDisabled}
                 value={street}
                 onChange={(e) => handleInputChange(e, setStreet, mode)}
-                margin="dense"
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 50 // Opcional: si quieres forzar la longitud máxima en el HTML
-                }}
-                error={state.length < 3 && street.length > 50}
+                inputProps={{ maxLength: 50 }}
+                error={street.length > 0 && (street.length < 3 || street.length > 50)}
                 helperText={
                   street.length > 0 && (street.length < 3 || street.length > 50)
-                    ? "La calle debe tener entre 3 y 50 caracteres"
-                    : ""
+                    ? 'La calle debe tener entre 3 y 50 caracteres'
+                    : ''
                 }
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Número exterior"
                 name="address_num_ext"
                 required
                 fullWidth
+                disabled={addressDisabled}
                 value={address_num_ext}
-                InputLabelProps={["Centro", "Acopio", "Reciclaje"].includes(group)?{shrink: true}: {}}
-                onChange={(e) => {
-                  // Solo permite números
-                  if (e.target.value === '' || /^[0-9\b]+$/.test(e.target.value)) {
-                    handleInputChange(e, setAddressNumExt, mode);
-                  }
-                }}
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 5
-                }}
-                margin="dense"
-                error={address_num_ext?.length > 0 && address_num_ext?.length > 5}
+                onChange={(e) => handleInputChange(e, setAddressNumExt, mode)}
+                inputProps={{ maxLength: 5 }}
+                error={
+                  address_num_ext.length > 5
+                }
                 helperText={
-                  address_num_ext?.length > 0 && address_num_ext?.length > 5
-                    ? "El número exterior debe tener entre 1 y 5 caracteres"
-                    : ""
+                  address_num_ext.length > 5
+                    ? 'Máximo 5 dígitos'
+                    : ''
                 }
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Número interior"
                 name="address_num_int"
                 fullWidth
+                disabled={addressDisabled}
                 value={address_num_int}
-                onChange={(e) => {
-                  // Solo permite números
-                  if (e.target.value === '' || /^[0-9\b]+$/.test(e.target.value)) {
-                    handleInputChange(e, setAddressNumInt, mode);
-                  }
-                }}
-                InputLabelProps={["Centro", "Acopio", "Reciclaje"].includes(group)?{shrink: true}: {}}
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 5
-                }}
-                margin="dense"
-                error={address_num_int.length > 0 && address_num_int.length > 5}
+                onChange={(e) => handleInputChange(e, setAddressNumInt, mode)}
+                inputProps={{ maxLength: 5 }}
+                error={
+                  address_num_int.length > 5
+                }
                 helperText={
-                  address_num_int.length > 0 && address_num_int.length > 5
-                    ? "El número interior debe tener entre 1 y 5 caracteres"
-                    : ""
+                  address_num_int.length > 5
+                    ? 'Máximo 5 dígitos'
+                    : ''
                 }
               />
-
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Código postal"
                 name="postal_code"
                 required
                 fullWidth
+                disabled={addressDisabled}
                 value={postal_code}
-                onChange={(e) => {
-                  // Solo permite números
-                  if (e.target.value === '' || /^[0-9\b]+$/.test(e.target.value)) {
-
-                    handleInputChange(e, setPostalCode, mode);
-                  }
-                }}
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 5
-                }}
-                margin="dense"
-                error={postal_code.length > 0 && postal_code.length > 5}
+                onChange={(e) => handleInputChange(e, setPostalCode, mode)}
+                inputProps={{ maxLength: 5 }}
+                error={postal_code.length > 5}
                 helperText={
-                  postal_code.length > 0 && postal_code.length > 5
-                    ? "El número interior debe tener entre 1 y 5 caracteres"
-                    : ""
+                  postal_code.length > 5
+                    ? 'Máximo 5 dígitos'
+                    : ''
                 }
               />
-
+            </Grid>
+            <Grid item xs={12}>
               <TextField
                 label="Referencias"
                 name="address_reference"
                 multiline
                 fullWidth
+                disabled={addressDisabled}
+                rows={3}
                 value={address_reference}
-                onChange={(e) => {
-                  if (e.target.value.length <= 100) {
-                    handleInputChange(e, setAddressReference, mode);
-                  }
-                }}
-                inputProps={{
-                  readOnly: ["Centro", "Acopio", "Reciclaje"].includes(group),
-                  maxLength: 100
-                }}
-                margin="dense"
-                error={address_reference?.length > 100}
+                onChange={(e) => handleInputChange(e, setAddressReference, mode)}
+                inputProps={{ maxLength: 100 }}
+                error={address_reference.length > 100}
                 helperText={
-                  address_reference?.length > 100
-                    ? "Máximo 100 caracteres"
-                    : ""
+                  address_reference.length > 100
+                    ? 'Máximo 100 caracteres'
+                    : ''
                 }
               />
-            </Box>
-            <Button type="submit" variant="contained" fullWidth>{mode}</Button>
-          </form>) : null}
-      </Box>
-    </Modal>,
+            </Grid>
+          </Grid>
+        </form>
+      </DialogContent>
+
+      <DialogActions sx={{ p: fullScreen ? 2 : 3 }}>
+        <Button onClick={closeModal}>Cancelar</Button>
+        <Button type="submit" form="user-form" variant="contained">
+          {mode}
+        </Button>
+      </DialogActions>
+    </Dialog>,
 
     document.getElementById('modal')
 

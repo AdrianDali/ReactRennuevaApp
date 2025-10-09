@@ -39,10 +39,14 @@ import CentroList from '../containers/ListSideBarCentro/CentroList.jsx';
 import  ResiduesMenu  from '../pages/Menus/ResiduesMenu.jsx'
 import CollectionCenterMenu from '../pages/Menus/CollectionCenterMenu.jsx';
 import ReciclajeList from '../containers/ListSideBarReciclaje.jsx';
+import SubReciclajeList from '../containers/ListSideBarSubReciclaje.jsx';
 import { ReportsAssignedRecyclingMenu } from '../pages/Menus/ReportsAssignedRecyclingMenu.jsx';
 import { MenuStatusFolio } from '../pages/Menus/MenuStatusFolios.jsx';
 import MenuAssignedAcopioOrders from '../pages/Menus/MenuAssignedAcopioOrders.js';
 import { GlobalStyles } from '@mui/material';
+import { UsersReportsAssignedRecyclingMenu } from '../pages/Menus/UsersAssignedRecycling.jsx';
+import { HistoryUserAssignedRecycling } from '../pages/Menus/HistoryUserAssignedRecycling.jsx';
+
 function App() {
 
   
@@ -125,7 +129,21 @@ function App() {
     {path : '/centro/residuos', element: <CentroLayout List={<CentroList/>}><ResiduesMenu/> </CentroLayout>},
     {path : '/centros/assignments', element: <CentroLayout List={<ReciclajeList/>}><ReportsAssignedRecyclingMenu/></CentroLayout>},
     {path : '/centrosAcopio', element: <CentroLayout List={<ReciclajeList/>}><CollectionCenterMenu/> </CentroLayout>},
+    {path : '/user/assignments', element: <CentroLayout List={<ReciclajeList/>}><UsersReportsAssignedRecyclingMenu/> </CentroLayout>},
+    {path : '/user/history', element: <CentroLayout List={<ReciclajeList/>}><HistoryUserAssignedRecycling/> </CentroLayout>},
+
+
+
     {path : '/centro/status', element: <CentroLayout List={<ReciclajeList/>}><MenuStatusFolio/> </CentroLayout>},
+    {path:'/centro/create', element: <CentroLayout List={<ReciclajeList/>}><ContainerMenu/></CentroLayout> },
+
+
+    {path : '/sub-centro/assignments', element: <CentroLayout List={<SubReciclajeList/>}><ReportsAssignedRecyclingMenu/> </CentroLayout>},
+    {path:'/sub-centro/home', element: <CentroLayout List={<SubReciclajeList/>}><ContainerMenu/></CentroLayout> },
+    {path : '/sub-centro/user-assignments', element: <CentroLayout List={<SubReciclajeList/>}><UsersReportsAssignedRecyclingMenu/> </CentroLayout>},
+
+
+
 
 
     

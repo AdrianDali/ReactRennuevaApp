@@ -12,7 +12,7 @@ function ModalResidueRecollection({ report }) {
     const [residues, setResidues] = useState([]);
     const [entries, setEntries] = useState([{ user: report.donador, report: report.id, residue: '', peso: '', volumen: '' }]);
     const [botonAdd, setBotonAdd] = useState(false);
-    const { openModalEditResidueReport, setOpenModalEditResidueReport, setUpdateReportInfo } = useContext(TodoContext);
+    const { openModalEditResidueReport,setOpenModalEditResidueReport, setUpdateReportInfo } = useContext(TodoContext);
 
     const closeModal = () => {
         setUpdateReportInfo(prev => !prev);
@@ -66,6 +66,7 @@ function ModalResidueRecollection({ report }) {
     const handleAddFirstFields = () => {
         handleAddFields();
         setBotonAdd(false);
+        setUpdateReportInfo(true)
     };
 
     const handleRemoveFields = (index) => {
