@@ -74,7 +74,7 @@ const generatePdf = (report) => {
 
   const tableStyles = {
     cellPadding: 2,
-    fontSize: 10,
+    fontSize: 8,
     lineColor: [0, 0, 0],
     lineWidth: 0.5
   };
