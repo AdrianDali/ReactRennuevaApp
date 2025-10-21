@@ -153,7 +153,7 @@ export default function generateReportPDF(report, data, qrImage){
       styles: tableStyles,
     });
   
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     doc.text("Datos del Centro de " + titulo_centro, 14, 90);
   
     // Table 2: Recolection
