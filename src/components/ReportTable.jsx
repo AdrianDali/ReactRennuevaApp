@@ -157,9 +157,9 @@ const generatePdf = (report) => {
   doc.line(10 + signatureWidth + spaceBetweenSignatures, startY + 5, 10 + 2 * signatureWidth + spaceBetweenSignatures, startY + 5);  // Línea de firma para el Generador
 
   doc.setFontSize(5);
-  doc.text("Tecnologias Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtemoc, Ciudad de Mexico, Mexico ", 14, 280)
-  doc.text("Tel. (55)8437 7300 y (55)8437 7272, info@rennueva.com", 14, 285);
-  doc.text("Todos los datos recabados en este documento seran tratados conforme a la Ley General de Proteccion de Datos Personales", 14, 290);
+  doc.text("Tecnologias Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtemoc, Ciudad de Mexico, Mexico ", 14, 290)
+  doc.text("Tel. (55)8437 7300 y (55)8437 7272, info@rennueva.com", 14, 295);
+  doc.text("Todos los datos recabados en este documento seran tratados conforme a la Ley General de Proteccion de Datos Personales", 14, 300);
 
   if (qrImage) {
     doc.addImage(qrImage, 'PNG', 12, 175, 65, 65);

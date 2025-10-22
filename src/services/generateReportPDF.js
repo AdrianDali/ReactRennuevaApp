@@ -307,17 +307,17 @@ export default function generateReportPDF(report, data, qrImage){
     doc.text(
       "Tecnologías Rennueva S.A de C.V, Mimosas 49 bis, Colonia Santa Maria insurgentes, C.P. 06430, Cuauhtémoc, Ciudad de México, México ",
       14,
-      distancia + 75
+      distancia + 85
     );
     doc.text(
       "Tel. (55)8437 7300 y (55)8437 7272, info@rennueva.com",
       14,
-      distancia + 80
+      distancia + 90
     );
     doc.text(
       "Todos los datos recabados en este documento serán tratados conforme a la Ley General de Protección de Datos Personales",
       14,
-      distancia + 85
+      distancia + 95
     );
   
     if (qrImage) {
