@@ -1,12 +1,12 @@
 import ListTemplate, { ListTemplateItem } from "./ListSideBar/ListTemplate";
-import { 
-  Assignment, 
-  AssignmentReturned as AssignmentReturnedIcon, 
-  DirectionsRunRounded, 
-  Recycling, 
-  Person as PersonIcon // Importar el icono de usuario
+import {
+  Assignment,
+  AssignmentReturned as AssignmentReturnedIcon,
+  DirectionsRunRounded,
+  Recycling,
+  Person as PersonIcon,
+  History as HistoryIcon, // Importamos el icono de historial
 } from "@mui/icons-material";
-
 
 // Ítem: Centros de acopio
 const usersItem = new ListTemplateItem({
@@ -35,14 +35,21 @@ const asignaciones = new ListTemplateItem({
   redirection: "/centros/assignments",
 });
 
-// Ítem NUEVO: Asignaciones usuario
+// Ítem: Asignaciones usuario
 const userAssignments = new ListTemplateItem({
   tag: "Asignaciones usuario",
-  icon: <PersonIcon />, // Aquí el icono de usuario
+  icon: <PersonIcon />,
   redirection: "/user/assignments",
 });
 
-// Ítem: Estado de reportes asignados (si lo quieres agregar)
+// Ítem: Historial usuario
+const userHistory = new ListTemplateItem({
+  tag: "Historial usuario",
+  icon: <HistoryIcon />,
+  redirection: "/user/history",
+});
+
+// Ítem: Estado de reportes asignados (opcional)
 const status = new ListTemplateItem({
   tag: "Estado de reportes asignados",
   icon: <AssignmentReturnedIcon />,
@@ -51,13 +58,15 @@ const status = new ListTemplateItem({
 
 export default function ReciclajeList() {
   return (
-    <ListTemplate items={[
-      usersItem, 
-      asignaciones, 
-      userAssignments, // Nuevo ítem aquí
-      collectRequestItem,
-      // Puedes agregar "status" aquí si lo deseas: 
-      //status
-    ]} />
+    <ListTemplate
+      items={[
+        usersItem,
+        asignaciones,
+        userAssignments,
+        userHistory, // Nuevo ítem agregado aquí
+        collectRequestItem,
+        // status, // puedes habilitarlo si quieres mostrarlo
+      ]}
+    />
   );
 }
