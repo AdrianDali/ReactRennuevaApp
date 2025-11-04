@@ -70,7 +70,7 @@ export default function generateReportPDF(report, data, qrImage){
   
     // Text on the top right side
     doc.setFontSize(8);
-    doc.text("Responsiva de Recepion de Residuos", 150, 10, { align: "left" });
+    doc.text("Responsiva de Recepción de Residuos", 150, 10, { align: "left" });
     for (let i = 0; i < permiso_centro.length; i++) {
       /* console.log("###############permiso")
       console.log(permiso_centro[i]) */

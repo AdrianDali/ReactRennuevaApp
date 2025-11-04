@@ -16,7 +16,7 @@ const statusText = (status) => {
         case 'verificado' || 'verificada':  
             return 'Verificada'
         case 'terminado'|| 'terminada':
-            return 'Veridicada'
+            return 'Verificada'
         default:
             return status.charAt(0).toUpperCase() + status.slice(1); // Capitaliza la primera letra
     }

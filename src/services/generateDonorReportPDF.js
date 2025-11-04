@@ -44,7 +44,7 @@ export default function generateDonorReportPDF(report, data, qrImage) {
     doc.rect(7, 0, 3, doc.internal.pageSize.height, "F");
 
     doc.setFontSize(8);
-    doc.text("Responsiva de Recepion de Residuos", 150, 10, { align: "left" });
+    doc.text("Responsiva de Recepción de Residuos", 150, 10, { align: "left" });
     for (let i = 0; i < permiso_centro.length; i++) {
       doc.text(permiso_centro[i], 150, 15 + i * 5, { align: "left" });
     }
