@@ -45,11 +45,7 @@ function ResponsiveAppBarGenerator() {
       <Container maxWidth="xl" sx={{ borderRadius: "25px" }}>
         <Toolbar disableGutters>
           <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 25, borderRadius: "25px" }}>
-
             <img src={Rennueva} alt="Rennueva" className="logo-header" />
-
-
-
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 10, borderRadius: "25px" }}>
 
               <Menu

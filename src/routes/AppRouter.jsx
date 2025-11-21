@@ -47,10 +47,17 @@ import { GlobalStyles } from '@mui/material';
 import { UsersReportsAssignedRecyclingMenu } from '../pages/Menus/UsersAssignedRecycling.jsx';
 import { HistoryUserAssignedRecycling } from '../pages/Menus/HistoryUserAssignedRecycling.jsx';
 
+//componentes de prueba
+import RoutalStopsTable from "../components/routal/RoutalStopsTable";
+
+
 function App() {
 
   
   const router = createBrowserRouter([ 
+    //Rutas de prueba
+    { path: "/routal/stops", element: <RoutalStopsTable /> },
+    //Rutas reales
     { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
     { path: '/groups', element: <CentroLayout List={<AdminList/>}><MenuGroups/></CentroLayout> },
     { path: '/vehicle', element: <CentroLayout List={<AdminList/>}><MenuVehicle/></CentroLayout> },

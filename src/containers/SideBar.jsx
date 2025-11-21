@@ -114,8 +114,6 @@ const SideBar = ({ children }) => {
       <div style={{ width: "100%", backgroundColor: "#f1f1f1" , overflowX : "hidden", overflowY : "hidden" }}>
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
-          
-
           <Drawer variant="permanent" open={open} sx={{ bgcolor: "#f1f1f1" }}>
             <Box
               sx={{
@@ -200,10 +198,7 @@ const SideBar = ({ children }) => {
           }}
         >
           <DrawerHeader />
-          
-          
-            <ResponsiveAppBarGenerator />
-          
+            <ResponsiveAppBarGenerator />          
           {children}
         </Box>
       </div>

@@ -134,7 +134,7 @@ export default function AssignModal({ setOpen, isOpen, center }) {
           className="ModalContent"
           sx={{
             position: "absolute",
-            top: "20%",
+            top: "30%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "80%",
