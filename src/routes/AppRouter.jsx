@@ -49,6 +49,7 @@ import { HistoryUserAssignedRecycling } from '../pages/Menus/HistoryUserAssigned
 
 //componentes de prueba
 import RoutalStopsTable from "../components/routal/RoutalStopsTable";
+import RoutalPlanner from '../components/routal/RoutalPlanner.jsx';
 
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
   const router = createBrowserRouter([ 
     //Rutas de prueba
     { path: "/routal/stops", element: <RoutalStopsTable /> },
+    { path: "/routal/planner", element: <RoutalPlanner /> },
     //Rutas reales
     { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
     { path: '/groups', element: <CentroLayout List={<AdminList/>}><MenuGroups/></CentroLayout> },
