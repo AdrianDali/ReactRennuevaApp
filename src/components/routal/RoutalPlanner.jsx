@@ -16,8 +16,9 @@ import TodayIcon from "@mui/icons-material/Today";
 import DirectionsBusFilledIcon from "@mui/icons-material/DirectionsBusFilled";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import RouteIcon from "@mui/icons-material/Route";
+import NewPlanModal from "../modals/NewPlanModal";
 
-// const REWARDS_GREEN = "#8BC34A";
+
 const ROUTAL_GREEN_DARK = "#689F38";
 
 const WEEK_DAYS = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
@@ -116,7 +117,8 @@ const toKey = (date) =>
     ).padStart(2, "0")}`;
 
 const RoutalPlanner = () => {
-    const [currentMonth, setCurrentMonth] = useState(new Date(2025, 10, 1)); // 10 = nov
+    const [openNewPlanModal, setOpenNewPlanModal] = useState(false);
+    const [currentMonth, setCurrentMonth] = useState(new Date(2025, 10, 1));
     const [selectedDate, setSelectedDate] = useState(new Date(2025, 10, 25));
     const [search, setSearch] = useState("");
 
@@ -476,16 +478,20 @@ const RoutalPlanner = () => {
                             sx={{
                                 borderRadius: 999,
                                 px: { xs: 2, md: 4 },
-                                width: { xs: "100%", md: "auto" },     // 👈 full-width en móvil
+                                width: { xs: "100%", md: "auto" },
                                 backgroundColor: ROUTAL_GREEN_DARK,
-                                "&:hover": { backgroundColor: "#25524d" },
+                                "&:hover": { backgroundColor: "#558B2F" },
                             }}
-                            onClick={() => console.log("Crear un plan nuevo")}
+                            onClick={() => setOpenNewPlanModal(true)}
                         >
                             Crear un plan nuevo
                         </Button>
                     </Box>
-
+                    <NewPlanModal
+                        open={openNewPlanModal}
+                        onClose={() => setOpenNewPlanModal(false)}
+                        selectedDate={selectedDate}
+                    />
                 </Box>
             </Box>
         </Box>
