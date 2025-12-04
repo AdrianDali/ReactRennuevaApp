@@ -19,7 +19,17 @@ function ModalVehicle({ mode, creatorUser }) {
     const [capacidad, setCapacidad] = useState("");
     const [permiso, setPermiso] = useState("");
     const [creator, setCreator] = useState(creatorUser);
+  const [address_reference, setReference] = useState(""); 
 
+  const [state, setState] = useState("");
+    const [city, setCity] = useState("");
+    const [locality, setLocality] = useState("");
+    const [street, setStreet] = useState("");
+    const [postal_code, setPostalCode] = useState("");
+    const [rfc, setRfc] = useState("");
+    const [phone, setPhone] = useState("");
+    const [address_num_int, setAddressNumInt] = useState("");
+    const [address_num_ext, setAddressNumExt] = useState("");
 
 
   const {  setUpdateVehicleInfo ,openModalCreateVehicle, setOpenModalText, setTextOpenModalText, setOpenModalCreateVehicle, openModalEditVehicle, setOpenModalEditVehicle, openModalDeleteVehicle, setOpenModalDeleteVehicle } = useContext(TodoContext);
@@ -309,6 +319,80 @@ function ModalVehicle({ mode, creatorUser }) {
                 onChange={(e) => handleInputChange(e, setCapacidad, mode)}
                 margin="dense"
               />
+
+              <Title>Ubicación</Title>
+                              <TextField
+                                label="Estado"
+                                name="state"
+                                required
+                                fullWidth
+                                value={state}
+                                onChange={(e) => handleInputChange(e, setState, mode)}
+                                margin="dense"
+                              />
+                              <TextField
+                                label="Ciudad"
+                                name="city"
+                                required
+                                fullWidth
+                                value={city}
+                                onChange={(e) => handleInputChange(e, setCity, mode)}
+                                margin="dense"
+                              />
+                              <TextField
+                                label="Colonia"
+                                name="locality"
+                                required
+                                fullWidth
+                                value={locality}
+                                onChange={(e) => handleInputChange(e, setLocality, mode)}
+                                margin="dense"
+                              />
+                              <TextField
+                                label="Calle "
+                                name="street"
+                                required
+                                fullWidth
+                                value={street}
+                                onChange={(e) => handleInputChange(e, setStreet, mode)}
+                                margin="dense"
+                              />
+                              <TextField
+                                label="Número exterior"
+                                name="address_num_ext"
+                                required
+                                fullWidth
+                                value={address_num_ext}
+                                onChange={(e) => handleInputChange(e, setAddressNumExt, mode)}
+                                margin="dense"
+                              />
+                              <TextField
+                                label="Número interior"
+                                name="address_num_int"
+                                fullWidth
+                                value={address_num_int}
+                                onChange={(e) => handleInputChange(e, setAddressNumInt, mode)}
+                                margin="dense"
+                              />
+                              <TextField
+                                label="Referencia"
+                                name="address_reference"
+                                required
+                                fullWidth
+                                value={address_reference}
+                                onChange={(e) => handleInputChange(e, setReference, mode)}
+                                margin="dense"
+                              />
+              
+                              <TextField
+                                label="Código postal"
+                                name="postal_code"
+                                required
+                                fullWidth
+                                value={postal_code}
+                                onChange={(e) => handleInputChange(e, setPostalCode, mode)}
+                                margin="dense"
+                              />
 
 
             </FormControl>
