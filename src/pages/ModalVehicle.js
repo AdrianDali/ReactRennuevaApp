@@ -1,342 +1,287 @@
-import React, { useState, useContext, useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import '../styles/user/CreateUser.css';
-import { TodoContext } from '../context/index.js';
-import axios from 'axios';
-import { Modal, TextField, Button, Select, MenuItem, Box, FormControl, InputLabel } from '@mui/material';
-import Title from '../components/Title';
+import React, { useState, useEffect, useContext } from "react";
+import ReactDOM from "react-dom";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  IconButton,
+  Typography,
+  CircularProgress,
+  Box
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
+import { TodoContext } from "../context/index.js";
+import Title from "../components/Title";
 
 function ModalVehicle({ mode, creatorUser }) {
+  const {
+    openModalCreateVehicle,
+    openModalEditVehicle,
+    openModalDeleteVehicle,
+    setOpenModalCreateVehicle,
+    setOpenModalEditVehicle,
+    setOpenModalDeleteVehicle,
+    setOpenModalText,
+    setTextOpenModalText,
+    setUpdateVehicleInfo,
+    infoVehicle,
+   
+  } = useContext(TodoContext);
+  console.log("infoVehicle in ModalVehicle:", infoVehicle);
+  const open =
+    openModalCreateVehicle || openModalEditVehicle || openModalDeleteVehicle;
+
+  // Estado agrupado y limpio ✨
+  const [form, setForm] = useState({
+    modelo: "",
+    placas: "",
+    capacidad: "",
+    permiso: "",
+    state: "",
+    city: "",
+    locality: "",
+    street: "",
+    address_num_ext: "",
+    address_num_int: "",
+    address_reference: "",
+    postal_code: "",
+    idConductor: "",
+  });
+
   const [vehicles, setVehicles] = useState([]);
   const [drivers, setDrivers] = useState([]);
-  const [driver, setDriver] = useState("");
-  const [residue, setVehicle] = useState("");
+  const [loading, setLoading] = useState(true);
   const [oldVehicle, setOldVehicle] = useState("");
-  const [id, setId] = useState("");
-
-    const [nombre, setNombre] = useState("");
-    const [placas, setPlacas] = useState("");
-    const [capacidad, setCapacidad] = useState("");
-    const [permiso, setPermiso] = useState("");
-    const [creator, setCreator] = useState(creatorUser);
-
-
-
-  const {  setUpdateVehicleInfo ,openModalCreateVehicle, setOpenModalText, setTextOpenModalText, setOpenModalCreateVehicle, openModalEditVehicle, setOpenModalEditVehicle, openModalDeleteVehicle, setOpenModalDeleteVehicle } = useContext(TodoContext);
 
   const closeModal = () => {
-    if (openModalCreateVehicle) {
-      setOpenModalCreateVehicle(false);
-    }
-    if (openModalEditVehicle) {
-      setOpenModalEditVehicle(false);
-    }
-    if (openModalDeleteVehicle) {
-      setOpenModalDeleteVehicle(false);
+    setOpenModalCreateVehicle(false);
+    setOpenModalEditVehicle(false);
+    setOpenModalDeleteVehicle(false);
+  };
+
+  const updateField = (field, value) => {
+    if (mode !== "BORRAR") {
+      setForm((prev) => ({ ...prev, [field]: value }));
     }
   };
 
+  const putEditDataInForm = (vehicleData) => {
+    console.log("vehicleData in putEditDataInForm:", vehicleData);
+    
+    setForm({
+      modelo: vehicleData.modelo || "",
+      placas: vehicleData.placas || "",
+      capacidad: vehicleData.capacidad || "",
+      permiso: vehicleData.permiso || "",
+      state: vehicleData.state || "",
+      city: vehicleData.city || "",
+      locality: vehicleData.locality || "",
+      street: vehicleData.street || "",
+      address_num_ext: vehicleData.address_num_ext || "",
+      address_num_int: vehicleData.address_num_int || "",
+      address_reference: vehicleData.address_reference || "",
+      postal_code: vehicleData.postal_code || "",
+      idConductor: vehicleData.idConductor || "",
+    });
+  };
+
+
+  useEffect(() => {
+    Promise.all([
+      axios.post(`${process.env.REACT_APP_API_URL}/read-vehicle/`, {"id": infoVehicle.external_id, "id_routal": infoVehicle.id}),
+      axios.get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
+    ])
+      .then(([v, d]) => {
+        setVehicles(v.data);
+        setDrivers(d.data);
+        setLoading(false);
+        if (mode === "EDITAR" || mode === "BORRAR") {
+          
+          putEditDataInForm(vehicles);
+        }
+
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const payload =
+      mode === "CREAR"
+        ? { ...form, creator_user: creatorUser }
+        : mode === "EDITAR"
+        ? { ...form, antiguasPlacas: oldVehicle, creator_user: creatorUser }
+        : { placas: oldVehicle, creator_user: creatorUser };
 
+    const url =
+      mode === "CREAR"
+        ? "/create-vehicle/"
+        : mode === "EDITAR"
+        ? "/update-vehicle/"
+        : "/delete-vehicle/";
 
-    const nuevoDato = {
-      modelo: e.target.nombre.value,
-      placas: e.target.placas.value,
-      capacidad: e.target.capacidad.value,
-      idConductor: id,
-      permiso: e.target.permiso.value,
-      creator_user: creator
-    };
-    const editarDato = {
-        modelo: e.target.nombre.value,
-        placas: e.target.placas.value,
-        capacidad: e.target.capacidad.value,
-        idConductor: id,
-        antiguasPlacas: oldVehicle,
-        permiso: e.target.permiso.value,
-        creator_user: creator
-        };
-        
+    const method = mode === "BORRAR" ? axios.post : mode === "EDITAR" ? axios.put : axios.post;
 
-    //   const antiguo_user = document.getElementById("mySelect")
-    //   var user_ant = antiguo_user ? antiguo_user.value : null;
-
-    //   const editarDato = {
-    //     user: e.target.user.value,
-
-    //   };
-
-    //   const deleteDato = {
-    //     user : user_ant
-    //   }
-    if (mode === "CREAR") {
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/create-vehicle/`, nuevoDato)
-        .then(response => {
-          const data = response.data;
-          console.log(data)
-          setOpenModalText(true);
-          setTextOpenModalText("Vehículo creado correctamente")
-          setUpdateVehicleInfo(true)
-          closeModal()
-          // setOpenModalText(true);
-          e.target.reset();
-
-
-        })
-        .catch(error => {
-          console.error("############################");
-          setOpenModalText(true);
-    
-          // Check if error response and data exist
-          if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
-          } else {
-            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
-          }
-    
-          console.error(error.response);
-        })
-    }
-    if (mode === "EDITAR") {
-      axios
-        .put(`${process.env.REACT_APP_API_URL}/update-vehicle/`, editarDato)
-        .then(response => {
-          const data = response.data;
-          console.log(data)
-          setOpenModalText(true);
-          setTextOpenModalText("Vehículo editado correctamente")
-          setUpdateVehicleInfo(true)
-          e.target.reset();
-          closeModal()
-          // Limpiar los campos del formulario
-        })
-        .catch(error => {
-          console.error("############################");
-          setOpenModalText(true);
-    
-          // Check if error response and data exist
-          if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
-          } else {
-            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
-          }
-    
-          console.error(error.response);
-        })
-    }
-    if (mode === "BORRAR") {
-      axios
-        .post(`${process.env.REACT_APP_API_URL}/delete-vehicle/`, { placas: oldVehicle, creator_user: creator })
-        .then(response => {
-          const data = response.data;
-          console.log(data)
-          setOpenModalText(true);
-          setTextOpenModalText("Vehículo borrado correctamente")
-          setUpdateVehicleInfo(true)
-          e.target.reset();
-          e.target.reset();
-          closeModal()
-
-        })
-        .catch(error => {
-          console.error("############################");
-          setOpenModalText(true);
-    
-          // Check if error response and data exist
-          if (error.response && error.response.data) {
-            const errorMessage = error.response.data.errorMessage || "Algo salió mal. Intenta de nuevo";
-            setTextOpenModalText(`Algo salió mal. Intenta de nuevo \n ${errorMessage}`);
-          } else {
-            setTextOpenModalText("Algo salió mal. Intenta de nuevo");
-          }
-    
-          console.error(error.response);
-        })
-    }
-    e.target.reset();
-  };
-
-  useEffect(() => {
-
-    const fetchVehicles =axios.get(`${process.env.REACT_APP_API_URL}/get-all-vehicle/`)
-
-    const fetchDrivers =axios.get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
-
-    axios.all([fetchVehicles, fetchDrivers]).then(
-      axios.spread((...allData) => {
-        const allDataVehicles = allData[0].data;
-        const allDataDrivers = allData[1].data;
-        setVehicles(allDataVehicles)
-        setDrivers(allDataDrivers)
-        console.log("######################GRUPOS##################################")
-        console.log(allDataVehicles)
-        console.log(allDataDrivers)
-
+    method(`${process.env.REACT_APP_API_URL}${url}`, payload)
+      .then(() => {
+        setUpdateVehicleInfo(true);
+        setOpenModalText(true);
+        setTextOpenModalText(
+          mode === "CREAR"
+            ? "Vehículo creado exitosamente"
+            : mode === "EDITAR"
+            ? "Vehículo actualizado correctamente"
+            : "Vehículo eliminado correctamente"
+        );
+        closeModal();
       })
-    )
-      .catch(error => {
-        console.error(error);
+      .catch((err) => {
+        const msg =
+          err.response?.data?.errorMessage || "Ha ocurrido un error inesperado";
+        setOpenModalText(true);
+        setTextOpenModalText(msg);
       });
-  }, []);
-  
-
-
-  const handleDriverSelectChange = (event) => {
-    const selectedOption = event.target.value; // Obtener la opción seleccionada
-    console.log(selectedOption)
-    setId(selectedOption)
-    //setOldVehicle(selectedOption)
-    // Buscar el dato seleccionado en el arreglo de datos
-    const datoEncontrado = drivers.find((drivers) => drivers.id === selectedOption);
-    console.log("dato encontrado")
-    console.log(datoEncontrado)
- 
-  }
-
-
-  const handleSelectChange = (event) => {
-    const selectedOption = event.target.value; // Obtener la opción seleccionada
-    setOldVehicle(selectedOption)
-    console.log("selectedOption")
-    console.log(selectedOption)
-
-    // Buscar el dato seleccionado en el arreglo de datos
-    const datoEncontrado = vehicles.find((vehicles) => vehicles.placas === selectedOption);
-    console.log("dato encontrado")
-    console.log(datoEncontrado)
-    setVehicle(datoEncontrado.placas)
-    setNombre(datoEncontrado.modelo)
-    setPlacas(datoEncontrado.placas)
-    setCapacidad(datoEncontrado.capacidad)
-    setDriver(datoEncontrado.idConductor)
-    setId(datoEncontrado.idConductor)
-    setPermiso(datoEncontrado.permiso)
-
-
-
-
-
-
-
-}
-
-
-  const handleInputChange = (e, setState, mode) => {
-    const currentInputValue = e.target.value;
-
-    if (mode !== "BORRAR") {
-      setState(currentInputValue);
-    }
   };
 
   return ReactDOM.createPortal(
-    <Modal open={true} onClose={closeModal} >
-      <Box className="ModalContent" sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        p: 4,
-        borderRadius: 2,
+    <Dialog open={open} onClose={closeModal} maxWidth="md" fullWidth>
+      <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        {mode === "CREAR" && "Crear Vehículo"}
+        {mode === "EDITAR" && "Editar Vehículo"}
+        {mode === "BORRAR" && "Eliminar Vehículo"}
 
-      }}>
-        <Button onClick={closeModal} sx={{ position: 'absolute', right: 2, top: 2 }}>&times;</Button>
-        <form onSubmit={handleSubmit} >
-          <Box mb={2}>
-            <Title> Vehículos</Title>
-            {mode === "EDITAR" || mode === "BORRAR" ? (
-              <FormControl fullWidth>
-                <InputLabel id="vehicle-select-label">Vehículo</InputLabel>
-                <Select
-                  labelId="vehicle-select-label"
-                  id="vehicle-select"
-                  onChange={(e) => handleSelectChange(e, oldVehicle)}
-                  required
-                >
-                  {vehicles.map((name, index) => (
-                    <MenuItem key={index} value={name.placas}>{name.placas}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ) : null}
+        <IconButton onClick={closeModal}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+
+      <DialogContent dividers sx={{ maxHeight: "75vh" }}>
+        {loading ? (
+          <Box sx={{ textAlign: "center", py: 5 }}>
+            <CircularProgress />
           </Box>
-          <Box mt={2} mb={2} sx={{ overflowY: 'auto', maxHeight: 500 }}>
+        ) : (
+          <>
 
-            <FormControl fullWidth mt={2} mb={2}>
+            {mode === "BORRAR" && oldVehicle && (
+              <Typography color="red" sx={{ mb: 3 }}>
+                Esta acción eliminará el vehículo seleccionado. ¿Deseas continuar?
+              </Typography>
+            )}
 
-              <TextField
-                label="Modelo del Vehículo"
-                name="nombre"
-                required
-                fullWidth
-                value={nombre}
-                onChange={(e) => handleInputChange(e, setNombre, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Placas del Vehículo"
-                name="placas"
-                required
-                fullWidth
-                value={placas}
-                onChange={(e) => handleInputChange(e, setPlacas, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Permiso del Vehículo"
-                name="permiso"
-                required
-                fullWidth
-                value={permiso}
-                onChange={(e) => handleInputChange(e, setPermiso, mode)}
-                margin="dense"
-              />
-              <TextField
-                label="Capacidad del Vehículo"
-                name="capacidad"
-                required
-                fullWidth
-                value={capacidad}
-                onChange={(e) => handleInputChange(e, setCapacidad, mode)}
-                margin="dense"
-              />
+            {mode !== "BORRAR" && (
+              <>
+                <Title>Información del Vehículo</Title>
 
+                <Grid container spacing={2} sx={{ mt: 1, mb: 3 }}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      label="Modelo"
+                      fullWidth
+                      value={form.modelo}
+                      onChange={(e) => updateField("modelo", e.target.value)}
+                    />
+                  </Grid>
 
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel id="driver-select-label">Conductor</InputLabel>
-                <Select
-                  labelId="driver-select-label"
-                  id="driver-select"
-                  onChange={(e) => handleDriverSelectChange(e, id)}
-                  required
-                  value={id}
-                >
-                  {drivers.map((name, index) => (
-                    <MenuItem key={index} value={name.id}>{name.license} {name.first_name} {name.last_name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-          </Box>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      label="Placas"
+                      fullWidth
+                      value={form.placas}
+                      onChange={(e) => updateField("placas", e.target.value)}
+                    />
+                  </Grid>
 
-          <Button type="submit" variant="contained" fullWidth>{mode}</Button>
-        </form>
-      </Box>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      label="Permiso"
+                      fullWidth
+                      value={form.permiso}
+                      onChange={(e) => updateField("permiso", e.target.value)}
+                    />
+                  </Grid>
 
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      label="Capacidad"
+                      fullWidth
+                      value={form.capacidad}
+                      onChange={(e) => updateField("capacidad", e.target.value)}
+                    />
+                  </Grid>
+                </Grid>
 
-    </Modal>,
+                <Title>Ubicación</Title>
 
-    document.getElementById('modal')
+                <Grid container spacing={2} sx={{ mt: 1, mb: 3 }}>
+                  <Grid item xs={12} md={6}>
+                    <TextField label="Estado" fullWidth value={form.state} onChange={(e) => updateField("state", e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField label="Ciudad" fullWidth value={form.city} onChange={(e) => updateField("city", e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField label="Colonia" fullWidth value={form.locality} onChange={(e) => updateField("locality", e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField label="Calle" fullWidth value={form.street} onChange={(e) => updateField("street", e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField label="Número exterior" fullWidth value={form.address_num_ext} onChange={(e) => updateField("address_num_ext", e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField label="Número interior" fullWidth value={form.address_num_int} onChange={(e) => updateField("address_num_int", e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField label="Referencia" fullWidth value={form.address_reference} onChange={(e) => updateField("address_reference", e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField label="Código Postal" fullWidth value={form.postal_code} onChange={(e) => updateField("postal_code", e.target.value)} />
+                  </Grid>
+                </Grid>
 
+                <Title>Conductor</Title>
+
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                  <InputLabel>Seleccionar conductor</InputLabel>
+                  <Select
+                    value={form.idConductor}
+                    label="Seleccionar conductor"
+                    onChange={(e) => updateField("idConductor", e.target.value)}
+                  >
+                    {drivers.map((d) => (
+                      <MenuItem key={d.id} value={d.id}>
+                        {d.license} – {d.first_name} {d.last_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            )}
+          </>
+        )}
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={closeModal}>Cancelar</Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          {mode}
+        </Button>
+      </DialogActions>
+    </Dialog>,
+    document.getElementById("modal")
   );
 }
 
