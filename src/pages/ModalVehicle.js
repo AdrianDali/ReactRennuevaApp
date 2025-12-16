@@ -33,8 +33,10 @@ function ModalVehicle({ mode, creatorUser }) {
     setOpenModalText,
     setTextOpenModalText,
     setUpdateVehicleInfo,
+    infoVehicle,
+   
   } = useContext(TodoContext);
-
+  console.log("infoVehicle in ModalVehicle:", infoVehicle);
   const open =
     openModalCreateVehicle || openModalEditVehicle || openModalDeleteVehicle;
 
@@ -72,39 +74,46 @@ function ModalVehicle({ mode, creatorUser }) {
     }
   };
 
+  const putEditDataInForm = (vehicleData) => {
+    console.log("vehicleData in putEditDataInForm:", vehicleData);
+    
+    setForm({
+      modelo: vehicleData.modelo || "",
+      placas: vehicleData.placas || "",
+      capacidad: vehicleData.capacidad || "",
+      permiso: vehicleData.permiso || "",
+      state: vehicleData.state || "",
+      city: vehicleData.city || "",
+      locality: vehicleData.locality || "",
+      street: vehicleData.street || "",
+      address_num_ext: vehicleData.address_num_ext || "",
+      address_num_int: vehicleData.address_num_int || "",
+      address_reference: vehicleData.address_reference || "",
+      postal_code: vehicleData.postal_code || "",
+      idConductor: vehicleData.idConductor || "",
+    });
+  };
+
+
   useEffect(() => {
     Promise.all([
-      axios.get(`${process.env.REACT_APP_API_URL}/get-all-vehicle/`),
+      axios.post(`${process.env.REACT_APP_API_URL}/read-vehicle/`, {"id": infoVehicle.external_id, "id_routal": infoVehicle.id}),
       axios.get(`${process.env.REACT_APP_API_URL}/get-all-drivers/`)
     ])
       .then(([v, d]) => {
         setVehicles(v.data);
         setDrivers(d.data);
         setLoading(false);
+        if (mode === "EDITAR" || mode === "BORRAR") {
+          
+          putEditDataInForm(vehicles);
+        }
+
       })
       .catch(() => setLoading(false));
   }, []);
 
-  const handleSelectExistingVehicle = (placa) => {
-    setOldVehicle(placa);
-    const v = vehicles.find((x) => x.placas === placa);
-
-    setForm({
-      modelo: v.modelo,
-      placas: v.placas,
-      capacidad: v.capacidad,
-      permiso: v.permiso,
-      idConductor: v.idConductor,
-      state: v.state || "",
-      city: v.city || "",
-      locality: v.locality || "",
-      street: v.street || "",
-      address_num_ext: v.address_num_ext || "",
-      address_num_int: v.address_num_int || "",
-      address_reference: v.address_reference || "",
-      postal_code: v.postal_code || "",
-    });
-  };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -165,22 +174,6 @@ function ModalVehicle({ mode, creatorUser }) {
           </Box>
         ) : (
           <>
-            {(mode === "EDITAR" || mode === "BORRAR") && (
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Seleccionar vehículo</InputLabel>
-                <Select
-                  value={oldVehicle}
-                  label="Seleccionar vehículo"
-                  onChange={(e) => handleSelectExistingVehicle(e.target.value)}
-                >
-                  {vehicles.map((v) => (
-                    <MenuItem key={v.placas} value={v.placas}>
-                      {v.placas} – {v.modelo}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
 
             {mode === "BORRAR" && oldVehicle && (
               <Typography color="red" sx={{ mb: 3 }}>

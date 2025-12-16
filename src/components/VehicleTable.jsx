@@ -12,7 +12,8 @@ import {
   Close, Search, Edit, KeyboardArrowDown
 } from "@mui/icons-material";
 
-import { TodoContext } from "../context";
+import { TodoContext } from "../context/index";
+
 import theme from "../context/theme";
 import { generateExcelFromJson } from "../services/Excel";
 import useAuth from "../hooks/useAuth";
@@ -27,6 +28,7 @@ const normalizeVehicles = (vehicles) => {
 
   const routal = vehicles?.routal?.docs || [];
   const local = vehicles?.local || [];
+  console.log("Routal vehicles:", routal);
 
   const routalNorm = routal.map(v => ({
     id: v.id,
@@ -35,7 +37,8 @@ const normalizeVehicles = (vehicles) => {
     capacidad: v.default_max_volume || "-",
     conductor: v.phone || "N/A",
     permiso: v.external_id || "N/A",
-    source: "Routal"
+    source: "Routal",
+    external_id: v.external_id || "N/A",
   }));
 
   const localNorm = local.map(v => ({
@@ -46,6 +49,7 @@ const normalizeVehicles = (vehicles) => {
     conductor: v.conductor || "N/A",
     permiso: v.permiso || "N/A",
     source: "Local"
+  
   }));
 
   return [...localNorm, ...routalNorm];
@@ -114,8 +118,7 @@ function ExportOptionsMenuVehicle({ anchorEl, setAnchorEl, allData, filteredData
 // COMPONENTE PRINCIPAL: VehicleTable
 // --------------------------------------------
 export default function VehicleTable({ vehicles }) {
-  const { setOpenModalEditVehicle, setOpenModalDeleteVehicle, setOpenModalCreateVehicle } = useContext(TodoContext);
-
+  const { setOpenModalEditVehicle, setOpenModalDeleteVehicle, setOpenModalCreateVehicle , infoVehicle, setInfoVehicle } = useContext(TodoContext);
   const allData = useMemo(() => normalizeVehicles(vehicles), [vehicles]);
 
   const [filteredData, setFilteredData] = useState(allData);
@@ -124,7 +127,7 @@ export default function VehicleTable({ vehicles }) {
   const [selected, setSelected] = useState([]);
   const [generalStatus, setGeneralStatus] = useState("unchecked");
   const [rowMenuAnchor, setRowMenuAnchor] = useState(null);
-  const [currentVehicle, setCurrentVehicle] = useState(null);
+  
 
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState(10);
@@ -293,7 +296,7 @@ export default function VehicleTable({ vehicles }) {
                       </TableCell>
 
                       <TableCell>
-                        <IconButton onClick={() => { setCurrentVehicle(vehicle); setOpenModalEditVehicle(true); }}>
+                        <IconButton onClick={() => { setInfoVehicle(vehicle); setOpenModalEditVehicle(true); }}>
                           <Edit />
                         </IconButton>
                       </TableCell>
