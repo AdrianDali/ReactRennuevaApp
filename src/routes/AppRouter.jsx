@@ -1,4 +1,3 @@
-import React from 'react';
 import { TodoProvider } from '../context/index';
 import { MenuGroups } from '../pages/Users/MenuGroups';
 import { MenuVehicle } from '../pages/MenuVehicle';
@@ -47,10 +46,16 @@ import { GlobalStyles } from '@mui/material';
 import { UsersReportsAssignedRecyclingMenu } from '../pages/Menus/UsersAssignedRecycling.jsx';
 import { HistoryUserAssignedRecycling } from '../pages/Menus/HistoryUserAssignedRecycling.jsx';
 
-function App() {
+//componentes de prueba
+import RoutalStopsTable from "../components/routal/RoutalStopsTable";
+import RoutalPlanner from '../components/routal/RoutalPlanner.jsx';
 
-  
-  const router = createBrowserRouter([ 
+function App() {
+    const router = createBrowserRouter([ 
+    //Rutas de prueba
+    { path: "/routal/stops", element: <RoutalStopsTable /> },
+    { path: "/routal/planner", element: <RoutalPlanner /> },
+    //Rutas reales
     { path: '/users', element: <CentroLayout List={<AdminList/>}><MenuUser/></CentroLayout> },
     { path: '/groups', element: <CentroLayout List={<AdminList/>}><MenuGroups/></CentroLayout> },
     { path: '/vehicle', element: <CentroLayout List={<AdminList/>}><MenuVehicle/></CentroLayout> },

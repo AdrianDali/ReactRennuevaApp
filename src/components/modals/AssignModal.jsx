@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+// src/components/modals/assignModal.jsx
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   Box,
   Button,
@@ -33,7 +34,7 @@ export default function AssignModal({ setOpen, isOpen, center }) {
     console.log(orderId);
     if (user === "" || folio === "") return;
     const data = {
-      orderId : orderId,
+      orderId: orderId,
       checker: user,
     };
 
@@ -116,6 +117,16 @@ export default function AssignModal({ setOpen, isOpen, center }) {
     setOpen(false);
   };
 
+  const toNum = (v) => {
+    const m = String(v ?? "").match(/\d+/); // toma la parte numérica
+    const n = Number(m ? m[0] : NaN);
+    return Number.isFinite(n) ? n : Infinity; // los no numéricos quedan al final
+  };
+
+  const sortedFolios = useMemo(() => {
+    return [...folios].sort((a, b) => toNum(a.RecollectionId) - toNum(b.RecollectionId));
+  }, [folios]);
+
   return (
     <>
       <Modal open={isOpen} onClose={closeModal}>
@@ -123,7 +134,7 @@ export default function AssignModal({ setOpen, isOpen, center }) {
           className="ModalContent"
           sx={{
             position: "absolute",
-            top: "20%",
+            top: "30%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "80%",
@@ -150,26 +161,22 @@ export default function AssignModal({ setOpen, isOpen, center }) {
               id="select-report"
               label="Folio"
               onChange={(e) => {
-                const selected = e.target.value; // value = objeto folio completo
+                const selected = e.target.value; // objeto folio
                 setFolio(selected.RecollectionId);
-
                 const center =
-                  selected.reports?.[0]?.CollectionCenter ?? // centro de acopio
-                  selected.reports?.[0]?.RecyclingCenter ?? // centro de reciclaje (si aplica)
+                  selected.reports?.[0]?.CollectionCenter ??
+                  selected.reports?.[0]?.RecyclingCenter ??
                   "Sin centro asignado";
-
-                // si necesitas guardarlo
                 setCenterName(center);
                 setIdOrderId(selected.RecollectionId);
                 console.log(center);
               }}
             >
-              {folios.map((folio) => {
+              {sortedFolios.map((folio) => {
                 const center =
                   folio.reports?.[0]?.CollectionCenter ??
                   folio.reports?.[0]?.RecyclingCenter ??
                   "Sin centro asignado";
-
                 return (
                   <MenuItem key={folio.RecollectionId} value={folio}>
                     {folio.RecollectionId} — {center} — {folio.RecollectionDate}
