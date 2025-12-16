@@ -1,4 +1,3 @@
-import React from 'react';
 import { TodoProvider } from '../context/index';
 import { MenuGroups } from '../pages/Users/MenuGroups';
 import { MenuVehicle } from '../pages/MenuVehicle';
@@ -51,11 +50,8 @@ import { HistoryUserAssignedRecycling } from '../pages/Menus/HistoryUserAssigned
 import RoutalStopsTable from "../components/routal/RoutalStopsTable";
 import RoutalPlanner from '../components/routal/RoutalPlanner.jsx';
 
-
 function App() {
-
-  
-  const router = createBrowserRouter([ 
+    const router = createBrowserRouter([ 
     //Rutas de prueba
     { path: "/routal/stops", element: <RoutalStopsTable /> },
     { path: "/routal/planner", element: <RoutalPlanner /> },
