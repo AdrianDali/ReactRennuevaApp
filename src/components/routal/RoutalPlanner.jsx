@@ -49,7 +49,16 @@ const MOCK_PLANS = [
         routes: 2,
         status: "done",
     },
+      {
+        id: 4,
+        date: "2025-12-09",
+        name: "Plan de pruebas diciembre",
+        vehicles: 1,
+        routes: 2,
+        status: "done",
+    },
 ];
+
 
 // Helpers sencillos para fechas
 const getCalendarGrid = (year, monthIndex) => {

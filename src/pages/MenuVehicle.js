@@ -60,33 +60,31 @@ function MenuVehicle() {
 
   return (
     <>
-      <CssBaseline />
-      <Box sx={{ display: "flex", height: "90vh", width: "100vw" }}>
-        {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Registro") && !loading ? (
-          <Container
-            maxWidth={false}
-            sx={{ flexGrow: 1, overflow: "auto", py: 3 }}
-          >
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Paper
-                  sx={{
-                    p: 3,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Title>Vehículos</Title>
-                  <CUDButtons model="Vehicle" />
-                  <Title>Vehículos Creados</Title>
-                  <VehicleTable vehicles={vehicles}/>
-                </Paper>
-              </Grid>
-            </Grid>
-
-            {openModalCreateVehicle && (
+          {dataUser && (dataUser.groups[0] === "Administrador" || dataUser.groups[0] === "Comunicacion" || dataUser.groups[0] === "Logistica" || dataUser.groups[0] === "Calidad" || dataUser.groups[0] === "Produccion" || dataUser.groups[0] === "Registro") && !loading ? (
+            <Container
+              maxWidth={false}
+              sx={{
+                flexGrow: 1,
+                overflow: "auto",
+                py: 3,
+                height: "100%",
+              }}
+            >
+   
+              <VehicleTable vehicles={vehicles}/></Container>
+          ) : loading? <LoadingComponent/>:(
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+              }}
+            >
+              <Title>No tienes permisos para ver esta página</Title>
+            </Box>
+          )}
+          {openModalCreateVehicle && (
               <ModalVehicle mode={"CREAR"} creatorUser={dataUser.user}>
                 La funcionalidad de agregar TODO
               </ModalVehicle>
@@ -123,21 +121,7 @@ function MenuVehicle() {
                 </DialogActions>
               </Dialog>
             )}
-          </Container>
-        ) : loading? <LoadingComponent/>: (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-            }}
-          >
-            <Title>No tienes permisos para ver esta página</Title>
-          </Box>
-        )}
-      </Box>
-    </>
+        </>
   );
 }
 
