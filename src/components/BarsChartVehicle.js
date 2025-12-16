@@ -31,6 +31,10 @@ export default function Bars() {
    
     const [beneficio, setBeneficio] = useState([]);
     const [grupos, setGrupos] = useState([]);
+    
+    var beneficios = [];
+    var meses = [];
+
 
     useEffect(() => {
         // Realiza una petición GET a una URL específica
@@ -53,9 +57,6 @@ export default function Bars() {
                 console.error(error);
             });
     }, []);
-
-    var beneficios = [];
-    var meses = [];
 
 
 
