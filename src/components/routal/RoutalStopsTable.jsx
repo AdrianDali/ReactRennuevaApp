@@ -18,6 +18,13 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+
+
+
 const DEFAULT_ROWS_PER_PAGE = 10;
 const REWARDS_GREEN = "#8BC34A";
 
@@ -33,6 +40,16 @@ const RoutalStopsTable = () => {
   const [createdBefore, setCreatedBefore] = useState("21/11/2025");
 
   const [loading, setLoading] = useState(false);
+
+  const [openRows, setOpenRows] = useState({});
+
+const toggleRow = (id) => {
+  setOpenRows((prev) => ({
+    ...prev,
+    [id]: !prev[id],
+  }));
+};
+
 
   // ============================================================
   // FETCH STOPS (SERVER SIDE)
@@ -226,55 +243,81 @@ const RoutalStopsTable = () => {
                       onChange={handleSelectAllClick}
                     />
                   </TableCell>
-
+                  <TableCell />
                   <TableCell>Orden</TableCell>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell>Ubicación</TableCell>
-                  <TableCell>Duración</TableCell>
-                  <TableCell>Fecha ejecución</TableCell>
-                  <TableCell>Reporte</TableCell>
-                  <TableCell>Creada</TableCell>
+<TableCell>Nombre</TableCell>
+<TableCell>Estado</TableCell>
+<TableCell>Ubicación</TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {stops.map((row) => {
-                  const selectedRow = isSelected(row.id);
+  {stops.map((row, index) => {
+    const selectedRow = isSelected(row.id);
+    const isOpen = openRows[row.id];
 
-                  return (
-                    <TableRow
-                      key={row.id}
-                      hover
-                      selected={selectedRow}
-                      onClick={() => handleRowClick(row.id)}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox checked={selectedRow} />
-                      </TableCell>
+    return (
+      <React.Fragment key={row.id}>
+        {/* FILA PRINCIPAL */}
+        <TableRow
+          hover
+          selected={selectedRow}
+          sx={{
+            backgroundColor: index % 2 === 0 ? "#fafafa" : "white",
+          }}
+        >
+          <TableCell padding="checkbox">
+            <Checkbox
+              checked={selectedRow}
+              onClick={() => handleRowClick(row.id)}
+            />
+          </TableCell>
 
-                      <TableCell>{row.orden ?? "-"}</TableCell>
-                      <TableCell>{row.nombre}</TableCell>
-                      <TableCell>{renderStatusChip(row.estado)}</TableCell>
-                      <TableCell>{row.ubicacion}</TableCell>
-                      <TableCell>{row.duracion_min} min</TableCell>
-                      <TableCell>{row.fecha_ejecucion ?? "-"}</TableCell>
-                      <TableCell>
-                        {row.tiene_reporte ? "Sí" : "No"}
-                      </TableCell>
-                      <TableCell>{row.creada}</TableCell>
-                    </TableRow>
-                  );
-                })}
+          <TableCell>
+            <IconButton size="small" onClick={() => toggleRow(row.id)}>
+              {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
 
-                {!loading && stops.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      No hay paradas
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
+          <TableCell>{row.orden ?? "-"}</TableCell>
+          <TableCell sx={{ fontWeight: 500 }}>{row.nombre}</TableCell>
+          <TableCell>{renderStatusChip(row.estado)}</TableCell>
+          <TableCell>{row.ubicacion}</TableCell>
+        </TableRow>
+
+        {/* COLLAPSE */}
+        <TableRow>
+          <TableCell colSpan={7} sx={{ p: 0 }}>
+            <Collapse in={isOpen} timeout="auto" unmountOnExit>
+              <Box sx={{ p: 2, backgroundColor: "#f9f9f9" }}>
+                <Stack direction="row" spacing={4} flexWrap="wrap">
+                  <Typography variant="body2">
+                    <strong>Duración:</strong> {row.duracion_min} min
+                  </Typography>
+
+                  <Typography variant="body2">
+                    <strong>Fecha ejecución:</strong>{" "}
+                    {row.fecha_ejecucion ?? "-"}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    <strong>Creada:</strong> {row.creada}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    <strong>Reporte:</strong>{" "}
+                    {row.tiene_reporte ? "Sí" : "No"}
+                  </Typography>
+                </Stack>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  })}
+</TableBody>
+
             </Table>
           </TableContainer>
 
