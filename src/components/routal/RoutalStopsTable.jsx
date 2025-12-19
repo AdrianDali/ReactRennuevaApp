@@ -23,8 +23,6 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 
-
-
 const DEFAULT_ROWS_PER_PAGE = 10;
 const REWARDS_GREEN = "#8BC34A";
 
@@ -43,54 +41,50 @@ const RoutalStopsTable = () => {
 
   const [openRows, setOpenRows] = useState({});
 
-const toggleRow = (id) => {
-  setOpenRows((prev) => ({
-    ...prev,
-    [id]: !prev[id],
-  }));
-};
-
+  const toggleRow = (id) => {
+    setOpenRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   // ============================================================
   // FETCH STOPS (SERVER SIDE)
   // ============================================================
   const fetchStops = async () => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const response = await axios.get(
-  "http://127.0.0.1:8000/routal/stops/search/",
-  {
-    params: {
-      project_id: "6429c7cccf48095710f801e8",
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:8000/routal/stops/search/",
+        {
+          params: {
+            project_id: "6429c7cccf48095710f801e8",
+          },
+        }
+      );
 
+      setStops(
+        response.data.docs.map((s) => ({
+          id: s.id,
+          nombre: s.label,
+          estado: s.status,
+          ubicacion: s.location?.label,
+          duracion_min: Math.floor((s.duration || 0) / 60),
+          orden: s.order,
+          fecha_ejecucion: s.plan_execution_date,
+          creada: s.created_at,
+          tiene_reporte: (s.reports || []).length > 0,
+        }))
+      );
+
+      setTotal(response.data.totalDocs);
+    } catch (error) {
+      console.error("Error cargando paradas:", error);
+    } finally {
+      setLoading(false);
     }
-  }
-);
-
-    setStops(
-      response.data.docs.map((s) => ({
-        id: s.id,
-        nombre: s.label,
-        estado: s.status,
-        ubicacion: s.location?.label,
-        duracion_min: Math.floor((s.duration || 0) / 60),
-        orden: s.order,
-        fecha_ejecucion: s.plan_execution_date,
-        creada: s.created_at,
-        tiene_reporte: (s.reports || []).length > 0,
-      }))
-    );
-
-    setTotal(response.data.totalDocs);
-
-  } catch (error) {
-    console.error("Error cargando paradas:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchStops();
@@ -173,7 +167,10 @@ const toggleRow = (id) => {
             mb: 3,
           }}
         >
-          <Typography variant="h4" sx={{ fontWeight: 600, color: REWARDS_GREEN }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 600, color: REWARDS_GREEN }}
+          >
             Paradas
           </Typography>
 
@@ -245,79 +242,93 @@ const toggleRow = (id) => {
                   </TableCell>
                   <TableCell />
                   <TableCell>Orden</TableCell>
-<TableCell>Nombre</TableCell>
-<TableCell>Estado</TableCell>
-<TableCell>Ubicación</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell>Ubicación</TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-  {stops.map((row, index) => {
-    const selectedRow = isSelected(row.id);
-    const isOpen = openRows[row.id];
+                {stops.map((row, index) => {
+                  const selectedRow = isSelected(row.id);
+                  const isOpen = openRows[row.id];
 
-    return (
-      <React.Fragment key={row.id}>
-        {/* FILA PRINCIPAL */}
-        <TableRow
-          hover
-          selected={selectedRow}
-          sx={{
-            backgroundColor: index % 2 === 0 ? "#fafafa" : "white",
-          }}
-        >
-          <TableCell padding="checkbox">
-            <Checkbox
-              checked={selectedRow}
-              onClick={() => handleRowClick(row.id)}
-            />
-          </TableCell>
+                  return (
+                    <React.Fragment key={row.id}>
+                      {/* FILA PRINCIPAL */}
+                      <TableRow
+                        hover
+                        selected={selectedRow}
+                        sx={{
+                          backgroundColor:
+                            index % 2 === 0 ? "#fafafa" : "white",
+                        }}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={selectedRow}
+                            onClick={() => handleRowClick(row.id)}
+                          />
+                        </TableCell>
 
-          <TableCell>
-            <IconButton size="small" onClick={() => toggleRow(row.id)}>
-              {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
+                        <TableCell>
+                          <IconButton
+                            size="small"
+                            onClick={() => toggleRow(row.id)}
+                          >
+                            {isOpen ? (
+                              <KeyboardArrowUpIcon />
+                            ) : (
+                              <KeyboardArrowDownIcon />
+                            )}
+                          </IconButton>
+                        </TableCell>
 
-          <TableCell>{row.orden ?? "-"}</TableCell>
-          <TableCell sx={{ fontWeight: 500 }}>{row.nombre}</TableCell>
-          <TableCell>{renderStatusChip(row.estado)}</TableCell>
-          <TableCell>{row.ubicacion}</TableCell>
-        </TableRow>
+                        <TableCell>{row.orden ?? "-"}</TableCell>
+                        <TableCell sx={{ fontWeight: 500 }}>
+                          {row.nombre}
+                        </TableCell>
+                        <TableCell>{renderStatusChip(row.estado)}</TableCell>
+                        <TableCell>{row.ubicacion}</TableCell>
+                      </TableRow>
 
-        {/* COLLAPSE */}
-        <TableRow>
-          <TableCell colSpan={7} sx={{ p: 0 }}>
-            <Collapse in={isOpen} timeout="auto" unmountOnExit>
-              <Box sx={{ p: 2, backgroundColor: "#f9f9f9" }}>
-                <Stack direction="row" spacing={4} flexWrap="wrap">
-                  <Typography variant="body2">
-                    <strong>Duración:</strong> {row.duracion_min} min
-                  </Typography>
+                      {/* COLLAPSE */}
+                      <TableRow>
+                        <TableCell colSpan={7} sx={{ p: 0 }}>
+                          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                            <Box sx={{ p: 2, backgroundColor: "#f9f9f9" }}>
+                              <Stack
+                                direction="row"
+                                spacing={4}
+                                flexWrap="wrap"
+                              >
+                                <Typography variant="body2">
+                                  <strong>Duración:</strong> {row.duracion_min}{" "}
+                                  min
+                                </Typography>
 
-                  <Typography variant="body2">
-                    <strong>Fecha ejecución:</strong>{" "}
-                    {row.fecha_ejecucion ?? "-"}
-                  </Typography>
+                                <Typography variant="body2">
+                                  <strong>Fecha ejecución:</strong>{" "}
+                                  {row.fecha_ejecucion ?? "-"}
+                                </Typography>
 
-                  <Typography variant="body2">
-                    <strong>Creada:</strong> {row.creada}
-                  </Typography>
+                                <Typography variant="body2">
+                                  <strong>Creada:</strong> {row.creada}
+                                </Typography>
 
-                  <Typography variant="body2">
-                    <strong>Reporte:</strong>{" "}
-                    {row.tiene_reporte ? "Sí" : "No"}
-                  </Typography>
-                </Stack>
-              </Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
-    );
-  })}
-</TableBody>
-
+                                <Typography variant="body2">
+                                  <strong>Reporte:</strong>{" "}
+                                  {row.tiene_reporte ? "Sí" : "No"}
+                                </Typography>
+                              </Stack>
+                            </Box>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
             </Table>
           </TableContainer>
 
