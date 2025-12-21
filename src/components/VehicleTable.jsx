@@ -1,19 +1,50 @@
 import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import {
-  Paper, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, TablePagination, Typography, Box,
-  Checkbox, IconButton, Menu, MenuItem, MenuList, ListItemIcon,
-  ListItemText, Collapse, Button, Badge, TextField, Dialog,
-  DialogContent, DialogActions, DialogTitle, TableSortLabel
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+  Typography,
+  Box,
+  Checkbox,
+  IconButton,
+  Menu,
+  MenuItem,
+  MenuList,
+  ListItemIcon,
+  ListItemText,
+  Collapse,
+  Button,
+  Badge,
+  TextField,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
+  TableSortLabel,
+  Grid,
+  Chip,
 } from "@mui/material";
 
 import {
-  Add, Download, FilterList, Delete, Visibility, Check,
-  Close, Search, Edit, KeyboardArrowDown
+  Add,
+  Download,
+  FilterList,
+  Delete,
+  Visibility,
+  Check,
+  Close,
+  Search,
+  Edit,
+  KeyboardArrowDown,
 } from "@mui/icons-material";
 
 import { TodoContext } from "../context/index";
-
+import { Autocomplete } from "@mui/material";
 import theme from "../context/theme";
 import { generateExcelFromJson } from "../services/Excel";
 import useAuth from "../hooks/useAuth";
@@ -30,7 +61,7 @@ const normalizeVehicles = (vehicles) => {
   const local = vehicles?.local || [];
   console.log("Routal vehicles:", routal);
 
-  const routalNorm = routal.map(v => ({
+  const routalNorm = routal.map((v) => ({
     id: v.id,
     modelo: v.label || "N/A",
     placas: v.plate || "N/A",
@@ -41,15 +72,14 @@ const normalizeVehicles = (vehicles) => {
     external_id: v.external_id || "N/A",
   }));
 
-  const localNorm = local.map(v => ({
+  const localNorm = local.map((v) => ({
     id: v.id,
     modelo: v.modelo || "N/A",
     placas: v.placas || "N/A",
     capacidad: v.capacidad || "-",
     conductor: v.conductor || "N/A",
     permiso: v.permiso || "N/A",
-    source: "Local"
-  
+    source: "Local",
   }));
 
   return [...localNorm, ...routalNorm];
@@ -66,13 +96,27 @@ function RowContextMenuVehicle({ anchorEl, setAnchorEl, onEdit, onDelete }) {
   return (
     <Menu anchorEl={anchorEl} open={open}>
       <MenuList>
-        <MenuItem onClick={() => { onEdit(); handleClose(); }}>
-          <ListItemIcon><Edit /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onEdit();
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <Edit />
+          </ListItemIcon>
           <ListItemText primary="Editar" />
         </MenuItem>
 
-        <MenuItem onClick={() => { onDelete(); handleClose(); }}>
-          <ListItemIcon><Delete color="error" /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onDelete();
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <Delete color="error" />
+          </ListItemIcon>
           <ListItemText primary="Eliminar" />
         </MenuItem>
       </MenuList>
@@ -83,30 +127,54 @@ function RowContextMenuVehicle({ anchorEl, setAnchorEl, onEdit, onDelete }) {
 // --------------------------------------------
 // MENÚ DE EXPORTACIÓN PARA VEHÍCULOS
 // --------------------------------------------
-function ExportOptionsMenuVehicle({ anchorEl, setAnchorEl, allData, filteredData, selected }) {
+function ExportOptionsMenuVehicle({
+  anchorEl,
+  setAnchorEl,
+  allData,
+  filteredData,
+  selected,
+}) {
   const open = Boolean(anchorEl);
   const handleClose = () => setAnchorEl(null);
 
   return (
     <Menu anchorEl={anchorEl} open={open}>
       <MenuList>
-        <MenuItem onClick={() => { generateExcelFromJson(allData, "Vehículos"); handleClose(); }}>
-          <ListItemIcon><Download /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            generateExcelFromJson(allData, "Vehículos");
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <Download />
+          </ListItemIcon>
           <ListItemText primary="Exportar todos" />
         </MenuItem>
 
-        <MenuItem onClick={() => { generateExcelFromJson(filteredData, "Vehículos"); handleClose(); }}>
-          <ListItemIcon><Visibility /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            generateExcelFromJson(filteredData, "Vehículos");
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <Visibility />
+          </ListItemIcon>
           <ListItemText primary="Exportar visibles" />
         </MenuItem>
 
-        <MenuItem onClick={() => {
-          const ids = selected.map(v => v.id);
-          const filtered = allData.filter(v => ids.includes(v.id));
-          generateExcelFromJson(filtered, "Vehículos");
-          handleClose();
-        }}>
-          <ListItemIcon><Check /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            const ids = selected.map((v) => v.id);
+            const filtered = allData.filter((v) => ids.includes(v.id));
+            generateExcelFromJson(filtered, "Vehículos");
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <Check />
+          </ListItemIcon>
           <ListItemText primary="Exportar seleccionados" />
         </MenuItem>
       </MenuList>
@@ -118,7 +186,13 @@ function ExportOptionsMenuVehicle({ anchorEl, setAnchorEl, allData, filteredData
 // COMPONENTE PRINCIPAL: VehicleTable
 // --------------------------------------------
 export default function VehicleTable({ vehicles }) {
-  const { setOpenModalEditVehicle, setOpenModalDeleteVehicle, setOpenModalCreateVehicle , infoVehicle, setInfoVehicle } = useContext(TodoContext);
+  const {
+    setOpenModalEditVehicle,
+    setOpenModalDeleteVehicle,
+    setOpenModalCreateVehicle,
+    infoVehicle,
+    setInfoVehicle,
+  } = useContext(TodoContext);
   const allData = useMemo(() => normalizeVehicles(vehicles), [vehicles]);
 
   const [filteredData, setFilteredData] = useState(allData);
@@ -127,7 +201,6 @@ export default function VehicleTable({ vehicles }) {
   const [selected, setSelected] = useState([]);
   const [generalStatus, setGeneralStatus] = useState("unchecked");
   const [rowMenuAnchor, setRowMenuAnchor] = useState(null);
-  
 
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState(10);
@@ -138,14 +211,15 @@ export default function VehicleTable({ vehicles }) {
 
   // Selección general
   useEffect(() => {
-    if (selected.length === allData.length && allData.length > 0) setGeneralStatus("checked");
+    if (selected.length === allData.length && allData.length > 0)
+      setGeneralStatus("checked");
     else if (selected.length === 0) setGeneralStatus("unchecked");
     else setGeneralStatus("indeterminate");
   }, [selected]);
 
   const toggleSelect = (vehicle) => {
-    if (selected.some(v => v.id === vehicle.id)) {
-      setSelected(selected.filter(v => v.id !== vehicle.id));
+    if (selected.some((v) => v.id === vehicle.id)) {
+      setSelected(selected.filter((v) => v.id !== vehicle.id));
     } else {
       setSelected([...selected, vehicle]);
     }
@@ -154,72 +228,124 @@ export default function VehicleTable({ vehicles }) {
   const toggleExpand = (id) => setExpanded(expanded === id ? null : id);
 
   return (
-    <Box sx={{
-          width: "100%",
-          mb: "3rem",
-          height: "80vh",
-          display: "flex",
-          flexDirection: "column",
-        }}>
-          <Paper 
-          elevation={3}
-            sx={{
-              borderRadius: 2, // esquinas redondeadas
-              boxShadow: 1, // sombra ligera
-              p: 2, // padding interno
-              bgcolor: "background.paper",
-            }}>
+    <Box
+      sx={{
+        width: "100%",
+        mb: "3rem",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          borderRadius: 2, // esquinas redondeadas
+          boxShadow: 1, // sombra ligera
+          p: 2, // padding interno
+          bgcolor: "background.paper",
+        }}
+      >
+        <Typography variant="h4" component="div" color="primary" sx={{ p: 2 }}>
+          Vehículos registrados Routal/Rewards
+        </Typography>
 
         {/* ---------------- TOOLBAR (igual al de usuarios) --------------- */}
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="h5">Vehículos registrados</Typography>
 
-          <Box>
-            <IconButton onClick={() => setOpenModalCreateVehicle(true)}>
-              <Add />
-            </IconButton>
+        <Box sx={{ mb: 2 }}>
+          <Grid container spacing={2} alignItems="center">
+            {/* Buscar */}
+            <Grid item xs={12} sm={4}>
+              <TextField
+                fullWidth
+                label="Buscar vehículo"
+                size="small"
+                InputProps={{
+                  startAdornment: <Search sx={{ mr: 1 }} />,
+                }}
+                onChange={(e) => {
+                  const value = e.target.value.toLowerCase();
+                  setVisibleData(
+                    filteredData.filter(
+                      (v) =>
+                        v.modelo.toLowerCase().includes(value) ||
+                        v.placas.toLowerCase().includes(value)
+                    )
+                  );
+                }}
+              />
+            </Grid>
 
-            <Button
-              variant="outlined"
-              startIcon={<Download />}
-              onClick={(e) => setExportAnchor(e.currentTarget)}
-              sx={{ mx: 1 }}
-            >
-              Exportar
-            </Button>
+            {/* Origen */}
+            <Grid item xs={12} sm={3}>
+              <Autocomplete
+                size="small"
+                options={["Local", "Routal"]}
+                renderInput={(params) => (
+                  <TextField {...params} label="Origen" />
+                )}
+                onChange={(e, value) => {
+                  if (!value) setVisibleData(filteredData);
+                  else
+                    setVisibleData(
+                      filteredData.filter((v) => v.source === value)
+                    );
+                }}
+              />
+            </Grid>
 
-            <Button
-              variant="text"
-              startIcon={<FilterList />}
-              onClick={() => setFiltersOpen(true)}
-            >
-              Filtrar
-            </Button>
-          </Box>
+            {/* Exportar */}
+            <Grid item xs={12} sm={3}>
+              <Button
+                variant="outlined"
+                startIcon={<Download />}
+                fullWidth
+                onClick={(e) => setExportAnchor(e.currentTarget)}
+              >
+                Exportar
+              </Button>
+            </Grid>
+
+            {/* Crear */}
+            <Grid item xs={12} sm={2}>
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                fullWidth
+                onClick={() => setOpenModalCreateVehicle(true)}
+              >
+                Nuevo
+              </Button>
+            </Grid>
+          </Grid>
         </Box>
 
         {/* ---------------- TABLA ---------------- */}
-        <TableContainer sx={{
-                    maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
-                    overflowY: "auto",
-                    "&::-webkit-scrollbar": { width: 6 },
-                    "&::-webkit-scrollbar-thumb": {
-                      bgcolor: "grey.400",
-                      borderRadius: 3,
-                    },
-                  }}>
-          <Table >
-            <TableHead sx={{
-                            bgcolor: "primary.main",
-                            "& .MuiTableCell-root": {
-                              color: "common.white",
-                              borderBottom: "2px solid",
-                              borderColor: "primary.dark",
-                              "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
-                                opacity: 1,
-                              },
-                            },
-                          }}>
+        <TableContainer
+          sx={{
+            maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { width: 6 },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "grey.400",
+              borderRadius: 3,
+            },
+          }}
+        >
+          <Table>
+            <TableHead
+              sx={{
+                bgcolor: "primary.main",
+                "& .MuiTableCell-root": {
+                  color: "common.white",
+                  borderBottom: "2px solid",
+                  borderColor: "primary.dark",
+                  "& .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon": {
+                    opacity: 1,
+                  },
+                },
+              }}
+            >
               <TableRow>
                 <TableCell />
 
@@ -234,32 +360,47 @@ export default function VehicleTable({ vehicles }) {
                   />
                 </TableCell>
 
-                <TableCell><b>Modelo</b></TableCell>
-                <TableCell><b>Placas</b></TableCell>
-                <TableCell><b>Capacidad</b></TableCell>
-                <TableCell><b>Conductor</b></TableCell>
-                <TableCell><b>Permiso</b></TableCell>
-                <TableCell><b>Origen</b></TableCell>
+                <TableCell>
+                  <b>Modelo</b>
+                </TableCell>
+                <TableCell>
+                  <b>Placas</b>
+                </TableCell>
+                <TableCell>
+                  <b>Capacidad</b>
+                </TableCell>
+                <TableCell>
+                  <b>Conductor</b>
+                </TableCell>
+                <TableCell>
+                  <b>Permiso</b>
+                </TableCell>
+                <TableCell>
+                  <b>Origen</b>
+                </TableCell>
 
-                <TableCell><b>Editar</b></TableCell>
-              
+                <TableCell>
+                  <b>Editar</b>
+                </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
               {visibleData
                 .slice(page * rows, page * rows + rows)
-                .map(vehicle => (
+                .map((vehicle) => (
                   <React.Fragment key={vehicle.id}>
                     <TableRow hover>
-
                       {/* Expand */}
                       <TableCell>
                         <IconButton onClick={() => toggleExpand(vehicle.id)}>
                           <KeyboardArrowDown
                             sx={{
-                              transform: expanded === vehicle.id ? "rotate(180deg)" : "rotate(0)",
-                              transition: "300ms"
+                              transform:
+                                expanded === vehicle.id
+                                  ? "rotate(180deg)"
+                                  : "rotate(0)",
+                              transition: "300ms",
                             }}
                           />
                         </IconButton>
@@ -268,7 +409,7 @@ export default function VehicleTable({ vehicles }) {
                       {/* Checkbox */}
                       <TableCell>
                         <Checkbox
-                          checked={selected.some(v => v.id === vehicle.id)}
+                          checked={selected.some((v) => v.id === vehicle.id)}
                           onClick={() => toggleSelect(vehicle)}
                         />
                       </TableCell>
@@ -279,29 +420,25 @@ export default function VehicleTable({ vehicles }) {
                       <TableCell>{vehicle.conductor}</TableCell>
                       <TableCell>{vehicle.permiso}</TableCell>
                       <TableCell>
-                        <Typography
-                          sx={{
-                            px: 1, py: 0.3,
-                            borderRadius: 1,
-                            backgroundColor:
-                              vehicle.source === "Routal"
-                                ? "primary.main"
-                                : "success.main",
-                            color: "white",
-                            fontSize: "0.7rem"
-                          }}
-                        >
-                          {vehicle.source}
-                        </Typography>
+                        <Chip
+                          size="small"
+                          label={vehicle.source}
+                          color={
+                            vehicle.source === "Routal" ? "primary" : "success"
+                          }
+                        />
                       </TableCell>
 
                       <TableCell>
-                        <IconButton onClick={() => { setInfoVehicle(vehicle); setOpenModalEditVehicle(true); }}>
+                        <IconButton
+                          onClick={() => {
+                            setInfoVehicle(vehicle);
+                            setOpenModalEditVehicle(true);
+                          }}
+                        >
                           <Edit />
                         </IconButton>
                       </TableCell>
-
-                      
                     </TableRow>
 
                     {/* SUBTABLA */}

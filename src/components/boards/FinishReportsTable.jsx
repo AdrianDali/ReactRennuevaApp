@@ -67,10 +67,6 @@ import ReportInfo from "./ReportInfo";
 import axios from "axios";
 import sortData from "../../helpers/SortData";
 
-
-
-
-
 function RowContextMenu({ anchorEl, setAnchorEl }) {
   const { setOpenModalEditReport, setOpenModalDeleteReport } =
     useContext(TodoContext);
@@ -118,7 +114,7 @@ function ExportOptionsMenu({
   allData,
   filteredData,
   selectedData,
-  setLoadingExport
+  setLoadingExport,
 }) {
   const open = Boolean(anchorEl);
 
@@ -130,28 +126,41 @@ function ExportOptionsMenu({
     setLoadingExport(true);
     handleClose();
     const newData = JSON.parse(JSON.stringify(allData));
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/get-all-residue/`
+    );
     const residues = response.data;
 
     for (let reportIdx in newData) {
-      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
-      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false  // Para formato 24h
-      });
+      const dateObj = new Date(newData[reportIdx]["fecha_inicio_reporte"]);
+      newData[reportIdx]["fecha_inicio_reporte"] = dateObj.toLocaleDateString(
+        "es-MX",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }
+      );
+      newData[reportIdx]["hora_inicio_reporte"] = dateObj.toLocaleTimeString(
+        "es-MX",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false, // Para formato 24h
+        }
+      );
       for (let residue of residues) {
         newData[reportIdx][`${residue.nombre}(kg)`] = 0;
         newData[reportIdx][`${residue.nombre}(m3)`] = 0;
       }
-      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
-      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const query = {
+        reportId: newData[reportIdx].id_report ?? newData[reportIdx].id,
+      };
+      const responsePerReport = await axios.post(
+        `${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`,
+        query
+      );
       const residuesPerReport = responsePerReport.data;
       for (let residue of residuesPerReport) {
         newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
@@ -167,28 +176,41 @@ function ExportOptionsMenu({
     setLoadingExport(true);
     handleClose();
     const newData = JSON.parse(JSON.stringify(filteredData));
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/get-all-residue/`
+    );
     const residues = response.data;
 
     for (let reportIdx in newData) {
-      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
-      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false  // Para formato 24h
-      });
+      const dateObj = new Date(newData[reportIdx]["fecha_inicio_reporte"]);
+      newData[reportIdx]["fecha_inicio_reporte"] = dateObj.toLocaleDateString(
+        "es-MX",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }
+      );
+      newData[reportIdx]["hora_inicio_reporte"] = dateObj.toLocaleTimeString(
+        "es-MX",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false, // Para formato 24h
+        }
+      );
       for (let residue of residues) {
         newData[reportIdx][`${residue.nombre}(kg)`] = 0;
         newData[reportIdx][`${residue.nombre}(m3)`] = 0;
       }
-      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
-      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const query = {
+        reportId: newData[reportIdx].id_report ?? newData[reportIdx].id,
+      };
+      const responsePerReport = await axios.post(
+        `${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`,
+        query
+      );
       const residuesPerReport = responsePerReport.data;
       for (let residue of residuesPerReport) {
         newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
@@ -197,7 +219,7 @@ function ExportOptionsMenu({
     }
     generateExcelFromJson(newData, "Reportes");
     setLoadingExport(false);
-  }
+  };
 
   const handleExportSelected = async () => {
     setLoadingExport(true);
@@ -208,28 +230,41 @@ function ExportOptionsMenu({
     );
 
     const newData = JSON.parse(JSON.stringify(dataToExport));
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/get-all-residue/`
+    );
     const residues = response.data;
 
     for (let reportIdx in newData) {
-      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
-      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false  // Para formato 24h
-      });
+      const dateObj = new Date(newData[reportIdx]["fecha_inicio_reporte"]);
+      newData[reportIdx]["fecha_inicio_reporte"] = dateObj.toLocaleDateString(
+        "es-MX",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }
+      );
+      newData[reportIdx]["hora_inicio_reporte"] = dateObj.toLocaleTimeString(
+        "es-MX",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false, // Para formato 24h
+        }
+      );
       for (let residue of residues) {
         newData[reportIdx][`${residue.nombre}(kg)`] = 0;
         newData[reportIdx][`${residue.nombre}(m3)`] = 0;
       }
-      const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
-      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const query = {
+        reportId: newData[reportIdx].id_report ?? newData[reportIdx].id,
+      };
+      const responsePerReport = await axios.post(
+        `${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`,
+        query
+      );
       const residuesPerReport = responsePerReport.data;
       for (let residue of residuesPerReport) {
         newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
@@ -245,9 +280,11 @@ function ExportOptionsMenu({
     <Menu anchorEl={anchorEl} open={open}>
       <ClickAwayListener onClickAway={handleClose}>
         <MenuList>
-          <MenuItem onClick={async () => {
-            await handleExportAll()
-          }}>
+          <MenuItem
+            onClick={async () => {
+              await handleExportAll();
+            }}
+          >
             <ListItemIcon>
               <Download />
             </ListItemIcon>
@@ -294,16 +331,15 @@ function Toolbar({
         py={2}
         bgcolor={theme.palette.primary.light}
       >
-
-
         <Typography
           variant="h4"
           component="div"
           color="secondary"
           sx={{ p: 2 }}
         >
-          {`${selected.length} ${selected.length === 1 ? "seleccionado" : "seleccionados"
-            }`}
+          {`${selected.length} ${
+            selected.length === 1 ? "seleccionado" : "seleccionados"
+          }`}
         </Typography>
         <Box>
           <Button
@@ -386,7 +422,7 @@ function Toolbar({
           onClick={(e) => setExportOptionsAnchorEl(e.currentTarget)}
           disabled={loadingExport}
         >
-          {loadingExport ? <CircularProgress size={20}/> : "Exportar"}
+          {loadingExport ? <CircularProgress size={20} /> : "Exportar"}
         </Button>
         <ExportOptionsMenu
           selectedData={selected}
@@ -482,16 +518,21 @@ function SearchField({ filteredData, setVisibleData }) {
   );
 }
 
-export default function FinishReportsTable({ data }) {
-
+export default function FinishReportsTable({
+  data,
+  count,
+  page,
+  rowsPerPage,
+  setPage,
+  setRowsPerPage,
+}) {
   const [filteredData, setFilteredData] = useState(data);
   const [reportsToDelete, setReportsToDelete] = useState([]);
   const [reportToEdit, setReportToEdit] = useState({});
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [visibleData, setVisibleData] = useState(data);
   const [signType, setSignType] = useState("Generador");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const [orderBy, setOrderBy] = useState("id_report");
   const [order, setOrder] = useState("desc");
   const [sortedData, setSortedData] = useState([]);
@@ -514,7 +555,6 @@ export default function FinishReportsTable({ data }) {
   const [expanded, setExpanded] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
 
-
   const [dataForFilters, setDataForFilters] = useState({
     colonia_usuario: [],
     ciudad_usuario: [],
@@ -534,8 +574,7 @@ export default function FinishReportsTable({ data }) {
     estado_reporte: [],
     cp_reporte: [],
     status_reporte: [],
-    grupo_usuario: []
-
+    grupo_usuario: [],
   });
 
   const handleExpandClick = (id) => {
@@ -676,7 +715,9 @@ export default function FinishReportsTable({ data }) {
       const status_reporte = [
         ...new Set(data.map((report) => report.status_reporte)),
       ];
-      const grupo_usuario = [...new Set(data.map((report) => report.grupo_usuario))];
+      const grupo_usuario = [
+        ...new Set(data.map((report) => report.grupo_usuario)),
+      ];
 
       setDataForFilters({
         colonia_usuario,
@@ -697,24 +738,25 @@ export default function FinishReportsTable({ data }) {
         estado_reporte,
         cp_reporte,
         status_reporte,
-        grupo_usuario
+        grupo_usuario,
       });
     }
   }, [data]);
 
   useEffect(() => {
     setSortedData(sortData(visibleData, orderBy, order));
-  }, [visibleData, order, orderBy])
+  }, [visibleData, order, orderBy]);
 
   return (
-    <Box 
+    <Box
       sx={{
         width: "100%",
         mb: "3rem",
         height: "80vh",
         display: "flex",
         flexDirection: "column",
-      }}>
+      }}
+    >
       <Paper
         elevation={3}
         sx={{
@@ -733,7 +775,7 @@ export default function FinishReportsTable({ data }) {
           filtersApplied={filtersApplied}
           setVisibleData={setVisibleData}
         />
-        <TableContainer 
+        <TableContainer
           sx={{
             maxHeight: "calc(70vh - 64px)", // ajusta según tu Toolbar/TablePagination
             overflowY: "auto",
@@ -743,10 +785,10 @@ export default function FinishReportsTable({ data }) {
               borderRadius: 3,
             },
           }}
-          >
-          <Table >
-            <TableHead 
-            sx={{
+        >
+          <Table>
+            <TableHead
+              sx={{
                 bgcolor: "primary.main",
                 "& .MuiTableCell-root": {
                   color: "common.white",
@@ -757,7 +799,7 @@ export default function FinishReportsTable({ data }) {
                   },
                 },
               }}
-              >
+            >
               <TableRow>
                 <TableCell>
                   <TableSortLabel direction="asc">
@@ -779,8 +821,8 @@ export default function FinishReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                      setOrderBy("id_report")
-                      setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("id_report");
+                      setOrder(order === "asc" ? "desc" : "asc");
                     }}
                     active={orderBy === "id_report" ? true : false}
                   >
@@ -791,8 +833,8 @@ export default function FinishReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                      setOrderBy("nombre_real_usuario")
-                      setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("nombre_real_usuario");
+                      setOrder(order === "asc" ? "desc" : "asc");
                     }}
                     active={orderBy === "nombre_real_usuario" ? true : false}
                   >
@@ -803,8 +845,8 @@ export default function FinishReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                      setOrderBy("apellido_usuario")
-                      setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("apellido_usuario");
+                      setOrder(order === "asc" ? "desc" : "asc");
                     }}
                     active={orderBy === "apellido_usuario" ? true : false}
                   >
@@ -820,12 +862,16 @@ export default function FinishReportsTable({ data }) {
                   <TableSortLabel
                     direction={order}
                     onClick={() => {
-                      setOrderBy("direccion_completa_usuario")
-                      setOrder(order === "asc" ? "desc" : "asc")
+                      setOrderBy("direccion_completa_usuario");
+                      setOrder(order === "asc" ? "desc" : "asc");
                     }}
-                    active={orderBy === "direccion_completa_usuario" ? true : false}
+                    active={
+                      orderBy === "direccion_completa_usuario" ? true : false
+                    }
                   >
-                    <Typography variant="subtitle2">Dirección Completa</Typography>
+                    <Typography variant="subtitle2">
+                      Dirección Completa
+                    </Typography>
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
@@ -852,102 +898,100 @@ export default function FinishReportsTable({ data }) {
                   </TableCell>
                 </TableRow>
               ) : (
-                sortedData
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((report, index) => (
-                    <>
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        key={report.id_report}
-                        selected={isRowSelected(report.id_report)}
-                        sx={{ cursor: "pointer" }}
-                        aria-checked={
-                          isRowSelected(report.id_report) ? true : false
-                        }
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleSelected(report.id_report);
-                        }}
-                        onContextMenu={(e) => {
-                          e.preventDefault();
-                          setReportToEdit(report);
-                          setReportsToDelete([report.id_report]);
-                          setRowContextMenuAnchorEl(e.target);
-                        }}
-                      >
-                        <TableCell>
-                          <Button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleExpandClick(report.id_report);
-                            }}
-                          >
-                            {expandedRow === report.id_report ? (
-                              <KeyboardArrowUpIcon />
-                            ) : (
-                              <KeyboardArrowDownIcon />
-                            )}
-                          </Button>
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleSelected(report.id_report);
-                            }}
-                            checked={isRowSelected(report.id_report)}
-                            inputProps={{
-                              "aria-labelledby": report.id_report,
-                            }}
-                          />
-                        </TableCell>
-
-                        <TableCell>{report.id_report}</TableCell>
-                        <TableCell>{report.nombre_real_usuario}</TableCell>
-                        <TableCell>{report.apellido_usuario}</TableCell>
-                        <TableCell>{report.telefono_usuario}</TableCell>
-                        <TableCell>{report.direccion_completa_usuario}</TableCell>
-                        <TableCell>
-                          {dateFormater(report.fecha_inicio_reporte)}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            startIcon={<SaveAlt />}
-                            variant="contained"
-                            size="small"
-                            color={
-                              report.firma_responsiva_generador &&
-                                report.firma_responsiva_receptor &&
-                                report.residuos_agregados
-                                ? "success"
-                                : "warning"
-                            }
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              await handleSavePDF(report);
-                            }}
-                          >
-                            Descargar
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell
-                          style={{ paddingBottom: 0, paddingTop: 0 }}
-                          colSpan={18}
+                sortedData.map((report) => (
+                  <>
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      key={report.id_report}
+                      selected={isRowSelected(report.id_report)}
+                      sx={{ cursor: "pointer" }}
+                      aria-checked={
+                        isRowSelected(report.id_report) ? true : false
+                      }
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSelected(report.id_report);
+                      }}
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setReportToEdit(report);
+                        setReportsToDelete([report.id_report]);
+                        setRowContextMenuAnchorEl(e.target);
+                      }}
+                    >
+                      <TableCell>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleExpandClick(report.id_report);
+                          }}
                         >
-                          <Collapse
-                            in={expandedRow === report.id_report}
-                            timeout="auto"
-                            unmountOnExit
-                          >
-                            <ReportInfo request={report} />
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
-                    </>
-                  ))
+                          {expandedRow === report.id_report ? (
+                            <KeyboardArrowUpIcon />
+                          ) : (
+                            <KeyboardArrowDownIcon />
+                          )}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Checkbox
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleSelected(report.id_report);
+                          }}
+                          checked={isRowSelected(report.id_report)}
+                          inputProps={{
+                            "aria-labelledby": report.id_report,
+                          }}
+                        />
+                      </TableCell>
+
+                      <TableCell>{report.id_report}</TableCell>
+                      <TableCell>{report.nombre_real_usuario}</TableCell>
+                      <TableCell>{report.apellido_usuario}</TableCell>
+                      <TableCell>{report.telefono_usuario}</TableCell>
+                      <TableCell>{report.direccion_completa_usuario}</TableCell>
+                      <TableCell>
+                        {dateFormater(report.fecha_inicio_reporte)}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          startIcon={<SaveAlt />}
+                          variant="contained"
+                          size="small"
+                          color={
+                            report.firma_responsiva_generador &&
+                            report.firma_responsiva_receptor &&
+                            report.residuos_agregados
+                              ? "success"
+                              : "warning"
+                          }
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleSavePDF(report);
+                          }}
+                        >
+                          Descargar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell
+                        style={{ paddingBottom: 0, paddingTop: 0 }}
+                        colSpan={18}
+                      >
+                        <Collapse
+                          in={expandedRow === report.id_report}
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <ReportInfo request={report} />
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
@@ -955,11 +999,14 @@ export default function FinishReportsTable({ data }) {
         <TablePagination
           rowsPerPageOptions={[10, 20, 25]}
           component="div"
-          count={sortedData.length}
+          count={count} // 👈 TOTAL REAL
           rowsPerPage={rowsPerPage}
           page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
         />
       </Paper>
 
