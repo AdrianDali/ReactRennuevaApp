@@ -127,40 +127,112 @@ function ExportOptionsMenu({
   };
 
   const handleExportAll = async () => {
-    setLoadingExport(true);
-    handleClose();
-    const newData = JSON.parse(JSON.stringify(allData));
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+  setLoadingExport(true);
+  handleClose();
+
+  try {
+    // Normaliza base URL para que funcione si tu REACT_APP_API_URL
+    // es "http://localhost:8000" o "http://localhost:8000/Rennueva"
+    const API = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
+    const RENNU = API.endsWith("/Rennueva") ? API : `${API}/Rennueva`;
+
+    // 1) Traer TODOS los reportes desde el backend
+    const reportsRes = await axios.get(`${RENNU}/get-all-reports-finish/`, {
+      params: { export: true },
+    });
+
+    // Por si el backend envuelve en results/data
+    const reports =
+      Array.isArray(reportsRes.data)
+        ? reportsRes.data
+        : (reportsRes.data?.results ?? reportsRes.data?.data ?? []);
+
+    const newData = JSON.parse(JSON.stringify(reports));
+
+    // 2) Residuos (igual que antes)
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`);
     const residues = response.data;
 
+    // 3) Enriquecimiento (igual que antes)
     for (let reportIdx in newData) {
-      const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
-      newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+      const dateObj = new Date(newData[reportIdx]["fecha_inicio_reporte"]);
+
+      newData[reportIdx]["fecha_inicio_reporte"] = dateObj.toLocaleDateString("es-MX", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       });
-      newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false  // Para formato 24h
+
+      newData[reportIdx]["hora_inicio_reporte"] = dateObj.toLocaleTimeString("es-MX", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
       });
+
       for (let residue of residues) {
         newData[reportIdx][`${residue.nombre}(kg)`] = 0;
         newData[reportIdx][`${residue.nombre}(m3)`] = 0;
       }
+
       const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
-      const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+      const responsePerReport = await axios.post(
+        `${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`,
+        query
+      );
+
       const residuesPerReport = responsePerReport.data;
+
       for (let residue of residuesPerReport) {
         newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
         newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
       }
     }
+
     generateExcelFromJson(newData, "Reportes");
+  } catch (err) {
+    console.error("Error exportando todos:", err);
+  } finally {
     setLoadingExport(false);
-  };
+  }
+};
+
+
+  // const handleExportAll = async () => {
+  //   setLoadingExport(true);
+  //   handleClose();
+  //   const newData = JSON.parse(JSON.stringify(allData));
+  //   const response = await axios.get(`${process.env.REACT_APP_API_URL}/get-all-residue/`)
+  //   const residues = response.data;
+
+  //   for (let reportIdx in newData) {
+  //     const dateObj = new Date(newData[reportIdx]['fecha_inicio_reporte']);
+  //     newData[reportIdx]['fecha_inicio_reporte'] = dateObj.toLocaleDateString('es-MX', {
+  //       day: '2-digit',
+  //       month: '2-digit',
+  //       year: 'numeric'
+  //     });
+  //     newData[reportIdx]['hora_inicio_reporte'] = dateObj.toLocaleTimeString('es-MX', {
+  //       hour: '2-digit',
+  //       minute: '2-digit',
+  //       second: '2-digit',
+  //       hour12: false  // Para formato 24h
+  //     });
+  //     for (let residue of residues) {
+  //       newData[reportIdx][`${residue.nombre}(kg)`] = 0;
+  //       newData[reportIdx][`${residue.nombre}(m3)`] = 0;
+  //     }
+  //     const query = { reportId: newData[reportIdx].id_report ?? newData[reportIdx].id };
+  //     const responsePerReport = await axios.post(`${process.env.REACT_APP_API_URL}/get-all-residues-per-report/`, query);
+  //     const residuesPerReport = responsePerReport.data;
+  //     for (let residue of residuesPerReport) {
+  //       newData[reportIdx][`${residue.residue}(kg)`] = residue.peso;
+  //       newData[reportIdx][`${residue.residue}(m3)`] = residue.volumen;
+  //     }
+  //   }
+  //   generateExcelFromJson(newData, "Reportes");
+  //   setLoadingExport(false);
+  // };
 
   const handleExportVisible = async () => {
     //console.log(filteredData)
