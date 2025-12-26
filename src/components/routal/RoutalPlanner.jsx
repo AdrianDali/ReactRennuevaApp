@@ -19,6 +19,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import RouteIcon from "@mui/icons-material/Route";
 import NewPlanModal from "../modals/NewPlanModal";
 import { searchPlans } from "../../services/routal/searchPlans";
+import { useNavigate } from "react-router-dom";
+import { ButtonBase } from "@mui/material";
 
 const ROUTAL_GREEN_DARK = "#689F38";
 const WEEK_DAYS = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
@@ -32,7 +34,10 @@ const getCalendarGrid = (year, monthIndex) => {
   const prevMonthLastDay = new Date(year, monthIndex, 0).getDate();
   for (let i = firstDayWeekIndex - 1; i >= 0; i--) {
     const day = prevMonthLastDay - i;
-    days.push({ date: new Date(year, monthIndex - 1, day), isCurrentMonth: false });
+    days.push({
+      date: new Date(year, monthIndex - 1, day),
+      isCurrentMonth: false,
+    });
   }
 
   const thisMonthLastDay = new Date(year, monthIndex + 1, 0).getDate();
@@ -42,28 +47,25 @@ const getCalendarGrid = (year, monthIndex) => {
 
   const remaining = (7 - (days.length % 7)) % 7;
   for (let d = 1; d <= remaining; d++) {
-    days.push({ date: new Date(year, monthIndex + 1, d), isCurrentMonth: false });
+    days.push({
+      date: new Date(year, monthIndex + 1, d),
+      isCurrentMonth: false,
+    });
   }
 
   return days;
 };
 
 const formatMonthYear = (date) =>
-  new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" }).format(date);
-
-const formatFullDate = (date) =>
-  new Intl.DateTimeFormat("es-ES", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(date);
+  new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" }).format(
+    date
+  );
 
 const toKey = (date) =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-    date.getDate()
-  ).padStart(2, "0")}`;
-
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
 
 const isoToYmd = (iso) => {
   if (!iso) return "";
@@ -76,19 +78,27 @@ const mapPlanFromApi = (p) => ({
   name: p.label,
   vehicles: p.total_drivers ?? 0,
   routes: p.total_routes ?? 0,
-  status: p.status, 
+  status: p.status,
 });
 
 const RoutalPlanner = () => {
   const [openNewPlanModal, setOpenNewPlanModal] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date(2025, 10, 1));
-  const [selectedDate, setSelectedDate] = useState(new Date(2025, 10, 25));
+  // const [currentMonth, setCurrentMonth] = useState(new Date(2025, 10, 1));
+  // const [selectedDate, setSelectedDate] = useState(new Date(2025, 10, 25));
+  const today = new Date();
+
+  const [currentMonth, setCurrentMonth] = useState(
+    () => new Date(today.getFullYear(), today.getMonth(), 1)
+  );
+  const [selectedDate, setSelectedDate] = useState(() => today);
+
   const [search, setSearch] = useState("");
 
   // ✅ planes reales del backend
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(false);
   const [plansError, setPlansError] = useState("");
+  const navigate = useNavigate();
 
   const calendarDays = useMemo(
     () => getCalendarGrid(currentMonth.getFullYear(), currentMonth.getMonth()),
@@ -141,11 +151,15 @@ const RoutalPlanner = () => {
   const plansForSelectedDate = plansByDate[selectedDateKey] || [];
 
   const handlePrevMonth = () => {
-    setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    setCurrentMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+    );
   };
 
   const handleNextMonth = () => {
-    setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    setCurrentMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+    );
   };
 
   const handleToday = () => {
@@ -189,7 +203,14 @@ const RoutalPlanner = () => {
               mb: 1,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                flexWrap: "wrap",
+              }}
+            >
               <Button
                 variant="outlined"
                 startIcon={<TodayIcon />}
@@ -203,7 +224,10 @@ const RoutalPlanner = () => {
                 <IconButton onClick={handlePrevMonth}>
                   <ArrowBackIosNewIcon fontSize="small" />
                 </IconButton>
-                <Typography variant="h6" sx={{ mx: 1, textTransform: "capitalize" }}>
+                <Typography
+                  variant="h6"
+                  sx={{ mx: 1, textTransform: "capitalize" }}
+                >
                   {formatMonthYear(currentMonth)}
                 </Typography>
                 <IconButton onClick={handleNextMonth}>
@@ -214,7 +238,10 @@ const RoutalPlanner = () => {
               {/* ✅ feedback loading/error */}
               {loadingPlans && <CircularProgress size={18} sx={{ ml: 1 }} />}
               {plansError && (
-                <Typography variant="caption" sx={{ ml: 1, color: "error.main" }}>
+                <Typography
+                  variant="caption"
+                  sx={{ ml: 1, color: "error.main" }}
+                >
                   {plansError}
                 </Typography>
               )}
@@ -239,7 +266,11 @@ const RoutalPlanner = () => {
             }}
           >
             {WEEK_DAYS.map((day) => (
-              <Typography key={day} align="center" sx={{ fontWeight: 600, color: "#9e9e9e" }}>
+              <Typography
+                key={day}
+                align="center"
+                sx={{ fontWeight: 600, color: "#9e9e9e" }}
+              >
                 {day}
               </Typography>
             ))}
@@ -268,7 +299,10 @@ const RoutalPlanner = () => {
 
               const handleClickDay = () => {
                 setSelectedDate(day);
-                if (!isCurrentMonth) setCurrentMonth(new Date(day.getFullYear(), day.getMonth(), 1));
+                if (!isCurrentMonth)
+                  setCurrentMonth(
+                    new Date(day.getFullYear(), day.getMonth(), 1)
+                  );
               };
 
               return (
@@ -281,7 +315,9 @@ const RoutalPlanner = () => {
                     borderRadius: 3,
                     cursor: "pointer",
                     height: "100%",
-                    border: isSelected ? `2px solid ${ROUTAL_GREEN_DARK}` : "1px solid #e0e0e0",
+                    border: isSelected
+                      ? `2px solid ${ROUTAL_GREEN_DARK}`
+                      : "1px solid #e0e0e0",
                     backgroundColor: isSelected
                       ? "#e0f2f1"
                       : isToday
@@ -330,8 +366,12 @@ const RoutalPlanner = () => {
                   )}
 
                   {filteredPlans.length > 1 && (
-                    <Typography variant="caption" sx={{ mt: 0.5, color: "#9e9e9e" }}>
-                      + {filteredPlans.length - 1} evento{filteredPlans.length - 1 > 1 && "s"}
+                    <Typography
+                      variant="caption"
+                      sx={{ mt: 0.5, color: "#9e9e9e" }}
+                    >
+                      + {filteredPlans.length - 1} evento
+                      {filteredPlans.length - 1 > 1 && "s"}
                     </Typography>
                   )}
                 </Paper>
@@ -350,39 +390,30 @@ const RoutalPlanner = () => {
             mt: { xs: 2, md: 0 },
           }}
         >
-          <Paper
-            elevation={0}
-            sx={{
-              p: 2,
-              borderRadius: 3,
-              border: "1px solid #e0e0e0",
-              minHeight: 260,
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            <Typography variant="subtitle2" sx={{ color: "#9e9e9e", textTransform: "capitalize" }}>
-              {formatFullDate(selectedDate)}
-            </Typography>
-
-            {plansForSelectedDate.length === 0 && (
-              <Typography variant="body2" sx={{ color: "#9e9e9e" }}>
-                No hay planes para esta fecha.
-              </Typography>
-            )}
-
-            {plansForSelectedDate.map((plan) => (
-              <Box
-                key={plan.id}
+          {plansForSelectedDate.map((plan) => (
+            <Paper
+              key={plan.id}
+              elevation={0}
+              onClick={() =>
+                navigate(`/routal/planner/plan/${plan.id}/overview`)
+              }
+              sx={{
+                borderRadius: 3,
+                border: `1px solid ${ROUTAL_GREEN_DARK}`,
+                overflow: "hidden",
+                cursor: "pointer",
+                "&:hover": { boxShadow: 2 },
+              }}
+            >
+              <ButtonBase
                 sx={{
-                  borderRadius: 3,
-                  border: `1px solid ${ROUTAL_GREEN_DARK}`,
-                  overflow: "hidden",
+                  width: "100%",
+                  textAlign: "left",
                   display: "flex",
-                  flexDirection: "row",
+                  alignItems: "stretch",
                 }}
               >
+                {/* Barra lateral de estado */}
                 <Box
                   sx={{
                     width: 10,
@@ -394,6 +425,8 @@ const RoutalPlanner = () => {
                         : "#ffb300",
                   }}
                 />
+
+                {/* Contenido */}
                 <Box sx={{ p: 2, flex: 1 }}>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
                     {plan.name}
@@ -405,22 +438,33 @@ const RoutalPlanner = () => {
                       icon={<DirectionsBusFilledIcon fontSize="small" />}
                       label={plan.vehicles}
                       variant="outlined"
+                      // evita que el click en el chip “robe” interacción rara
+                      onClick={(e) => e.preventDefault()}
                     />
                     <Chip
                       size="small"
                       icon={<RouteIcon fontSize="small" />}
                       label={plan.routes}
                       variant="outlined"
+                      onClick={(e) => e.preventDefault()}
                     />
                     <Chip
                       size="small"
                       icon={<AccessTimeIcon fontSize="small" />}
                       label="Progreso"
                       variant="outlined"
+                      onClick={(e) => e.preventDefault()}
                     />
                   </Stack>
 
-                  <Box sx={{ mt: 1, height: 6, borderRadius: 999, bgcolor: "#eeeeee" }}>
+                  <Box
+                    sx={{
+                      mt: 1,
+                      height: 6,
+                      borderRadius: 999,
+                      bgcolor: "#eeeeee",
+                    }}
+                  >
                     <Box
                       sx={{
                         height: "100%",
@@ -431,9 +475,9 @@ const RoutalPlanner = () => {
                     />
                   </Box>
                 </Box>
-              </Box>
-            ))}
-          </Paper>
+              </ButtonBase>
+            </Paper>
+          ))}
 
           <Divider />
 
